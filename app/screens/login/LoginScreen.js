@@ -233,17 +233,6 @@ export default class LoginScreen extends BaseScreen {
           </TouchableOpacity>
         </View>
 
-        <View style={styles.loginBottom}>
-          <Text style={styles.textPress} onPress={() => { this.navigate('ResetPasswordScreen', {}) }}>
-            {I18n.t('login.forgotText')}
-          </Text>
-          <View style={styles.textRow}>
-            <Text style={styles.text}>
-              {I18n.t('login.questionRegister')}
-            </Text>
-            <Text onPress={this._onPressRegister.bind(this)} style={[styles.textPress, styles.textUnderline]} >{I18n.t('login.register')}</Text>
-          </View>
-        </View>
         {this.state.errorMessage.show && (
           <View style={styles.boxError}>
             <Text>{this.state.errorMessage.text}</Text>
