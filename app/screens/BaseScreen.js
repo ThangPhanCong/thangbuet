@@ -4,7 +4,7 @@ import I18n from '../i18n/i18n';
 
 export default class BaseScreen extends React.Component {
   static navigationOptions = {
-    headerLeft: (<View />)
+    header: null
   };
 
   _didFocusSubscription;

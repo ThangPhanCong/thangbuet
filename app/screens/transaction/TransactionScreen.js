@@ -14,7 +14,7 @@ import ScaledSheet from '../../libs/reactSizeMatter/ScaledSheet';
 
 export default class TransactionScreen extends BaseScreen {
   render() {
-    <Text>Sreen</Text>
+    return(<Text>Sreen</Text>)
   }
 }
 

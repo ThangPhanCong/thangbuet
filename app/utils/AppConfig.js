@@ -46,4 +46,3 @@ export default class AppConfig {
     return AppConfig.TERM_URL;
   }
 }
-
