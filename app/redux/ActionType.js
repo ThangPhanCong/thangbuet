@@ -1,3 +1,5 @@
 export default Object.freeze({
-  
+  GET_LIST_FAILURE: 'GET_LIST_FAILURE',
+  GET_COIN_LIST: 'GET_COIN_LIST',
+  GET_COIN_LIST_SUCCESS: 'GET_COIN_LIST_SUCCESS'
 });
