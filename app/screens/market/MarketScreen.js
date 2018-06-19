@@ -32,7 +32,7 @@ class MarketScreen extends BaseScreen {
 
 function mapStateToProps(state) {
   return {
-    coinsList: state.marketReducer.list
+    stats: state.marketReducer
   }
 }
 

@@ -8,6 +8,7 @@ import BaseScreen from './app/screens/BaseScreen';
 import GlobalSocket from './app/GlobalSocket';
 import MasterdataUtils from './app/utils/MasterdataUtils';
 import Screens from './app/screens/Screens';
+import AppSocket from './app/AppSocket';
 
 import I18n from './app/i18n/i18n';
 
@@ -42,6 +43,7 @@ function initApp() {
     .then(credentials => {
       AppConfig.ACCESS_TOKEN = credentials.password;
       window.GlobalSocket = new GlobalSocket();
+      window.socket = new AppSocket();
 
       if (__DEV__) {
         console.log('API Server: ' + AppConfig.getApiServer());

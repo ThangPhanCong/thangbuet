@@ -1,9 +1,8 @@
 import { Observable } from 'rxjs';
 import io from "socket.io-client";
 import AppConfig from '../../utils/AppConfig';
-import { eventNames } from 'cluster';
 
-export default class SocketEpic {
+export default class Socket {
   constructor() {
     this._socket = this._initSocket();
   }
@@ -31,7 +30,7 @@ export default class SocketEpic {
           observer.next(data);
 
           if (!this._events.includes(event)) {
-            observer.completed();
+            observer.unsubscribe();
           }
         })
       })
@@ -43,8 +42,8 @@ export default class SocketEpic {
     const observable = this._obsevables[event]
     if (observable) {
       this._socket.off(event, () => {
-        this._obsevables[event] = null;
         _.remove(this._events, e => e !== event);
+        this._obsevables[event] = null;
       });
     }
   }
