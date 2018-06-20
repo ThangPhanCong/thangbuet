@@ -8,11 +8,14 @@ import {
   View
 } from 'react-native';
 import BaseScreen from '../BaseScreen';
-import { connect } from 'redux';
+import { connect } from 'react-redux';
 import ActionType from '../../redux/ActionType';
 import Consts from '../../utils/Consts';
 import { CommonColors, CommonStyles } from '../../utils/CommonStyles';
 import { getCurrencyName, formatCurrency, formatPercent } from "../../utils/Filters";
+import ScaledSheet from '../../libs/reactSizeMatter/ScaledSheet';
+import I18n from '../../i18n/i18n';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 class MarketScreen extends BaseScreen {
   static SORT_FIELDS = {
@@ -28,11 +31,13 @@ class MarketScreen extends BaseScreen {
   };
 
   static defaultProps = {
-    sortField: MarketScreen.SORT_FIELDS.VOLUME,
-    sortDirection: MarketScreen.SORT_DIRECTION.DESC,
-    symbols: [],
-    prices: {},
-    favorites: {}
+    stats: {
+      sortField: MarketScreen.SORT_FIELDS.VOLUME,
+      sortDirection: MarketScreen.SORT_DIRECTION.DESC,
+      symbols: [],
+      prices: {},
+      favorites: {}
+    }
   }
 
   constructor(props) {
@@ -40,19 +45,13 @@ class MarketScreen extends BaseScreen {
 
     const { sortField, sortDirection } = this.props.navigation.state.params || {};
     
-    this.props = {
-      sortField: sortField || MarketScreen.SORT_FIELDS.VOLUME,
-      sortDirection: sortDirection || MarketScreen.SORT_DIRECTION.DESC,
-    }
+    this.props.stats.sortField = sortField || MarketScreen.SORT_FIELDS.VOLUME;
+    this.props.stats.sortDirection = sortDirection || MarketScreen.SORT_DIRECTION.DESC;
   }
 
   componentWillMount() {
     super.componentWillMount();
-    this.dispatch({
-      type: ActionType.GET_COIN_LIST,
-      sortField: MarketScreen.SORT_FIELDS.VOLUME,
-      sortDirection: MarketScreen.SORT_DIRECTION.DESC
-    })
+    this.props.getList();
   }
 
   componentDidUpdate(previousProps) {
@@ -241,12 +240,8 @@ class MarketScreen extends BaseScreen {
   }
 
   _changeSortField(sortField, sortDirection) {
-    this.dispatch({
-      type: ActionType.SORT_COIN_LIST,
-      symbols: this.props.stats.symbols,
-      sortField,
-      sortDirection
-    })
+    let symbols = this.props.stats.symbols;
+    this.props.sortList(symbols, sortField, sortDirection);
   }
 }
 
@@ -256,7 +251,23 @@ function mapStateToProps(state) {
   }
 }
 
-export default connect(mapStateToProps)(MarketScreen);
+function mapDispatchToProps(dispatch) {
+  return {
+    getList: () => dispatch({
+      type: ActionType.GET_COIN_LIST,
+      sortField: MarketScreen.SORT_FIELDS.VOLUME,
+      sortDirection: MarketScreen.SORT_DIRECTION.DESC
+    }),
+    sortList: (symbols, sortField, sortDirection) => dispatch({
+      type: ActionType.SORT_COIN_LIST,
+      symbols,
+      sortField,
+      sortDirection
+    })
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(MarketScreen);
 
 const styles = ScaledSheet.create({
   screen: {
