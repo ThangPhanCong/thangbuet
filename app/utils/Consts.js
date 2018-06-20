@@ -21,4 +21,16 @@ export default class Consts {
   static WITHDRAWLS_HISTORY = 'withdrawls_history';
   static DEPOSIT_DETAIL = 'Deposit detail'
   static WITHDRAW_DETAIL = 'Withdraw detail'
+
+  static SORT_MARKET_FIELDS = {
+    SYMBOL: 'symbol',
+    VOLUME: 'volume',
+    PRICE: 'price',
+    CHANGE: 'change'
+  };
+
+  static SORT_DIRECTION = {
+    ASC: 'asc',
+    DESC: 'desc'
+  };
 }

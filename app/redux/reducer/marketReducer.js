@@ -4,9 +4,10 @@ export default function reduce (state = {}, action) {
   switch (action.type) {
     case ActionType.SORT_SYMBOL_LIST_SUCCESS:
       return {
-        ...state,
         isLoading: false,
         symbols: action.symbols,
+        prices: action.prices || state.prices,
+        favorites: action.favorites || state.favorites,
         sortField: action.sortField,
         sortDirection: action.sortDirection
       }
@@ -32,6 +33,9 @@ export default function reduce (state = {}, action) {
         error: action.error
       }
     default:
-      return {}
+      return {
+        ...state,
+        isLoading: false
+      }
   }
 }

@@ -16,24 +16,13 @@ import { getCurrencyName, formatCurrency, formatPercent } from "../../utils/Filt
 import ScaledSheet from '../../libs/reactSizeMatter/ScaledSheet';
 import I18n from '../../i18n/i18n';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import Utils from '../../utils/Utils';
 
 class MarketScreen extends BaseScreen {
-  static SORT_FIELDS = {
-    SYMBOL: 'symbol',
-    VOLUME: 'volume',
-    PRICE: 'price',
-    CHANGE: 'change'
-  };
-
-  static SORT_DIRECTION = {
-    ASC: 'asc',
-    DESC: 'desc'
-  };
-
   static defaultProps = {
     stats: {
-      sortField: MarketScreen.SORT_FIELDS.VOLUME,
-      sortDirection: MarketScreen.SORT_DIRECTION.DESC,
+      sortField: Consts.SORT_MARKET_FIELDS.VOLUME,
+      sortDirection: Consts.SORT_DIRECTION.DESC,
       symbols: [],
       prices: {},
       favorites: {}
@@ -45,8 +34,8 @@ class MarketScreen extends BaseScreen {
 
     const { sortField, sortDirection } = this.props.navigation.state.params || {};
     
-    this.props.stats.sortField = sortField || MarketScreen.SORT_FIELDS.VOLUME;
-    this.props.stats.sortDirection = sortDirection || MarketScreen.SORT_DIRECTION.DESC;
+    this.props.stats.sortField = sortField || Consts.SORT_MARKET_FIELDS.VOLUME;
+    this.props.stats.sortDirection = sortDirection || Consts.SORT_DIRECTION.DESC;
   }
 
   componentWillMount() {
@@ -58,7 +47,7 @@ class MarketScreen extends BaseScreen {
     if (this.props.isFocused && !previousProps.isFocused) {
       let { sortField, sortDirection } = this.props.navigation.state.params || {};
       if (!sortDirection) {
-        sortDirection = MarketScreen.SORT_DIRECTION.DESC;
+        sortDirection = Consts.SORT_DIRECTION.DESC;
       }
       if (sortField) {
         if (sortField != this.props.stats.sortField || sortDirection != this.props.stats.sortDirection) {
@@ -138,35 +127,35 @@ class MarketScreen extends BaseScreen {
       <View style={styles.tabBar}>
         <TouchableWithoutFeedback onPress={() => this._onSortPair()}>
           <View style={[styles.itemSort, { flexDirection: 'row', flex: 3 }]}>
-            <Text style={sortField == MarketScreen.SORT_FIELDS.SYMBOL ? styles.activeHeader : styles.normalHeader}>
+            <Text style={sortField == Consts.SORT_MARKET_FIELDS.SYMBOL ? styles.activeHeader : styles.normalHeader}>
               {I18n.t('markets.pairTab')}
-              {sortField == MarketScreen.SORT_FIELDS.VOLUME || sortField != MarketScreen.SORT_FIELDS.SYMBOL ?
+              {sortField == Consts.SORT_MARKET_FIELDS.VOLUME || sortField != Consts.SORT_MARKET_FIELDS.SYMBOL ?
                 <Text>/ </Text> : null}
-              {sortField == MarketScreen.SORT_FIELDS.SYMBOL && this._renderArrow(sortDirection)}
+              {sortField == Consts.SORT_MARKET_FIELDS.SYMBOL && this._renderArrow(sortDirection)}
             </Text>
 
-            <Text style={sortField == MarketScreen.SORT_FIELDS.VOLUME ? styles.activeHeader : styles.normalHeader}>
-              {sortField == MarketScreen.SORT_FIELDS.SYMBOL ? <Text> /</Text> : null}
+            <Text style={sortField == Consts.SORT_MARKET_FIELDS.VOLUME ? styles.activeHeader : styles.normalHeader}>
+              {sortField == Consts.SORT_MARKET_FIELDS.SYMBOL ? <Text> /</Text> : null}
               {I18n.t('markets.volTab')}
-              {sortField == MarketScreen.SORT_FIELDS.VOLUME && this._renderArrow(sortDirection)}
+              {sortField == Consts.SORT_MARKET_FIELDS.VOLUME && this._renderArrow(sortDirection)}
             </Text>
           </View>
         </TouchableWithoutFeedback>
 
         <TouchableWithoutFeedback onPress={() => this._onSortLastPrice()}>
           <View style={{ flex: 3 }}>
-            <Text style={sortField == MarketScreen.SORT_FIELDS.PRICE ? styles.activeHeader : styles.normalHeader}>
+            <Text style={sortField == Consts.SORT_MARKET_FIELDS.PRICE ? styles.activeHeader : styles.normalHeader}>
               {I18n.t('markets.lastPriceTab')}
-              {sortField == MarketScreen.SORT_FIELDS.PRICE && this._renderArrow(sortDirection)}
+              {sortField == Consts.SORT_MARKET_FIELDS.PRICE && this._renderArrow(sortDirection)}
             </Text>
           </View>
         </TouchableWithoutFeedback>
 
         <TouchableWithoutFeedback onPress={() => this._onSortChangePercent()}>
           <View style={{ flex: 2 }}>
-            <Text style={sortField == MarketScreen.SORT_FIELDS.CHANGE ? styles.activeHeader : styles.normalHeader}>
+            <Text style={sortField == Consts.SORT_MARKET_FIELDS.CHANGE ? styles.activeHeader : styles.normalHeader}>
               {I18n.t('markets.percentTab')}
-              {sortField == MarketScreen.SORT_FIELDS.CHANGE && this._renderArrow(sortDirection)}
+              {sortField == Consts.SORT_MARKET_FIELDS.CHANGE && this._renderArrow(sortDirection)}
             </Text>
           </View>
         </TouchableWithoutFeedback>
@@ -176,7 +165,7 @@ class MarketScreen extends BaseScreen {
 
   _renderArrow(direction) {
     return (
-      direction == MarketScreen.SORT_DIRECTION.ASC ?
+      direction == Consts.SORT_DIRECTION.ASC ?
         <Image
           resizeMode={'contain'}
           style={styles.iconSort}
@@ -189,14 +178,28 @@ class MarketScreen extends BaseScreen {
     )
   }
 
+  _onSortPair() {
+    let { sortField, sortDirection } = this.props.stats;
+
+    if (sortField != Consts.SORT_MARKET_FIELDS.SYMBOL) {
+      sortField = Consts.SORT_MARKET_FIELDS.SYMBOL;
+      sortDirection = Consts.SORT_DIRECTION.DESC;
+    } else {
+      sortField = Consts.SORT_MARKET_FIELDS.VOLUME;
+      sortDirection = Consts.SORT_DIRECTION.DESC;
+    }
+
+    this._changeSortField(sortField, sortDirection);
+  }
+
   _onSortLastPrice() {
     let { sortField, sortDirection } = this.props.stats;
 
-    if (sortField == MarketScreen.SORT_FIELDS.PRICE) {
+    if (sortField == Consts.SORT_MARKET_FIELDS.PRICE) {
       sortDirection = this._revertSortDirection(sortDirection);
     } else {
-      sortField = MarketScreen.SORT_FIELDS.PRICE;
-      sortDirection = MarketScreen.SORT_DIRECTION.DESC;
+      sortField = Consts.SORT_MARKET_FIELDS.PRICE;
+      sortDirection = Consts.SORT_DIRECTION.DESC;
     }
 
     this._changeSortField(sortField, sortDirection);
@@ -205,21 +208,25 @@ class MarketScreen extends BaseScreen {
   _onSortChangePercent() {
     let { sortField, sortDirection } = this.props.stats;
 
-    if (sortField == MarketScreen.SORT_FIELDS.CHANGE) {
+    if (sortField == Consts.SORT_MARKET_FIELDS.CHANGE) {
       sortDirection = this._revertSortDirection(sortDirection);
     } else {
-      sortField = MarketScreen.SORT_FIELDS.CHANGE;
-      sortDirection = MarketScreen.SORT_DIRECTION.DESC;
+      sortField = Consts.SORT_MARKET_FIELDS.CHANGE;
+      sortDirection = Consts.SORT_DIRECTION.DESC;
     }
 
     this._changeSortField(sortField, sortDirection);
   }
 
+  _onPressItem(item) {
+    // this.navigate('MarketDetailScreen', item);
+  }
+
   _revertSortDirection(direction) {
-    if (direction == MarketScreen.SORT_DIRECTION.ASC) {
-      return MarketScreen.SORT_DIRECTION.DESC;
+    if (direction == Consts.SORT_DIRECTION.ASC) {
+      return Consts.SORT_DIRECTION.DESC;
     } else {
-      return MarketScreen.SORT_DIRECTION.ASC;
+      return Consts.SORT_DIRECTION.ASC;
     }
   }
 
@@ -235,8 +242,10 @@ class MarketScreen extends BaseScreen {
     }
   }
 
-  _onPressItem(item) {
-    // this.navigate('MarketDetailScreen', item);
+  _getPrice(currency, coin) {
+    let key = Utils.getPriceKey(currency, coin);
+    const priceObject = this.props.stats.prices[key];
+    return priceObject ? priceObject.price : 1;
   }
 
   _changeSortField(sortField, sortDirection) {
@@ -255,8 +264,8 @@ function mapDispatchToProps(dispatch) {
   return {
     getList: () => dispatch({
       type: ActionType.GET_MARKET_LIST,
-      sortField: MarketScreen.SORT_FIELDS.VOLUME,
-      sortDirection: MarketScreen.SORT_DIRECTION.DESC
+      sortField: Consts.SORT_MARKET_FIELDS.VOLUME,
+      sortDirection: Consts.SORT_DIRECTION.DESC
     }),
     sortList: (symbols, sortField, sortDirection) => dispatch({
       type: ActionType.SORT_SYMBOL_LIST,
