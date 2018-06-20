@@ -2,10 +2,16 @@ import { getMarketSuccess, getFailure, sortSymbolSuccess } from '../actions'
 import RequestFactory from '../../libs/RequestFactory';
 import _ from 'lodash';
 
-import { Observable } from 'rxjs';
 import ActionType from '../ActionType';
+import { Observable } from 'rxjs';
+import 'rxjs/add/observable/of';
+import 'rxjs/add/observable/fromPromise';
+import 'rxjs/add/observable/zip';
+import 'rxjs/add/operator/map';
+import 'rxjs/add/operator/mergeMap';
+import 'rxjs/add/operator/catch';
 
-const getMarketList = action$ => 
+const getMarketList = action$ =>
   action$
     .ofType(ActionType.GET_MARKET_LIST)
     .mergeMap(action => {
@@ -36,7 +42,7 @@ const getMarketList = action$ =>
             }
             return favorites;
           });
-          
+
       return Observable
         .zip(coinSettingObservable, pricesObservable, favouriteObservable, _mergeData)
         .map(data => getMarketSuccess(data.symbols, data.prices, data.favorites, action.sortField, action.sortDirection))
@@ -50,7 +56,7 @@ const sortSymbolList = action$ =>
       let symbols = action.symbols;
       return _sortSymbols(symbols, action.sortField, action.sortDirection);
     })
-    .map(symbols => sortSymbolSuccess(symbols, action.sortField, action.sortDirection));
+    .map(symbols => sortSymbolSuccess(symbols, action.sortField, action.sortDirection))
 
 function _mergeData(symbols, prices, favorites) {
   return {

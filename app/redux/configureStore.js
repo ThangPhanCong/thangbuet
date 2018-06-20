@@ -14,7 +14,6 @@ const logger = createLogger();
 
 export default function configureStore () {
   const store = createStore(reducers, applyMiddleware(epicMiddleware, logger));
+  epicMiddleware.run(_loadRootEpic());
   return store;
 }
-
-epicMiddleware.run(_loadRootEpic());
