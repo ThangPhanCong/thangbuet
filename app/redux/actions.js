@@ -1,17 +1,19 @@
 import ActionType from "./ActionType";
 
-export function sortSymbolSuccess(symbols, sortField, sortDirection) {
+export function sortSymbolSuccess(currency, symbols, sortField, sortDirection) {
   return {
     type: ActionType.SORT_SYMBOL_LIST_SUCCESS,
+    currency,
     symbols,
     sortField,
     sortDirection
   }
 }
 
-export function getMarketSuccess(symbols, prices, favorites, sortField, sortDirection) {
+export function getMarketSuccess(currency, symbols, prices, favorites, sortField, sortDirection) {
   return {
     type: ActionType.GET_MARKET_LIST_SUCCESS,
+    currency,
     symbols,
     prices,
     favorites,

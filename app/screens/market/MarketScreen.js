@@ -21,6 +21,7 @@ import Utils from '../../utils/Utils';
 class MarketScreen extends BaseScreen {
   static defaultProps = {
     stats: {
+      currency: Consts.CURRENCY_KRW,
       sortField: Consts.SORT_MARKET_FIELDS.VOLUME,
       sortDirection: Consts.SORT_DIRECTION.DESC,
       symbols: [],
@@ -34,13 +35,14 @@ class MarketScreen extends BaseScreen {
 
     const { sortField, sortDirection } = this.props.navigation.state.params || {};
     
+    this.props.stats.currency = Consts.CURRENCY_KRW;
     this.props.stats.sortField = sortField || Consts.SORT_MARKET_FIELDS.VOLUME;
     this.props.stats.sortDirection = sortDirection || Consts.SORT_DIRECTION.DESC;
   }
 
   componentWillMount() {
     super.componentWillMount();
-    this.props.getList();
+    this.props.getList(this.props.stats.currency);
   }
 
   componentDidUpdate(previousProps) {
@@ -250,7 +252,7 @@ class MarketScreen extends BaseScreen {
 
   _changeSortField(sortField, sortDirection) {
     let symbols = this.props.stats.symbols;
-    this.props.sortList(symbols, sortField, sortDirection);
+    this.props.sortList(this.props.stats.currency, symbols, sortField, sortDirection);
   }
 }
 
@@ -262,13 +264,15 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps(dispatch) {
   return {
-    getList: () => dispatch({
+    getList: (currency) => dispatch({
+      currency,
       type: ActionType.GET_MARKET_LIST,
       sortField: Consts.SORT_MARKET_FIELDS.VOLUME,
       sortDirection: Consts.SORT_DIRECTION.DESC
     }),
-    sortList: (symbols, sortField, sortDirection) => dispatch({
+    sortList: (currency, symbols, sortField, sortDirection) => dispatch({
       type: ActionType.SORT_SYMBOL_LIST,
+      currency,
       symbols,
       sortField,
       sortDirection
