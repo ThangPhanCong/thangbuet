@@ -2,7 +2,7 @@ import ActionType from "../ActionType";
 
 export default function reduce (state = {}, action) {
   switch (action.type) {
-    case ActionType.SORT_COIN_LIST_SUCCESS:
+    case ActionType.SORT_SYMBOL_LIST_SUCCESS:
       return {
         ...state,
         isLoading: false,
@@ -10,12 +10,12 @@ export default function reduce (state = {}, action) {
         sortField: action.sortField,
         sortDirection: action.sortDirection
       }
-    case ActionType.GET_COIN_LIST:
+    case ActionType.GET_MARKET_LIST:
       return {
         ...state,
         isLoading: true
       }
-    case ActionType.GET_COIN_LIST_SUCCESS:
+    case ActionType.GET_MARKET_LIST_SUCCESS:
       return {
         ...state,
         isLoading: false,

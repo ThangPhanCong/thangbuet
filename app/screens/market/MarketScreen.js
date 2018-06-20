@@ -254,12 +254,12 @@ function mapStateToProps(state) {
 function mapDispatchToProps(dispatch) {
   return {
     getList: () => dispatch({
-      type: ActionType.GET_COIN_LIST,
+      type: ActionType.GET_MARKET_LIST,
       sortField: MarketScreen.SORT_FIELDS.VOLUME,
       sortDirection: MarketScreen.SORT_DIRECTION.DESC
     }),
     sortList: (symbols, sortField, sortDirection) => dispatch({
-      type: ActionType.SORT_COIN_LIST,
+      type: ActionType.SORT_SYMBOL_LIST,
       symbols,
       sortField,
       sortDirection
