@@ -13,17 +13,17 @@ import {
 import BaseScreen from '../BaseScreen'
 import { TabNavigator, TabBarBottom } from 'react-navigation'
 import rf from '../../libs/RequestFactory'
-import MasterdataUtils from '../../utils/MasterdataUtils';
+import MasterdataUtils from '../../utils/MasterdataUtils'
 import ScaledSheet from '../../libs/reactSizeMatter/ScaledSheet'
-import { filter, pickBy, startsWith, orderBy } from 'lodash';
-import Utils from '../../utils/Utils';
+import { filter, pickBy, startsWith, orderBy } from 'lodash'
+import Utils from '../../utils/Utils'
 import TradingGeneralScreen from './TradingGeneralScreen'
 import TradingOrderScreen from './TradingOrderScreen'
 import TradingChartScreen from './TradingChartScreen'
 import TradingConclusionScreen from './TradingConclusionScreen'
-import I18n from '../../i18n/i18n';
-import Consts from '../../utils/Consts';
-import { ListItem, List } from 'react-native-elements'
+import I18n from '../../i18n/i18n'
+import Consts from '../../utils/Consts'
+import { ListItem, List, Icon } from 'react-native-elements'
 
 const TradeTabs = TabNavigator(
   {
@@ -109,7 +109,7 @@ export default class TradingScreen extends BaseScreen {
     await this._getPrices()
     await this._getBalance()
     this.setState({ itemSelected: this.state.symbols[0] })
-    console.log('this.state.symbols[0]', this.state.symbols[0])
+    // console.log('this.state.symbols[0]', this.state.symbols[0])
   }
 
   _onPriceUpdated(data) {
@@ -139,7 +139,7 @@ export default class TradingScreen extends BaseScreen {
   async _getBalance() {
     try {
       let result = await rf.getRequest('UserRequest').getBalance()
-      console.log('_getBalance', result)
+      // console.log('_getBalance', result)
 
       let symbols = this.state.symbols;
       for (let symbolKey in result.data) {
@@ -172,7 +172,7 @@ export default class TradingScreen extends BaseScreen {
 
       this.setState({ symbols });
 
-      console.log('symbols', symbols)
+      // console.log('symbols', symbols)
     } catch (err) {
       console.log('TradingScreen._getSymbols', err);
     }
@@ -205,18 +205,14 @@ export default class TradingScreen extends BaseScreen {
               <TouchableOpacity
                 style={styles.headerContent}
                 onPress={() => this.setState({ modalVisible: true })}>
-                <Image
-                  style={{ width: 30, height: 30 }}
-                  source={{ uri: 'https://facebook.github.io/react-native/docs/assets/favicon.png' }} />
+                <Icon name="more" />
                 <Text>
                   {(this.state.itemSelected.coin + "/" + this.state.itemSelected.currency).toUpperCase()}
                 </Text>
               </TouchableOpacity>
               <View style={styles.headerContent}>
                 <Text>{this.state.itemSelected.available_balance * this.state.itemSelected.price}</Text>
-                <Image
-                  style={{ width: 15, height: 15 }}
-                  source={{ uri: 'https://facebook.github.io/react-native/docs/assets/favicon.png' }} />
+                <Icon name="help" />
                 <Text>{this.state.itemSelected.change + "%"}</Text>
               </View>
             </View>
@@ -230,34 +226,34 @@ export default class TradingScreen extends BaseScreen {
               </View>
             </View>
           </View>
-          <TradeTabs style={styles.body} />
-
+          {this.state.itemSelected &&
+          <TradeTabs
+            style={styles.body}
+            screenProps={{
+              coin: this.state.itemSelected.coin,
+              currency: this.state.itemSelected.currency
+            }} />
+          }
           <Modal
             animationType="slide"
             transparent={true}
             visible={this.state.modalVisible}
             onRequestClose={() => { }}>
-            <View style={styles.modalContainer}>
-              <View style={styles.modalContent}>
-                <TouchableOpacity
-                  onPress={() => this.setState({ modalVisible: false })}>
-                  <Text style={{ color: '#FFFFFF' }}>Close</Text>
-                </TouchableOpacity>
+            <View style={{ justifyContent: "center", alignItems: "center" }}>
+              <List containerStyle={{ borderTopWidth: 0, borderBottomWidth: 0, width: 200, backgroundColor: '#11151C', height: 400, marginTop: 100 }} >
                 <FlatList
                   data={this.state.symbols}
                   keyExtractor={item => item.key + "_" + item.id}
                   ItemSeparatorComponent={() => <View style={styles.saparator} />}
-                  renderItem={({ item }) =>
-                    <TouchableOpacity
-                      onPress={() => this.setState({ itemSelected: item, modalVisible: false })}>
-                      <Text
-                        style={styles.item}
-                        key={item.key + "_" + item.id}>
-                        {(item.coin + "/" + item.currency).toString().toUpperCase()}
-                      </Text>
-                    </TouchableOpacity>
-                  } />
-              </View>
+                  renderItem={({ item }) => (
+                    <ListItem
+                      onPress={() => this.setState({ itemSelected: item, modalVisible: false })}
+                      hideChevron
+                      key={item.key + "_" + item.id}
+                      title={(item.coin + "/" + item.currency).toString().toUpperCase()}
+                      containerStyle={{ borderBottomWidth: 0 }} />
+                  )} />
+              </List>
             </View>
           </Modal>
 
