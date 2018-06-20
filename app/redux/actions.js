@@ -1,9 +1,22 @@
 import ActionType from "./ActionType";
 
-export function getCoinSuccess(data) {
+export function sortSymbolSuccess(symbols, sortField, sortDirection) {
+  return {
+    type: ActionType.SORT_COIN_LIST_SUCCESS,
+    symbols,
+    sortField,
+    sortDirection
+  }
+}
+
+export function getCoinSuccess(symbols, prices, favorites, sortField, sortDirection) {
   return {
     type: ActionType.GET_COIN_LIST_SUCCESS,
-    data
+    symbols,
+    prices,
+    favorites,
+    sortField,
+    sortDirection
   }
 }
 

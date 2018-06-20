@@ -1,7 +1,7 @@
 export default class Consts {
   static CURRENCY_BTC = 'btc';
   static CURRENCY_ETH = 'eth';
-  static CURRENCY_VND = 'vnd';
+  static CURRENCY_KRW = 'krw';
 
   static ORDER_TYPE_LIMIT = 'limit';
   static ORDER_TYPE_MARKET = 'market';

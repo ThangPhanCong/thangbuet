@@ -1,6 +1,6 @@
 import { Observable } from 'rxjs';
 import io from "socket.io-client";
-import AppConfig from '../../utils/AppConfig';
+import AppConfig from './utils/AppConfig';
 
 export default class Socket {
   constructor() {
