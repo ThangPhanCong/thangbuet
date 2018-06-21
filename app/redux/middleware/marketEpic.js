@@ -50,7 +50,7 @@ const getMarketList = action$ =>
 
 const updateMarketListPriceSocket = action$ =>
   action$.pipe(
-    filter(action => action.type === ActionType.UPDATE_SOCKET_DATA_SUCCESS && action.event === Consts.SOCKET_EVENTS.MARKET_PRICE_CHANGES_UPDATED),
+    filter(action => action.type === ActionType.UPDATE_SOCKET_DATA_SUCCESS && !action.isPrivate && action.event === Consts.SOCKET_EVENTS.MARKET_PRICE_CHANGES_UPDATED),
     map(action => action.data),
     map(prices => {
       return {
@@ -62,7 +62,7 @@ const updateMarketListPriceSocket = action$ =>
 
 const updateMarketListFavoriteSocket = action$ =>
   action$.pipe(
-    filter(action => action.type === ActionType.UPDATE_SOCKET_DATA_SUCCESS && action.event === Consts.SOCKET_EVENTS.FAVORITE_SYMBOLS_UPDATED),
+    filter(action => action.type === ActionType.UPDATE_SOCKET_DATA_SUCCESS && !action.isPrivate && action.event === Consts.SOCKET_EVENTS.FAVORITE_SYMBOLS_UPDATED),
     map(action => action.data),
     map(data => {
       return {

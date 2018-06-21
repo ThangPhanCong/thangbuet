@@ -7,15 +7,18 @@ export default class Socket {
     this._socket = this._initSocket();
   }
 
-  _events = [];
-  _channels = [];
   _obsevables = {};
+  _eventChannels = [];
 
   _initSocket() {
     if (AppConfig.ACCESS_TOKEN) {
       return io.connect(AppConfig.getSocketServer(), {
-        extraHeaders: {
-          'Authorization': 'Bearer ' + AppConfig.ACCESS_TOKEN,
+        transportOptions: {
+          polling: {
+            extraHeaders: {
+              Authorization: 'Bearer ' + AppConfig.ACCESS_TOKEN,
+            }
+          }
         }
       });
     }
@@ -35,19 +38,14 @@ export default class Socket {
 
   listen(event, channel) {
     if (!this._obsevables[event]) {
-      this._events.push(event);
+      this._eventChannels.push({event, channel});
       let observable = Observable.create(observer => {
         this._socket.on(event, data => {
-          if (!this._channels.includes(channel))
-            this._socket.join(channel);
-
-          if (this._events.includes(event)) {
-            observer.next({
-              event,
-              channel,
-              data
-            });
-          }
+          observer.next({
+            event,
+            channel,
+            data
+          });
 
           // Once observable is disposed, this handler closure will be not keept by any observable instance,
           // so this `observable` will be escaped from retain cycle by itself
@@ -60,11 +58,19 @@ export default class Socket {
       this._obsevables[event] = observable
     }
 
+    if (!this._eventChannels.some(e => e.channel === channel))
+      this._socket.emit('join', channel);
+
     return this._obsevables[event]
   }
 
-  remove(event) {
-    _.remove(this._events, e => e === event);
+  removeChannel(channel) {
+    this._channels[channel] = null;
+    this._socket.emit('leave', channel);
+  }
+
+  removeEvent(event) {
+    _.remove(this._eventChannels, e => e.event === event);
     this._obsevables[event] = null;
   }
 }

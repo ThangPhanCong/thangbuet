@@ -34,6 +34,18 @@ export default class Consts {
     DESC: 'desc'
   };
 
+  static SOCKET_CHANNEL = {
+    PUBLIC: {
+      APP_PRICES: 'App.Prices',
+      APP_ORDERS: 'App.Orders',
+      APP_ORDER_BOOK: 'App.OrderBook',
+      APP_COIN_MARKKETCAP_TICKER: 'App.CoinMarketCapTicker',
+      APP_MARKET_PRICES_CHANGE: 'App.MarketPriceChanges',
+      APP_PROFIT_RATE: 'App.ProfitRate'
+    },
+    PRIVATE: 'App.User.'
+  };
+
   static SOCKET_EVENTS = {
     MARKET_PRICE_CHANGES_UPDATED: 'MarketPriceChangesUpdated',
     PRICE_UPDATED: 'PricesUpdated',
@@ -48,5 +60,5 @@ export default class Consts {
     FAVORITE_SYMBOLS_UPDATED: 'FavoriteSymbolsUpdated',
     COIN_MARKET_CAP_TICKET_UPDATED: 'CoinMarketCapTickerUpdated',
     PROFIT_RATE_UPDATED: 'ProfitRateUpdated'
-  }
+  };
 }
