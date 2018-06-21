@@ -22,29 +22,36 @@ export default class Socket {
     return null;
   }
 
-  listen(event) {
-    if (!this._obsevables[event])
+  connect() {
+    if (!this._socket.connected) {
+      this._socket.connect();
+    }
+  }
+
+  disconnect() {
+    this._socket.disconnect();
+  }
+
+  listen(event, namspace) {
+    if (!this._obsevables[event]) {
       this._events.push(event);
       this._obsevables[event] = Observable.create(observer => {
         this._socket.on(event, data => {
-          observer.next(data);
-
-          if (!this._events.includes(event)) {
-            observer.unsubscribe();
+          if (this._events.includes(event)) {
+            observer.next({
+              event,
+              namspace,
+              data
+            });
           }
         })
       })
+    }
 
     return this._obsevables[event]
   }
 
   remove(event) {
-    const observable = this._obsevables[event]
-    if (observable) {
-      this._socket.off(event, () => {
-        _.remove(this._events, e => e !== event);
-        this._obsevables[event] = null;
-      });
-    }
+    _.remove(this._events, e => e === event);
   }
 }

@@ -29,10 +29,15 @@ export default function reduce (state = {}, action) {
         sortField: action.sortField,
         sortDirection: action.sortDirection
       }
+    case ActionType.UPDATE_MARKET_LIST_SOCKET_SUCCESS:
+      return {
+        ...state,
+        prices: action.prices || state.prices,
+        favorites: action.favorites || state.favorites
+      }
     case ActionType.GET_LIST_FAILURE:
       return {
         ...state,
-        currency: action.currency,
         isLoading: true,
         error: action.error
       }

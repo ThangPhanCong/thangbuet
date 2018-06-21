@@ -5,8 +5,9 @@ import { combineEpics, createEpicMiddleware } from 'redux-observable';
 import { createLogger } from 'redux-logger';
 
 const _loadRootEpic = () => {
-  const epics = require('./middleware/marketList').default;
-  return combineEpics(...Object.values(epics));
+  const epics = require('./middleware/marketEpic').default;
+  const socketEpic = require('./middleware/socketEpic').default;
+  return combineEpics(...Object.values(epics), socketEpic);
 }
 
 const epicMiddleware = createEpicMiddleware();

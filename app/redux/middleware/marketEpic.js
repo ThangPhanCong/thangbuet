@@ -1,4 +1,4 @@
-import { getMarketSuccess, getFailure, sortSymbolSuccess } from '../actions'
+import { getFailure } from '../actions'
 import RequestFactory from '../../libs/RequestFactory';
 import _ from 'lodash';
 
@@ -12,8 +12,10 @@ import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/mergeMap';
 import 'rxjs/add/operator/catch';
 import 'rxjs/add/operator/filter';
+import { map } from 'rxjs/operators';
 
 import Consts from '../../utils/Consts';
+import { filter } from 'rxjs/operators';
 
 const getMarketList = action$ =>
   action$
@@ -42,15 +44,39 @@ const getMarketList = action$ =>
 
       return Observable
         .zip(coinSettingObservable, pricesObservable, favouriteObservable, _mergeData)
-        .map(data => getMarketSuccess(action.currency, data.symbols, data.prices, data.favorites, action.sortField, action.sortDirection))
+        .map(data => _getMarketSuccess(action.currency, data.symbols, data.prices, data.favorites, action.sortField, action.sortDirection))
         .catch(error => Observable.of(getFailure(error)));
     })
+
+const updateMarketListPriceSocket = action$ =>
+  action$.pipe(
+    filter(action => action.type === ActionType.UPDATE_SOCKET_DATA_SUCCESS && action.event === Consts.SOCKET_EVENTS.MARKET_PRICE_CHANGES_UPDATED),
+    map(action => action.data),
+    map(prices => {
+      return {
+        type: ActionType.UPDATE_MARKET_LIST_SOCKET_SUCCESS,
+        prices
+      }
+    })
+  )
+
+const updateMarketListFavoriteSocket = action$ =>
+  action$.pipe(
+    filter(action => action.type === ActionType.UPDATE_SOCKET_DATA_SUCCESS && action.event === Consts.SOCKET_EVENTS.FAVORITE_SYMBOLS_UPDATED),
+    map(action => action.data),
+    map(data => {
+      return {
+        type: ActionType.UPDATE_MARKET_LIST_SOCKET_SUCCESS,
+        favorites: _getFavorites(data)
+      }
+    })
+  )
 
 const sortSymbolList = action$ =>
   action$
     .ofType(ActionType.SORT_SYMBOL_LIST)
     .map(action => _sortSymbols(action.currency, action.symbols, action.sortField, action.sortDirection))
-    .map(res => sortSymbolSuccess(res.currency, res.symbols, res.sortField, res.sortDirection))
+    .map(res => _sortSymbolSuccess(res.currency, res.symbols, res.sortField, res.sortDirection))
 
 function _mergeData(symbols, prices, favorites) {
   return {
@@ -83,4 +109,26 @@ function _getFavorites(data) {
   return favorites;
 }
 
-export default { getMarketList, sortSymbolList };
+function _sortSymbolSuccess(currency, symbols, sortField, sortDirection) {
+  return {
+    type: ActionType.SORT_SYMBOL_LIST_SUCCESS,
+    currency,
+    symbols,
+    sortField,
+    sortDirection
+  }
+}
+
+function _getMarketSuccess(currency, symbols, prices, favorites, sortField, sortDirection) {
+  return {
+    type: ActionType.GET_MARKET_LIST_SUCCESS,
+    currency,
+    symbols,
+    prices,
+    favorites,
+    sortField,
+    sortDirection
+  }
+}
+
+export default { getMarketList, sortSymbolList, updateMarketListPriceSocket, updateMarketListFavoriteSocket };

@@ -83,9 +83,9 @@ class MarketScreen extends BaseScreen {
         <View style={styles.nameGroup}>
           <View style={{ flexDirection: 'row' }}>
             <View>
-              {item.isFavorite && <Icon name='star'
+              <Icon name='star'
                 size={10}
-                color={"yellow"}/>}
+                color={item.isFavorite ? 'yellow' : 'grey'}/>
             </View>
             <Text style={styles.itemCoin}>{getCurrencyName(item.coin)}</Text>
             <Text style={styles.itemCurrency}>{'/' + getCurrencyName(item.currency)}</Text>
@@ -128,26 +128,18 @@ class MarketScreen extends BaseScreen {
     return (
       <View style={styles.tabBar}>
         <TouchableWithoutFeedback onPress={() => this._onSortPair()}>
-          <View style={[styles.itemSort, { flexDirection: 'row', flex: 3 }]}>
-            <Text style={sortField == Consts.SORT_MARKET_FIELDS.SYMBOL ? styles.activeHeader : styles.normalHeader}>
-              {I18n.t('markets.pairTab')}
-              {sortField == Consts.SORT_MARKET_FIELDS.VOLUME || sortField != Consts.SORT_MARKET_FIELDS.SYMBOL ?
-                <Text>/ </Text> : null}
-              {sortField == Consts.SORT_MARKET_FIELDS.SYMBOL && this._renderArrow(sortDirection)}
-            </Text>
-
-            <Text style={sortField == Consts.SORT_MARKET_FIELDS.VOLUME ? styles.activeHeader : styles.normalHeader}>
-              {sortField == Consts.SORT_MARKET_FIELDS.SYMBOL ? <Text> /</Text> : null}
-              {I18n.t('markets.volTab')}
-              {sortField == Consts.SORT_MARKET_FIELDS.VOLUME && this._renderArrow(sortDirection)}
-            </Text>
-          </View>
+          <Text style={sortField == Consts.SORT_MARKET_FIELDS.SYMBOL ? styles.activeHeader : styles.normalHeader}>
+            코인
+            {sortField == Consts.SORT_MARKET_FIELDS.VOLUME || sortField != Consts.SORT_MARKET_FIELDS.SYMBOL ?
+              <Text>/ </Text> : null}
+            {sortField == Consts.SORT_MARKET_FIELDS.SYMBOL && this._renderArrow(sortDirection)}
+          </Text>
         </TouchableWithoutFeedback>
 
         <TouchableWithoutFeedback onPress={() => this._onSortLastPrice()}>
           <View style={{ flex: 3 }}>
             <Text style={sortField == Consts.SORT_MARKET_FIELDS.PRICE ? styles.activeHeader : styles.normalHeader}>
-              {I18n.t('markets.lastPriceTab')}
+              현재가
               {sortField == Consts.SORT_MARKET_FIELDS.PRICE && this._renderArrow(sortDirection)}
             </Text>
           </View>
@@ -156,8 +148,17 @@ class MarketScreen extends BaseScreen {
         <TouchableWithoutFeedback onPress={() => this._onSortChangePercent()}>
           <View style={{ flex: 2 }}>
             <Text style={sortField == Consts.SORT_MARKET_FIELDS.CHANGE ? styles.activeHeader : styles.normalHeader}>
-              {I18n.t('markets.percentTab')}
+              전일대비
               {sortField == Consts.SORT_MARKET_FIELDS.CHANGE && this._renderArrow(sortDirection)}
+            </Text>
+          </View>
+        </TouchableWithoutFeedback>
+
+        <TouchableWithoutFeedback onPress={() => this._onSortVolume()}>
+          <View style={{ flex: 2 }}>
+            <Text style={sortField == Consts.SORT_MARKET_FIELDS.VOLUME ? styles.activeHeader : styles.normalHeader}>
+              거래대금
+              {sortField == Consts.SORT_MARKET_FIELDS.VOLUME && this._renderArrow(sortDirection)}
             </Text>
           </View>
         </TouchableWithoutFeedback>
@@ -214,6 +215,19 @@ class MarketScreen extends BaseScreen {
       sortDirection = this._revertSortDirection(sortDirection);
     } else {
       sortField = Consts.SORT_MARKET_FIELDS.CHANGE;
+      sortDirection = Consts.SORT_DIRECTION.DESC;
+    }
+
+    this._changeSortField(sortField, sortDirection);
+  }
+
+  _onSortVolume() {
+    let { sortField, sortDirection } = this.props.stats;
+
+    if (sortField == Consts.SORT_MARKET_FIELDS.VOLUME) {
+      sortDirection = this._revertSortDirection(sortDirection);
+    } else {
+      sortField = Consts.SORT_MARKET_FIELDS.VOLUME;
       sortDirection = Consts.SORT_DIRECTION.DESC;
     }
 

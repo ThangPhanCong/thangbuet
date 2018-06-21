@@ -33,4 +33,20 @@ export default class Consts {
     ASC: 'asc',
     DESC: 'desc'
   };
+
+  static SOCKET_EVENTS = {
+    MARKET_PRICE_CHANGES_UPDATED: 'MarketPriceChangesUpdated',
+    PRICE_UPDATED: 'PricesUpdated',
+    BALANCE_UPDATED: 'BalanceUpdated',
+    TRANSACTION_CREATED: 'TransactionCreated',
+    ORDER_TRANSACTION_CREATED: 'OrderTransactionCreated',
+    ORDER_BOOK_UPDATED: 'OrderBookUpdated',
+    USER_ORDER_BOOK_UPDATED: 'UserOrderBookUpdated',
+    ORDER_LIST_UPDATED: 'OrderListUpdated',
+    ORDER_CHANGED: 'OrderChanged',
+    USER_SESSION_REGISTERED: 'UserSessionRegistered',
+    FAVORITE_SYMBOLS_UPDATED: 'FavoriteSymbolsUpdated',
+    COIN_MARKET_CAP_TICKET_UPDATED: 'CoinMarketCapTickerUpdated',
+    PROFIT_RATE_UPDATED: 'ProfitRateUpdated'
+  }
 }
