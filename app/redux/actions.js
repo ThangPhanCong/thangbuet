@@ -7,10 +7,10 @@ export function getFailure(error) {
   }
 }
 
-export function updateSocketData(namespace, event, data) {
+export function updateSocketData(event, channel, data) {
   return {
     type: ActionType.UPDATE_SOCKET_DATA_SUCCESS,
-    namespace,
+    channel,
     event,
     data
   }

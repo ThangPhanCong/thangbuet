@@ -43,7 +43,6 @@ function initApp() {
     .then(credentials => {
       AppConfig.ACCESS_TOKEN = credentials.password;
       window.GlobalSocket = new GlobalSocket();
-      // window.socket = new AppSocket();
 
       if (__DEV__) {
         console.log('API Server: ' + AppConfig.getApiServer());

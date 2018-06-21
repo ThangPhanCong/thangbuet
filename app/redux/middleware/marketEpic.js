@@ -87,7 +87,7 @@ function _mergeData(symbols, prices, favorites) {
 }
 
 function _sortSymbols(currency, symbols, sortField, sortDirection) {
-  if (sortField != Consts.SORT_MARKET_FIELDS.SYMBOL) {
+  if (sortField !== Consts.SORT_MARKET_FIELDS.SYMBOL) {
     symbols = _.orderBy(symbols, (item) => parseFloat(item[sortField]), sortDirection);
   } else {
     symbols = _.orderBy(symbols, ['coin', 'currency'], [sortField, sortDirection]);

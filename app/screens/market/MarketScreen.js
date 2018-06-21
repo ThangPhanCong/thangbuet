@@ -43,17 +43,17 @@ class MarketScreen extends BaseScreen {
   }
 
   componentDidUpdate(previousProps) {
-    if (this.props.isFocused && !previousProps.isFocused) {
-      let { sortField, sortDirection } = this.props.navigation.state.params || {};
-      if (!sortDirection) {
-        sortDirection = Consts.SORT_DIRECTION.DESC;
-      }
-      if (sortField) {
-        if (sortField != this.props.stats.sortField || sortDirection != this.props.stats.sortDirection) {
-          this._changeSortField(sortField, sortDirection);
-        }
-      }
-    }
+    // if (this.props.isFocused && !previousProps.isFocused) {
+    //   let { sortField, sortDirection } = this.props.navigation.state.params || {};
+    //   if (!sortDirection) {
+    //     sortDirection = Consts.SORT_DIRECTION.DESC;
+    //   }
+    //   if (sortField) {
+    //     if (sortField != this.props.stats.sortField || sortDirection != this.props.stats.sortDirection) {
+    //       this._changeSortField(sortField, sortDirection);
+    //     }
+    //   }
+    // }
   }
 
   render() {
@@ -86,7 +86,8 @@ class MarketScreen extends BaseScreen {
                 size={15}
                 color={item.isFavorite ? 'yellow' : 'grey'}/>
             </View>
-            <View styles={styles.coinPairNameContainer}>
+            <View style={styles.spacePairName} />
+            <View style={{ alignSelf: 'center' }}>
               <Text style={styles.itemCoin}>
                 {getCurrencyName(item.coin) + '/' + getCurrencyName(item.currency)}
               </Text>
@@ -170,11 +171,10 @@ class MarketScreen extends BaseScreen {
   _onSortPair() {
     let { sortField, sortDirection } = this.props.stats;
 
-    if (sortField != Consts.SORT_MARKET_FIELDS.SYMBOL) {
-      sortField = Consts.SORT_MARKET_FIELDS.SYMBOL;
-      sortDirection = Consts.SORT_DIRECTION.DESC;
+    if (sortField == Consts.SORT_MARKET_FIELDS.SYMBOL) {
+      sortDirection = this._revertSortDirection(sortDirection);
     } else {
-      sortField = Consts.SORT_MARKET_FIELDS.VOLUME;
+      sortField = Consts.SORT_MARKET_FIELDS.SYMBOL;
       sortDirection = Consts.SORT_DIRECTION.DESC;
     }
 
@@ -229,11 +229,11 @@ class MarketScreen extends BaseScreen {
     return (
       sortField === field && sortDirection === Consts.SORT_DIRECTION.ASC ?
       <Icon
-        name='menu-down'
+        name='menu-up'
         size={20}
         color= '#000'/> :
       <Icon
-        name='menu-up'
+        name='menu-down'
         size={20}
         color= '#000'/>
     )
@@ -265,8 +265,6 @@ class MarketScreen extends BaseScreen {
     let percentString = formatPercent(number);
     if (number > 0)
       return '+' + percentString;
-    else if (number < 0)
-      return '-' + percentString;
     else
       return percentString;
   }
@@ -320,9 +318,8 @@ const styles = ScaledSheet.create({
   nameGroup: {
     flex: 3
   },
-  coinPairNameContainer: {
-    alignSelf: 'center',
-    marginStart: '3@s'
+  spacePairName: {
+    width: '3@s'
   },
   itemCoin: {
     color: '#000'
