@@ -16,7 +16,6 @@ import { getCurrencyName, formatCurrency, formatPercent } from "../../utils/Filt
 import ScaledSheet from '../../libs/reactSizeMatter/ScaledSheet';
 import I18n from '../../i18n/i18n';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import Utils from '../../utils/Utils';
 
 class MarketScreen extends BaseScreen {
   static defaultProps = {
@@ -24,9 +23,7 @@ class MarketScreen extends BaseScreen {
       currency: Consts.CURRENCY_KRW,
       sortField: Consts.SORT_MARKET_FIELDS.VOLUME,
       sortDirection: Consts.SORT_DIRECTION.DESC,
-      symbols: [],
-      prices: {},
-      favorites: {}
+      symbols: []
     }
   }
 
@@ -62,6 +59,7 @@ class MarketScreen extends BaseScreen {
   render() {
     return (
       <View style={styles.screen}>
+        <View style = {{height: 20}} />
         {this._renderHeader()}
         <FlatList
           style={styles.listView}
@@ -82,35 +80,39 @@ class MarketScreen extends BaseScreen {
 
         <View style={styles.nameGroup}>
           <View style={{ flexDirection: 'row' }}>
-            <View>
-              <Icon name='star'
-                size={10}
+            <View style = {{ alignItems: 'center', justifyContent: 'center' }}>
+              <Icon
+                name='star'
+                size={15}
                 color={item.isFavorite ? 'yellow' : 'grey'}/>
             </View>
-            <Text style={styles.itemCoin}>{getCurrencyName(item.coin)}</Text>
-            <Text style={styles.itemCurrency}>{'/' + getCurrencyName(item.currency)}</Text>
+            <View styles={styles.coinPairNameContainer}>
+              <Text style={styles.itemCoin}>
+                {getCurrencyName(item.coin) + '/' + getCurrencyName(item.currency)}
+              </Text>
+              <Text style={styles.itemCoin}>
+                {getCurrencyName(item.coin) + '/' + getCurrencyName(item.currency)}
+              </Text>
+            </View>
           </View>
-          <Text style={styles.secondaryText}>
-            {I18n.t('markets.vol') + ' ' + formatCurrency(item.volume, item.currency)}
-          </Text>
         </View>
 
         <View style={styles.priceGroup}>
-          <Text style={{ color: '#FFF' }}>
-            {formatCurrency(item.price, item.currency)}
-          </Text>
-          <Text style={styles.itemCurrency}>
-            {formatCurrency(this._getFiatPrice(item), Consts.CURRENCY_KRW)}
+          <Text style={this._applyTextColorByChange(item.change)}>
+            {formatCurrency(item.price, item.currency, 0)}
           </Text>
         </View>
 
         <View style={styles.changeGroup}>
-          <View
-            style={[styles.changeSubGroup, item.change >= 0 ? styles.increasedChange : styles.decreasedChange]}>
-            <Text style={styles.changedText}>
-              {item.change >= 0 ? '+' + formatPercent(item.change) : '-' + formatPercent(item.change)}
-            </Text>
-          </View>
+          <Text style={this._applyTextColorByChange(item.change)}>
+            {this._toPercentChangeString(item.change)}
+          </Text>
+        </View>
+
+        <View style={styles.volumeGroup}>
+          <Text style={{ color: '#000' }}>
+            {formatCurrency(item.volume, Consts.CURRENCY_KRW, 0) + '백만'}
+          </Text>
         </View>
 
       </TouchableOpacity>
@@ -124,61 +126,45 @@ class MarketScreen extends BaseScreen {
   }
 
   _renderHeader() {
-    let { sortField, sortDirection } = this.props.stats;
     return (
       <View style={styles.tabBar}>
         <TouchableWithoutFeedback onPress={() => this._onSortPair()}>
-          <Text style={sortField == Consts.SORT_MARKET_FIELDS.SYMBOL ? styles.activeHeader : styles.normalHeader}>
-            코인
-            {sortField == Consts.SORT_MARKET_FIELDS.VOLUME || sortField != Consts.SORT_MARKET_FIELDS.SYMBOL ?
-              <Text>/ </Text> : null}
-            {sortField == Consts.SORT_MARKET_FIELDS.SYMBOL && this._renderArrow(sortDirection)}
-          </Text>
+          <View style={{ flex: 3, alignItems: 'center' }}>
+            <Text style={styles.normalHeader}>
+              코인
+              {this._renderArrow(Consts.SORT_MARKET_FIELDS.SYMBOL)}
+            </Text>
+          </View>
         </TouchableWithoutFeedback>
 
         <TouchableWithoutFeedback onPress={() => this._onSortLastPrice()}>
-          <View style={{ flex: 3 }}>
-            <Text style={sortField == Consts.SORT_MARKET_FIELDS.PRICE ? styles.activeHeader : styles.normalHeader}>
+          <View style={{ flex: 3, alignItems: 'flex-end' }}>
+            <Text style={styles.normalHeader}>
               현재가
-              {sortField == Consts.SORT_MARKET_FIELDS.PRICE && this._renderArrow(sortDirection)}
+              {this._renderArrow(Consts.SORT_MARKET_FIELDS.PRICE)}
             </Text>
           </View>
         </TouchableWithoutFeedback>
 
         <TouchableWithoutFeedback onPress={() => this._onSortChangePercent()}>
-          <View style={{ flex: 2 }}>
-            <Text style={sortField == Consts.SORT_MARKET_FIELDS.CHANGE ? styles.activeHeader : styles.normalHeader}>
+          <View style={{ flex: 2, alignItems: 'flex-end' }}>
+            <Text style={styles.normalHeader}>
               전일대비
-              {sortField == Consts.SORT_MARKET_FIELDS.CHANGE && this._renderArrow(sortDirection)}
+              {this._renderArrow(Consts.SORT_MARKET_FIELDS.CHANGE)}
             </Text>
           </View>
         </TouchableWithoutFeedback>
 
         <TouchableWithoutFeedback onPress={() => this._onSortVolume()}>
-          <View style={{ flex: 2 }}>
-            <Text style={sortField == Consts.SORT_MARKET_FIELDS.VOLUME ? styles.activeHeader : styles.normalHeader}>
+          <View style={{ flex: 3, alignItems: 'flex-end' }}>
+            <Text style={styles.normalHeader}>
               거래대금
-              {sortField == Consts.SORT_MARKET_FIELDS.VOLUME && this._renderArrow(sortDirection)}
+              {this._renderArrow(Consts.SORT_MARKET_FIELDS.VOLUME)}
             </Text>
           </View>
         </TouchableWithoutFeedback>
       </View>
     );
-  }
-
-  _renderArrow(direction) {
-    return (
-      direction == Consts.SORT_DIRECTION.ASC ?
-        <Image
-          resizeMode={'contain'}
-          style={styles.iconSort}
-          source={require('../../../assets/common/2x/sortUp.png')}
-        /> : <Image
-          resizeMode={'contain'}
-          style={styles.iconSort}
-          source={require('../../../assets/common/2x/sortDown.png')}
-        />
-    )
   }
 
   _onSortPair() {
@@ -238,6 +224,21 @@ class MarketScreen extends BaseScreen {
     // this.navigate('MarketDetailScreen', item);
   }
 
+  _renderArrow(field) {
+    let {sortField, sortDirection } = this.props.stats;
+    return (
+      sortField === field && sortDirection === Consts.SORT_DIRECTION.ASC ?
+      <Icon
+        name='menu-down'
+        size={20}
+        color= '#000'/> :
+      <Icon
+        name='menu-up'
+        size={20}
+        color= '#000'/>
+    )
+  }
+
   _revertSortDirection(direction) {
     if (direction == Consts.SORT_DIRECTION.ASC) {
       return Consts.SORT_DIRECTION.DESC;
@@ -246,27 +247,28 @@ class MarketScreen extends BaseScreen {
     }
   }
 
-  isFavorite(symbol, favorites) {
-    return favorites[`${symbol.coin}/${symbol.currency}`];
-  }
-
-  _getFiatPrice(item) {
-    if (item.currency == Consts.CURRENCY_KRW) {
-      return item.price;
-    } else {
-      return item.price * this._getPrice(Consts.CURRENCY_KRW, item.currency);
-    }
-  }
-
-  _getPrice(currency, coin) {
-    let key = Utils.getPriceKey(currency, coin);
-    const priceObject = this.props.stats.prices[key];
-    return priceObject ? priceObject.price : 1;
-  }
-
   _changeSortField(sortField, sortDirection) {
     let symbols = this.props.stats.symbols;
     this.props.sortList(this.props.stats.currency, symbols, sortField, sortDirection);
+  }
+
+  _applyTextColorByChange(number) {
+    if (number > 0)
+      return styles.positiveText;
+    else if (number < 0)
+      return styles.negativeText;
+    else
+      return styles.normalText
+  }
+
+  _toPercentChangeString(number) {
+    let percentString = formatPercent(number);
+    if (number > 0)
+      return '+' + percentString;
+    else if (number < 0)
+      return '-' + percentString;
+    else
+      return percentString;
   }
 }
 
@@ -302,38 +304,35 @@ const styles = ScaledSheet.create({
   },
   listView: {
     flex: 1,
-    paddingLeft: "18@s",
-    paddingRight: "18@s"
   },
   listItem: {
     flexDirection: 'row',
-    backgroundColor: '#10121e',
-    height: "66@s",
-    alignItems: 'center'
+    height: "58@s",
+    alignItems: 'center',
+    paddingLeft: "10@s",
+    paddingRight: "10@s"
   },
   separator: {
     flex: 1,
     height: 1,
-    backgroundColor: '#555555'
+    backgroundColor: '#DEE3EB'
   },
-
   nameGroup: {
-    flex: 3,
+    flex: 3
+  },
+  coinPairNameContainer: {
+    alignSelf: 'center',
+    marginStart: '3@s'
   },
   itemCoin: {
-    color: '#FFFFFF'
-  },
-  itemCurrency: {
-    color: '#7b808d',
-    fontSize: '11@s',
-    paddingTop: "2.2@s"
+    color: '#000'
   },
   secondaryText: {
     color: CommonColors.secondaryText
   },
-
   priceGroup: {
     flex: 3,
+    alignItems: 'flex-end',
   },
   increasedPrice: {
     color: '#3ea954'
@@ -341,11 +340,13 @@ const styles = ScaledSheet.create({
   decreasedPrice: {
     color: '#e0533c'
   },
-
   changeGroup: {
     flex: 2,
     alignItems: 'flex-end',
-    paddingRight: "10@s",
+  },
+  volumeGroup: {
+    flex: 3,
+    alignItems: 'flex-end'
   },
   changeSubGroup: {
     width: "72@s",
@@ -367,14 +368,7 @@ const styles = ScaledSheet.create({
     flex: 1,
   },
   normalHeader: {
-    color: CommonColors.secondaryText
-  },
-  activeHeader: {
-    color: CommonColors.activeTintColor
-  },
-  percentTab: {
-    color: '#656b7c',
-    textAlign: 'right'
+    color: '#000'
   },
   volTab: {
     color: '#656b7c'
@@ -383,12 +377,21 @@ const styles = ScaledSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     height: "36@s",
-    backgroundColor: CommonColors.listItemBgColor,
-    paddingLeft: "18@s",
-    paddingRight: "18@s",
+    backgroundColor: '#F8F9FB',
+    paddingLeft: "10@s",
+    paddingRight: "10@s",
   },
   iconSort: {
     height: "25@s",
     width: "14@s",
+  },
+  negativeText: {
+    color: '#0070C0'
+  },
+  positiveText: {
+    color: '#FF0000'
+  },
+  normalText: {
+    color: '#000'
   }
 });
