@@ -19,7 +19,7 @@ import LoginCommonStyle from './LoginCommonStyle'
 import ScaledSheet from '../../libs/reactSizeMatter/ScaledSheet';
 import { connect } from 'react-redux';
 
-export default class LoginScreen extends BaseScreen {
+class LoginScreen extends BaseScreen {
 
   state = {
     email: '',
@@ -30,7 +30,7 @@ export default class LoginScreen extends BaseScreen {
     try {
       let responseUser = await rf.getRequest('UserRequest').login(this.state.email, this.state.password);
       AppPreferences.saveAccessToken(responseUser.access_token);
-      this._dispatchAllSocketEvents();
+      this._dispatchAllSocketEvents(responseUser.data.userId);
       // console.log('responseUser', responseUser)
       this.navigate('MainScreen', {});
 
@@ -114,7 +114,7 @@ export default class LoginScreen extends BaseScreen {
     )
   }
 
-  _dispatchAllSocketEvents() {
+  _dispatchAllSocketEvents(userId) {
     let { listenPrivateEvent, listenPublicEvent } = this.props;
     listenPublicEvent(Consts.SOCKET_EVENTS.PRICE_UPDATED, Consts.SOCKET_CHANNEL.PUBLIC.APP_PRICES);
     listenPublicEvent(Consts.SOCKET_EVENTS.ORDER_TRANSACTION_CREATED, Consts.SOCKET_CHANNEL.PUBLIC.APP_ORDERS);
@@ -123,13 +123,13 @@ export default class LoginScreen extends BaseScreen {
     listenPublicEvent(Consts.SOCKET_EVENTS.MARKET_PRICE_CHANGES_UPDATED, Consts.SOCKET_CHANNEL.PUBLIC.APP_MARKET_PRICES_CHANGE);
     listenPublicEvent(Consts.SOCKET_EVENTS.PROFIT_RATE_UPDATED, Consts.SOCKET_CHANNEL.PUBLIC.APP_PROFIT_RATE);
 
-    listenPrivateEvent(Consts.SOCKET_EVENTS.BALANCE_UPDATED);
-    listenPrivateEvent(Consts.SOCKET_EVENTS.TRANSACTION_CREATED);
-    listenPrivateEvent(Consts.SOCKET_EVENTS.USER_ORDER_BOOK_UPDATED);
-    listenPrivateEvent(Consts.SOCKET_EVENTS.ORDER_CHANGED);
-    listenPrivateEvent(Consts.SOCKET_EVENTS.USER_SESSION_REGISTERED);
-    listenPrivateEvent(Consts.SOCKET_EVENTS.FAVORITE_SYMBOLS_UPDATED);
-    listenPrivateEvent(Consts.SOCKET_EVENTS.ORDER_LIST_UPDATED);
+    listenPrivateEvent(Consts.SOCKET_EVENTS.BALANCE_UPDATED, userId);
+    listenPrivateEvent(Consts.SOCKET_EVENTS.TRANSACTION_CREATED, userId);
+    listenPrivateEvent(Consts.SOCKET_EVENTS.USER_ORDER_BOOK_UPDATED, userId);
+    listenPrivateEvent(Consts.SOCKET_EVENTS.ORDER_CHANGED, userId);
+    listenPrivateEvent(Consts.SOCKET_EVENTS.USER_SESSION_REGISTERED, userId);
+    listenPrivateEvent(Consts.SOCKET_EVENTS.FAVORITE_SYMBOLS_UPDATED, userId);
+    listenPrivateEvent(Consts.SOCKET_EVENTS.ORDER_LIST_UPDATED, userId);
   }
 }
 
@@ -171,9 +171,10 @@ function mapDispatchToProps(dispatch) {
       event,
       channel
     }),
-    listenPrivateEvent: (event) => dispatch({
+    listenPrivateEvent: (event, userId) => dispatch({
       type: ActionType.LISTEN_PRIVATE_SOCKET_EVENT,
-      event
+      event,
+      userId
     })
   }
 }
