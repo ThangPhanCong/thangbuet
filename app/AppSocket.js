@@ -41,8 +41,6 @@ export default class Socket {
         observable = Observable.create(observer => {
           this._echo.private(channel)
             .listen(event, res => {
-              console.log('Socket data', res.data, event, channel);
-
               observer.next({
                 data: res.data,
                 event,
