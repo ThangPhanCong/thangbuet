@@ -7,12 +7,9 @@ export function getFailure(error) {
   }
 }
 
-export function updateSocketData(event, channel, isPrivate, data) {
+export function updateSocketData(socketData) {
   return {
-    type: ActionType.UPDATE_SOCKET_DATA_SUCCESS,
-    isPrivate,
-    channel,
-    event,
-    data
+    ...socketData,
+    type: ActionType.UPDATE_SOCKET_DATA_SUCCESS
   }
 }

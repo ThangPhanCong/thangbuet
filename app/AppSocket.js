@@ -1,72 +1,86 @@
 import { Observable } from 'rxjs';
-import io from "socket.io-client";
+import Echo from 'laravel-echo';
 import AppConfig from './utils/AppConfig';
 
 export default class Socket {
   constructor() {
-    this._socket = this._initSocket();
+    this._echo = this._initEcho();
   }
 
   _obsevables = {};
   _eventChannels = [];
 
-  _initSocket() {
-    if (AppConfig.ACCESS_TOKEN) {
-      return io.connect(AppConfig.getSocketServer(), {
-        transportOptions: {
-          polling: {
-            extraHeaders: {
-              Authorization: 'Bearer ' + AppConfig.ACCESS_TOKEN,
-            }
-          }
-        }
-      });
-    }
-
-    return null;
+  _initEcho() {
+    return new Echo({
+      broadcaster: 'socket.io',
+      host: AppConfig.getSocketServer(),
+      encrypted: true,
+      client: require('socket.io-client'),
+      auth: {
+        headers: {
+          'Authorization': 'Bearer ' + AppConfig.ACCESS_TOKEN,
+        },
+      },
+    });
   }
 
   connect() {
-    if (!this._socket.connected) {
-      this._socket.connect();
+    if (!this._echo.connected) {
+      this._echo.connect();
     }
   }
 
   disconnect() {
-    this._socket.disconnect();
+    if (this._echo)
+      this._echo.disconnect();
   }
 
-  listen(event, channel) {
+  listen(event, channel, isPrivate) {
     if (!this._obsevables[event]) {
-      this._eventChannels.push({event, channel});
-      let observable = Observable.create(observer => {
-        this._socket.on(event, data => {
-          observer.next({
-            event,
-            channel,
-            data
-          });
+      this._eventChannels.push({ event, channel });
+      let observable;
+      if (isPrivate) {
+        observable = Observable.create(observer => {
+          this._echo.private(channel)
+            .listen(event, data => {
+              console.log('Socket data', data, event, channel);
 
-          // Once observable is disposed, this handler closure will be not keept by any observable instance,
-          // so this `observable` will be escaped from retain cycle by itself
-          if (!this._socket || this._socket.disconnect || this._obsevables[event] !== observable) {
-            observer.unsubscribe()
-          }
+              observer.next({
+                data,
+                event,
+                channel,
+                isPrivate
+              })
+
+              // Once observable is disposed, this handler closure will be not keept by any observable instance,
+              // so this `observable` will be escaped from retain cycle by itself
+              if (!this._echo || this._obsevables[event] !== observable) {
+                observer.unsubscribe()
+              }
+            });
         })
-      })
+      }
+      else {
+        observable = Observable.create(observer => {
+          this._echo.channel(channel)
+            .listen(event, data => {
+              observer.next({
+                data,
+                event,
+                channel
+              })
+            });
+        })
+      }
 
       this._obsevables[event] = observable
     }
-
-    if (!this._eventChannels.some(e => e.channel === channel))
-      this._socket.emit('join', channel);
 
     return this._obsevables[event]
   }
 
   removeChannel(channel) {
     this._channels[channel] = null;
-    this._socket.emit('leave', channel);
   }
 
   removeEvent(event) {

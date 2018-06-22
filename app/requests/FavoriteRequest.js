@@ -12,19 +12,19 @@ export default class FavoriteRequest extends BaseModelRequest {
   }
 
   getList() {
-    if (window.GlobalSocket) {
-      if (window.GlobalSocket.favoriteSymbols) {
-        return new Promise((resolve, reject) => {
-          resolve(window.GlobalSocket.favoriteSymbols);
-        });
-      }
-    }
+    // if (window.GlobalSocket) {
+    //   if (window.GlobalSocket.favoriteSymbols) {
+    //     return new Promise((resolve, reject) => {
+    //       resolve(window.GlobalSocket.favoriteSymbols);
+    //     });
+    //   }
+    // }
 
     return new Promise((resolve, reject) => {
       let url = '/favorites';
       this.get(url)
         .then(function (res) {
-          window.GlobalSocket.favoriteSymbols = res;
+          // window.GlobalSocket.favoriteSymbols = res;
           resolve(res);
         })
         .catch(function (error) {
