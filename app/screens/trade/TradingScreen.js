@@ -205,7 +205,7 @@ export default class TradingScreen extends BaseScreen {
               <TouchableOpacity
                 style={styles.headerContent}
                 onPress={() => this.setState({ modalVisible: true })}>
-                <Icon name="more" />
+                <Icon name="arrow-drop-down" />
                 <Text>
                   {(this.state.itemSelected.coin + "/" + this.state.itemSelected.currency).toUpperCase()}
                 </Text>
