@@ -29,11 +29,11 @@ class SplashScreen extends BaseScreen {
     super.componentWillMount();
     // TODO start animation
     initApp()
-      // .then(() => {
-      //   if (AppConfig.ACCESS_TOKEN) {
-      //     this._dispatchAllSocketEvents();
-      //   }
-      // })
+      .then(() => {
+        if (AppConfig.ACCESS_TOKEN) {
+          this._dispatchAllSocketEvents();
+        }
+      })
       .then(() => {
         if (AppConfig.ACCESS_TOKEN) {
           this.navigate('MainScreen');
