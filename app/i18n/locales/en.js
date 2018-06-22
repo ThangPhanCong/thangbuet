@@ -50,5 +50,10 @@ export default {
       termOfUse: 'Terms Of Use',
       googleAuthentication: '2FA'
     }
+  },
+  marketDetail: {
+    time: '시간',
+    price: '체결가',
+    amount: '거래량',
   }
 };

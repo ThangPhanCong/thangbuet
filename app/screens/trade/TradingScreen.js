@@ -231,7 +231,8 @@ export default class TradingScreen extends BaseScreen {
             style={styles.body}
             screenProps={{
               coin: this.state.itemSelected.coin,
-              currency: this.state.itemSelected.currency
+              currency: this.state.itemSelected.currency,
+              count: 50
             }} />
           }
           <Modal
