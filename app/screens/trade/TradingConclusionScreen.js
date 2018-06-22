@@ -32,9 +32,7 @@ export default class TradingConclusionScreen extends BaseScreen {
 
   componentDidUpdate() {
     let { coin, currency } = this.props.screenProps
-    console.log('==>', coin, currency, this.state.coin, this.state.currency)
     if (coin != this.state.coin || currency != this.state.currency) {
-      console.log('update cooin and currency', coin, currency)
       this.setState({ coin, currency })
       this.reloadData()
     }

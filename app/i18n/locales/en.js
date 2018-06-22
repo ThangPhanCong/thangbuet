@@ -55,5 +55,22 @@ export default {
     time: '시간',
     price: '체결가',
     amount: '거래량',
-  }
+    low: 'Low',
+    high: 'High',
+    bid: 'Bid',
+    ask: 'Ask',
+    orderBook: 'Order Book',
+    marketTrades: 'Market Trades',
+    _minute: '{{minutes}}min',
+    _hour: '{{hours}}h',
+    _day: '{{days}}d',
+    _week: '{{weeks}}w',
+    depth: 'Depth',
+    full: 'Full'
+  },
+  fullScreenChart: {
+    change24h: '24h Change',
+    hour: 'Hour',
+    min: 'min'
+  },
 };
