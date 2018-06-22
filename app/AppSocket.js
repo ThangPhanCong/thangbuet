@@ -42,11 +42,11 @@ export default class Socket {
       if (isPrivate) {
         observable = Observable.create(observer => {
           this._echo.private(channel)
-            .listen(event, data => {
-              console.log('Socket data', data, event, channel);
+            .listen(event, res => {
+              console.log('Socket data', res.data, event, channel);
 
               observer.next({
-                data,
+                data: res.data,
                 event,
                 channel,
                 isPrivate
