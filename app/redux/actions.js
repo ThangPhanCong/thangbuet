@@ -9,7 +9,7 @@ export function getFailure(error) {
 
 export function updateSocketData(socketData) {
   return {
-    ...socketData,
-    type: ActionType.UPDATE_SOCKET_DATA_SUCCESS
+    type: ActionType.UPDATE_SOCKET_DATA_SUCCESS,
+    ...socketData
   }
 }

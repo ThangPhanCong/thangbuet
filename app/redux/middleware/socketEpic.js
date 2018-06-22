@@ -14,7 +14,7 @@ import { Observable } from 'rxjs';
 const listenPublicSocketEvent = action$ =>
   action$
     .ofType(ActionType.LISTEN_PUBLIC_SOCKET_EVENT)
-    .switchMap(action => window.GlobalSocket.listen(action.event, action.channel, false))
+    .mergeMap(action => window.GlobalSocket.listen(action.event, action.channel, false))
     .map(res => updateSocketData(res))
 
 const listenPrivateSocketEvent = action$ =>
@@ -38,7 +38,7 @@ const listenPrivateSocketEvent = action$ =>
           })
       }
     )
-    .switchMap(action => window.GlobalSocket.listen(action.event, action.channel, true))
+    .mergeMap(action => window.GlobalSocket.listen(action.event, action.channel, true))
     .map(res => updateSocketData(res))
 
 export default { listenPublicSocketEvent, listenPrivateSocketEvent };
