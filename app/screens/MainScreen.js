@@ -8,12 +8,12 @@ import FundsScreen from './funds/FundsScreen'
 import TransactionScreen from './transaction/TransactionScreen'
 import BalanceScreen from './balances/BalanceScreen'
 import MyPageScreen from './my-page/MyPageScreen'
-import MarketScreen from './market/MarketScreen';
+import MarketSearchScreen from './market/MarketSearchScreen';
 
 export default TabNavigator(
   {
-    MarketScreen: {
-      screen: MarketScreen,
+    MarketSearchScreen: {
+      screen: MarketSearchScreen,
       navigationOptions: () => ({
         tabBarLabel: 'Trading',
       })

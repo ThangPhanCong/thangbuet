@@ -1,7 +1,6 @@
 import React from 'react';
 import {
   FlatList,
-  Image,
   Text,
   TouchableOpacity,
   TouchableWithoutFeedback,
@@ -16,6 +15,7 @@ import { getCurrencyName, formatCurrency, formatPercent } from "../../utils/Filt
 import ScaledSheet from '../../libs/reactSizeMatter/ScaledSheet';
 import I18n from '../../i18n/i18n';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import _ from 'lodash';
 
 class MarketScreen extends BaseScreen {
   static defaultProps = {
@@ -30,36 +30,21 @@ class MarketScreen extends BaseScreen {
   constructor(props) {
     super(props);
 
-    const { sortField, sortDirection } = this.props.navigation.state.params || {};
-    
-    this.props.stats.currency = Consts.CURRENCY_KRW;
-    this.props.stats.sortField = sortField || Consts.SORT_MARKET_FIELDS.VOLUME;
-    this.props.stats.sortDirection = sortDirection || Consts.SORT_DIRECTION.DESC;
+    if (!this.props.stats.sortField)
+      this.props.stats.sortField = Consts.SORT_MARKET_FIELDS.VOLUME;
+    if (!this.props.stats.sortDirection)
+      this.props.stats.sortDirection = Consts.SORT_DIRECTION.DESC;
   }
 
   componentWillMount() {
     super.componentWillMount();
-    this.props.getList(this.props.stats.currency);
-  }
-
-  componentDidUpdate(previousProps) {
-    // if (this.props.isFocused && !previousProps.isFocused) {
-    //   let { sortField, sortDirection } = this.props.navigation.state.params || {};
-    //   if (!sortDirection) {
-    //     sortDirection = Consts.SORT_DIRECTION.DESC;
-    //   }
-    //   if (sortField) {
-    //     if (sortField != this.props.stats.sortField || sortDirection != this.props.stats.sortDirection) {
-    //       this._changeSortField(sortField, sortDirection);
-    //     }
-    //   }
-    // }
+    if (_.isEmpty(this.props.stats.symbols))
+      this.props.getList();
   }
 
   render() {
     return (
       <View style={styles.screen}>
-        <View style = {{height: 20}} />
         {this._renderHeader()}
         <FlatList
           style={styles.listView}
@@ -249,7 +234,7 @@ class MarketScreen extends BaseScreen {
 
   _changeSortField(sortField, sortDirection) {
     let symbols = this.props.stats.symbols;
-    this.props.sortList(this.props.stats.currency, symbols, sortField, sortDirection);
+    this.props.sortList(symbols, sortField, sortDirection);
   }
 
   _applyTextColorByChange(number) {
@@ -270,23 +255,31 @@ class MarketScreen extends BaseScreen {
   }
 }
 
-function mapStateToProps(state) {
-  return {
-    stats: state.marketReducer
+function mapStateToPropsFactory(state, ownProps) {
+  return (state) => {
+    return {
+      stats: state.marketReducer
+    }
   }
 }
 
-function mapDispatchToProps(dispatch) {
+// function mapStateToProps(state, ownProps) {
+//   return {
+//     stats: state.marketReducer
+//   }
+// }
+
+function mapDispatchToProps(dispatch, ownProps) {
   return {
-    getList: (currency) => dispatch({
-      currency,
+    getList: () => dispatch({
+      currency: ownProps.currency,
       type: ActionType.GET_MARKET_LIST,
       sortField: Consts.SORT_MARKET_FIELDS.VOLUME,
       sortDirection: Consts.SORT_DIRECTION.DESC
     }),
-    sortList: (currency, symbols, sortField, sortDirection) => dispatch({
+    sortList: (symbols, sortField, sortDirection) => dispatch({
       type: ActionType.SORT_SYMBOL_LIST,
-      currency,
+      currency: ownProps.currency,
       symbols,
       sortField,
       sortDirection
@@ -294,7 +287,7 @@ function mapDispatchToProps(dispatch) {
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(MarketScreen);
+export default connect(mapStateToPropsFactory, mapDispatchToProps)(MarketScreen);
 
 const styles = ScaledSheet.create({
   screen: {
