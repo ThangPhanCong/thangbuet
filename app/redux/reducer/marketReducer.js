@@ -51,13 +51,18 @@ export default function reduce (state = {}, action) {
     case ActionType.UPDATE_MARKET_LIST_SOCKET_SUCCESS:
       return {
         ...state,
-        symbols: _updateSymbolsData(action.symbols, action.prices || state.prices, action.favorites || state.favorites)
+        symbols: _updateSymbolsData(action.symbols || state.symbols, action.prices || state.prices, action.favorites || state.favorites)
       }
     case ActionType.GET_LIST_FAILURE:
       return {
         ...state,
         isLoading: true,
         error: action.error
+      }
+    case ActionType.UPDATE_BALANCE_SUCCESS:
+      return {
+        ...state,
+        balance: action.balance
       }
     default:
       return {

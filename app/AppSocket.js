@@ -60,11 +60,12 @@ export default class Socket {
       else {
         observable = Observable.create(observer => {
           this._echo.channel(channel)
-            .listen(event, data => {
+            .listen(event, res => {
               observer.next({
-                data,
+                data: res.data,
                 event,
-                channel
+                channel,
+                isPrivate
               })
             });
         })

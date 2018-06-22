@@ -50,7 +50,7 @@ const getMarketList = action$ =>
 
 const updateMarketListPriceSocket = action$ =>
   action$.pipe(
-    filter(action => action.type === ActionType.UPDATE_SOCKET_DATA_SUCCESS && !action.isPrivate && action.event === Consts.SOCKET_EVENTS.MARKET_PRICE_CHANGES_UPDATED),
+    filter(action => action.type === ActionType.UPDATE_SOCKET_DATA_SUCCESS && !action.isPrivate && action.event === Consts.SOCKET_EVENTS.PRICE_UPDATED),
     map(action => action.data),
     map(prices => {
       return {
@@ -68,6 +68,17 @@ const updateMarketListFavoriteSocket = action$ =>
       return {
         type: ActionType.UPDATE_MARKET_LIST_SOCKET_SUCCESS,
         favorites: _getFavorites(data)
+      }
+    })
+  )
+
+const showBalanceUpdate = action$ =>
+  action$.pipe(
+    filter(action => action.type === ActionType.UPDATE_SOCKET_DATA_SUCCESS && action.isPrivate && action.event === Consts.SOCKET_EVENTS.BALANCE_UPDATED),
+    map(action => {
+      return {
+        type: ActionType.UPDATE_BALANCE_SUCCESS,
+        balance: action.data
       }
     })
   )
@@ -131,4 +142,4 @@ function _getMarketSuccess(currency, symbols, prices, favorites, sortField, sort
   }
 }
 
-export default { getMarketList, sortSymbolList, updateMarketListPriceSocket, updateMarketListFavoriteSocket };
+export default { getMarketList, sortSymbolList, updateMarketListPriceSocket, updateMarketListFavoriteSocket, showBalanceUpdate };
