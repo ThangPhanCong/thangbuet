@@ -72,17 +72,6 @@ const updateMarketListFavoriteSocket = action$ =>
     })
   )
 
-const showBalanceUpdate = action$ =>
-  action$.pipe(
-    filter(action => action.type === ActionType.UPDATE_SOCKET_DATA_SUCCESS && action.isPrivate && action.event === Consts.SOCKET_EVENTS.BALANCE_UPDATED),
-    map(action => {
-      return {
-        type: ActionType.UPDATE_BALANCE_SUCCESS,
-        balance: action.data
-      }
-    })
-  )
-
 const sortSymbolList = action$ =>
   action$
     .ofType(ActionType.SORT_SYMBOL_LIST)

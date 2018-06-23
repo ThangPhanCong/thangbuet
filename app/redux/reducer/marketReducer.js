@@ -48,7 +48,7 @@ export default function reduce (state = {}, action) {
         sortField: action.sortField,
         sortDirection: action.sortDirection
       }
-    case ActionType.UPDATE_MARKET_LIST_SOCKET_SUCCESS:
+    case ActionType.UPDATE_MARKET_LIST_SUCCESS:
       return {
         ...state,
         symbols: _updateSymbolsData(action.symbols || state.symbols, action.prices || state.prices, action.favorites || state.favorites)
@@ -58,11 +58,6 @@ export default function reduce (state = {}, action) {
         ...state,
         isLoading: true,
         error: action.error
-      }
-    case ActionType.UPDATE_BALANCE_SUCCESS:
-      return {
-        ...state,
-        balance: action.balance
       }
     default:
       return {
