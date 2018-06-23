@@ -67,6 +67,13 @@ export default class Socket {
                 channel,
                 isPrivate
               })
+
+              // Once observable is disposed, this handler closure will be not keept by any observable instance,
+              // so this `observable` will be escaped from retain cycle by itself
+              if (!this._echo || this._obsevables[event] !== observable) {
+                console.log('Unsubscribe observable');
+                observer.unsubscribe()
+              }
             });
         })
       }
