@@ -131,4 +131,4 @@ function _getMarketSuccess(currency, symbols, prices, favorites, sortField, sort
   }
 }
 
-export default { getMarketList, sortSymbolList, updateMarketListPriceSocket, updateMarketListFavoriteSocket, showBalanceUpdate };
+export default { getMarketList, sortSymbolList, updateMarketListPriceSocket, updateMarketListFavoriteSocket };
