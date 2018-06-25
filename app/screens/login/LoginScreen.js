@@ -17,9 +17,8 @@ import Consts from '../../utils/Consts';
 import BaseScreen from '../BaseScreen';
 import LoginCommonStyle from './LoginCommonStyle'
 import ScaledSheet from '../../libs/reactSizeMatter/ScaledSheet';
-import { connect } from 'react-redux';
 
-class LoginScreen extends BaseScreen {
+export default class LoginScreen extends BaseScreen {
 
   state = {
     email: '',
@@ -30,7 +29,7 @@ class LoginScreen extends BaseScreen {
     try {
       let responseUser = await rf.getRequest('UserRequest').login(this.state.email, this.state.password);
       AppPreferences.saveAccessToken(responseUser.access_token);
-      this._dispatchAllSocketEvents(responseUser.data.userId);
+      window.GlobalSocket.connect();
       // console.log('responseUser', responseUser)
       this.navigate('MainScreen', {});
 
@@ -113,24 +112,6 @@ class LoginScreen extends BaseScreen {
       </KeyboardAwareScrollView>
     )
   }
-
-  _dispatchAllSocketEvents(userId) {
-    let { listenPrivateEvent, listenPublicEvent } = this.props;
-    listenPublicEvent(Consts.SOCKET_EVENTS.PRICE_UPDATED, Consts.SOCKET_CHANNEL.PUBLIC.APP_PRICES);
-    listenPublicEvent(Consts.SOCKET_EVENTS.ORDER_TRANSACTION_CREATED, Consts.SOCKET_CHANNEL.PUBLIC.APP_ORDERS);
-    listenPublicEvent(Consts.SOCKET_EVENTS.ORDER_BOOK_UPDATED, Consts.SOCKET_CHANNEL.PUBLIC.APP_ORDER_BOOK);
-    listenPublicEvent(Consts.SOCKET_EVENTS.COIN_MARKET_CAP_TICKET_UPDATED, Consts.SOCKET_CHANNEL.PUBLIC.APP_COIN_MARKKETCAP_TICKER);
-    listenPublicEvent(Consts.SOCKET_EVENTS.MARKET_PRICE_CHANGES_UPDATED, Consts.SOCKET_CHANNEL.PUBLIC.APP_MARKET_PRICES_CHANGE);
-    listenPublicEvent(Consts.SOCKET_EVENTS.PROFIT_RATE_UPDATED, Consts.SOCKET_CHANNEL.PUBLIC.APP_PROFIT_RATE);
-
-    listenPrivateEvent(Consts.SOCKET_EVENTS.BALANCE_UPDATED, userId);
-    listenPrivateEvent(Consts.SOCKET_EVENTS.TRANSACTION_CREATED, userId);
-    listenPrivateEvent(Consts.SOCKET_EVENTS.USER_ORDER_BOOK_UPDATED, userId);
-    listenPrivateEvent(Consts.SOCKET_EVENTS.ORDER_CHANGED, userId);
-    listenPrivateEvent(Consts.SOCKET_EVENTS.USER_SESSION_REGISTERED, userId);
-    listenPrivateEvent(Consts.SOCKET_EVENTS.FAVORITE_SYMBOLS_UPDATED, userId);
-    listenPrivateEvent(Consts.SOCKET_EVENTS.ORDER_LIST_UPDATED, userId);
-  }
 }
 
 const styles = ScaledSheet.create({
@@ -163,20 +144,3 @@ const styles = ScaledSheet.create({
     height: "60@s"
   }
 });
-
-function mapDispatchToProps(dispatch) {
-  return {
-    listenPublicEvent: (event, channel) => dispatch({
-      type: ActionType.LISTEN_PUBLIC_SOCKET_EVENT,
-      event,
-      channel
-    }),
-    listenPrivateEvent: (event, userId) => dispatch({
-      type: ActionType.LISTEN_PRIVATE_SOCKET_EVENT,
-      event,
-      userId
-    })
-  }
-}
-
-export default connect(null, mapDispatchToProps)(LoginScreen);

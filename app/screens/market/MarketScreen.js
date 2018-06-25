@@ -7,40 +7,55 @@ import {
   View
 } from 'react-native';
 import BaseScreen from '../BaseScreen';
-import { connect } from 'react-redux';
-import ActionType from '../../redux/ActionType';
 import Consts from '../../utils/Consts';
 import { CommonColors, CommonStyles } from '../../utils/CommonStyles';
 import { getCurrencyName, formatCurrency, formatPercent } from "../../utils/Filters";
 import ScaledSheet from '../../libs/reactSizeMatter/ScaledSheet';
-import I18n from '../../i18n/i18n';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import _ from 'lodash';
-import { createSelector, createSelectorCreator, defaultMemoize } from 'reselect';
 
 class MarketScreen extends BaseScreen {
-  static defaultProps = {
-    stats: {
-      currency: Consts.CURRENCY_KRW,
-      sortField: Consts.SORT_MARKET_FIELDS.VOLUME,
-      sortDirection: Consts.SORT_DIRECTION.DESC,
-      symbols: []
-    }
-  }
+  static SORT_FIELDS = {
+    SYMBOL: 'symbol',
+    VOLUME: 'volume',
+    PRICE: 'price',
+    CHANGE: 'change'
+  };
+
+  static SORT_DIRECTION = {
+    ASC: 'asc',
+    DESC: 'desc'
+  };
 
   constructor(props) {
     super(props);
 
-    if (!this.props.sortField)
-      this.props.sortField = Consts.SORT_MARKET_FIELDS.VOLUME;
-    if (!this.props.sortDirection)
-      this.props.sortDirection = Consts.SORT_DIRECTION.DESC;
+    const { sortField, sortDirection } = this.props.navigation.state.params || {};
+    this.state = {
+      sortField: sortField || MarketScreen.SORT_FIELDS.VOLUME,
+      sortDirection: sortDirection || MarketScreen.SORT_DIRECTION.DESC,
+      symbols: [],
+      prices: {},
+      favorites: {}
+    };
+  }
+
+  componentDidUpdate(previousProps) {
+    if (this.props.isFocused && !previousProps.isFocused) {
+      let { sortField, sortDirection } = this.props.navigation.state.params || {};
+      if (!sortDirection) {
+        sortDirection = MarketScreen.SORT_DIRECTION.DESC;
+      }
+      if (sortField) {
+        if (sortField != this.state.sortField || sortDirection != this.state.sortDirection) {
+          this._changeSortField(sortField, sortDirection);
+        }
+      }
+    }
   }
 
   componentWillMount() {
     super.componentWillMount();
-    if (_.isEmpty(this.props.symbols))
-      this.props.getList();
+    this._loadData();
   }
 
   render() {
@@ -254,70 +269,217 @@ class MarketScreen extends BaseScreen {
     else
       return percentString;
   }
-}
 
-// function mapStateToPropsFactory(state, ownProps) {
-//   return (state, props) => {
-//     return {
-//       stats: (state.marketReducer.currency === props.currency) && state.marketReducer
-//     }
-//   }
-// }
+  async _loadData() {
+    const data = await Promise.all([
+      this._getSymbols(),
+      this._getPrices(),
+      this._getFavorites()
+    ]);
 
-function mapStateToProps(state, ownProps) {
-  let res = computeProps(state, ownProps);
+    let symbols = data[0];
+    let prices = data[1];
+    let favorites = data[2]
 
-  return {
-    symbols: res[ownProps.currency],
-    isLoading: res.isLoading,
-    sortField: res.sortField,
-    sortDirection: res.sortDirection
+    this.setState(this._updateSymbolsData(symbols, prices, favorites));
   }
-}
 
-function mapDispatchToProps(dispatch, ownProps) {
-  return {
-    getList: () => dispatch({
-      currency: ownProps.currency,
-      type: ActionType.GET_MARKET_LIST,
-      sortField: Consts.SORT_MARKET_FIELDS.VOLUME,
-      sortDirection: Consts.SORT_DIRECTION.DESC
-    }),
-    sortList: (symbols, sortField, sortDirection) => dispatch({
-      type: ActionType.SORT_SYMBOL_LIST,
-      currency: ownProps.currency,
-      symbols,
+  async _getSymbols() {
+    try {
+      let symbolResponse = await rf.getRequest('MasterdataRequest').getAll();
+      let symbols = filter(symbolResponse.coin_settings, ['currency', this.props.currency]);
+      symbols.map(symbol => {
+        symbol.key = symbol.currency + '_' + symbol.coin;
+        return symbol;
+      });
+
+      return symbols;
+    } catch (err) {
+      console.log('MarketScreen._getSymbols', err);
+    }
+  }
+
+  async _getPrices() {
+    try {
+      let priceResponse = await rf.getRequest('PriceRequest').getPrices();
+      return priceResponse.data;
+    } catch (err) {
+      console.log('MarketScreen._getPrices', err);
+    }
+  }
+
+  async _getFavorites() {
+    try {
+      let response = await rf.getRequest('FavoriteRequest').getList();
+      return this._getFavoritesMap(response.data);
+    } catch (err) {
+      console.log('MarketScreen._getFavorites', err);
+    }
+  }
+
+  _getFavoritesMap(data) {
+    let favorites = {};
+    for (item of data) {
+      favorites[item.coin_pair] = true;
+    }
+    return favorites;
+  }
+
+  getSocketEventHandlers() {
+    return {
+      PricesUpdated: (prices) => {
+        const { symbols, favorites } = this.state;
+        const state = this._updateSymbolsData(symbols, prices, favorites);
+        this.setState(state);
+      },
+      FavoriteSymbolsUpdated: (data) => {
+        const { symbols, prices } = this.state;
+        const favorites = this._getFavoritesMap(data);
+        const state = this._updateSymbolsData(symbols, prices, favorites);
+        this.setState(state);
+      }
+    };
+  }
+
+  _updateSymbolsData(symbols, prices, favorites) {
+    if (!symbols || !favorites) {
+      return;
+    }
+
+    prices = Object.assign({}, this.state.prices, prices);
+    let { sortField, sortDirection } = this.state;
+
+    for (let symbolKey in prices) {
+      let [currency, coin] = symbolKey.split('_');
+      this._updateSymbolData(symbols, currency, coin, prices[symbolKey]);
+    }
+
+    let currencyPrice = undefined;
+    if (this.props.currency != Consts.CURRENCY_VND) {
+      let key = Utils.getPriceKey(Consts.CURRENCY_VND, this.props.currency);
+      if (prices[key]) {
+        currencyPrice = prices[key].price
+      }
+    }
+
+    let result = {
+      prices,
+      symbols: this._sortSymbols(symbols, sortField, sortDirection)
+    };
+    if (currencyPrice) {
+      result['currencyPrice'] = currencyPrice;
+    }
+    return result;
+  }
+
+  _updateSymbolData(symbols, currency, coin, data) {
+    let index = symbols.findIndex((item) => {
+      return item.currency == currency && item.coin == coin;
+    });
+    if (index >= 0) {
+      Object.assign(symbols[index], data);
+    }
+  }
+
+  _getCurrencyPrice(prices) {
+    if (this.props.currency != Consts.CURRENCY_VND) {
+      let key = Utils.getPriceKey(Consts.CURRENCY_VND, this.props.currency);
+      if (prices[key]) {
+        return prices[key].price;
+      }
+    }
+  }
+
+  isFavorite(symbol, favorites) {
+    return favorites[`${symbol.coin}/${symbol.currency}`];
+  }
+
+  _onPressItem(item) {
+    this.navigate('MarketDetailScreen', item);
+  }
+
+  _onSortPair() {
+    let { sortField, sortDirection, symbols } = this.state;
+
+    if (sortField != MarketScreen.SORT_FIELDS.SYMBOL) {
+      sortField = MarketScreen.SORT_FIELDS.SYMBOL;
+      sortDirection = MarketScreen.SORT_DIRECTION.DESC;
+    } else {
+      sortField = MarketScreen.SORT_FIELDS.VOLUME;
+      sortDirection = MarketScreen.SORT_DIRECTION.DESC;
+    }
+
+    this._changeSortField(sortField, sortDirection);
+  }
+
+  _revertSortDirection(direction) {
+    if (direction == MarketScreen.SORT_DIRECTION.ASC) {
+      return MarketScreen.SORT_DIRECTION.DESC;
+    } else {
+      return MarketScreen.SORT_DIRECTION.ASC;
+    }
+  }
+
+  _changeSortField(sortField, sortDirection) {
+    const symbols = this.state.symbols;
+    this.setState({
       sortField,
-      sortDirection
-    })
+      sortDirection,
+      symbols: this._sortSymbols(symbols, sortField, sortDirection)
+    });
+  }
+
+  _sortSymbols(symbols, sortField, sortDirection) {
+    if (sortField != MarketScreen.SORT_FIELDS.SYMBOL) {
+      return orderBy(symbols, (item) => parseFloat(item[sortField]), sortDirection);
+    } else {
+      const revertedDirection = this._revertSortDirection(sortDirection);
+      return orderBy(symbols, ['coin', 'currency'], [revertedDirection, revertedDirection]);
+    }
+  }
+
+  _onSortLastPrice() {
+    let { sortField, sortDirection, symbols } = this.state;
+
+    if (sortField == MarketScreen.SORT_FIELDS.PRICE) {
+      sortDirection = this._revertSortDirection(sortDirection);
+    } else {
+      sortField = MarketScreen.SORT_FIELDS.PRICE;
+      sortDirection = MarketScreen.SORT_DIRECTION.DESC;
+    }
+
+    this._changeSortField(sortField, sortDirection);
+  }
+
+  _onSortChangePercent() {
+    let { sortField, sortDirection, symbols } = this.state;
+
+    if (sortField == MarketScreen.SORT_FIELDS.CHANGE) {
+      sortDirection = this._revertSortDirection(sortDirection);
+    } else {
+      sortField = MarketScreen.SORT_FIELDS.CHANGE;
+      sortDirection = MarketScreen.SORT_DIRECTION.DESC;
+    }
+
+    this._changeSortField(sortField, sortDirection);
+  }
+
+  _getPrice(currency, coin) {
+    let key = Utils.getPriceKey(currency, coin);
+    const priceObject = this.state.prices[key];
+    return priceObject ? priceObject.price : 1;
+  }
+
+  _getFiatPrice(item) {
+    if (item.currency == Consts.CURRENCY_VND) {
+      return item.price;
+    } else {
+      return item.price * this._getPrice(Consts.CURRENCY_VND, item.currency);
+    }
   }
 }
 
-const createCachedSelector = createSelectorCreator(
-  defaultMemoize,
-  _.isEqual
-);
-
-const computeProps = createCachedSelector(
-  (_, props) => props.currency,
-  state => state.symbols,
-  state => state,
-  (currency, symbols, state) => {
-    let res = {};
-    res[currency] = symbols;
-    res.isLoading = state.isLoading;
-    res.sortField = state.sortField;
-    res.sortDirection = state.sortDirection;
-    res.error = state.error;
-
-    return res;
-  }
-)
-
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(MarketScreen);
+export default MarketScreen;
 
 const styles = ScaledSheet.create({
   screen: {

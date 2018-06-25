@@ -9,11 +9,8 @@ import {
 } from 'react-native';
 import BaseScreen from '../BaseScreen';
 import { TabNavigator, TabBarTop } from 'react-navigation';
-import { connect } from 'react-redux';
-import ActionType from '../../redux/ActionType';
 import Consts from '../../utils/Consts';
-import { CommonColors, CommonStyles } from '../../utils/CommonStyles';
-import { getCurrencyName, formatCurrency, formatPercent } from "../../utils/Filters";
+import { CommonStyles } from '../../utils/CommonStyles';
 import ScaledSheet from '../../libs/reactSizeMatter/ScaledSheet';
 import I18n from '../../i18n/i18n';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -22,19 +19,19 @@ import MarketScreen from './MarketScreen';
 const TabBarNavigator = TabNavigator(
   {
     MarketScreenKRW: {
-      screen: (props) => <MarketScreen currency = {Consts.CURRENCY_KRW}/>,
+      screen: (props) => <MarketScreen {...props} currency = {Consts.CURRENCY_KRW}/>,
       navigationOptions: () => ({
         tabBarLabel: Consts.CURRENCY_KRW,
       })
     },
     MarketScreenBTC: {
-      screen: (props) => <MarketScreen currency = {Consts.CURRENCY_BTC}/>,
+      screen: (props) => <MarketScreen {...props} currency = {Consts.CURRENCY_BTC}/>,
       navigationOptions: () => ({
         tabBarLabel: Consts.CURRENCY_BTC,
       })
     },
     MarketScreenETH: {
-      screen: (props) => <MarketScreen currency = {Consts.CURRENCY_ETH}/>,
+      screen: (props) => <MarketScreen {...props} currency = {Consts.CURRENCY_ETH}/>,
       navigationOptions: () => ({
         tabBarLabel: Consts.CURRENCY_ETH,
       })
@@ -80,7 +77,7 @@ class MarketSearchScreen extends BaseScreen {
   }
 
   _onTextChanged(text) {
-    this.props.search(text);
+    
   }
 
   _renderHeader() {
@@ -164,17 +161,4 @@ const styles = ScaledSheet.create({
   }
 });
 
-function mapDispatchToProps(dispatch) {
-  return {
-    search: (text) => dispatch({
-      type: ActionType.SEARCH_SYMBOL,
-      value: text
-    }),
-    changeMarket: (currency) => dispatch({
-      type: ActionType.GET_MARKET_LIST,
-      currency
-    })
-  }
-}
-
-export default connect(null, mapDispatchToProps)(MarketSearchScreen);
+export default MarketSearchScreen;
