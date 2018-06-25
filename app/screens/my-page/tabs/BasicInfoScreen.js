@@ -15,16 +15,20 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 export default class BasicInfoScreen extends BaseScreen {
   _infoProps = [{
     prop: 'security_level',
-    locale: '인증 레벨'
+    locale: '인증 레벨',
+    prefix: 'Level '
   }, {
     prop: 'fee_level',
-    locale: '수수료 등급'
+    locale: '수수료 등급',
+    prefix: 'Level '
   }, {
     prop: 'id',
-    locale: '아이디'
+    locale: '아이디',
+    prefix: ''
   }, {
-    prop: 'phone',
-    locale: '휴대전화'
+    prop: 'phone_no',
+    locale: '휴대전화',
+    prefix: ''
   }];
 
   constructor(props) {
@@ -67,7 +71,7 @@ export default class BasicInfoScreen extends BaseScreen {
 
           <View style={styles.valueGroup}>
             <Text style={styles.text}>
-              {this.state.info[item.prop]}
+              {this.state.info[item.prop] ? item.prefix + this.state.info[item.prop] : null}
             </Text>
           </View>
 
@@ -93,13 +97,19 @@ export default class BasicInfoScreen extends BaseScreen {
   }
 
   async _getCurrentUser() {
-    let user = await rf.getRequest('UserRequest').getCurrentUser();
-    let info = {};
-    for (el of this._infoProps) {
-      info[el.prop] = user[el.prop];
+    try {
+      let res = await rf.getRequest('UserRequest').getCurrentUser();
+      let user = res.data;
+      let info = {};
+      for (el of this._infoProps) {
+        info[el.prop] = user[el.prop];
+      }
+      
+      this.setState({ info })
     }
-
-    this.setState({ info })
+    catch(err) {
+      console.log('BasicInfoScreen._getCurrentUser', err);
+    }
   }
 }
 
