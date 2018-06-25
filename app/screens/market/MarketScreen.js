@@ -3,6 +3,7 @@ import {
   FlatList,
   Text,
   TouchableOpacity,
+  TouchableHighlight,
   TouchableWithoutFeedback,
   View
 } from 'react-native';
@@ -78,50 +79,51 @@ class MarketScreen extends BaseScreen {
 
   _renderItem({ item }) {
     return (
-      <TouchableOpacity
+      <TouchableHighlight
         style={styles.listItem}
-        onPress={() => this._onPressItem(item)}>
-
-        <View style={styles.nameGroup}>
-          <View style={{ flexDirection: 'row' }}>
-            <TouchableOpacity style = {{ alignItems: 'center', justifyContent: 'center' }}
-              onPress = {() => this._onEnableFavorite(item)}>
-              <Icon
-                name='star'
-                size={15}
-                color={this._isFavorite(item) ? '#FFC000' : '#D9D9D9'} />
-            </TouchableOpacity>
-            <View style={styles.spacePairName} />
-            <View style={{ alignSelf: 'center' }}>
-              <Text style={styles.itemCoin}>
-                {getCurrencyName(item.coin) + '/' + getCurrencyName(item.currency)}
-              </Text>
-              <Text style={styles.itemCoin}>
-                {getCurrencyName(item.coin) + '/' + getCurrencyName(item.currency)}
-              </Text>
+        onPress={() => this._onPressItem(item)}
+        underlayColor='#FFECED'>
+        <View style = {styles.listItemContainer}>
+          <View style={styles.nameGroup}>
+            <View style={{ flexDirection: 'row' }}>
+              <TouchableOpacity style = {{ alignItems: 'center', justifyContent: 'center' }}
+                onPress = {() => this._onEnableFavorite(item)}>
+                <Icon
+                  name='star'
+                  size={15}
+                  color={this._isFavorite(item) ? '#FFC000' : '#D9D9D9'} />
+              </TouchableOpacity>
+              <View style={styles.spacePairName} />
+              <View style={{ alignSelf: 'center' }}>
+                <Text style={styles.itemCoin}>
+                  {getCurrencyName(item.coin) + '/' + getCurrencyName(item.currency)}
+                </Text>
+                <Text style={styles.itemCoin}>
+                  {getCurrencyName(item.coin) + '/' + getCurrencyName(item.currency)}
+                </Text>
+              </View>
             </View>
           </View>
-        </View>
 
-        <View style={styles.priceGroup}>
-          <Text style={this._applyTextColorByChange(item.change)}>
-            {formatCurrency(item.price, item.currency, 0)}
-          </Text>
-        </View>
+          <View style={styles.priceGroup}>
+            <Text style={this._applyTextColorByChange(item.change)}>
+              {formatCurrency(item.price, item.currency, 0)}
+            </Text>
+          </View>
 
-        <View style={styles.changeGroup}>
-          <Text style={this._applyTextColorByChange(item.change)}>
-            {this._toPercentChangeString(item.change)}
-          </Text>
-        </View>
+          <View style={styles.changeGroup}>
+            <Text style={this._applyTextColorByChange(item.change)}>
+              {this._toPercentChangeString(item.change)}
+            </Text>
+          </View>
 
-        <View style={styles.volumeGroup}>
-          <Text style={{ color: '#000' }}>
-            {formatCurrency(item.volume, Consts.CURRENCY_KRW, 0) + '백만'}
-          </Text>
+          <View style={styles.volumeGroup}>
+            <Text style={{ color: '#000' }}>
+              {formatCurrency(item.volume, Consts.CURRENCY_KRW, 0) + '백만'}
+            </Text>
+          </View>
         </View>
-
-      </TouchableOpacity>
+      </TouchableHighlight>
     );
   }
 
@@ -441,8 +443,11 @@ const styles = ScaledSheet.create({
     flex: 1,
   },
   listItem: {
+    height: "58@s"
+  },
+  listItemContainer: {
+    flex: 1,
     flexDirection: 'row',
-    height: "58@s",
     alignItems: 'center',
     paddingLeft: "10@s",
     paddingRight: "10@s"
@@ -450,7 +455,8 @@ const styles = ScaledSheet.create({
   separator: {
     flex: 1,
     height: 1,
-    backgroundColor: '#DEE3EB'
+    backgroundColor: '#DEE3EB',
+    opacity: 0.3
   },
   nameGroup: {
     flex: 3
