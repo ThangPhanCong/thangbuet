@@ -168,9 +168,12 @@ export default class FundsScreen extends BaseScreen {
                 <Text style={styles.infoRowRight}>{this.state.priceTotal}<Text style={{ fontSize: 11 }}>KRW</Text></Text>
               </View>
               <View style={styles.infoRow}>
-                <Text style={styles.infoRowLeft}>평가 수익률
-                  <TouchableOpacity onPress={() => this.setState({ openHelp: true })}><Icon name="help" size={15} /></TouchableOpacity>
-                </Text>
+                <TouchableOpacity
+                  style={[styles.infoRowLeft, { flexDirection: 'row' }]}
+                  onPress={() => this.setState({ openHelp: true })}>
+                  <Text>평가 수익률</Text>
+                  <Icon name="help" size={15} />
+                </TouchableOpacity>
                 <Text style={styles.infoRowRight}>{this.state.yield}<Text style={{ fontSize: 11 }}>%</Text></Text>
               </View>
             </View>
@@ -210,7 +213,7 @@ export default class FundsScreen extends BaseScreen {
                   </View>
                 ))
               }
-            </ScrollView>>
+            </ScrollView>
           </View>
           <View
             style={{
