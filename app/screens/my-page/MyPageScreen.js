@@ -9,15 +9,16 @@ import {
   Image,
   SafeAreaView
 } from 'react-native';
-import { TabNavigator } from 'react-navigation';
+import { TabNavigator, TabBarTop } from 'react-navigation';
 import BaseScreen from '../BaseScreen';
-import { CommonStyles } from '../../utils/CommonStyles';
+import { CommonStyles, CommonColors } from '../../utils/CommonStyles';
 
 import ScaledSheet from '../../libs/reactSizeMatter/ScaledSheet';
 import BasicInfoScreen from './tabs/BasicInfoScreen';
 import ConnectionScreen from './tabs/ConnectionScreen';
 import SecurityScreen from './tabs/SecurityScreen';
 import WalletScreen from './tabs/WalletScreen';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 const TabBarNavigator = TabNavigator({
   BasicInfoScreen: {
@@ -81,7 +82,12 @@ export default class MyPageScreen extends BaseScreen {
   _renderHeader() {
     return (
       <View style={styles.header}>
-        
+        <Icon name="account"
+          size={PixelRatio.getPixelSizeForLayoutSize(14)}
+          color='#000' />
+        <Text style={styles.headerTitle}>
+          MY PAGE
+        </Text>
       </View>
     )
   }
@@ -93,6 +99,12 @@ const styles = ScaledSheet.create({
   },
   header: {
     height: '60@s',
-    flexDirection: 'row'
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingStart: '16@s'
   },
+  headerTitle: {
+    marginStart: '10@s',
+    fontSize: '14@s'
+  }
 });
