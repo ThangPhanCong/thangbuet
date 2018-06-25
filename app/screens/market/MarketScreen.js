@@ -202,7 +202,7 @@ class MarketScreen extends BaseScreen {
 
     try {
       if (currentFavorite) {
-        await rf.getRequest('FavoriteRequest').createFavoriteCoinPair(item.key);
+        await rf.getRequest('FavoriteRequest').deleteFavoriteCoinPair(item.key);
       }
       else {
         await rf.getRequest('FavoriteRequest').createFavoriteCoinPair(item.key);

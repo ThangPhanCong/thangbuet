@@ -40,10 +40,9 @@ export default class FavoriteRequest extends BaseModelRequest {
       .then(res => {
         let cachedFavoriteSymbols = window.GlobalSocket.favoriteSymbols.data || [];
         if (!_.some(cachedFavoriteSymbols, ['coin_pair', coinPair])) {
-          cachedFavoriteSymbols.push(res);
+          cachedFavoriteSymbols.push(res.data);
           window.GlobalSocket.favoriteSymbols.data = cachedFavoriteSymbols;
         }
-
         return res;
       })
   }
