@@ -19,6 +19,7 @@ import rf from '../../libs/RequestFactory'
 import I18n from '../../i18n/i18n'
 import AppConfig from '../../utils/AppConfig';
 import AppPreferences from '../../utils/AppPreferences';
+import { formatCurrency, formatPercent, getCurrencyName } from '../../utils/Filters';
 
 export default class FundsScreen extends BaseScreen {
 
@@ -29,8 +30,9 @@ export default class FundsScreen extends BaseScreen {
       amountTotal: 0,
       priceTotal: 0,
       yield: 0,
-      openHelp: false
+      openHelp: false,
     }
+    this.currency = 'krw'
   }
 
   componentDidMount() {
@@ -82,7 +84,7 @@ export default class FundsScreen extends BaseScreen {
   }
 
   _onBalanceUpdated(newAccountBalances, ) {
-    console.log('newAccountBalances', newAccountBalances)
+    // console.log('newAccountBalances', newAccountBalances)
     for (balance in newAccountBalances) {
       if (!newAccountBalances[balance].name) {
         newAccountBalances[balance].name = balance
@@ -92,30 +94,18 @@ export default class FundsScreen extends BaseScreen {
     this.accountBalances = Object.assign({}, this.accountBalances, newAccountBalances);
     // console.log('this.accountBalances ', Object.values(this.accountBalances))
 
-    let balanceList = Object.values(this.accountBalances).sort(function (a, b) {
-      let nameA = a.name.toUpperCase();
-      let nameB = b.name.toUpperCase();
-      if (nameA < nameB) {
-        return -1;
-      }
-      if (nameA > nameB) {
-        return 1;
-      }
-
-      return 0;
-    });
+    let balanceList = Object.values(this.accountBalances)
 
     this._updateState(balanceList);
   }
 
   _onPricesUpdated(prices) {
-    console.log('prices', prices)
     const coinList = this.state.symbols
     coinList.map((coin, index) => {
-      if (coin.code.toLowerCase() === 'krw') {
+      if (coin.code.toLowerCase() === this.currency) {
         coinList[index] = Object.assign({}, coinList[index], { price: 1 })
-      } else if (prices["krw_" + coin.code.toLowerCase()]) {
-        coinList[index] = Object.assign({}, coinList[index], prices["krw_" + coin.code.toLowerCase()])
+      } else if (prices[this.currency + "_" + coin.code.toLowerCase()]) {
+        coinList[index] = Object.assign({}, coinList[index], prices[this.currency + "_" + coin.code.toLowerCase()])
       }
     })
 
@@ -134,18 +124,18 @@ export default class FundsScreen extends BaseScreen {
     symbols.map((symbol, index) => {
       if (symbol.code.toLowerCase() !== 'krw') {
         if (symbol.krw_amount != 0) {
-          symbols[index].yield = parseFloat((symbol.balance * symbol.price - symbol.krw_amount) / symbol.krw_amount).toFixed(2)
+          symbols[index].yield = parseFloat((symbol.balance * symbol.price - symbol.krw_amount) / symbol.krw_amount)
         } else {
-          symbols[index].yield = parseFloat(0).toFixed(2)
+          symbols[index].yield = parseFloat(0)
         }
       }
     })
 
     this.setState({
       symbols,
-      amountTotal: amountTotal.toFixed(2),
-      priceTotal: priceTotal.toFixed(2),
-      yield: amountTotal != 0 ? ((priceTotal - amountTotal) / amountTotal).toFixed(2) : 0.00
+      amountTotal,
+      priceTotal,
+      yield: amountTotal != 0 ? ((priceTotal - amountTotal) / amountTotal) : 0.00
     })
   }
 
@@ -156,34 +146,39 @@ export default class FundsScreen extends BaseScreen {
           <View style={styles.header}>
             <View style={styles.logo}>
               <Icon name="assessment" />
-              <Text>자산 현황</Text>
+              <Text>{I18n.t('funds.assetStatus')}</Text>
             </View>
             <View style={styles.info}>
               <View style={styles.infoRow}>
-                <Text style={styles.infoRowLeft}>코인 총 매수</Text>
-                <Text style={styles.infoRowRight}>{this.state.amountTotal}<Text style={{ fontSize: 11 }}>KRW</Text></Text>
+                <Text style={styles.infoRowLeft}>{I18n.t('funds.totalNumberOfCoin')}</Text>
+                <Text style={styles.infoRowRight}>
+                  {formatCurrency(this.state.amountTotal, this.currency)}
+                  <Text style={{ fontSize: 11 }}>{I18n.t('funds.currency')}</Text>
+                </Text>
               </View>
               <View style={styles.infoRow}>
-                <Text style={styles.infoRowLeft}>코인 평가액</Text>
-                <Text style={styles.infoRowRight}>{this.state.priceTotal}<Text style={{ fontSize: 11 }}>KRW</Text></Text>
+                <Text style={styles.infoRowLeft}>{I18n.t('funds.coinValuation')}</Text>
+                <Text style={styles.infoRowRight}>
+                  {formatCurrency(this.state.priceTotal, this.currency)}
+                  <Text style={{ fontSize: 11 }}>{I18n.t('funds.currency')}</Text></Text>
               </View>
               <View style={styles.infoRow}>
                 <TouchableOpacity
                   style={[styles.infoRowLeft, { flexDirection: 'row' }]}
                   onPress={() => this.setState({ openHelp: true })}>
-                  <Text>평가 수익률</Text>
+                  <Text>{I18n.t('funds.ratingYeild')}</Text>
                   <Icon name="help" size={15} />
                 </TouchableOpacity>
-                <Text style={styles.infoRowRight}>{this.state.yield}<Text style={{ fontSize: 11 }}>%</Text></Text>
+                <Text style={styles.infoRowRight}>{formatPercent(this.state.yield)}</Text>
               </View>
             </View>
           </View>
           <View style={{ flex: 1 }}>
             <View style={styles.tableHeader}>
-              <Text style={{ flex: 1 }}>구분</Text>
-              <Text style={{ flex: 1 }}> 보유 수량</Text>
-              <Text style={{ flex: 0.8 }}>손익<Text style={{ fontSize: 11 }}>%</Text></Text>
-              <Text style={{ flex: 1 }}>평가액<Text style={{ fontSize: 11 }}>(KRW)</Text></Text>
+              <Text style={{ flex: 1 }}>{I18n.t('funds.division')}</Text>
+              <Text style={{ flex: 1 }}> {I18n.t('funds.quantity')}</Text>
+              <Text style={{ flex: 0.8 }}>{I18n.t('funds.profitAndLoss')}<Text style={{ fontSize: 11 }}>%</Text></Text>
+              <Text style={{ flex: 1 }}>{I18n.t('funds.valuation')}<Text style={{ fontSize: 11 }}>({I18n.t('funds.currency')})</Text></Text>
             </View>
             <ScrollView>
               {
@@ -198,17 +193,17 @@ export default class FundsScreen extends BaseScreen {
                       <Text>{symbol.code.toUpperCase()}</Text>
                     </View>
                     <Text style={{ flex: 1, fontSize: 12 }}>
-                      {symbol.code.toUpperCase() !== 'KRW' && parseFloat(symbol.balance).toFixed(2)}
+                      {symbol.code.toUpperCase() !== 'KRW' && parseFloat(symbol.balance)}
                     </Text>
                     <Text style={[{ flex: 0.8 }, symbol.yield > 0 ? { color: 'red' } : { color: 'blue' }]}>
-                      {symbol.code.toUpperCase() !== "KRW" && symbol.yield}
-                      {symbol.code.toUpperCase() !== "KRW" && <Text style={{ fontSize: 11 }}>%</Text>}
+                      {symbol.code.toUpperCase() !== "KRW" && formatPercent(symbol.yield)}
+                      {/* {symbol.code.toUpperCase() !== "KRW" && <Text style={{ fontSize: 11 }}>%</Text>} */}
                     </Text>
                     <Text
                       style={[{ flex: 1, fontSize: 11 },
                       symbol.yield > 0 ? { color: 'red' } : { color: 'blue' },
                       symbol.code.toUpperCase() === 'KRW' ? { color: 'black' } : {}]}>
-                      {(symbol.balance * symbol.price).toFixed(2)}
+                      {(symbol.balance * symbol.price)}
                     </Text>
                   </View>
                 ))
@@ -220,10 +215,10 @@ export default class FundsScreen extends BaseScreen {
               flexDirection: "row", height: 30, backgroundColor: '#c7d2e2',
               alignItems: 'center', justifyContent: 'center', borderTopWidth: 1
             }}>
-            <Text style={{ flex: 1, fontWeight: 'bold' }}>TOTAL</Text>
+            <Text style={{ flex: 1, fontWeight: 'bold' }}>{I18n.t('funds.total')}</Text>
             <Text style={{ flex: 1 }}></Text>
-            <Text style={{ flex: 0.8, fontWeight: 'bold', color: 'red' }}>{this.state.yield}<Text style={{ fontSize: 11 }}>%</Text></Text>
-            <Text style={{ flex: 1.5, fontWeight: 'bold', color: 'red' }}>{this.state.priceTotal}</Text>
+            <Text style={{ flex: 0.8, fontWeight: 'bold', color: 'red' }}>{formatPercent(this.state.yield)}</Text>
+            <Text style={{ flex: 1.5, fontWeight: 'bold', color: 'red' }}>{formatCurrency(this.state.priceTotal, this.currency)}</Text>
           </View>
         </View>
 
@@ -252,7 +247,7 @@ const styles = ScaledSheet.create({
   content: { flex: 1, flexDirection: "column" },
   header: { height: 80, flexDirection: "row", borderBottomWidth: 1 },
   logo: { flex: 1, flexDirection: "row", alignItems: 'center', justifyContent: 'center' },
-  info: { flex: 1.5, flexDirection: "column", alignItems: 'center', justifyContent: 'center' },
+  info: { flex: 2, flexDirection: "column", alignItems: 'center', justifyContent: 'center' },
   infoRow: { flexDirection: "row", alignItems: 'center', justifyContent: 'center' },
   infoRowLeft: { flex: 1 },
   infoRowRight: { flex: 1.5 },
