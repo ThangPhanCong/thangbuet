@@ -95,10 +95,10 @@ class MarketScreen extends BaseScreen {
               <View style={styles.spacePairName} />
               <View style={{ alignSelf: 'center' }}>
                 <Text style={styles.itemCoin}>
-                  {getCurrencyName(item.coin) + '/' + getCurrencyName(item.currency)}
+                  {getCurrencyName(item.coin) + ' / ' + getCurrencyName(item.currency)}
                 </Text>
                 <Text style={styles.itemCoin}>
-                  {getCurrencyName(item.coin) + '/' + getCurrencyName(item.currency)}
+                  {getCurrencyName(item.coin) + ' / ' + getCurrencyName(item.currency)}
                 </Text>
               </View>
             </View>
@@ -190,7 +190,7 @@ class MarketScreen extends BaseScreen {
   }
 
   _onPressItem(item) {
-    // this.navigate('MarketDetailScreen', item);
+    this.props.showMarketScreenDetail(item);
   }
 
   async _onEnableFavorite(item) {

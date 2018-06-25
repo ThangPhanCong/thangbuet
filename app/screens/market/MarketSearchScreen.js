@@ -2,11 +2,16 @@ import React from 'react';
 import {
   Text,
   TouchableOpacity,
+  TouchableHighlight,
   PixelRatio,
   TextInput,
   SafeAreaView,
-  View
+  View,
+  FlatList
 } from 'react-native';
+import {
+  Card
+} from 'react-native-elements';
 import BaseScreen from '../BaseScreen';
 import { TabNavigator, TabBarTop } from 'react-navigation';
 import Consts from '../../utils/Consts';
@@ -15,56 +20,18 @@ import ScaledSheet from '../../libs/reactSizeMatter/ScaledSheet';
 import I18n from '../../i18n/i18n';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import MarketScreen from './MarketScreen';
+import rf from '../../libs/RequestFactory';
+import _ from 'lodash';
 
-const TabBarNavigator = TabNavigator(
-  {
-    MarketScreenKRW: {
-      screen: (props) => <MarketScreen {...props} currency = {Consts.CURRENCY_KRW}/>,
-      navigationOptions: () => ({
-        tabBarLabel: Consts.CURRENCY_KRW,
-      })
-    },
-    MarketScreenBTC: {
-      screen: (props) => <MarketScreen {...props} currency = {Consts.CURRENCY_BTC}/>,
-      navigationOptions: () => ({
-        tabBarLabel: Consts.CURRENCY_BTC,
-      })
-    },
-    MarketScreenETH: {
-      screen: (props) => <MarketScreen {...props} currency = {Consts.CURRENCY_ETH}/>,
-      navigationOptions: () => ({
-        tabBarLabel: Consts.CURRENCY_ETH,
-      })
-    }
-  },
-  {
-    navigationOptions: ({ navigation }) => ({
-      gesturesEnabled: false
-    }),
-    tabBarComponent: TabBarTop,
-    tabBarPosition: 'top',
-    tabBarOptions: {
-      upperCaseLabel: true,
-      activeTintColor: '#FFC000',
-      inactiveTintColor: '#D9D9D9',
-      style: {
-        backgroundColor: '#3B3838',
-      },
-      indicatorStyle: {
-        backgroundColor: '#FFC000'
-      },
-      labelStyle: {
-        fontSize: 16
-      }
-    },
-    animationEnabled: false,
-    swipeEnabled: false
-  }
-);
+let TabBarNavigator;
 
 class MarketSearchScreen extends BaseScreen {
   constructor(props) {
     super(props);
+    this.state = {
+      searchList: []
+    }
+    TabBarNavigator = this._initTabNavigator();
   }
 
   render() {
@@ -107,13 +74,121 @@ class MarketSearchScreen extends BaseScreen {
                 color="#000" />
             </View>
           </View>
+          {this._renderSearchList()}
         </View>
       </View>
     )
   }
 
-  _onTextChanged(text) {
+  _renderSearchList() {
+    let { searchList } = this.state;
+    if (_.isEmpty(searchList))
+      return null;
+
+    return (
+      <Card style={styles.searchResult}>
+        <FlatList
+          style={styles.listView}
+          data={this.state.searchList}
+          extraData={this.state}
+          renderItem={this._renderItem.bind(this)}
+        />
+      </Card>
+    )
+  }
+
+  _renderItem(item){
+    return (
+      <TouchableHighlight
+        style={styles.listItem}
+        onPress={() => this._onPressItem(item)}
+        underlayColor='#FFECED'>
+        <View style = {styles.listItemContainer}>
+          <Text style={styles.searchResultLabel}>
+            {item.coinPair}
+          </Text>
+        </View>
+      </TouchableHighlight>
+    )
+  }
+
+  _initTabNavigator() {
+    return TabNavigator(
+      {
+        MarketScreenKRW: {
+          screen: (props) => <MarketScreen {...props} currency = {Consts.CURRENCY_KRW} showMarketScreenDetail={this._onPressItem.bind(this)}/>,
+          navigationOptions: () => ({
+            tabBarLabel: Consts.CURRENCY_KRW,
+          })
+        },
+        MarketScreenBTC: {
+          screen: (props) => <MarketScreen {...props} currency = {Consts.CURRENCY_BTC} showMarketScreenDetail={this._onPressItem.bind(this)}/>,
+          navigationOptions: () => ({
+            tabBarLabel: Consts.CURRENCY_BTC,
+          })
+        },
+        MarketScreenETH: {
+          screen: (props) => <MarketScreen {...props} currency = {Consts.CURRENCY_ETH} showMarketScreenDetail={this._onPressItem.bind(this)}/>,
+          navigationOptions: () => ({
+            tabBarLabel: Consts.CURRENCY_ETH,
+          })
+        }
+      },
+      {
+        navigationOptions: ({ navigation }) => ({
+          gesturesEnabled: false
+        }),
+        tabBarComponent: TabBarTop,
+        tabBarPosition: 'top',
+        tabBarOptions: {
+          upperCaseLabel: true,
+          activeTintColor: '#FFC000',
+          inactiveTintColor: '#D9D9D9',
+          style: {
+            backgroundColor: '#3B3838',
+          },
+          indicatorStyle: {
+            backgroundColor: '#FFC000'
+          },
+          labelStyle: {
+            fontSize: 16
+          }
+        },
+        animationEnabled: false,
+        swipeEnabled: false
+      }
+    );
+  }
+
+  _onPressItem(item) {
+    console.log('Navigate to trading screen', item);
+    // this.navigate('MarketDetailScreen', item);
+  }
+
+  async _onTextChanged(searchText) {
+    let searchList;
+    if (_.isEmpty(searchText))
+      searchList = [];
+    else
+      searchList = await this._searchList(searchText.toLowerCase());
     
+    this.setState({
+      searchList
+    })
+  }
+
+  async _searchList(searchText) {
+    try {
+      let symbolResponse = await rf.getRequest('MasterdataRequest').getAll();
+      let symbols = _.filter(symbolResponse.coin_settings, symbol => symbol.currency.includes(searchText) || symbol.coin.includes(searchText));
+      symbols.map(symbol => {
+        symbol.coinPair = symbol.currency.toUpperCase() + '/' + symbol.coin.toUpperCase();        
+        return symbol;
+      })
+      return symbols;
+    } catch (err) {
+      console.log('MarketScreen._getSymbols', err);
+    }
   }
 }
 
@@ -167,6 +242,26 @@ const styles = ScaledSheet.create({
     marginStart: "6@s",
     borderColor: null,
     alignSelf: 'center'
+  },
+  listView: {
+    flex: 1,
+  },
+  listItem: {
+    height: "44@s"
+  },
+  listItemContainer: {
+    flex: 1,
+    alignItems: 'center',
+    paddingLeft: "10@s",
+    paddingRight: "10@s"
+  },
+  searchResultLabel: {
+    color: '#3B3838',
+    fontSize: '14@s'
+  },
+  searchResult: {
+    zIndex: 99,
+    marginTop: '3@s'
   }
 });
 
