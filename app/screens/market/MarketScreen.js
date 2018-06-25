@@ -16,6 +16,7 @@ import ScaledSheet from '../../libs/reactSizeMatter/ScaledSheet';
 import I18n from '../../i18n/i18n';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import _ from 'lodash';
+import { createSelector, createSelectorCreator, defaultMemoize } from 'reselect';
 
 class MarketScreen extends BaseScreen {
   static defaultProps = {
@@ -30,15 +31,15 @@ class MarketScreen extends BaseScreen {
   constructor(props) {
     super(props);
 
-    if (!this.props.stats.sortField)
-      this.props.stats.sortField = Consts.SORT_MARKET_FIELDS.VOLUME;
-    if (!this.props.stats.sortDirection)
-      this.props.stats.sortDirection = Consts.SORT_DIRECTION.DESC;
+    if (!this.props.sortField)
+      this.props.sortField = Consts.SORT_MARKET_FIELDS.VOLUME;
+    if (!this.props.sortDirection)
+      this.props.sortDirection = Consts.SORT_DIRECTION.DESC;
   }
 
   componentWillMount() {
     super.componentWillMount();
-    if (_.isEmpty(this.props.stats.symbols))
+    if (_.isEmpty(this.props.symbols))
       this.props.getList();
   }
 
@@ -48,8 +49,8 @@ class MarketScreen extends BaseScreen {
         {this._renderHeader()}
         <FlatList
           style={styles.listView}
-          data={this.props.stats.symbols}
-          extraData={this.props.stats}
+          data={this.props.symbols}
+          extraData={this.props}
           renderItem={this._renderItem.bind(this)}
           ItemSeparatorComponent={this._renderSeparator}
         />
@@ -154,7 +155,7 @@ class MarketScreen extends BaseScreen {
   }
 
   _onSortPair() {
-    let { sortField, sortDirection } = this.props.stats;
+    let { sortField, sortDirection } = this.props;
 
     if (sortField == Consts.SORT_MARKET_FIELDS.SYMBOL) {
       sortDirection = this._revertSortDirection(sortDirection);
@@ -167,7 +168,7 @@ class MarketScreen extends BaseScreen {
   }
 
   _onSortLastPrice() {
-    let { sortField, sortDirection } = this.props.stats;
+    let { sortField, sortDirection } = this.props;
 
     if (sortField == Consts.SORT_MARKET_FIELDS.PRICE) {
       sortDirection = this._revertSortDirection(sortDirection);
@@ -180,7 +181,7 @@ class MarketScreen extends BaseScreen {
   }
 
   _onSortChangePercent() {
-    let { sortField, sortDirection } = this.props.stats;
+    let { sortField, sortDirection } = this.props;
 
     if (sortField == Consts.SORT_MARKET_FIELDS.CHANGE) {
       sortDirection = this._revertSortDirection(sortDirection);
@@ -193,7 +194,7 @@ class MarketScreen extends BaseScreen {
   }
 
   _onSortVolume() {
-    let { sortField, sortDirection } = this.props.stats;
+    let { sortField, sortDirection } = this.props;
 
     if (sortField == Consts.SORT_MARKET_FIELDS.VOLUME) {
       sortDirection = this._revertSortDirection(sortDirection);
@@ -210,7 +211,7 @@ class MarketScreen extends BaseScreen {
   }
 
   _renderArrow(field) {
-    let {sortField, sortDirection } = this.props.stats;
+    let {sortField, sortDirection } = this.props;
     return (
       sortField === field && sortDirection === Consts.SORT_DIRECTION.ASC ?
       <Icon
@@ -233,7 +234,7 @@ class MarketScreen extends BaseScreen {
   }
 
   _changeSortField(sortField, sortDirection) {
-    let symbols = this.props.stats.symbols;
+    let symbols = this.props.symbols;
     this.props.sortList(symbols, sortField, sortDirection);
   }
 
@@ -255,19 +256,24 @@ class MarketScreen extends BaseScreen {
   }
 }
 
-function mapStateToPropsFactory(state, ownProps) {
-  return (state) => {
-    return {
-      stats: state.marketReducer
-    }
-  }
-}
-
-// function mapStateToProps(state, ownProps) {
-//   return {
-//     stats: state.marketReducer
+// function mapStateToPropsFactory(state, ownProps) {
+//   return (state, props) => {
+//     return {
+//       stats: (state.marketReducer.currency === props.currency) && state.marketReducer
+//     }
 //   }
 // }
+
+function mapStateToProps(state, ownProps) {
+  let res = computeProps(state, ownProps);
+
+  return {
+    symbols: res[ownProps.currency],
+    isLoading: res.isLoading,
+    sortField: res.sortField,
+    sortDirection: res.sortDirection
+  }
+}
 
 function mapDispatchToProps(dispatch, ownProps) {
   return {
@@ -287,7 +293,31 @@ function mapDispatchToProps(dispatch, ownProps) {
   }
 }
 
-export default connect(mapStateToPropsFactory, mapDispatchToProps)(MarketScreen);
+const createCachedSelector = createSelectorCreator(
+  defaultMemoize,
+  _.isEqual
+);
+
+const computeProps = createCachedSelector(
+  (_, props) => props.currency,
+  state => state.symbols,
+  state => state,
+  (currency, symbols, state) => {
+    let res = {};
+    res[currency] = symbols;
+    res.isLoading = state.isLoading;
+    res.sortField = state.sortField;
+    res.sortDirection = state.sortDirection;
+    res.error = state.error;
+
+    return res;
+  }
+)
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(MarketScreen);
 
 const styles = ScaledSheet.create({
   screen: {
