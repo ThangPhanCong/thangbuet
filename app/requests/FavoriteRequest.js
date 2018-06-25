@@ -43,6 +43,8 @@ export default class FavoriteRequest extends BaseModelRequest {
           cachedFavoriteSymbols.push(res);
           window.GlobalSocket.favoriteSymbols.data = cachedFavoriteSymbols;
         }
+
+        return res;
       })
   }
 
@@ -54,6 +56,7 @@ export default class FavoriteRequest extends BaseModelRequest {
     return this.del(url, { coinPair })
       .then(res => {
         _.remove(window.GlobalSocket.favoriteSymbols.data, item => item === favorite);
+        return res;
       })
   }
 }

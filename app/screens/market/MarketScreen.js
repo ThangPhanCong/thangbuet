@@ -89,7 +89,7 @@ class MarketScreen extends BaseScreen {
               <Icon
                 name='star'
                 size={15}
-                color={item.isFavorite ? '#FFC000' : '#D9D9D9'} />
+                color={this._isFavorite(item) ? '#FFC000' : '#D9D9D9'} />
             </TouchableOpacity>
             <View style={styles.spacePairName} />
             <View style={{ alignSelf: 'center' }}>
@@ -193,10 +193,9 @@ class MarketScreen extends BaseScreen {
   }
 
   async _onEnableFavorite(item) {
-    let currentFavorite = item.isFavorite;
+    let currentFavorite = this._isFavorite(item);
     let favorites = this.state.favorites;
-    item.isFavorite = !item.isFavorite;
-    favorites[item.key] = item.isFavorite;
+    favorites[item.key] = !currentFavorite;
     this.setState({
       favorites
     })
@@ -210,8 +209,7 @@ class MarketScreen extends BaseScreen {
       }
     }
     catch (err) {
-      item.isFavorite = !item.isFavorite;
-      favorites[item.key] = item.isFavorite;
+      favorites[item.key] = currentFavorite;
       this.setState({
         favorites
       })
@@ -385,22 +383,16 @@ class MarketScreen extends BaseScreen {
       this._updateSymbolData(symbols, currency, coin, prices[symbolKey]);
     }
 
-    let currencyPrice = undefined;
-    if (this.props.currency != Consts.CURRENCY_VND) {
-      let key = Utils.getPriceKey(Consts.CURRENCY_VND, this.props.currency);
-      if (prices[key]) {
-        currencyPrice = prices[key].price
-      }
-    }
-
     let result = {
       prices,
-      symbols: this._sortSymbols(symbols, sortField, sortDirection)
+      symbols: this._sortSymbols(symbols, sortField, sortDirection),
+      favorites
     };
-    if (currencyPrice) {
-      result['currencyPrice'] = currencyPrice;
-    }
     return result;
+  }
+
+  _isFavorite(symbol) {
+    return this.state.favorites[symbol.key];
   }
 
   _updateSymbolData(symbols, currency, coin, data) {
