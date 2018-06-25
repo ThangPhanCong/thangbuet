@@ -102,7 +102,7 @@ class MarketSearchScreen extends BaseScreen {
             />
             <View style={styles.iconContainer}>
               <Icon name="magnify"
-                size={PixelRatio.getPixelSizeForLayoutSize(10)}
+                size={PixelRatio.getPixelSizeForLayoutSize(8)}
                 style={styles.searchIcon}
                 color="#000" />
             </View>
@@ -145,7 +145,8 @@ const styles = ScaledSheet.create({
   },
   iconContainer: {
     justifyContent: 'center',
-    alignItems: 'center'
+    alignItems: 'center',
+    marginEnd: '2@s'
   },
   searchView: {
     borderColor: '#BFBFBF',
@@ -160,7 +161,7 @@ const styles = ScaledSheet.create({
   inputSearch: {
     flex: 1,
     color: '#000',
-    alignItems: 'center',
+    textAlign: 'center',
     fontSize: "12@s",
     height: "30@s",
     marginStart: "6@s",
