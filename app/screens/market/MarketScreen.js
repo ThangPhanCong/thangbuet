@@ -15,7 +15,6 @@ import ScaledSheet from '../../libs/reactSizeMatter/ScaledSheet';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import rf from '../../libs/RequestFactory';
 import _ from 'lodash';
-import Utils from '../../utils/Utils';
 
 class MarketScreen extends BaseScreen {
   static SORT_FIELDS = {
@@ -136,7 +135,7 @@ class MarketScreen extends BaseScreen {
   _renderHeader() {
     return (
       <View style={styles.tabBar}>
-        <TouchableWithoutFeedback onPress={() => this._onSortPair()}>
+        <TouchableWithoutFeedback onPress={() => this._onSortField(MarketScreen.SORT_FIELDS.SYMBOL)}>
           <View style={{ flex: 3, alignItems: 'center' }}>
             <Text style={styles.normalHeader}>
               코인
@@ -145,7 +144,7 @@ class MarketScreen extends BaseScreen {
           </View>
         </TouchableWithoutFeedback>
 
-        <TouchableWithoutFeedback onPress={() => this._onSortLastPrice()}>
+        <TouchableWithoutFeedback onPress={() => this._onSortField(MarketScreen.SORT_FIELDS.PRICE)}>
           <View style={{ flex: 3, alignItems: 'flex-end' }}>
             <Text style={styles.normalHeader}>
               현재가
@@ -154,7 +153,7 @@ class MarketScreen extends BaseScreen {
           </View>
         </TouchableWithoutFeedback>
 
-        <TouchableWithoutFeedback onPress={() => this._onSortChangePercent()}>
+        <TouchableWithoutFeedback onPress={() => this._onSortField(MarketScreen.SORT_FIELDS.CHANGE)}>
           <View style={{ flex: 2, alignItems: 'flex-end' }}>
             <Text style={styles.normalHeader}>
               전일대비
@@ -163,7 +162,7 @@ class MarketScreen extends BaseScreen {
           </View>
         </TouchableWithoutFeedback>
 
-        <TouchableWithoutFeedback onPress={() => this._onSortVolume()}>
+        <TouchableWithoutFeedback onPress={() => this._onSortField(MarketScreen.SORT_FIELDS.VOLUME)}>
           <View style={{ flex: 3, alignItems: 'flex-end' }}>
             <Text style={styles.normalHeader}>
               거래대금
@@ -219,52 +218,13 @@ class MarketScreen extends BaseScreen {
     }
   }
 
-  _onSortPair() {
-    let { sortField, sortDirection, symbols } = this.state;
-
-    if (sortField != MarketScreen.SORT_FIELDS.SYMBOL) {
-      sortDirection = this._revertSortDirection(sortDirection);
-    } else {
-      sortField = MarketScreen.SORT_FIELDS.SYMBOL;
-      sortDirection = MarketScreen.SORT_DIRECTION.DESC;
-    }
-
-    this._changeSortField(sortField, sortDirection);
-  }
-
-  _onSortLastPrice() {
+  _onSortField(field) {
     let { sortField, sortDirection } = this.state;
 
-    if (sortField == MarketScreen.SORT_FIELDS.PRICE) {
+    if (sortField === field) {
       sortDirection = this._revertSortDirection(sortDirection);
     } else {
-      sortField = MarketScreen.SORT_FIELDS.PRICE;
-      sortDirection = MarketScreen.SORT_DIRECTION.DESC;
-    }
-
-    this._changeSortField(sortField, sortDirection);
-  }
-
-  _onSortChangePercent() {
-    let { sortField, sortDirection } = this.state;
-
-    if (sortField == MarketScreen.SORT_FIELDS.CHANGE) {
-      sortDirection = this._revertSortDirection(sortDirection);
-    } else {
-      sortField = MarketScreen.SORT_FIELDS.CHANGE;
-      sortDirection = MarketScreen.SORT_DIRECTION.DESC;
-    }
-
-    this._changeSortField(sortField, sortDirection);
-  }
-
-  _onSortVolume() {
-    let { sortField, sortDirection } = this.state;
-
-    if (sortField == MarketScreen.SORT_FIELDS.VOLUME) {
-      sortDirection = this._revertSortDirection(sortDirection);
-    } else {
-      sortField = MarketScreen.SORT_FIELDS.VOLUME;
+      sortField = field;
       sortDirection = MarketScreen.SORT_DIRECTION.DESC;
     }
 
@@ -316,19 +276,6 @@ class MarketScreen extends BaseScreen {
     } catch (err) {
       console.log('MarketScreen._getFavorites', err);
     }
-  }
-
-  _revertSortDirection(direction) {
-    if (direction == Consts.SORT_DIRECTION.ASC) {
-      return Consts.SORT_DIRECTION.DESC;
-    } else {
-      return Consts.SORT_DIRECTION.ASC;
-    }
-  }
-
-  _changeSortField(sortField, sortDirection) {
-    let symbols = this.props.symbols;
-    this.props.sortList(symbols, sortField, sortDirection);
   }
 
   _applyTextColorByChange(number) {
