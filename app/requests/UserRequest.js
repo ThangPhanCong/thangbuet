@@ -60,13 +60,13 @@ export default class UserRequest extends BaseModelRequest {
   }
 
   getBalance() {
-    // if (window.GlobalSocket) {
-    //   if (window.GlobalSocket.balance) {
-    //     return new Promise((resolve, reject) => {
-    //       resolve(window.GlobalSocket.balance);
-    //     });
-    //   }
-    // }
+    if (window.GlobalSocket) {
+      if (window.GlobalSocket.balance) {
+        return new Promise((resolve, reject) => {
+          resolve(window.GlobalSocket.balance);
+        });
+      }
+    }
 
     return new Promise((resolve, reject) => {
       let url = '/balance';

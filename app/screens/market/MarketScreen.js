@@ -12,6 +12,9 @@ import { CommonColors, CommonStyles } from '../../utils/CommonStyles';
 import { getCurrencyName, formatCurrency, formatPercent } from "../../utils/Filters";
 import ScaledSheet from '../../libs/reactSizeMatter/ScaledSheet';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import rf from '../../libs/RequestFactory';
+import _ from 'lodash';
+import Utils from '../../utils/Utils';
 
 class MarketScreen extends BaseScreen {
   static SORT_FIELDS = {
@@ -64,8 +67,8 @@ class MarketScreen extends BaseScreen {
         {this._renderHeader()}
         <FlatList
           style={styles.listView}
-          data={this.props.symbols}
-          extraData={this.props}
+          data={this.state.symbols}
+          extraData={this.state}
           renderItem={this._renderItem.bind(this)}
           ItemSeparatorComponent={this._renderSeparator}
         />
@@ -170,7 +173,7 @@ class MarketScreen extends BaseScreen {
   }
 
   _onSortPair() {
-    let { sortField, sortDirection } = this.props;
+    let { sortField, sortDirection } = this.state;
 
     if (sortField == Consts.SORT_MARKET_FIELDS.SYMBOL) {
       sortDirection = this._revertSortDirection(sortDirection);
@@ -183,7 +186,7 @@ class MarketScreen extends BaseScreen {
   }
 
   _onSortLastPrice() {
-    let { sortField, sortDirection } = this.props;
+    let { sortField, sortDirection } = this.state;
 
     if (sortField == Consts.SORT_MARKET_FIELDS.PRICE) {
       sortDirection = this._revertSortDirection(sortDirection);
@@ -196,7 +199,7 @@ class MarketScreen extends BaseScreen {
   }
 
   _onSortChangePercent() {
-    let { sortField, sortDirection } = this.props;
+    let { sortField, sortDirection } = this.state;
 
     if (sortField == Consts.SORT_MARKET_FIELDS.CHANGE) {
       sortDirection = this._revertSortDirection(sortDirection);
@@ -209,7 +212,7 @@ class MarketScreen extends BaseScreen {
   }
 
   _onSortVolume() {
-    let { sortField, sortDirection } = this.props;
+    let { sortField, sortDirection } = this.state;
 
     if (sortField == Consts.SORT_MARKET_FIELDS.VOLUME) {
       sortDirection = this._revertSortDirection(sortDirection);
@@ -226,7 +229,7 @@ class MarketScreen extends BaseScreen {
   }
 
   _renderArrow(field) {
-    let {sortField, sortDirection } = this.props;
+    let {sortField, sortDirection } = this.state;
     return (
       sortField === field && sortDirection === Consts.SORT_DIRECTION.ASC ?
       <Icon
@@ -287,7 +290,7 @@ class MarketScreen extends BaseScreen {
   async _getSymbols() {
     try {
       let symbolResponse = await rf.getRequest('MasterdataRequest').getAll();
-      let symbols = filter(symbolResponse.coin_settings, ['currency', this.props.currency]);
+      let symbols = _.filter(symbolResponse.coin_settings, ['currency', this.props.currency]);
       symbols.map(symbol => {
         symbol.key = symbol.currency + '_' + symbol.coin;
         return symbol;
@@ -431,10 +434,10 @@ class MarketScreen extends BaseScreen {
 
   _sortSymbols(symbols, sortField, sortDirection) {
     if (sortField != MarketScreen.SORT_FIELDS.SYMBOL) {
-      return orderBy(symbols, (item) => parseFloat(item[sortField]), sortDirection);
+      return _.orderBy(symbols, (item) => parseFloat(item[sortField]), sortDirection);
     } else {
       const revertedDirection = this._revertSortDirection(sortDirection);
-      return orderBy(symbols, ['coin', 'currency'], [revertedDirection, revertedDirection]);
+      return _.orderBy(symbols, ['coin', 'currency'], [revertedDirection, revertedDirection]);
     }
   }
 

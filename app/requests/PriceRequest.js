@@ -10,9 +10,9 @@ export default class PriceRequest extends BaseRequest {
   }
 
   getPrices() {
-    // if (window.GlobalSocket && window.GlobalSocket.prices) {
-    //   return Promise.resolve(window.GlobalSocket.prices);
-    // }
+    if (window.GlobalSocket && window.GlobalSocket.prices) {
+      return Promise.resolve(window.GlobalSocket.prices);
+    }
 
     if (this._isRequesting) {
       return new Promise((resolve, reject) => {
@@ -25,7 +25,7 @@ export default class PriceRequest extends BaseRequest {
     let url = '/prices';
     return this.get(url)
       .then(res => {
-        // window.GlobalSocket.setPrices(res);
+        window.GlobalSocket.setPrices(res);
         this._callback(this._getPriceResolvers, res);
         this._getPriceResolvers = [];
         this._getPriceRejectors = [];
