@@ -76,10 +76,6 @@ class MarketSearchScreen extends BaseScreen {
     )
   }
 
-  _onTextChanged(text) {
-    
-  }
-
   _renderHeader() {
     const { isFavorite } = this.props.navigation.state.params || {};
 
@@ -89,35 +85,35 @@ class MarketSearchScreen extends BaseScreen {
           <TouchableOpacity style = {styles.favoriteButton}>
             <Icon
               name='star'
-              size={15}
-              color={isFavorite ? 'yellow' : 'grey'} />
+              size={18}
+              color={isFavorite ? '#FFC000' : '#D9D9D9'} />
           </TouchableOpacity>
-          <Text>
+          <Text style = {styles.titleLeftView}>
             즐겨찾기
           </Text>
         </View>
-        <View style={styles.searchView}>
-          <TextInput style={styles.inputSearch}
-            underlineColorAndroid='transparent'
-            onChangeText={this._onTextChanged.bind(this)}
-            placeholder='검색'
-            placeholderTextColor="#A6A6A6"
-          />
-          <Icon name="magnify"
-            size={PixelRatio.getPixelSizeForLayoutSize(7)}
-            style={styles.searchIcon}
-            color="#000" />
+        <View style={styles.searchViewContainer}>
+          <View style={styles.searchView}>
+            <TextInput style={styles.inputSearch}
+              underlineColorAndroid='transparent'
+              onChangeText={this._onTextChanged.bind(this)}
+              placeholder='검색'
+              placeholderTextColor="#A6A6A6"
+            />
+            <View style={styles.iconContainer}>
+              <Icon name="magnify"
+                size={PixelRatio.getPixelSizeForLayoutSize(10)}
+                style={styles.searchIcon}
+                color="#000" />
+            </View>
+          </View>
         </View>
       </View>
     )
   }
 
-  _renderTabBar() {
-    return (
-      <View style = { styles.tabBar }>
-        
-      </View>
-    )
+  _onTextChanged(text) {
+    
   }
 }
 
@@ -134,12 +130,24 @@ const styles = ScaledSheet.create({
 
   },
   leftView: {
+    marginStart: '16@s',
     flex: 1,
     alignItems: 'center',
     flexDirection: 'row'
   },
-  searchView: {
+  titleLeftView: {
+    marginStart: '5@s'
+  },
+  searchViewContainer: {
     flex: 3,
+    justifyContent: 'center',
+    marginEnd: '16@s'
+  },
+  iconContainer: {
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
+  searchView: {
     borderColor: '#BFBFBF',
     borderWidth: 1,
     flexDirection: 'row',
@@ -147,15 +155,15 @@ const styles = ScaledSheet.create({
     alignItems: 'center'
   },
   searchIcon: {
-    marginTop: "10@s",
     alignSelf: 'flex-end'
   },
   inputSearch: {
-    color: '#FFF',
+    flex: 1,
+    color: '#000',
     alignItems: 'center',
     fontSize: "12@s",
-    width: "40@s",
-    marginLeft: "6@s",
+    height: "30@s",
+    marginStart: "6@s",
     borderColor: null,
     alignSelf: 'center'
   }

@@ -84,12 +84,13 @@ class MarketScreen extends BaseScreen {
 
         <View style={styles.nameGroup}>
           <View style={{ flexDirection: 'row' }}>
-            <View style = {{ alignItems: 'center', justifyContent: 'center' }}>
+            <TouchableOpacity style = {{ alignItems: 'center', justifyContent: 'center' }}
+              onPress = {() => this._onEnableFavorite(item)}>
               <Icon
                 name='star'
                 size={15}
-                color={item.isFavorite ? 'yellow' : 'grey'}/>
-            </View>
+                color={item.isFavorite ? '#FFC000' : '#D9D9D9'} />
+            </TouchableOpacity>
             <View style={styles.spacePairName} />
             <View style={{ alignSelf: 'center' }}>
               <Text style={styles.itemCoin}>
@@ -172,62 +173,6 @@ class MarketScreen extends BaseScreen {
     );
   }
 
-  _onSortPair() {
-    let { sortField, sortDirection } = this.state;
-
-    if (sortField == Consts.SORT_MARKET_FIELDS.SYMBOL) {
-      sortDirection = this._revertSortDirection(sortDirection);
-    } else {
-      sortField = Consts.SORT_MARKET_FIELDS.SYMBOL;
-      sortDirection = Consts.SORT_DIRECTION.DESC;
-    }
-
-    this._changeSortField(sortField, sortDirection);
-  }
-
-  _onSortLastPrice() {
-    let { sortField, sortDirection } = this.state;
-
-    if (sortField == Consts.SORT_MARKET_FIELDS.PRICE) {
-      sortDirection = this._revertSortDirection(sortDirection);
-    } else {
-      sortField = Consts.SORT_MARKET_FIELDS.PRICE;
-      sortDirection = Consts.SORT_DIRECTION.DESC;
-    }
-
-    this._changeSortField(sortField, sortDirection);
-  }
-
-  _onSortChangePercent() {
-    let { sortField, sortDirection } = this.state;
-
-    if (sortField == Consts.SORT_MARKET_FIELDS.CHANGE) {
-      sortDirection = this._revertSortDirection(sortDirection);
-    } else {
-      sortField = Consts.SORT_MARKET_FIELDS.CHANGE;
-      sortDirection = Consts.SORT_DIRECTION.DESC;
-    }
-
-    this._changeSortField(sortField, sortDirection);
-  }
-
-  _onSortVolume() {
-    let { sortField, sortDirection } = this.state;
-
-    if (sortField == Consts.SORT_MARKET_FIELDS.VOLUME) {
-      sortDirection = this._revertSortDirection(sortDirection);
-    } else {
-      sortField = Consts.SORT_MARKET_FIELDS.VOLUME;
-      sortDirection = Consts.SORT_DIRECTION.DESC;
-    }
-
-    this._changeSortField(sortField, sortDirection);
-  }
-
-  _onPressItem(item) {
-    // this.navigate('MarketDetailScreen', item);
-  }
-
   _renderArrow(field) {
     let {sortField, sortDirection } = this.state;
     return (
@@ -243,34 +188,87 @@ class MarketScreen extends BaseScreen {
     )
   }
 
-  _revertSortDirection(direction) {
-    if (direction == Consts.SORT_DIRECTION.ASC) {
-      return Consts.SORT_DIRECTION.DESC;
-    } else {
-      return Consts.SORT_DIRECTION.ASC;
+  _onPressItem(item) {
+    // this.navigate('MarketDetailScreen', item);
+  }
+
+  async _onEnableFavorite(item) {
+    let currentFavorite = item.isFavorite;
+    let favorites = this.state.favorites;
+    item.isFavorite = !item.isFavorite;
+    favorites[item.key] = item.isFavorite;
+    this.setState({
+      favorites
+    })
+
+    try {
+      if (currentFavorite) {
+        await rf.getRequest('FavoriteRequest').createFavoriteCoinPair(item.key);
+      }
+      else {
+        await rf.getRequest('FavoriteRequest').createFavoriteCoinPair(item.key);
+      }
+    }
+    catch (err) {
+      item.isFavorite = !item.isFavorite;
+      favorites[item.key] = item.isFavorite;
+      this.setState({
+        favorites
+      })
+      console.log('MarketScreen._onEnableFavorite', err);
     }
   }
 
-  _changeSortField(sortField, sortDirection) {
-    let symbols = this.props.symbols;
-    this.props.sortList(symbols, sortField, sortDirection);
+  _onSortPair() {
+    let { sortField, sortDirection, symbols } = this.state;
+
+    if (sortField != MarketScreen.SORT_FIELDS.SYMBOL) {
+      sortDirection = this._revertSortDirection(sortDirection);
+    } else {
+      sortField = MarketScreen.SORT_FIELDS.SYMBOL;
+      sortDirection = MarketScreen.SORT_DIRECTION.DESC;
+    }
+
+    this._changeSortField(sortField, sortDirection);
   }
 
-  _applyTextColorByChange(number) {
-    if (number > 0)
-      return styles.positiveText;
-    else if (number < 0)
-      return styles.negativeText;
-    else
-      return styles.normalText
+  _onSortLastPrice() {
+    let { sortField, sortDirection } = this.state;
+
+    if (sortField == MarketScreen.SORT_FIELDS.PRICE) {
+      sortDirection = this._revertSortDirection(sortDirection);
+    } else {
+      sortField = MarketScreen.SORT_FIELDS.PRICE;
+      sortDirection = MarketScreen.SORT_DIRECTION.DESC;
+    }
+
+    this._changeSortField(sortField, sortDirection);
   }
 
-  _toPercentChangeString(number) {
-    let percentString = formatPercent(number);
-    if (number > 0)
-      return '+' + percentString;
-    else
-      return percentString;
+  _onSortChangePercent() {
+    let { sortField, sortDirection } = this.state;
+
+    if (sortField == MarketScreen.SORT_FIELDS.CHANGE) {
+      sortDirection = this._revertSortDirection(sortDirection);
+    } else {
+      sortField = MarketScreen.SORT_FIELDS.CHANGE;
+      sortDirection = MarketScreen.SORT_DIRECTION.DESC;
+    }
+
+    this._changeSortField(sortField, sortDirection);
+  }
+
+  _onSortVolume() {
+    let { sortField, sortDirection } = this.state;
+
+    if (sortField == MarketScreen.SORT_FIELDS.VOLUME) {
+      sortDirection = this._revertSortDirection(sortDirection);
+    } else {
+      sortField = MarketScreen.SORT_FIELDS.VOLUME;
+      sortDirection = MarketScreen.SORT_DIRECTION.DESC;
+    }
+
+    this._changeSortField(sortField, sortDirection);
   }
 
   async _loadData() {
@@ -318,6 +316,36 @@ class MarketScreen extends BaseScreen {
     } catch (err) {
       console.log('MarketScreen._getFavorites', err);
     }
+  }
+
+  _revertSortDirection(direction) {
+    if (direction == Consts.SORT_DIRECTION.ASC) {
+      return Consts.SORT_DIRECTION.DESC;
+    } else {
+      return Consts.SORT_DIRECTION.ASC;
+    }
+  }
+
+  _changeSortField(sortField, sortDirection) {
+    let symbols = this.props.symbols;
+    this.props.sortList(symbols, sortField, sortDirection);
+  }
+
+  _applyTextColorByChange(number) {
+    if (number > 0)
+      return styles.positiveText;
+    else if (number < 0)
+      return styles.negativeText;
+    else
+      return styles.normalText
+  }
+
+  _toPercentChangeString(number) {
+    let percentString = formatPercent(number);
+    if (number > 0)
+      return '+' + percentString;
+    else
+      return percentString;
   }
 
   _getFavoritesMap(data) {
@@ -384,37 +412,6 @@ class MarketScreen extends BaseScreen {
     }
   }
 
-  _getCurrencyPrice(prices) {
-    if (this.props.currency != Consts.CURRENCY_VND) {
-      let key = Utils.getPriceKey(Consts.CURRENCY_VND, this.props.currency);
-      if (prices[key]) {
-        return prices[key].price;
-      }
-    }
-  }
-
-  isFavorite(symbol, favorites) {
-    return favorites[`${symbol.coin}/${symbol.currency}`];
-  }
-
-  _onPressItem(item) {
-    this.navigate('MarketDetailScreen', item);
-  }
-
-  _onSortPair() {
-    let { sortField, sortDirection, symbols } = this.state;
-
-    if (sortField != MarketScreen.SORT_FIELDS.SYMBOL) {
-      sortField = MarketScreen.SORT_FIELDS.SYMBOL;
-      sortDirection = MarketScreen.SORT_DIRECTION.DESC;
-    } else {
-      sortField = MarketScreen.SORT_FIELDS.VOLUME;
-      sortDirection = MarketScreen.SORT_DIRECTION.DESC;
-    }
-
-    this._changeSortField(sortField, sortDirection);
-  }
-
   _revertSortDirection(direction) {
     if (direction == MarketScreen.SORT_DIRECTION.ASC) {
       return MarketScreen.SORT_DIRECTION.DESC;
@@ -438,46 +435,6 @@ class MarketScreen extends BaseScreen {
     } else {
       const revertedDirection = this._revertSortDirection(sortDirection);
       return _.orderBy(symbols, ['coin', 'currency'], [revertedDirection, revertedDirection]);
-    }
-  }
-
-  _onSortLastPrice() {
-    let { sortField, sortDirection, symbols } = this.state;
-
-    if (sortField == MarketScreen.SORT_FIELDS.PRICE) {
-      sortDirection = this._revertSortDirection(sortDirection);
-    } else {
-      sortField = MarketScreen.SORT_FIELDS.PRICE;
-      sortDirection = MarketScreen.SORT_DIRECTION.DESC;
-    }
-
-    this._changeSortField(sortField, sortDirection);
-  }
-
-  _onSortChangePercent() {
-    let { sortField, sortDirection, symbols } = this.state;
-
-    if (sortField == MarketScreen.SORT_FIELDS.CHANGE) {
-      sortDirection = this._revertSortDirection(sortDirection);
-    } else {
-      sortField = MarketScreen.SORT_FIELDS.CHANGE;
-      sortDirection = MarketScreen.SORT_DIRECTION.DESC;
-    }
-
-    this._changeSortField(sortField, sortDirection);
-  }
-
-  _getPrice(currency, coin) {
-    let key = Utils.getPriceKey(currency, coin);
-    const priceObject = this.state.prices[key];
-    return priceObject ? priceObject.price : 1;
-  }
-
-  _getFiatPrice(item) {
-    if (item.currency == Consts.CURRENCY_VND) {
-      return item.price;
-    } else {
-      return item.price * this._getPrice(Consts.CURRENCY_VND, item.currency);
     }
   }
 }
