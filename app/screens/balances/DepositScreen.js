@@ -21,8 +21,9 @@ import I18n from '../../i18n/i18n'
 import AppConfig from '../../utils/AppConfig';
 import AppPreferences from '../../utils/AppPreferences';
 import { formatCurrency, formatPercent, getCurrencyName } from '../../utils/Filters';
+import { withNavigationFocus } from 'react-navigation';
 
-export default class BalanceScreen extends BaseScreen {
+class DepositScreen extends BaseScreen {
   constructor(props) {
     super(props)
     this.state = {
@@ -81,7 +82,7 @@ export default class BalanceScreen extends BaseScreen {
   }
 
   _onBalanceUpdated(newAccountBalances, ) {
-    console.log('newAccountBalances', newAccountBalances)
+    // console.log('newAccountBalances', newAccountBalances)
     for (balance in newAccountBalances) {
       if (!newAccountBalances[balance].name) {
         newAccountBalances[balance].name = balance
@@ -97,7 +98,6 @@ export default class BalanceScreen extends BaseScreen {
   }
 
   _onPricesUpdated(prices) {
-    console.log('prices', prices)
     const coinList = this.state.symbols
     coinList.map((coin, index) => {
       if (coin.code.toLowerCase() === this.currency) {
@@ -141,41 +141,22 @@ export default class BalanceScreen extends BaseScreen {
             <TextInput style={{ flex: 1, textAlign: 'center' }} placeholder='검색' underlineColorAndroid='rgba(0, 0, 0, 0)' autoCorrect={false} />
             <Icon name="search" size={20} />
           </View>
-          <View style={{ flex: 1 }}>
-            <View style={styles.tableHeader}>
-              <Text style={{ flex: 1 }}>{I18n.t('balances.coin')}</Text>
-              <Text style={{ flex: 1 }}> {I18n.t('balances.quantity')}</Text>
-              <Text style={{ flex: 1 }}>{I18n.t('balances.action')}</Text>
+          <ScrollView style={{ flex: 1 }}>
+            <View style={{ alignItems: 'center', justifyContent: 'center' }}><Text>BTC {I18n.t('deposit.title')}</Text></View>
+            <View style={{ flexDirection: 'column' }}>
+              <View style={{ flexDirection: 'row' }}>
+                <Text>{I18n.t('disposit.account')}</Text>
+                <Text>13123123123<Text>{I18n.t('funds.currency')}</Text></Text>
+              </View>
             </View>
-            <ScrollView>
-              {
-                this.state.symbols.map((symbol, index) => (
-                  <View
-                    key={symbol + "_" + index}
-                    style={styles.tableRow}>
-                    <View style={styles.tableRowDetail}>
-                      <Image
-                        style={{ width: 24, height: 24 }}
-                        source={{ uri: symbol.icon }} />
-                      <Text>{symbol.code.toUpperCase()}</Text>
-                    </View>
-                    <Text style={{ flex: 1, fontSize: 12 }}>
-                      {symbol.code.toUpperCase() !== 'KRW' && parseFloat(symbol.balance)}
-                    </Text>
-                    <View style={{ flex: 1, flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'flex-start' }}>
-                      <Button title={I18n.t('balances.deposit')} onPress={() => this.navigate('Deposit', { symbol })} />
-                      <Button title={I18n.t('balances.withdrawal')} onPress={() => { }} />
-                    </View>
-                  </View>
-                ))
-              }
-            </ScrollView>
-          </View>
+          </ScrollView>
         </View>
       </SafeAreaView>
     )
   }
 }
+
+export default withNavigationFocus(DepositScreen)
 
 const styles = ScaledSheet.create({
   fullScreen: { flex: 1 },

@@ -74,6 +74,15 @@ export default {
     min: 'min'
   },
 
+  tabBar: {
+    trading: '트레이딩',
+    funds: '자산현황',
+    balance: '입출금',
+    transaction: '거래내역',
+    myPage: 'MY PAGE'
+
+  },
+
   funds: {
     assetStatus: '자산현황',
     totalNumberOfCoin: '코인총매수',
@@ -85,5 +94,16 @@ export default {
     profitAndLoss: '손익',
     valuation: '평가',
     total: 'TOTAL'
+  },
+
+  balances: {
+    coin: '코인',
+    quantity: '보유수량',
+    action: '입출금',
+    deposit: '입금',
+    withdrawal: '출금',
+    totalAssets: '총자산평가액',
+    depositAndWithdrawal: '입출금',
+    currency: 'KRW',
   }
 };

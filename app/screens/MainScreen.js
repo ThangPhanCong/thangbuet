@@ -1,5 +1,5 @@
 import React from 'react';
-import { TabNavigator, TabBarBottom } from 'react-navigation';
+import { TabNavigator, TabBarBottom, StackNavigator } from 'react-navigation';
 import I18n from "../i18n/i18n";
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { PixelRatio } from 'react-native';
@@ -8,37 +8,47 @@ import FundsScreen from './funds/FundsScreen'
 import TransactionScreen from './transaction/TransactionScreen'
 import BalanceScreen from './balances/BalanceScreen'
 import MyPageScreen from './my-page/MyPageScreen'
+import DepositScreen from './balances/DepositScreen'
+
+export const BalanceStack = StackNavigator({
+  Balance: {
+    screen: BalanceScreen,
+  },
+  Deposit: {
+    screen: DepositScreen,
+  },
+});
 
 export default TabNavigator(
   {
     TradingScreen: {
       screen: TradingScreen,
       navigationOptions: () => ({
-        tabBarLabel: 'Trading',
+        tabBarLabel: I18n.t('tabBar.trading'),
       })
     },
     FundsScreen: {
       screen: FundsScreen,
       navigationOptions: () => ({
-        tabBarLabel: 'Funds',
+        tabBarLabel: I18n.t('tabBar.funds'),
       })
     },
     BalanceScreen: {
-      screen: BalanceScreen,
+      screen: BalanceStack,
       navigationOptions: () => ({
-        tabBarLabel: 'Balance',
+        tabBarLabel: I18n.t('tabBar.balance'),
       })
     },
     TransactionScreen: {
       screen: TransactionScreen,
       navigationOptions: () => ({
-        tabBarLabel: 'Transaction',
+        tabBarLabel: I18n.t('tabBar.transaction'),
       })
     },
     MyPageScreen: {
       screen: MyPageScreen,
       navigationOptions: () => ({
-        title: 'My page',
+        title: I18n.t('tabBar.myPage'),
       })
     },
   },
@@ -63,6 +73,6 @@ export default TabNavigator(
     },
     animationEnabled: false,
     swipeEnabled: false,
-    // initialRouteName: 'FundsScreen',
+    initialRouteName: 'BalanceScreen',
   }
 );
