@@ -88,7 +88,7 @@ export default class BasicInfoScreen extends BaseScreen {
 
   _renderSeparator(sectionID, rowID, adjacentRowHighlighted) {
     return (
-      <View key="rowID" style={styles.separator}/>
+      <View style={styles.separator}/>
     );
   }
 
