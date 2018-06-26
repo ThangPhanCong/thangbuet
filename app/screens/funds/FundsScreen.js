@@ -195,7 +195,7 @@ export default class FundsScreen extends BaseScreen {
                     <Text style={{ flex: 1, fontSize: 12 }}>
                       {symbol.code.toUpperCase() !== 'KRW' && parseFloat(symbol.balance)}
                     </Text>
-                    <Text style={[{ flex: 0.8 }, symbol.yield > 0 ? { color: 'red' } : { color: 'blue' }]}>
+                    <Text style={[{ flex: 0.5 }, symbol.yield > 0 ? { color: 'red' } : { color: 'blue' }]}>
                       {symbol.code.toUpperCase() !== "KRW" && formatPercent(symbol.yield)}
                       {/* {symbol.code.toUpperCase() !== "KRW" && <Text style={{ fontSize: 11 }}>%</Text>} */}
                     </Text>

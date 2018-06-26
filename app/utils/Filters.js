@@ -4,7 +4,7 @@ import { isNil } from 'lodash';
 import moment from "moment";
 
 function formatCurrency(amount, currency, zeroValue) {
-  let numberOfDecimalDigits = currency == Consts.CURRENCY_VND ? 0 : 10;
+  let numberOfDecimalDigits = currency == Consts.CURRENCY_KRW ? 0 : 10;
   let format = numberOfDecimalDigits == 0 ?
     '0,0' :
     '0,0.[' + Array(numberOfDecimalDigits + 1).join('0') + ']';
