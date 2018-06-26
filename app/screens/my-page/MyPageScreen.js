@@ -1,23 +1,19 @@
 import React from 'react';
 import {
   PixelRatio,
-  StyleSheet,
   Text,
-  TextInput,
-  TouchableOpacity,
   View,
-  Image,
   SafeAreaView
 } from 'react-native';
 import { TabNavigator, TabBarTop } from 'react-navigation';
 import BaseScreen from '../BaseScreen';
-import { CommonStyles, CommonColors } from '../../utils/CommonStyles';
+import { CommonStyles } from '../../utils/CommonStyles';
 
 import ScaledSheet from '../../libs/reactSizeMatter/ScaledSheet';
-import BasicInfoScreen from './tabs/BasicInfoScreen';
-import ConnectionScreen from './tabs/ConnectionScreen';
-import SecurityScreen from './tabs/SecurityScreen';
-import WalletScreen from './tabs/WalletScreen';
+import BasicInfoScreen from './basic/BasicInfoScreen';
+import ConnectionScreen from './connection/ConnectionScreen';
+import SecurityScreen from './security/SecurityScreen';
+import WalletScreen from './wallet/WalletScreen';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 const TabBarNavigator = TabNavigator({
