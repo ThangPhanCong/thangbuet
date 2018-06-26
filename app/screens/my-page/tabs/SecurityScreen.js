@@ -3,7 +3,7 @@ import {
   Text,
   View,
   Image,
-  TouchableOpacity,
+  TouchableHighlight,
   ScrollView
 } from 'react-native';
 
@@ -17,15 +17,14 @@ export default class SecurityScreen extends BaseScreen {
     propVerify: 'email_verified',
     image: require('../../../../assets/common/email.png')
   }, {
-    propValue: '',
-    propVerify: 'identity_verified',
+    propVerify: 'otp_verified',
     image: require('../../../../assets/common/googleAuth.png')
   }, {
     propValue: 'phone_no',
     propVerify: 'phone_verified',
     image: require('../../../../assets/common/phoneAuth.png')
   }, {
-    propValue: 'bank_account',
+    propValue: 'bank',
     propVerify: 'bank_account_verified',
     image: require('../../../../assets/common/accountVerify.png')
   }, {
@@ -37,7 +36,8 @@ export default class SecurityScreen extends BaseScreen {
     super(props);
 
     this.state = {
-      info: {}
+      info: {},
+      cancelOtpButtonPressed: false
     }
   }
 
@@ -92,9 +92,15 @@ export default class SecurityScreen extends BaseScreen {
         <View style={styles.valueGroup}>
           {
             this.state.info[item.propVerify] ? 
-            <TouchableOpacity>
-              
-            </TouchableOpacity> :
+            <TouchableHighlight style={styles.cancelOTPButton}
+              onPress={this._onCancelGoogleAuth.bind(this)}
+              onPressIn={() => this.setState({cancelOtpButtonPressed: true})}
+              onPressOut={() => this.setState({cancelOtpButtonPressed: false})}
+              underlayColor='#FF3300'>
+              <Text style={[styles.text, this.state.cancelOtpButtonPressed ? {color: '#FFF'} : {color: '#FF3300'}]}>
+                {'사용 중단하기'}
+              </Text>
+            </TouchableHighlight> :
             <Text style={styles.text}>
               { '미인증' }
             </Text>
@@ -171,14 +177,15 @@ export default class SecurityScreen extends BaseScreen {
   _renderVerifyButtonView(item, onPressHandler) {
     return (
       <View style={styles.buttonGroup}>
-        <TouchableOpacity 
+        <TouchableHighlight 
           style={this.state.info[item.propVerify] ? styles.activeButton : styles.inactiveButton}
           onPress={onPressHandler}
-          disabled={this.state.info[item.propVerify] > 0}>
+          disabled={this.state.info[item.propVerify] > 0}
+          underlayColor='#595959'>
           <Text style = {{ alignSelf: 'center', color: '#FFF' }}>
             {this.state.info[item.propVerify] ? '인증 완료' : '인증하기' }
           </Text>
-        </TouchableOpacity>
+        </TouchableHighlight>
       </View>
     )
   }
@@ -196,6 +203,10 @@ export default class SecurityScreen extends BaseScreen {
   }
 
   _onVerifyPassword() {
+
+  }
+
+  _onCancelGoogleAuth() {
 
   }
 
@@ -259,14 +270,24 @@ const styles = ScaledSheet.create({
   },
   activeButton: {
     borderRadius: '5@s',
-    height: '30@s',
+    height: '40@s',
     backgroundColor: '#0070C0',
     justifyContent: 'center'
   },
   inactiveButton: {
     borderRadius: '5@s',
-    height: '30@s',
-    backgroundColor: '#595959',
+    height: '40@s',
+    backgroundColor: '#BFBFBF',
     justifyContent: 'center'
+  },
+  cancelOTPButton: {
+    borderRadius: '5@s',
+    height: '40@s',
+    backgroundColor: '#FFF',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: '#FF3300',
+    marginEnd: '30@s'
   }
 });
