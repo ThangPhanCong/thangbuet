@@ -12,11 +12,11 @@ import { CommonStyles } from '../../../utils/CommonStyles';
 
 const GoogleAuthIcon = require('../../../../assets/common/googleAuthBig.png')
 const SmallAppleIcon = require('../../../../assets/common/appleSmall.png');
-const SmallAndroidIcon = require('../../../../assets/common/adnroidSmall.png');
+const SmallAndroidIcon = require('../../../../assets/common/androidSmall.png');
 const SmallAppStoreIcon = require('../../../../assets/common/appStoreSmall.png');
 const SmallPlayStoreIcon = require('../../../../assets/common/playStoreSmall.png');
 
-export default class ConnectionScreen extends BaseScreen {
+export default class OTPGuideScreen extends BaseScreen {
   render() {
     return(
       <View style={styles.screen}>
@@ -87,7 +87,7 @@ const styles = ScaledSheet.create({
   googleAuthContainer: {
     flexDirection: 'row',
     marginTop: '20@s',
-    marignBottom: '20@s',
+    marginBottom: '20@s',
     alignItems: 'center'
   },
   text: {
