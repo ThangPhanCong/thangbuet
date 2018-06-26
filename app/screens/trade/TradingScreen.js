@@ -18,7 +18,7 @@ import ScaledSheet from '../../libs/reactSizeMatter/ScaledSheet'
 import { filter, pickBy, startsWith, orderBy } from 'lodash'
 import Utils from '../../utils/Utils'
 import TradingGeneralScreen from './TradingGeneralScreen'
-import TradingOrderScreen from './TradingOrderScreen'
+import TradingOrderBookScreen from './TradingOrderBookScreen'
 import TradingChartScreen from './TradingChartScreen'
 import TradingConclusionScreen from './TradingConclusionScreen'
 import I18n from '../../i18n/i18n'
@@ -34,7 +34,7 @@ const TradeTabs = TabNavigator(
       })
     },
     Order: {
-      screen: TradingOrderScreen,
+      screen: TradingOrderBookScreen,
       navigationOptions: () => ({
         tabBarLabel: 'Order'
       })
