@@ -39,6 +39,18 @@ export default {
     return amount ? Numeral(amount).format(format) : zeroValue;
   },
 
+  getPrecision(num) {
+    let decimalDigitCount = 0;
+    while (num * Math.pow(10, decimalDigitCount) < 1) {
+      decimalDigitCount++;
+    }
+    return decimalDigitCount > 0 ? decimalDigitCount + 1 : decimalDigitCount;
+  },
+
+  calculatePriceSettingDigits(priceSetting) {
+    priceSetting.digits = this.getPrecision(priceSetting.value);
+  },
+
   getCurrencyName(value) {
     return value ? value.toUpperCase() : value;
   },

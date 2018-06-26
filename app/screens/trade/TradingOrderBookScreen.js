@@ -8,19 +8,21 @@ import {
   View,
   Image
 } from 'react-native';
-import BaseScreen from '../BaseScreen'
 import {
   createBottomTabNavigator,
   createStackNavigator,
 } from 'react-navigation'
+import BaseScreen from '../BaseScreen'
+import OrderBook from './OrderBook';
+import { CommonColors, CommonSize, CommonStyles } from '../../utils/CommonStyles';
 
 import ScaledSheet from '../../libs/reactSizeMatter/ScaledSheet';
 
-export default class TradingOrderScreen extends BaseScreen {
+export default class TradingOrderBookScreen extends BaseScreen {
   render() {
     return (
-      <View>
-
+      <View style={CommonStyles.matchParent}>
+        <OrderBook currency='krw' coin='btc' type={OrderBook.TYPE_FULL}/>
       </View>
     )
   }
