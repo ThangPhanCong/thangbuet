@@ -73,4 +73,17 @@ export default {
     hour: 'Hour',
     min: 'min'
   },
+
+  funds: {
+    assetStatus: '자산현황',
+    totalNumberOfCoin: '코인총매수',
+    currency: 'KRW',
+    coinValuation: '코인평가액',
+    ratingYeild: '평가수익률',
+    division: '구분',
+    quantity: '보유수량',
+    profitAndLoss: '손익',
+    valuation: '평가',
+    total: 'TOTAL'
+  }
 };
