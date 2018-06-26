@@ -63,6 +63,7 @@ export default TabNavigator(
       },
     },
     animationEnabled: false,
-    swipeEnabled: false
+    swipeEnabled: false,
+    // initialRouteName: 'FundsScreen',
   }
 );

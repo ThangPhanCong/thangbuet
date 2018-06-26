@@ -13,7 +13,7 @@ export default class AppPreferences {
       AppPreferences.lastTradingSymbol = { currency, coin };
     } else {
       AppPreferences.lastTradingSymbol = {
-        currency: Consts.CURRENCY_VND,
+        currency: Consts.CURRENCY_KRW,
         coin: Consts.CURRENCY_BTC
       };
     }

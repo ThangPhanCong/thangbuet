@@ -18,7 +18,7 @@ export default {
   },
 
   formatCurrencyAmount(amount, currency, zeroValue) {
-    let numberOfDecimalDigits = currency == Consts.CURRENCY_VND ? 0 : 10;
+    let numberOfDecimalDigits = currency == Consts.CURRENCY_KRW ? 0 : 10;
     let format = numberOfDecimalDigits == 0 ?
       '0,0' :
       '0,0.[' + Array(numberOfDecimalDigits + 1).join('0') + ']';
@@ -29,7 +29,7 @@ export default {
   },
 
   roundCurrencyAmount(amount, currency, zeroValue) {
-    let numberOfDecimalDigits = currency == Consts.CURRENCY_VND ? 0 : 10;
+    let numberOfDecimalDigits = currency == Consts.CURRENCY_KRW ? 0 : 10;
     let format = numberOfDecimalDigits == 0 ?
       '0' :
       '0[.' + Array(numberOfDecimalDigits + 1).join('0') + ']';
@@ -37,6 +37,18 @@ export default {
       zeroValue = '';
     }
     return amount ? Numeral(amount).format(format) : zeroValue;
+  },
+
+  getPrecision(num) {
+    let decimalDigitCount = 0;
+    while (num * Math.pow(10, decimalDigitCount) < 1) {
+      decimalDigitCount++;
+    }
+    return decimalDigitCount > 0 ? decimalDigitCount + 1 : decimalDigitCount;
+  },
+
+  calculatePriceSettingDigits(priceSetting) {
+    priceSetting.digits = this.getPrecision(priceSetting.value);
   },
 
   getCurrencyName(value) {
@@ -50,7 +62,7 @@ export default {
 
   isWalletAddress(currency, address, destination_tag) {
     switch (currency) {
-      case Consts.CURRENCY_VND:
+      case Consts.CURRENCY_KRW:
         //TO DO
         return /^.+$/.test(address);
       case "xrp":
