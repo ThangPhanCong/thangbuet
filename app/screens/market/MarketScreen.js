@@ -90,7 +90,7 @@ class MarketScreen extends BaseScreen {
                 <Icon
                   name='star'
                   size={15}
-                  color={this._isFavorite(item) ? '#FFC000' : '#D9D9D9'} />
+                  color={item.isFavorite ? '#FFC000' : '#D9D9D9'} />
               </TouchableOpacity>
               <View style={styles.spacePairName} />
               <View style={{ alignSelf: 'center' }}>
@@ -139,7 +139,7 @@ class MarketScreen extends BaseScreen {
           <View style={{ flex: 3, alignItems: 'center' }}>
             <Text style={styles.normalHeader}>
               코인
-              {this._renderArrow(Consts.SORT_MARKET_FIELDS.SYMBOL)}
+              {this._renderArrow(MarketScreen.SORT_FIELDS.SYMBOL)}
             </Text>
           </View>
         </TouchableWithoutFeedback>
@@ -148,7 +148,7 @@ class MarketScreen extends BaseScreen {
           <View style={{ flex: 3, alignItems: 'flex-end' }}>
             <Text style={styles.normalHeader}>
               현재가
-              {this._renderArrow(Consts.SORT_MARKET_FIELDS.PRICE)}
+              {this._renderArrow(MarketScreen.SORT_FIELDS.PRICE)}
             </Text>
           </View>
         </TouchableWithoutFeedback>
@@ -157,7 +157,7 @@ class MarketScreen extends BaseScreen {
           <View style={{ flex: 2, alignItems: 'flex-end' }}>
             <Text style={styles.normalHeader}>
               전일대비
-              {this._renderArrow(Consts.SORT_MARKET_FIELDS.CHANGE)}
+              {this._renderArrow(MarketScreen.SORT_FIELDS.CHANGE)}
             </Text>
           </View>
         </TouchableWithoutFeedback>
@@ -166,7 +166,7 @@ class MarketScreen extends BaseScreen {
           <View style={{ flex: 3, alignItems: 'flex-end' }}>
             <Text style={styles.normalHeader}>
               거래대금
-              {this._renderArrow(Consts.SORT_MARKET_FIELDS.VOLUME)}
+              {this._renderArrow(MarketScreen.SORT_FIELDS.VOLUME)}
             </Text>
           </View>
         </TouchableWithoutFeedback>
@@ -177,7 +177,7 @@ class MarketScreen extends BaseScreen {
   _renderArrow(field) {
     let {sortField, sortDirection } = this.state;
     return (
-      sortField === field && sortDirection === Consts.SORT_DIRECTION.ASC ?
+      sortField === field && sortDirection === MarketScreen.SORT_DIRECTION.ASC ?
       <Icon
         name='menu-up'
         size={20}
@@ -194,26 +194,19 @@ class MarketScreen extends BaseScreen {
   }
 
   async _onEnableFavorite(item) {
-    let currentFavorite = this._isFavorite(item);
+    let currentFavorite = item.isFavorite;
     let favorites = this.state.favorites;
-    favorites[item.key] = !currentFavorite;
-    this.setState({
-      favorites
-    })
+    let favorite = _.find(favorites, item => item.coin_pair === item.key)
 
     try {
       if (currentFavorite) {
-        await rf.getRequest('FavoriteRequest').deleteFavoriteCoinPair(item.key);
+        await rf.getRequest('FavoriteRequest').removeOne(favorite.id);
       }
       else {
-        await rf.getRequest('FavoriteRequest').createFavoriteCoinPair(item.key);
+        await rf.getRequest('FavoriteRequest').createANewOne({coinPair: item.key});
       }
     }
     catch (err) {
-      favorites[item.key] = currentFavorite;
-      this.setState({
-        favorites
-      })
       console.log('MarketScreen._onEnableFavorite', err);
     }
   }
@@ -272,7 +265,7 @@ class MarketScreen extends BaseScreen {
   async _getFavorites() {
     try {
       let response = await rf.getRequest('FavoriteRequest').getList();
-      return this._getFavoritesMap(response.data);
+      return response.data;
     } catch (err) {
       console.log('MarketScreen._getFavorites', err);
     }
@@ -295,14 +288,6 @@ class MarketScreen extends BaseScreen {
       return percentString;
   }
 
-  _getFavoritesMap(data) {
-    let favorites = {};
-    for (item of data) {
-      favorites[item.coin_pair] = true;
-    }
-    return favorites;
-  }
-
   getSocketEventHandlers() {
     return {
       PricesUpdated: (prices) => {
@@ -312,7 +297,7 @@ class MarketScreen extends BaseScreen {
       },
       FavoriteSymbolsUpdated: (data) => {
         const { symbols, prices } = this.state;
-        const favorites = this._getFavoritesMap(data);
+        const favorites = data;
         const state = this._updateSymbolsData(symbols, prices, favorites);
         this.setState(state);
       }
@@ -332,16 +317,17 @@ class MarketScreen extends BaseScreen {
       this._updateSymbolData(symbols, currency, coin, prices[symbolKey]);
     }
 
+    symbols = _.map(symbols, s => {
+      s.isFavorite = favorites.findIndex(f => f.coin_pair == s.key) > 0;
+      return s;
+    });
+
     let result = {
       prices,
       symbols: this._sortSymbols(symbols, sortField, sortDirection),
       favorites
     };
     return result;
-  }
-
-  _isFavorite(symbol) {
-    return this.state.favorites[symbol.key];
   }
 
   _updateSymbolData(symbols, currency, coin, data) {

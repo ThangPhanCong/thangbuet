@@ -21,44 +21,4 @@ export default class Consts {
   static WITHDRAWLS_HISTORY = 'withdrawls_history';
   static DEPOSIT_DETAIL = 'Deposit detail'
   static WITHDRAW_DETAIL = 'Withdraw detail'
-
-  static SORT_MARKET_FIELDS = {
-    SYMBOL: 'symbol',
-    VOLUME: 'volume',
-    PRICE: 'price',
-    CHANGE: 'change'
-  };
-
-  static SORT_DIRECTION = {
-    ASC: 'asc',
-    DESC: 'desc'
-  };
-
-  static SOCKET_CHANNEL = {
-    PUBLIC: {
-      APP_PRICES: 'App.Prices',
-      APP_ORDERS: 'App.Orders',
-      APP_ORDER_BOOK: 'App.OrderBook',
-      APP_COIN_MARKKETCAP_TICKER: 'App.CoinMarketCapTicker',
-      APP_MARKET_PRICES_CHANGE: 'App.MarketPriceChanges',
-      APP_PROFIT_RATE: 'App.ProfitRate'
-    },
-    PRIVATE: 'App.User.'
-  };
-
-  static SOCKET_EVENTS = {
-    MARKET_PRICE_CHANGES_UPDATED: 'MarketPriceChangesUpdated',
-    PRICE_UPDATED: 'PricesUpdated',
-    BALANCE_UPDATED: 'BalanceUpdated',
-    TRANSACTION_CREATED: 'TransactionCreated',
-    ORDER_TRANSACTION_CREATED: 'OrderTransactionCreated',
-    ORDER_BOOK_UPDATED: 'OrderBookUpdated',
-    USER_ORDER_BOOK_UPDATED: 'UserOrderBookUpdated',
-    ORDER_LIST_UPDATED: 'OrderListUpdated',
-    ORDER_CHANGED: 'OrderChanged',
-    USER_SESSION_REGISTERED: 'UserSessionRegistered',
-    FAVORITE_SYMBOLS_UPDATED: 'FavoriteSymbolsUpdated',
-    COIN_MARKET_CAP_TICKET_UPDATED: 'CoinMarketCapTickerUpdated',
-    PROFIT_RATE_UPDATED: 'ProfitRateUpdated'
-  };
 }

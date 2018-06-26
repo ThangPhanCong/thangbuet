@@ -32,11 +32,11 @@ export default class BaseScreen extends React.Component {
   }
 
   componentDidMount() {
-    // let eventHandlers = this.getSocketEventHandlers();
-    // for (let event in eventHandlers) {
-    //   let handler = eventHandlers[event];
-    //   window.GlobalSocket.bind(event, handler);
-    // }
+    let eventHandlers = this.getSocketEventHandlers();
+    for (let event in eventHandlers) {
+      let handler = eventHandlers[event];
+      window.GlobalSocket.bind(event, handler);
+    }
     if (Platform.OS === 'android' && this.props.navigation) {
       this._willBlurSubscription = this.props.navigation.addListener('willBlur', payload => {
         //console.log("payload willBlur", payload)
