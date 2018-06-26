@@ -32,7 +32,7 @@ function initApp() {
   AppPreferences.init();
   AppPreferences.getLocale().then((locale) => {
     if (!locale) {
-      locale = 'vi';
+      locale = 'ko';
       AppPreferences.saveLocale(locale);
     }
     I18n.locale = locale;
