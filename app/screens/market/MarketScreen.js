@@ -45,6 +45,10 @@ class MarketScreen extends BaseScreen {
     };
   }
 
+  setFavoriteFilter(isFilter) {
+    this._isFavoriteFilter = isFilter;
+  }
+
   componentDidUpdate(previousProps) {
     if (this.props.isFocused && !previousProps.isFocused) {
       let { sortField, sortDirection } = this.props.navigation.state.params || {};
@@ -197,6 +201,9 @@ class MarketScreen extends BaseScreen {
   }
 
   filterFavoriteChanged(value) {
+    if (this._isFavoriteFilter === value)
+      return;
+
     this._isFavoriteFilter = value;
     let favoriteKeys = _.map(this._favorites, 'coin_pair');
     let filterSymbols;

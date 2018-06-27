@@ -42,7 +42,7 @@ class MarketSearchScreen extends BaseScreen {
     return (
       <SafeAreaView style = {styles.screen}>
         {this._renderHeader()}
-        <TabBarNavigator/>
+        <TabBarNavigator onNavigationStateChange={this._onTabChanged.bind(this)}/>
       </SafeAreaView>
     )
   }
@@ -174,6 +174,13 @@ class MarketSearchScreen extends BaseScreen {
         if (marketScreen.filterFavoriteChanged)
           marketScreen.filterFavoriteChanged(this.state.isFavoriteFilter);
       })
+    })
+  }
+
+  _onTabChanged(prevState, nextState, action) {
+    _.each(Object.values(this._refs), marketScreen => {
+      if (marketScreen.setFavoriteFilter)
+        marketScreen.setFavoriteFilter(this.state.isFavoriteFilter);
     })
   }
 
