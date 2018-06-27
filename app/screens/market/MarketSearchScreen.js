@@ -26,10 +26,14 @@ import _ from 'lodash';
 let TabBarNavigator;
 
 class MarketSearchScreen extends BaseScreen {
+
+  _refs = {};
+
   constructor(props) {
     super(props);
     this.state = {
-      searchList: []
+      searchList: [],
+      isFavoriteFilter: false
     }
     TabBarNavigator = this._initTabNavigator();
   }
@@ -44,16 +48,15 @@ class MarketSearchScreen extends BaseScreen {
   }
 
   _renderHeader() {
-    const { isFavorite } = this.props.navigation.state.params || {};
-
     return (
       <View style={styles.header}>
         <View style={styles.leftView}>
-          <TouchableOpacity style = {styles.favoriteButton}>
+          <TouchableOpacity style = {styles.favoriteButton}
+            onPress={this._onFavoriteFilter.bind(this)}>
             <Icon
               name='star'
               size={18}
-              color={isFavorite ? '#FFC000' : '#D9D9D9'} />
+              color={this.state.isFavoriteFilter ? '#FFC000' : '#D9D9D9'} />
           </TouchableOpacity>
           <Text style = {styles.titleLeftView}>
             즐겨찾기
@@ -116,19 +119,19 @@ class MarketSearchScreen extends BaseScreen {
     return TabNavigator(
       {
         MarketScreenKRW: {
-          screen: (props) => <MarketScreen {...props} currency = {Consts.CURRENCY_KRW} showMarketScreenDetail={this._onPressItem.bind(this)}/>,
+          screen: (props) => <MarketScreen {...props} currency = {Consts.CURRENCY_KRW} showMarketScreenDetail={this._onPressItem.bind(this)} ref = {ref => this._refs.marketKRW = ref}/>,
           navigationOptions: () => ({
             tabBarLabel: Consts.CURRENCY_KRW,
           })
         },
         MarketScreenBTC: {
-          screen: (props) => <MarketScreen {...props} currency = {Consts.CURRENCY_BTC} showMarketScreenDetail={this._onPressItem.bind(this)}/>,
+          screen: (props) => <MarketScreen {...props} currency = {Consts.CURRENCY_BTC} showMarketScreenDetail={this._onPressItem.bind(this)} ref = {ref => this._refs.marketBTC = ref}/>,
           navigationOptions: () => ({
             tabBarLabel: Consts.CURRENCY_BTC,
           })
         },
         MarketScreenETH: {
-          screen: (props) => <MarketScreen {...props} currency = {Consts.CURRENCY_ETH} showMarketScreenDetail={this._onPressItem.bind(this)}/>,
+          screen: (props) => <MarketScreen {...props} currency = {Consts.CURRENCY_ETH} showMarketScreenDetail={this._onPressItem.bind(this)} ref = {ref => this._refs.marketETH = ref}/>,
           navigationOptions: () => ({
             tabBarLabel: Consts.CURRENCY_ETH,
           })
@@ -163,6 +166,15 @@ class MarketSearchScreen extends BaseScreen {
   _onPressItem(item) {
     console.log('Navigate to trading screen', item);
     // this.navigate('MarketDetailScreen', item);
+  }
+
+  _onFavoriteFilter() {
+    this.setState({isFavoriteFilter: !this.state.isFavoriteFilter}, () => {
+      _.each(Object.values(this._refs), marketScreen => {
+        if (marketScreen.filterFavoriteChanged)
+          marketScreen.filterFavoriteChanged(this.state.isFavoriteFilter);
+      })
+    })
   }
 
   async _onTextChanged(searchText) {

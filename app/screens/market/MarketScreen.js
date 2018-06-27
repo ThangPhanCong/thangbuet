@@ -29,6 +29,11 @@ class MarketScreen extends BaseScreen {
     DESC: 'desc'
   };
 
+  _symbols = [];
+  _prices = {};
+  _favorites = [];
+  _isFavoriteFilter = false;
+
   constructor(props) {
     super(props);
 
@@ -36,9 +41,7 @@ class MarketScreen extends BaseScreen {
     this.state = {
       sortField: sortField || MarketScreen.SORT_FIELDS.VOLUME,
       sortDirection: sortDirection || MarketScreen.SORT_DIRECTION.DESC,
-      symbols: [],
-      prices: {},
-      favorites: {}
+      symbols: []
     };
   }
 
@@ -193,10 +196,21 @@ class MarketScreen extends BaseScreen {
     this.props.showMarketScreenDetail(item);
   }
 
+  filterFavoriteChanged(value) {
+    this._isFavoriteFilter = value;
+    let favoriteKeys = _.map(this._favorites, 'coin_pair');
+    let filterSymbols;
+    if (this._isFavoriteFilter)
+      filterSymbols = _.filter(this._symbols, s => _.includes(favoriteKeys, s.favoriteKey));
+    else
+      filterSymbols = this._symbols;
+
+    this.setState({symbols: filterSymbols})
+  }
+
   async _onEnableFavorite(item) {
     let currentFavorite = item.isFavorite;
-    let favorites = this.state.favorites;
-    let favorite = _.find(favorites, item => item.coin_pair === item.favoriteKey)
+    let favorite = _.find(this._favorites, item => item.coin_pair === item.favoriteKey)
 
     try {
       if (currentFavorite) {
@@ -247,7 +261,7 @@ class MarketScreen extends BaseScreen {
         symbol.favoriteKey = symbol.coin + '/' + symbol.currency;
         return symbol;
       });
-
+      
       return symbols;
     } catch (err) {
       console.log('MarketScreen._getSymbols', err);
@@ -310,7 +324,8 @@ class MarketScreen extends BaseScreen {
       return;
     }
 
-    prices = Object.assign({}, this.state.prices, prices);
+    this._favorites = favorites;
+    this._prices = Object.assign({}, this._prices, prices);
     let { sortField, sortDirection } = this.state;
 
     for (let symbolKey in prices) {
@@ -318,15 +333,24 @@ class MarketScreen extends BaseScreen {
       this._updateSymbolData(symbols, currency, coin, prices[symbolKey]);
     }
 
+    let favoriteKeys = _.map(favorites, 'coin_pair');
     symbols = _.map(symbols, s => {
-      s.isFavorite = favorites.findIndex(f => f.coin_pair == s.favoriteKey) > 0;
+      s.isFavorite = _.includes(favoriteKeys, s.favoriteKey);
       return s;
     });
+    
+    this._symbols = symbols;
+    symbols = this._sortSymbols(sortField, sortDirection);
+    this._symbols = symbols;
 
+    let filterSymbols;
+    if (this._isFavoriteFilter)
+      filterSymbols = _.filter(symbols, s => s.isFavorite);
+    else
+      filterSymbols = symbols;
+    
     let result = {
-      prices,
-      symbols: this._sortSymbols(symbols, sortField, sortDirection),
-      favorites
+      symbols: filterSymbols
     };
     return result;
   }
@@ -349,20 +373,27 @@ class MarketScreen extends BaseScreen {
   }
 
   _changeSortField(sortField, sortDirection) {
-    const symbols = this.state.symbols;
+    this._symbols = this._sortSymbols(sortField, sortDirection);
+    let favoriteKeys = _.map(this._favorites, 'coin_pair');
+    let filterSymbols;
+    if (this._isFavoriteFilter)
+      filterSymbols = _.filter(this._symbols, s => _.includes(favoriteKeys, s.favoriteKey));
+    else
+      filterSymbols = this._symbols;
+
     this.setState({
       sortField,
       sortDirection,
-      symbols: this._sortSymbols(symbols, sortField, sortDirection)
+      symbols: filterSymbols
     });
   }
 
-  _sortSymbols(symbols, sortField, sortDirection) {
+  _sortSymbols(sortField, sortDirection) {
     if (sortField != MarketScreen.SORT_FIELDS.SYMBOL) {
-      return _.orderBy(symbols, (item) => parseFloat(item[sortField]), sortDirection);
+      return _.orderBy(this._symbols, (item) => parseFloat(item[sortField]), sortDirection);
     } else {
       const revertedDirection = this._revertSortDirection(sortDirection);
-      return _.orderBy(symbols, ['coin', 'currency'], [revertedDirection, revertedDirection]);
+      return _.orderBy(this._symbols, ['coin', 'currency'], [revertedDirection, revertedDirection]);
     }
   }
 }
