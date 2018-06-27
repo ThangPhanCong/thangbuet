@@ -3,7 +3,7 @@ import { Image, StyleSheet } from 'react-native';
 import { scale } from '../libs/reactSizeMatter/scalingUtils';
 
 class CommonColors {
-  static screenBgColor = '#10121e';
+  static screenBgColor = '#FFF';
   static toolbarBgColor = '#202732';
   static increased = '#2ba81e';
   static decreased = '#ee4949';
