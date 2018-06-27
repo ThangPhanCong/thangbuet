@@ -196,14 +196,14 @@ class MarketScreen extends BaseScreen {
   async _onEnableFavorite(item) {
     let currentFavorite = item.isFavorite;
     let favorites = this.state.favorites;
-    let favorite = _.find(favorites, item => item.coin_pair === item.key)
+    let favorite = _.find(favorites, item => item.coin_pair === item.favoriteKey)
 
     try {
       if (currentFavorite) {
         await rf.getRequest('FavoriteRequest').removeOne(favorite.id);
       }
       else {
-        await rf.getRequest('FavoriteRequest').createANewOne({coinPair: item.key});
+        await rf.getRequest('FavoriteRequest').createANewOne({coinPair: item.favoriteKey});
       }
     }
     catch (err) {
@@ -244,6 +244,7 @@ class MarketScreen extends BaseScreen {
       let symbols = _.filter(symbolResponse.coin_settings, ['currency', this.props.currency]);
       symbols.map(symbol => {
         symbol.key = symbol.currency + '_' + symbol.coin;
+        symbol.favoriteKey = symbol.coin + '/' + symbol.currency;
         return symbol;
       });
 
@@ -318,7 +319,7 @@ class MarketScreen extends BaseScreen {
     }
 
     symbols = _.map(symbols, s => {
-      s.isFavorite = favorites.findIndex(f => f.coin_pair == s.key) > 0;
+      s.isFavorite = favorites.findIndex(f => f.coin_pair == s.favoriteKey) > 0;
       return s;
     });
 
