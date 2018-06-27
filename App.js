@@ -6,6 +6,7 @@ import AppConfig from './app/utils/AppConfig';
 import AppPreferences from './app/utils/AppPreferences';
 import BaseScreen from './app/screens/BaseScreen';
 import GlobalSocket from './app/GlobalSocket';
+import EventBus from './app/EventBus';
 import MasterdataUtils from './app/utils/MasterdataUtils';
 import Screens from './app/screens/Screens';
 
@@ -25,6 +26,7 @@ YellowBox.ignoreWarnings([
 ]);
 
 MicroEvent.mixin(GlobalSocket);
+MicroEvent.mixin(EventBus);
 
 function initApp() {
   MicroEvent.mixin(BaseScreen);
@@ -37,6 +39,8 @@ function initApp() {
     }
     I18n.locale = locale;
   });
+
+  window.EventBus = new EventBus();
 
   return AppPreferences.getAccessToken()
     .then(credentials => {

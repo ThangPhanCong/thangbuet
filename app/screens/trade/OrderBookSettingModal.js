@@ -13,13 +13,13 @@ import _ from 'lodash';
 import BaseScreen from '../BaseScreen'
 import OrderBook from './OrderBook';
 import TextInputMask from 'react-native-text-input-mask';
-import { CommonColors, CommonSize, CommonStyles } from '../../utils/CommonStyles';
 import I18n from '../../i18n/i18n';
 import rf from '../../libs/RequestFactory';
-
 import ScaledSheet from '../../libs/reactSizeMatter/ScaledSheet';
 import { scale } from '../../libs/reactSizeMatter/scalingUtils';
 import { formatCurrency, getCurrencyName } from '../../utils/Filters';
+import { CommonColors, CommonSize, CommonStyles } from '../../utils/CommonStyles';
+import Events from '../../utils/Events';
 
 export default class OrderBookSettingModal extends BaseScreen {
   state = {
@@ -51,14 +51,6 @@ export default class OrderBookSettingModal extends BaseScreen {
 
   setModalVisible(visible) {
     this.setState({ modalVisible: visible });
-  }
-
-  show(settings) {
-    const state = this._convertSettingsToState(settings);
-    this.setState({
-      ...state,
-      modalVisible: visible
-    });
   }
 
   async _loadData() {
@@ -99,6 +91,8 @@ export default class OrderBookSettingModal extends BaseScreen {
       ...settings
     }
     const response = await rf.getRequest('UserRequest').updateOrderBookSettings(params);
+    this.notify(Events.ORDER_BOOK_SETTINGS_UPDATED, response.data);
+    this.setModalVisible(false);
   }
 
   _convertSettingsToState(settings) {

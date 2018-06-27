@@ -24,7 +24,6 @@ import OrderBookSettingModal from './OrderBookSettingModal';
 export default class TradingOrderBookScreen extends BaseScreen {
   componentDidMount() {
     super.componentDidMount();
-    this._orderBookSettingModal.setModalVisible(true);
   }
 
   render() {
