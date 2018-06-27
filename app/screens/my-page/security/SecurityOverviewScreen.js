@@ -191,7 +191,7 @@ export default class SecurityOverviewScreen extends BaseScreen {
   }
 
   _onVerifyGoogle() {
-    this.navigate('OTPVerifyScreen');
+    this.navigate('OTPGuideScreen');
   }
 
   _onVerifyBankAccount() {
