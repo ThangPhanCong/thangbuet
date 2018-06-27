@@ -382,19 +382,19 @@ export default class OrderBook extends BaseScreen {
     return (
       <View style={styles.orderBookHeader}>
         <View style={styles.userQuantityHeader}>
-          <Text style={styles.headerText}>매도</Text>
+          <Text style={styles.headerText}>{I18n.t('orderBook.sell')}</Text>
         </View>
         <View style={styles.quantityHeader}>
-          <Text style={styles.headerText}>잔량</Text>
+          <Text style={styles.headerText}>{I18n.t('orderBook.balance')}</Text>
         </View>
         <View style={styles.priceHeader}>
-          <Text style={styles.headerText}>가격</Text>
+          <Text style={styles.headerText}>{I18n.t('orderBook.price')}</Text>
         </View>
         <View style={styles.quantityHeader}>
-          <Text style={styles.headerText}>잔량</Text>
+          <Text style={styles.headerText}>{I18n.t('orderBook.balance')}</Text>
         </View>
         <View style={styles.userQuantityHeader}>
-          <Text style={styles.headerText}>매도</Text>
+          <Text style={styles.headerText}>{I18n.t('orderBook.buy')}</Text>
         </View>
       </View>
     );
