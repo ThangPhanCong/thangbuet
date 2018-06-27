@@ -117,7 +117,11 @@ export default class OrderBook extends BaseScreen {
   }
 
   async _getOrderBookSettings() {
-    let response = await rf.getRequest('UserRequest').getOrderBookSettings();
+    const params = {
+      currency: this._getCurrency(),
+      coin: this._getCoin()
+    };
+    const response = await rf.getRequest('UserRequest').getOrderBookSettings(params);
     this.settings = response.data;
     return this._updateOrderBook();
   }
@@ -209,44 +213,58 @@ export default class OrderBook extends BaseScreen {
     let settings = this.settings;
     let tickerSize = this._getTickerSize();
 
-    console.log('price: ', currentPrice, 'orderbook: ', orderBook, 'settings: ', settings, 'ticker: ', tickerSize);
-
     if (!currentPrice || !orderBook || !settings || !tickerSize) {
       return;
     }
 
-    const middlePrice = this._getMiddlePrice(orderBook, currentPrice);
+    const middlePrice = this._getMiddlePrice(orderBook, currentPrice, tickerSize);
 
     let result = undefined;
     if (this.settings.show_empty_group) {
-      result = this._getOrderBookWithEmptyRow(orderBook, middlePrice);
+      result = this._getOrderBookWithEmptyRow(orderBook, middlePrice, orderBookSize + 1, tickerSize);
     } else {
-      result = this._getOrderBookWithoutEmptyRow(orderBook, middlePrice);
+      result = this._getOrderBookWithoutEmptyRow(orderBook, middlePrice, orderBookSize + 1, tickerSize);
     }
 
-    this._addPaddingRows(result.buyOrderBook, result.sellOrderBook, orderBookSize, middlePrice, tickerSize);
+    this._removeRedundantRows(result.buyOrderBook, result.sellOrderBook, orderBookSize);
 
     this.setState(result);
   }
 
-  _getOrderBookWithoutEmptyRow(orderBook, middlePrice) {
+  _getOrderBookWithEmptyRow(orderBook, middlePrice, orderBookSize, tickerSize) {
+    let buyOrderBook = [];
+    let sellOrderBook = [];
+
+    let price = middlePrice;
+    for (let i = 0 ; i < orderBookSize; i++) {
+      let row = orderBook.buy.find(row => this._isEqual(row['price'], price));
+      buyOrderBook.push(row || { price })
+      price -= tickerSize;
+    }
+
+    price = middlePrice;
+    for (let i = 0 ; i < orderBookSize; i++) {
+      let row = orderBook.sell.find(row => this._isEqual(row['price'], price));
+      sellOrderBook.unshift(row || { price })
+      price += tickerSize;
+    }
+
+    return { buyOrderBook, sellOrderBook };
+  }
+
+  _getOrderBookWithoutEmptyRow(orderBook, middlePrice, orderBookSize, tickerSize) {
     let buyOrderBook = _.filter(orderBook.buy, item => item.price <= middlePrice);
     let sellOrderBook = _.filter(orderBook.sell, item => item.price >= middlePrice);
 
     buyOrderBook = _.orderBy(buyOrderBook, 'price', 'desc');
     sellOrderBook = _.orderBy(sellOrderBook, 'price', 'desc');
 
+    this._addPaddingRows(buyOrderBook, sellOrderBook, orderBookSize, middlePrice, tickerSize);
+
     return { buyOrderBook, sellOrderBook };
   }
 
   _addPaddingRows(buyOrderBook, sellOrderBook, orderBookSize, middlePrice, tickerSize) {
-    if (buyOrderBook.length > orderBookSize) {
-      buyOrderBook = buyOrderBook.slice(0, orderBookSize);
-    }
-    if (sellOrderBook.length > orderBookSize) {
-      sellOrderBook = sellOrderBook.slice(sellOrderBook.length - orderBookSize);
-    }
-
     this._addPaddingBuyRows(buyOrderBook, orderBookSize, middlePrice, tickerSize);
     this._addPaddingSellRows(sellOrderBook, orderBookSize, middlePrice, tickerSize);
   }
@@ -275,6 +293,25 @@ export default class OrderBook extends BaseScreen {
     }
   }
 
+  _removeRedundantRows(buyOrderBook, sellOrderBook, orderBookSize) {
+    const topBuy = buyOrderBook[0];
+    const bottomSell = sellOrderBook[sellOrderBook.length - 1];
+    if (topBuy.price == bottomSell.price) {
+      if (topBuy.quantity > bottomSell.quantity) {
+        sellOrderBook.pop();
+      } else {
+        buyOrderBook.shift();
+      }
+    }
+
+    if (buyOrderBook.length > orderBookSize) {
+      buyOrderBook = buyOrderBook.slice(0, orderBookSize);
+    }
+    if (sellOrderBook.length > orderBookSize) {
+      sellOrderBook = sellOrderBook.slice(sellOrderBook.length - orderBookSize);
+    }
+  }
+
   _getOrderBookSize() {
     let sizes = {};
     sizes[OrderBook.TYPE_FULL] = 5;
@@ -282,9 +319,32 @@ export default class OrderBook extends BaseScreen {
     return sizes[this.props.type] || 5;
   }
 
-  _getMiddlePrice(orderBook, currentPrice) {
-    // TODO calculate middle price
-    return currentPrice;
+  _getMiddlePrice(orderBook, currentPrice, tickerSize) {
+    let price = 0;
+
+    var maxBuyGroup = _.maxBy(orderBook.buy, 'price');
+    var maxBuyPrice = maxBuyGroup ? maxBuyGroup.price : 0;
+
+    var minSellGroup = _.minBy(orderBook.buy, 'price');
+    var minSellPrice = minSellGroup ? minSellGroup.price : 0;
+
+    if (maxBuyPrice > 0 && minSellPrice > 0) {
+      if (maxBuyPrice < minSellPrice) {
+        if ((maxBuyPrice > currentPrice && minSellPrice > currentPrice)
+          || (maxBuyPrice < currentPrice && minSellPrice < currentPrice)) {
+          price = (maxBuyPrice + minSellPrice) / 2;
+        }
+      }
+    } else if (maxBuyPrice > 0) {
+      price = maxBuyPrice;
+    } else if (minSellPrice > 0) {
+      price = minSellPrice;
+    } else {
+      price = parseFloat(currentPrice);
+    }
+
+    price = Math.round(price / tickerSize) * tickerSize;
+    return price;
   }
 
   _combineOrderBooks() {
