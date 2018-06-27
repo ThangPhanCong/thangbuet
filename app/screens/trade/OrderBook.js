@@ -21,6 +21,7 @@ import Utils from '../../utils/Utils';
 import BaseScreen from '../BaseScreen';
 import { CommonColors, CommonSize, CommonStyles } from '../../utils/CommonStyles';
 import { formatCurrency, formatPercent } from '../../utils/Filters';
+import Events from '../../utils/Events';
 
 export default class OrderBook extends BaseScreen {
   static TYPE_FULL = 'full';
@@ -54,6 +55,25 @@ export default class OrderBook extends BaseScreen {
     super.componentWillMount();
     this._updateOrderBook()
     this._loadData();
+  }
+
+  getSocketEventHandlers() {
+    return {
+      OrderBookUpdated: this._onOrderBookUpdated.bind(this),
+      UserOrderBookUpdated: this._onUserOrderBookUpdated.bind(this),
+      PricesUpdated: (data) => {
+        this.setState(this._onPriceUpdated(data))
+      }
+    };
+  }
+
+  getDataEventHandlers() {
+    return {
+      [Events.ORDER_BOOK_SETTINGS_UPDATED]: data => {
+        this.settings = data;
+        this._updateOrderBook();
+      }
+    };
   }
 
   reloadData() {
@@ -178,16 +198,6 @@ export default class OrderBook extends BaseScreen {
     }
 
     this._updateOrderBook();
-  }
-
-  getSocketEventHandlers() {
-    return {
-      OrderBookUpdated: this._onOrderBookUpdated.bind(this),
-      UserOrderBookUpdated: this._onUserOrderBookUpdated.bind(this),
-      PricesUpdated: (data) => {
-        this.setState(this._onPriceUpdated(data))
-      }
-    };
   }
 
   _onOrderBookUpdated(data) {

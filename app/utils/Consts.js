@@ -13,12 +13,12 @@ export default class Consts {
   static TRADE_TYPE_SELL = 'sell';
 
   //Google authenticator action
-  static GOOGLE_2FA_DISABLED_ACT = "disable2FA"
-  static GOOGLE_2FA_CHANGE_PASSWORD = "changePassWord"
+  static GOOGLE_2FA_DISABLED_ACT = "disable2FA";
+  static GOOGLE_2FA_CHANGE_PASSWORD = "changePassWord";
 
   //Transaction History
   static DEPOSITS_HISTORY = 'deposits_history';
   static WITHDRAWLS_HISTORY = 'withdrawls_history';
-  static DEPOSIT_DETAIL = 'Deposit detail'
-  static WITHDRAW_DETAIL = 'Withdraw detail'
+  static DEPOSIT_DETAIL = 'Deposit detail';
+  static WITHDRAW_DETAIL = 'Withdraw detail';
 }
