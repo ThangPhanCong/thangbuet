@@ -12,6 +12,7 @@ import {
 } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import ScaledSheet from '../../libs/reactSizeMatter/ScaledSheet';
+import { scale } from '../../libs/reactSizeMatter/scalingUtils';
 import _ from 'lodash';
 import Numeral from '../../libs/numeral';
 import rf from '../../libs/RequestFactory';
@@ -40,13 +41,13 @@ export default class OrderBook extends BaseScreen {
       priceSetting: { digits: 4 },
 
       currencyPrice: 1,
-      marketData: {},
     };
 
     this.orderBook = undefined;
     this.userOrderBook = undefined;
     this.prices = {};
-    this.currencyPrice;
+    this.currentPrice = undefined;
+    this.yesterdayPrice = undefined;
     this.priceSetting = undefined;
     this.quantityPrecision = undefined;
   }
@@ -69,21 +70,12 @@ export default class OrderBook extends BaseScreen {
 
   getDataEventHandlers() {
     return {
-      [Events.ORDER_BOOK_SETTINGS_UPDATED]: data => {
-        this.settings = data;
-        this._updateOrderBook();
-      }
+      [Events.ORDER_BOOK_SETTINGS_UPDATED]: this._onOrderBookSettingsUpdated.bind(this)
     };
   }
 
   reloadData() {
     return this._loadData();
-  }
-
-  setPriceSetting(priceSetting) {
-    Utils.calculatePriceSettingDigits(priceSetting);
-    this.setState({ priceSetting });
-    this.reloadData();
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -193,7 +185,8 @@ export default class OrderBook extends BaseScreen {
     let key = Utils.getPriceKey(this._getCurrency(), this._getCoin());
     if (prices[key]) {
       if (this.currentPrice != this.prices[key].price) {
-        this.currentPrice = this.prices[key].price
+        this.currentPrice = this.prices[key].price;
+        this.yesterdayPrice = this.prices[key].last_24h_price;
       }
     }
 
@@ -214,6 +207,12 @@ export default class OrderBook extends BaseScreen {
       this._convertOrderBookDataType(this.userOrderBook);
       this._updateOrderBook();
     }
+  }
+
+  async _onOrderBookSettingsUpdated(data) {
+    this.settings = data;
+    await this._getPriceSetting();
+    this._updateOrderBook();
   }
 
   _updateOrderBook() {
@@ -480,8 +479,8 @@ export default class OrderBook extends BaseScreen {
           <View style={[styles.sellPercent, this._getPercentViewStyle(item)]} />
           <Text style={styles.quantityText}>{this._formatQuantity(item.quantity)}</Text>
         </View>
-        <View style={[styles.priceCell, styles.topBorder]}>
-          <Text style={styles.priceText}>{this._formatPrice(item.price)}</Text>
+        <View style={[styles.priceCell, styles.topBorder, this._getPriceCellStyle(item.price)]}>
+          <Text style={[styles.priceText, this._getPriceTextStyle(item.price)]}>{this._formatPrice(item.price)}</Text>
         </View>
         <View style={[styles.quantityCell, styles.topBorder]}>
         </View>
@@ -500,8 +499,8 @@ export default class OrderBook extends BaseScreen {
         </View>
         <View style={[styles.quantityCell, styles.bottomBorder]}>
         </View>
-        <View style={[styles.priceCell, styles.bottomBorder]}>
-          <Text style={styles.priceText}>{this._formatPrice(item.price)}</Text>
+        <View style={[styles.priceCell, styles.bottomBorder, this._getPriceCellStyle(item.price)]}>
+          <Text style={[styles.priceText, this._getPriceTextStyle(item.price)]}>{this._formatPrice(item.price)}</Text>
         </View>
         <View style={[styles.quantityCell, styles.bottomBorder]}>
           <View style={[styles.sellPercent, this._getPercentViewStyle(item)]} />
@@ -512,6 +511,24 @@ export default class OrderBook extends BaseScreen {
         </View>
       </View>
     );
+  }
+
+  _getPriceCellStyle(price) {
+    if (price == this.currentPrice) {
+      return styles.currentPriceCell;
+    } else {
+      return {};
+    }
+  }
+
+  _getPriceTextStyle(price) {
+    if (price == this.currentPrice) {
+      return styles.currentPrice;
+    } else if (price >= this.yesterdayPrice) {
+      return styles.increasedPrice;
+    } else {
+      return styles.decreasedPrice;
+    }
   }
 
   _rowClick(item) {
@@ -540,10 +557,6 @@ export default class OrderBook extends BaseScreen {
     return {
       width: (item.quantityPercent || 0) + '%'
     };
-  }
-
-  _getFiatPrice() {
-    return this.state.marketData.price * this.state.currencyPrice;
   }
 
   _renderSmallOrderBook() {
@@ -577,7 +590,7 @@ export default class OrderBook extends BaseScreen {
   }
 }
 
-const fontSize = PixelRatio.getFontScale() * 10;
+const fontSize = scale(12);
 const borderColor = '#DCDCDC';
 const borderWidth = 1;
 const sellCellBorder = {
@@ -697,6 +710,19 @@ const styles = ScaledSheet.create({
     borderBottomWidth: borderWidth,
     borderLeftWidth: borderWidth,
     borderColor: borderColor
+  },
+
+  currentPriceCell: {
+    backgroundColor: '#002A68'
+  },
+  currentPrice: {
+    color: '#FFF'
+  },
+  increasedPrice: {
+    color: '#FE0000'
+  },
+  decreasedPrice: {
+    color: '#0065BF'
   },
 
   buyPrice: {
