@@ -3,26 +3,35 @@ import {
   PixelRatio,
   Text,
   TextInput,
-  TouchableHighlight,
   TouchableOpacity,
   View,
   Clipboard,
-  KeyboardAvoidingView
+  Image,
+  Platform
 } from 'react-native';
 import BaseScreen from '../../BaseScreen'
 import { CommonStyles } from '../../../utils/CommonStyles';
 import ScaledSheet from '../../../libs/reactSizeMatter/ScaledSheet';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+import rf from '../../../libs/RequestFactory';
+import _ from 'lodash';
 
 export default class OTPVerifyScreen extends BaseScreen {
   _otpCode = '';
+  _secretCode = '';
 
   constructor(props) {
     super(props);
     this.state = {
       isShowSecretCode: false,
-      secretCode: '123456'
+      qrCodeUrl: ''
     }
+  }
+
+  componentWillMount() {
+    super.componentWillMount();
+
+    this._getGoogleAuthenKey();
   }
 
   render() {
@@ -36,6 +45,12 @@ export default class OTPVerifyScreen extends BaseScreen {
           {`1. '추가'        를 선택하고 'SECRET KEY'를 입력하세요\n2. APP에 표시된 6자리의 OTP CODE를 입력하고 'ACTIVATE'를 클릭하세요`}
         </Text>
         <View style={styles.qrcodeContainer}>
+          {
+            !_.isEmpty(this.state.qrCodeUrl) &&
+            <Image
+              style={{flex: 1}}
+              source={{uri: this.state.qrCodeUrl}}/>
+          }
         </View>
         <View style={styles.functionContainer}>
           <View style={{flex: 1}}>
@@ -49,19 +64,18 @@ export default class OTPVerifyScreen extends BaseScreen {
                   onPress={this._onShowSecretCode.bind(this)}
                   disabled={this.state.isShowSecretCode}>
                   <Text style = {styles.buttonText}>
-                    {this.state.isShowSecretCode ? this.state.secretCode : 'VIEW SECRET KEY' }
+                    {this.state.isShowSecretCode ? this._secretCode : 'VIEW SECRET KEY' }
                   </Text>
                 </TouchableOpacity>
                 <View style={styles.buttonSpace}/>
-                <TouchableHighlight
+                <TouchableOpacity
                   style={[styles.button, this.state.isShowSecretCode ? {flex: 1, backgroundColor: '#0070C0'} : {flex: 1, backgroundColor: '#BFBFBF'}]}
                   onPress={this._onCopySecretCode.bind(this)}
-                  disabled={!this.state.isShowSecretCode}
-                  underlayColor='#595959'>
+                  disabled={!this.state.isShowSecretCode}>
                   <Text style = {styles.buttonText}>
                     {'COPY'}
                   </Text>
-                </TouchableHighlight>
+                </TouchableOpacity>
               </View>
             </View>
 
@@ -101,12 +115,36 @@ export default class OTPVerifyScreen extends BaseScreen {
     await Clipboard.setString(this.state.secretCode);
   }
 
-  _onActiveOTP() {
-
+  async _onActiveOTP() {
+    await this._verifyOTP(this._otpCode);
   }
 
   _onOTPTextChanged(text) {
     this._otpCode = text;
+  }
+
+  async _getGoogleAuthenKey() {
+    try {
+      let res = await rf.getRequest('UserRequest').getQRCodeGoogleUrl();
+      let key = res.data;
+      this._secretCode = key.key;
+      this.setState({
+        qrCodeUrl: key.url
+      })
+    }
+    catch(err) {
+      console.log('OTPVerifyScreen._getGoogleAuthenKey', err);
+    }
+  }
+
+  async _verifyOTP(code) {
+    try {
+      let res = await rf.getRequest('UserRequest').verify(code);
+      return res;
+    }
+    catch(err) {
+      console.log('OTPVerifyScreen._verifyOTP', err);
+    }
   }
 }
 
@@ -125,7 +163,18 @@ const styles = ScaledSheet.create({
     marginTop: '20@s',
     marginBottom: '20@s',
     aspectRatio: 1,
-    width: '150@s'
+    width: '160@s',
+    alignSelf: 'center',
+    ...Platform.select({
+      ios: {
+        shadowColor: '#000',
+        shadowOpacity: 0.3,
+        shadowRadius: '5@s'
+      },
+      android: {
+        elevation: 5
+      }
+    })
   },
   functionContainer: {
     marginStart: '40@s',
