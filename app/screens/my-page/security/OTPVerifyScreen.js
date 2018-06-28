@@ -87,6 +87,7 @@ export default class OTPVerifyScreen extends BaseScreen {
               <View style={styles.buttonContainer}>
                 <TextInput
                   style={styles.otpInput}
+                  underlineColorAndroid='transparent'
                   onChangeText={this._onOTPTextChanged.bind(this)}/>
                 <View style={styles.buttonSpace}/>
                 <TouchableOpacity
