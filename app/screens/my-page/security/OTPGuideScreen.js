@@ -108,7 +108,8 @@ const styles = ScaledSheet.create({
   },
   textHeader: {
     marginTop: '30@s',
-    textAlign: 'center'
+    textAlign: 'center',
+    fontSize: '13@s'
   },
   googleAuthText: {
     fontSize: '18@s',
