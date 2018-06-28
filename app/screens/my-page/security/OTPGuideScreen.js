@@ -120,7 +120,9 @@ const styles = StyleSheet.create({
     marginTop: 30,
     marginBottom: 20,
     marginStart: 40,
-    marginEnd: 40
+    marginEnd: 40,
+    height: 150,
+    alignSelf: 'center'
   },
   text: {
     fontSize: 14,
@@ -138,7 +140,8 @@ const styles = StyleSheet.create({
   },
   storeContainer: {
     flex: 1,
-    marginStart: 5
+    marginStart: 10,
+    justifyContent: 'space-between'
   },
   googleAuthInfo: {
     marginStart: 10,
@@ -151,6 +154,6 @@ const styles = StyleSheet.create({
     height: 9
   },
   storeInfoVerticalSpace: {
-    height: 10
+    height: 8
   }
 });

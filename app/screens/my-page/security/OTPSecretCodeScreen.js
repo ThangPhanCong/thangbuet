@@ -40,7 +40,7 @@ const styles = StyleSheet.create({
   },
   recoveryCodeText: {
     marginTop: 60,
-    marginBottom: 20,
+    marginBottom: 40,
     alignSelf: 'center',
     fontSize: 16
   },

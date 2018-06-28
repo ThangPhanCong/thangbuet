@@ -146,6 +146,10 @@ export default class OTPVerifyScreen extends BaseScreen {
   }
 
   _onActiveOTP() {
+    if (_.isEmpty(this._otpCode)) {
+      return;
+    }
+
     this._verifyOTP();
   }
 
