@@ -73,6 +73,28 @@ export default {
     depth: 'Depth',
     full: 'Full'
   },
+  orderBook: {
+    sell: '매도',
+    buy: '매수',
+    balance: '잔량',
+    price: '가격',
+    quantity: '수량',
+    hand: '손절',
+    fence: '익절'
+  },
+  orderBookSettings: {
+    title: '주문창 설정',
+    showEmptyRow: '빈 호가 표시',
+    clickToOrder: '원클릭 주문',
+    confirmOrder: '주문 확인',
+    priceGroup: '호가 단위',
+    notification: '알림 설정(공통)',
+    notificationContent: '알림 내용(공통)',
+    notificationCreated: '주문',
+    notificationMatched: '체결',
+    notificationCanceled: '취소',
+    update: '확인'
+  },
   fullScreenChart: {
     change24h: '24h Change',
     hour: 'Hour',

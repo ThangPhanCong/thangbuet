@@ -18,11 +18,12 @@ export const BalanceStack = StackNavigator({
     screen: DepositScreen,
   },
 });
+import MarketSearchScreen from './market/MarketSearchScreen';
 
 export default TabNavigator(
   {
-    TradingScreen: {
-      screen: TradingScreen,
+    MarketSearchScreen: {
+      screen: MarketSearchScreen,
       navigationOptions: () => ({
         tabBarLabel: I18n.t('tabBar.trading'),
       })

@@ -1,7 +1,9 @@
-import { PixelRatio, StyleSheet } from 'react-native';
+import React from 'react';
+import { Image, StyleSheet } from 'react-native';
+import { scale } from '../libs/reactSizeMatter/scalingUtils';
 
 class CommonColors {
-  static screenBgColor = '#10121e';
+  static screenBgColor = '#FFF';
   static toolbarBgColor = '#202732';
   static increased = '#2ba81e';
   static decreased = '#ee4949';
@@ -44,6 +46,34 @@ const CommonStyles = {
   },
   matchParent: {
     flex: 1,
+  },
+  checkBox: {
+    checkedImage: (<Image source={require('../../assets/common/checkbox/checked.png')}/>),
+    unCheckedImage: (<Image source={require('../../assets/common/checkbox/unchecked.png')}/>)
+  },
+  switch: {
+    activeText: 'ON',
+    inActiveText: ' OFF',
+    renderActiveText: true,
+    renderInActiveText: true,
+    circleSize: scale(14),
+    barHeight: scale(18),
+    switchLeftPx: 1.1,
+    switchRightPx: 1.3,
+    switchWidthMultiplier: 3,
+    circleBorderWidth: 0,
+    circleBorderActiveColor: '#0000',
+    circleBorderInactiveColor: '#0000',
+    backgroundActive: '#41BCF3',
+    backgroundInactive: '#C4C4C4',
+    activeTextStyle: {
+      fontSize: scale(9),
+      paddingRight: scale(5)
+    },
+    inactiveTextStyle: {
+      fontSize: scale(9),
+      paddingLeft: scale(1)
+    }
   }
 };
 
