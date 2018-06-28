@@ -1,11 +1,11 @@
 import React from 'react';
 import {
+  StyleSheet,
   Text,
   View,
 } from 'react-native';
 import BaseScreen from '../../BaseScreen'
 import { CommonStyles } from '../../../utils/CommonStyles';
-import ScaledSheet from '../../../libs/reactSizeMatter/ScaledSheet';
 
 export default class OTPSecretCodeScreen extends BaseScreen {
   render() {
@@ -29,33 +29,33 @@ export default class OTPSecretCodeScreen extends BaseScreen {
   }
 }
 
-const styles = ScaledSheet.create({
+const styles = StyleSheet.create({
   screen: {
     ...CommonStyles.screen
   },
   textHeader: {
-    marginTop: '30@s',
+    marginTop: 30,
     textAlign: 'center',
-    fontSize: '13@s'
+    fontSize: 13
   },
   recoveryCodeText: {
-    marginTop: '60@s',
-    marginBottom: '20@s',
+    marginTop: 60,
+    marginBottom: 20,
     alignSelf: 'center',
-    fontSize: '16@s'
+    fontSize: 16
   },
   secretCodeContainer: {
     alignItems: 'center',
     justifyContent: 'center',
-    height: '40@s',
+    height: 40,
     backgroundColor: '#F2F2F2',
     borderBottomWidth: 1,
     borderColor: '#595959',
-    marginStart: '30@s',
-    marginEnd: '30@s'
+    marginStart: 30,
+    marginEnd: 30
   },
   secretCode: {
-    fontSize: '16@s',
+    fontSize: 16,
     fontWeight: 'bold'
   }
 });

@@ -1,5 +1,6 @@
 import React from 'react';
 import {
+  StyleSheet,
   PixelRatio,
   Text,
   TouchableHighlight,
@@ -113,19 +114,19 @@ export default class BasicInfoScreen extends BaseScreen {
   }
 }
 
-const styles = ScaledSheet.create({
+const styles = StyleSheet.create({
   listView: {
     flex: 1,
   },
   listItem: {
-    height: "58@s"
+    height: 64
   },
   listItemContainer: {
     flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
-    paddingLeft: "20@s",
-    paddingRight: "20@s"
+    paddingLeft: 20,
+    paddingRight: 20
   },
   separator: {
     flex: 1,
@@ -146,6 +147,6 @@ const styles = ScaledSheet.create({
     justifyContent: 'center'
   },
   text: {
-    fontSize: '14@s',
+    fontSize: 14,
   }
 });

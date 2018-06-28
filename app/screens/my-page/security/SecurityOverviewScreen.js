@@ -1,5 +1,6 @@
 import React from 'react';
 import {
+  StyleSheet,
   Text,
   View,
   Image,
@@ -8,7 +9,6 @@ import {
 } from 'react-native';
 
 import BaseScreen from '../../BaseScreen';
-import ScaledSheet from '../../../libs/reactSizeMatter/ScaledSheet';
 import rf from '../../../libs/RequestFactory';
 
 export default class SecurityOverviewScreen extends BaseScreen {
@@ -230,16 +230,16 @@ export default class SecurityOverviewScreen extends BaseScreen {
   }
 }
 
-const styles = ScaledSheet.create({
+const styles = StyleSheet.create({
   listView: {
     flex: 1,
   },
   listItem: {
-    height: "58@s",
+    height: 64,
     flexDirection: 'row',
     alignItems: 'center',
-    paddingLeft: "20@s",
-    paddingRight: "20@s"
+    paddingLeft: 20,
+    paddingRight: 20
   },
   separator: {
     flex: 1,
@@ -253,7 +253,7 @@ const styles = ScaledSheet.create({
   },
   iconContainer: {
     flex: 1,
-    marginEnd: '30@s',
+    marginEnd: 30,
     justifyContent: 'center',
     alignItems: 'center'
   },
@@ -266,28 +266,28 @@ const styles = ScaledSheet.create({
     justifyContent: 'center'
   },
   text: {
-    fontSize: '14@s',
+    fontSize: 14,
   },
   activeButton: {
-    borderRadius: '5@s',
-    height: '40@s',
+    borderRadius: 5,
+    height: 40,
     backgroundColor: '#0070C0',
     justifyContent: 'center'
   },
   inactiveButton: {
-    borderRadius: '5@s',
-    height: '40@s',
+    borderRadius: 5,
+    height: 40,
     backgroundColor: '#BFBFBF',
     justifyContent: 'center'
   },
   cancelOTPButton: {
-    borderRadius: '5@s',
-    height: '40@s',
+    borderRadius: 5,
+    height: 40,
     backgroundColor: '#FFF',
     justifyContent: 'center',
     alignItems: 'center',
     borderWidth: 1,
     borderColor: '#FF3300',
-    marginEnd: '30@s'
+    marginEnd: 30
   }
 });

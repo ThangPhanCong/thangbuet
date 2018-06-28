@@ -1,5 +1,6 @@
 import React from 'react';
 import {
+  StyleSheet,
   FlatList,
   Text,
   TouchableOpacity,
@@ -11,7 +12,6 @@ import BaseScreen from '../BaseScreen';
 import Consts from '../../utils/Consts';
 import { CommonColors, CommonStyles } from '../../utils/CommonStyles';
 import { getCurrencyName, formatCurrency, formatPercent } from "../../utils/Filters";
-import ScaledSheet from '../../libs/reactSizeMatter/ScaledSheet';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import rf from '../../libs/RequestFactory';
 import _ from 'lodash';
@@ -407,7 +407,7 @@ class MarketScreen extends BaseScreen {
 
 export default MarketScreen;
 
-const styles = ScaledSheet.create({
+const styles = StyleSheet.create({
   screen: {
     ...CommonStyles.screen
   },
@@ -415,14 +415,14 @@ const styles = ScaledSheet.create({
     flex: 1,
   },
   listItem: {
-    height: "58@s"
+    height: 64
   },
   listItemContainer: {
     flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
-    paddingLeft: "10@s",
-    paddingRight: "10@s"
+    paddingLeft: 10,
+    paddingRight: 10
   },
   separator: {
     flex: 1,
@@ -434,7 +434,7 @@ const styles = ScaledSheet.create({
     flex: 3
   },
   spacePairName: {
-    width: '3@s'
+    width: 3
   },
   itemCoin: {
     color: '#000'
@@ -461,9 +461,9 @@ const styles = ScaledSheet.create({
     alignItems: 'flex-end'
   },
   changeSubGroup: {
-    width: "72@s",
-    height: "30@s",
-    borderRadius: "1@s",
+    width: 72,
+    height: 30,
+    borderRadius: 10,
     justifyContent: 'center',
     alignItems: 'center'
   },
@@ -488,14 +488,14 @@ const styles = ScaledSheet.create({
   tabBar: {
     flexDirection: 'row',
     alignItems: 'center',
-    height: "36@s",
+    height: 36,
     backgroundColor: '#F8F9FB',
-    paddingLeft: "10@s",
-    paddingRight: "10@s",
+    paddingLeft: 10,
+    paddingRight: 10,
   },
   iconSort: {
-    height: "25@s",
-    width: "14@s",
+    height: 25,
+    width: 14,
   },
   negativeText: {
     color: '#0070C0'

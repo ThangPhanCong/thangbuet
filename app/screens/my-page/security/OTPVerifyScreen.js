@@ -1,5 +1,6 @@
 import React from 'react';
 import {
+  StyleSheet,
   PixelRatio,
   Text,
   TextInput,
@@ -9,12 +10,23 @@ import {
   Image,
   Platform
 } from 'react-native';
+import { BoxShadow } from 'react-native-shadow';
 import BaseScreen from '../../BaseScreen'
 import { CommonStyles } from '../../../utils/CommonStyles';
-import ScaledSheet from '../../../libs/reactSizeMatter/ScaledSheet';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import rf from '../../../libs/RequestFactory';
 import _ from 'lodash';
+
+const shadowOpt = {
+  width: 155,
+  height: 155,
+  color: "#000",
+  opacity: 0.3,
+  border: 5,
+	radius: 5,
+	x: 0,
+	y: 0
+}
 
 export default class OTPVerifyScreen extends BaseScreen {
   _otpCode = '';
@@ -45,10 +57,28 @@ export default class OTPVerifyScreen extends BaseScreen {
         </Text>
         <View style={styles.qrcodeContainer}>
           {
-            !_.isEmpty(this.state.qrCodeUrl) &&
-            <Image
-              style={{flex: 1}}
-              source={{uri: this.state.qrCodeUrl}}/>
+            Platform.select({
+              ios: (
+                <View style = {{flex: 1}}>
+                  {
+                    !_.isEmpty(this.state.qrCodeUrl) &&
+                    <Image
+                      style={{flex: 1}}
+                      source={{uri: this.state.qrCodeUrl}}/>
+                  }
+                </View>
+              ),
+              android: (
+                <BoxShadow setting={shadowOpt}>
+                  {
+                    !_.isEmpty(this.state.qrCodeUrl) &&
+                    <Image
+                      style={{flex: 1, padding: 10}}
+                      source={{uri: this.state.qrCodeUrl}}/>
+                  }
+                </BoxShadow>
+              )
+            })
           }
         </View>
         <View style={styles.functionContainer}>
@@ -150,38 +180,31 @@ export default class OTPVerifyScreen extends BaseScreen {
   }
 }
 
-const styles = ScaledSheet.create({
+const styles = StyleSheet.create({
   screen: {
     ...CommonStyles.screen
   },
   textHeader: {
-    marginTop: '30@s',
-    marginStart: '20@s',
-    marginEnd: '20@s',
+    marginTop: 30,
+    marginStart: 20,
+    marginEnd: 20,
     textAlign: 'center',
-    fontSize: '13@s'
+    fontSize: 13
   },
   qrcodeContainer: {
-    marginTop: '20@s',
-    marginBottom: '20@s',
+    marginTop: 50,
+    marginBottom: 30,
     aspectRatio: 1,
-    width: '160@s',
+    width: 160,
     alignSelf: 'center',
-    ...Platform.select({
-      ios: {
-        shadowColor: '#000',
-        shadowOpacity: 0.3,
-        shadowRadius: '5@s'
-      },
-      android: {
-        elevation: 5
-      }
-    })
+    shadowColor: '#000',
+    shadowOpacity: 0.3,
+    shadowRadius: 5
   },
   functionContainer: {
-    marginStart: '40@s',
-    marginEnd: '40@s',
-    height: '150@s'
+    marginStart: 40,
+    marginEnd: 40,
+    height: 150
   },
   buttonContainer: {
     flex: 1,
@@ -191,30 +214,35 @@ const styles = ScaledSheet.create({
     flex: 1
   },
   button: {
-    height: '40@s',
-    borderRadius: '5@s',
+    height: 40,
+    borderRadius: 5,
     alignItems: 'center',
     justifyContent: 'center'
   },
   buttonSpace: {
-    width: '5@s'
+    width: 5
   },
   buttonAreaSpace: {
-    height: '10@s'
+    height: 10
   },
   title: {
-    marginBottom: '5@s',
-    fontSize: '12@s'
+    marginBottom: 5,
+    fontSize: 12
   },
   buttonText: {
     color: '#FFF',
-    fontSize: '12@s'
+    fontSize: 12
   },
   otpInput: {
     flex: 2,
-    height: '40@s',
-    borderRadius: '5@s',
+    height: 40,
+    borderRadius: 5,
     borderWidth: 1,
-    borderColor: '#BFBFBF'
+    borderColor: '#BFBFBF',
+    ...Platform.select({
+      android: {
+        marginBottom: -20
+      }
+    })
   }
 });

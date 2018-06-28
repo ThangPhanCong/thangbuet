@@ -1,5 +1,7 @@
 import React from 'react';
 import {
+  Platform,
+  StyleSheet,
   Text,
   TouchableOpacity,
   TouchableHighlight,
@@ -16,7 +18,6 @@ import BaseScreen from '../BaseScreen';
 import { TabNavigator, TabBarTop } from 'react-navigation';
 import Consts from '../../utils/Consts';
 import { CommonStyles } from '../../utils/CommonStyles';
-import ScaledSheet from '../../libs/reactSizeMatter/ScaledSheet';
 import I18n from '../../i18n/i18n';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import MarketScreen from './MarketScreen';
@@ -69,10 +70,11 @@ class MarketSearchScreen extends BaseScreen {
               onChangeText={this._onTextChanged.bind(this)}
               placeholder='검색'
               placeholderTextColor="#A6A6A6"
+              
             />
             <View style={styles.iconContainer}>
               <Icon name="magnify"
-                size={PixelRatio.getPixelSizeForLayoutSize(8)}
+                size={PixelRatio.getPixelSizeForLayoutSize(12)}
                 style={styles.searchIcon}
                 color="#000" />
             </View>
@@ -211,42 +213,42 @@ class MarketSearchScreen extends BaseScreen {
   }
 }
 
-const styles = ScaledSheet.create({
+const styles = StyleSheet.create({
   screen: {
     ...CommonStyles.screen
   },
 
   header: {
-    height: '60@s',
+    height: 60,
     flexDirection: 'row'
   },
   favoriteButton: {
 
   },
   leftView: {
-    marginStart: '16@s',
+    marginStart: 16,
     flex: 1,
     alignItems: 'center',
     flexDirection: 'row'
   },
   titleLeftView: {
-    marginStart: '5@s'
+    marginStart: 5
   },
   searchViewContainer: {
     flex: 3,
     justifyContent: 'center',
-    marginEnd: '16@s'
+    marginEnd: 16
   },
   iconContainer: {
     justifyContent: 'center',
     alignItems: 'center',
-    marginEnd: '2@s'
+    marginEnd: 2
   },
   searchView: {
     borderColor: '#BFBFBF',
     borderWidth: 1,
     flexDirection: 'row',
-    borderRadius: '5@s',
+    borderRadius: 5,
     alignItems: 'center'
   },
   searchIcon: {
@@ -256,31 +258,35 @@ const styles = ScaledSheet.create({
     flex: 1,
     color: '#000',
     textAlign: 'center',
-    fontSize: "12@s",
-    height: "30@s",
-    marginStart: "6@s",
+    fontSize: 12,
+    height: 36,
     borderColor: null,
-    alignSelf: 'center'
+    alignSelf: 'center',
+    ...Platform.select({
+      android: {
+        marginBottom: -10
+      }
+    })
   },
   listView: {
     flex: 1,
   },
   listItem: {
-    height: "44@s"
+    height: 44
   },
   listItemContainer: {
     flex: 1,
     alignItems: 'center',
-    paddingLeft: "10@s",
-    paddingRight: "10@s"
+    paddingLeft: 10,
+    paddingRight: 10
   },
   searchResultLabel: {
     color: '#3B3838',
-    fontSize: '14@s'
+    fontSize: 14
   },
   searchResult: {
     zIndex: 99,
-    marginTop: '3@s'
+    marginTop: 3
   }
 });
 

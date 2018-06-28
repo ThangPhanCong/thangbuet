@@ -1,5 +1,6 @@
 import React from 'react';
 import {
+  StyleSheet,
   Text,
   TouchableOpacity,
   View,
@@ -7,7 +8,6 @@ import {
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import BaseScreen from '../../BaseScreen';
-import ScaledSheet from '../../../libs/reactSizeMatter/ScaledSheet';
 import { CommonStyles } from '../../../utils/CommonStyles';
 
 const GoogleAuthIcon = require('../../../../assets/common/googleAuthBig.png')
@@ -102,55 +102,55 @@ export default class OTPGuideScreen extends BaseScreen {
   }
 }
 
-const styles = ScaledSheet.create({
+const styles = StyleSheet.create({
   screen: {
     ...CommonStyles.screen
   },
   textHeader: {
-    marginTop: '30@s',
+    marginTop: 30,
     textAlign: 'center',
-    fontSize: '13@s'
+    fontSize: 13
   },
   googleAuthText: {
-    fontSize: '18@s',
+    fontSize: 18,
     flex: 1
   },
   googleAuthContainer: {
     flexDirection: 'row',
-    marginTop: '30@s',
-    marginBottom: '20@s',
-    marginStart: '40@s',
-    marginEnd: '40@s'
+    marginTop: 30,
+    marginBottom: 20,
+    marginStart: 40,
+    marginEnd: 40
   },
   text: {
-    fontSize: '14@s',
+    fontSize: 14,
   },
   storeInfoText: {
-    fontSize: '12@s'
+    fontSize: 12
   },
   nextButton: {
-    height: '40@s',
-    width: '300@s',
+    height: 40,
+    width: 300,
     alignSelf: 'center',
-    marginTop: '30@s',
-    borderRadius: '5@s',
+    marginTop: 30,
+    borderRadius: 5,
     overflow: 'hidden'
   },
   storeContainer: {
     flex: 1,
-    marginStart: '5@s'
+    marginStart: 5
   },
   googleAuthInfo: {
-    marginStart: '10@s',
+    marginStart: 10,
     justifyContent: 'space-between'
   },
   storeInfoHorizontalSpace: {
-    width: '5@s'
+    width: 5
   },
   googleAuthInfoSpace: {
-    height: '9@s'
+    height: 9
   },
   storeInfoVerticalSpace: {
-    height: '10@s'
+    height: 10
   }
 });
