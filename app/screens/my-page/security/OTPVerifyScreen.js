@@ -30,7 +30,6 @@ export default class OTPVerifyScreen extends BaseScreen {
 
   componentWillMount() {
     super.componentWillMount();
-
     this._getGoogleAuthenKey();
   }
 
@@ -42,7 +41,7 @@ export default class OTPVerifyScreen extends BaseScreen {
         keyboardOpeningTime={0}
         extraHeight={PixelRatio.getPixelSizeForLayoutSize(20)}>
         <Text style={styles.textHeader}>
-          {`1. '추가'        를 선택하고 'SECRET KEY'를 입력하세요\n2. APP에 표시된 6자리의 OTP CODE를 입력하고 'ACTIVATE'를 클릭하세요`}
+          {`1. '추가' 를 선택하고 'SECRET KEY'를 입력하세요\n2. APP에 표시된 6자리의 OTP CODE를 입력하고 'ACTIVATE'를 클릭하세요`}
         </Text>
         <View style={styles.qrcodeContainer}>
           {
@@ -115,8 +114,8 @@ export default class OTPVerifyScreen extends BaseScreen {
     await Clipboard.setString(this.state.secretCode);
   }
 
-  async _onActiveOTP() {
-    await this._verifyOTP(this._otpCode);
+  _onActiveOTP() {
+    this._verifyOTP();
   }
 
   _onOTPTextChanged(text) {
@@ -139,8 +138,10 @@ export default class OTPVerifyScreen extends BaseScreen {
 
   async _verifyOTP(code) {
     try {
-      let res = await rf.getRequest('UserRequest').verify(code);
-      return res;
+      await rf.getRequest('UserRequest').verify(this._otpCode);
+      this.navigate('OTPSecretCodeScreen', {
+        secretCode: this._secretCode
+      });
     }
     catch(err) {
       console.log('OTPVerifyScreen._verifyOTP', err);
