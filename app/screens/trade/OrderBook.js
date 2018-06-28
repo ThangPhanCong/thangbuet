@@ -12,6 +12,7 @@ import {
 } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import ScaledSheet from '../../libs/reactSizeMatter/ScaledSheet';
+import { scale } from '../../libs/reactSizeMatter/scalingUtils';
 import _ from 'lodash';
 import Numeral from '../../libs/numeral';
 import rf from '../../libs/RequestFactory';
@@ -21,6 +22,7 @@ import Utils from '../../utils/Utils';
 import BaseScreen from '../BaseScreen';
 import { CommonColors, CommonSize, CommonStyles } from '../../utils/CommonStyles';
 import { formatCurrency, formatPercent } from '../../utils/Filters';
+import Events from '../../utils/Events';
 
 export default class OrderBook extends BaseScreen {
   static TYPE_FULL = 'full';
@@ -39,13 +41,13 @@ export default class OrderBook extends BaseScreen {
       priceSetting: { digits: 4 },
 
       currencyPrice: 1,
-      marketData: {},
     };
 
     this.orderBook = undefined;
     this.userOrderBook = undefined;
     this.prices = {};
-    this.currencyPrice;
+    this.currentPrice = undefined;
+    this.yesterdayPrice = undefined;
     this.priceSetting = undefined;
     this.quantityPrecision = undefined;
   }
@@ -56,14 +58,24 @@ export default class OrderBook extends BaseScreen {
     this._loadData();
   }
 
-  reloadData() {
-    return this._loadData();
+  getSocketEventHandlers() {
+    return {
+      OrderBookUpdated: this._onOrderBookUpdated.bind(this),
+      UserOrderBookUpdated: this._onUserOrderBookUpdated.bind(this),
+      PricesUpdated: (data) => {
+        this.setState(this._onPriceUpdated(data))
+      }
+    };
   }
 
-  setPriceSetting(priceSetting) {
-    Utils.calculatePriceSettingDigits(priceSetting);
-    this.setState({ priceSetting });
-    this.reloadData();
+  getDataEventHandlers() {
+    return {
+      [Events.ORDER_BOOK_SETTINGS_UPDATED]: this._onOrderBookSettingsUpdated.bind(this)
+    };
+  }
+
+  reloadData() {
+    return this._loadData();
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -117,7 +129,11 @@ export default class OrderBook extends BaseScreen {
   }
 
   async _getOrderBookSettings() {
-    let response = await rf.getRequest('UserRequest').getOrderBookSettings();
+    const params = {
+      currency: this._getCurrency(),
+      coin: this._getCoin()
+    };
+    const response = await rf.getRequest('UserRequest').getOrderBookSettings(params);
     this.settings = response.data;
     return this._updateOrderBook();
   }
@@ -169,21 +185,12 @@ export default class OrderBook extends BaseScreen {
     let key = Utils.getPriceKey(this._getCurrency(), this._getCoin());
     if (prices[key]) {
       if (this.currentPrice != this.prices[key].price) {
-        this.currentPrice = this.prices[key].price
+        this.currentPrice = this.prices[key].price;
+        this.yesterdayPrice = this.prices[key].last_24h_price;
       }
     }
 
     this._updateOrderBook();
-  }
-
-  getSocketEventHandlers() {
-    return {
-      OrderBookUpdated: this._onOrderBookUpdated.bind(this),
-      UserOrderBookUpdated: this._onUserOrderBookUpdated.bind(this),
-      PricesUpdated: (data) => {
-        this.setState(this._onPriceUpdated(data))
-      }
-    };
   }
 
   _onOrderBookUpdated(data) {
@@ -202,6 +209,12 @@ export default class OrderBook extends BaseScreen {
     }
   }
 
+  async _onOrderBookSettingsUpdated(data) {
+    this.settings = data;
+    await this._getPriceSetting();
+    this._updateOrderBook();
+  }
+
   _updateOrderBook() {
     let currentPrice = this.currentPrice;
     let orderBook = this._combineOrderBooks(); // combine user orderBook with user's orderBook
@@ -209,44 +222,58 @@ export default class OrderBook extends BaseScreen {
     let settings = this.settings;
     let tickerSize = this._getTickerSize();
 
-    console.log('price: ', currentPrice, 'orderbook: ', orderBook, 'settings: ', settings, 'ticker: ', tickerSize);
-
     if (!currentPrice || !orderBook || !settings || !tickerSize) {
       return;
     }
 
-    const middlePrice = this._getMiddlePrice(orderBook, currentPrice);
+    const middlePrice = this._getMiddlePrice(orderBook, currentPrice, tickerSize);
 
     let result = undefined;
     if (this.settings.show_empty_group) {
-      result = this._getOrderBookWithEmptyRow(orderBook, middlePrice);
+      result = this._getOrderBookWithEmptyRow(orderBook, middlePrice, orderBookSize + 1, tickerSize);
     } else {
-      result = this._getOrderBookWithoutEmptyRow(orderBook, middlePrice);
+      result = this._getOrderBookWithoutEmptyRow(orderBook, middlePrice, orderBookSize + 1, tickerSize);
     }
 
-    this._addPaddingRows(result.buyOrderBook, result.sellOrderBook, orderBookSize, middlePrice, tickerSize);
+    this._removeRedundantRows(result.buyOrderBook, result.sellOrderBook, orderBookSize);
 
     this.setState(result);
   }
 
-  _getOrderBookWithoutEmptyRow(orderBook, middlePrice) {
+  _getOrderBookWithEmptyRow(orderBook, middlePrice, orderBookSize, tickerSize) {
+    let buyOrderBook = [];
+    let sellOrderBook = [];
+
+    let price = middlePrice;
+    for (let i = 0 ; i < orderBookSize; i++) {
+      let row = orderBook.buy.find(row => this._isEqual(row['price'], price));
+      buyOrderBook.push(row || { price })
+      price -= tickerSize;
+    }
+
+    price = middlePrice;
+    for (let i = 0 ; i < orderBookSize; i++) {
+      let row = orderBook.sell.find(row => this._isEqual(row['price'], price));
+      sellOrderBook.unshift(row || { price })
+      price += tickerSize;
+    }
+
+    return { buyOrderBook, sellOrderBook };
+  }
+
+  _getOrderBookWithoutEmptyRow(orderBook, middlePrice, orderBookSize, tickerSize) {
     let buyOrderBook = _.filter(orderBook.buy, item => item.price <= middlePrice);
     let sellOrderBook = _.filter(orderBook.sell, item => item.price >= middlePrice);
 
     buyOrderBook = _.orderBy(buyOrderBook, 'price', 'desc');
     sellOrderBook = _.orderBy(sellOrderBook, 'price', 'desc');
 
+    this._addPaddingRows(buyOrderBook, sellOrderBook, orderBookSize, middlePrice, tickerSize);
+
     return { buyOrderBook, sellOrderBook };
   }
 
   _addPaddingRows(buyOrderBook, sellOrderBook, orderBookSize, middlePrice, tickerSize) {
-    if (buyOrderBook.length > orderBookSize) {
-      buyOrderBook = buyOrderBook.slice(0, orderBookSize);
-    }
-    if (sellOrderBook.length > orderBookSize) {
-      sellOrderBook = sellOrderBook.slice(sellOrderBook.length - orderBookSize);
-    }
-
     this._addPaddingBuyRows(buyOrderBook, orderBookSize, middlePrice, tickerSize);
     this._addPaddingSellRows(sellOrderBook, orderBookSize, middlePrice, tickerSize);
   }
@@ -275,6 +302,25 @@ export default class OrderBook extends BaseScreen {
     }
   }
 
+  _removeRedundantRows(buyOrderBook, sellOrderBook, orderBookSize) {
+    const topBuy = buyOrderBook[0];
+    const bottomSell = sellOrderBook[sellOrderBook.length - 1];
+    if (topBuy.price == bottomSell.price) {
+      if (topBuy.quantity > bottomSell.quantity) {
+        sellOrderBook.pop();
+      } else {
+        buyOrderBook.shift();
+      }
+    }
+
+    if (buyOrderBook.length > orderBookSize) {
+      buyOrderBook = buyOrderBook.slice(0, orderBookSize);
+    }
+    if (sellOrderBook.length > orderBookSize) {
+      sellOrderBook = sellOrderBook.slice(sellOrderBook.length - orderBookSize);
+    }
+  }
+
   _getOrderBookSize() {
     let sizes = {};
     sizes[OrderBook.TYPE_FULL] = 5;
@@ -282,9 +328,32 @@ export default class OrderBook extends BaseScreen {
     return sizes[this.props.type] || 5;
   }
 
-  _getMiddlePrice(orderBook, currentPrice) {
-    // TODO calculate middle price
-    return currentPrice;
+  _getMiddlePrice(orderBook, currentPrice, tickerSize) {
+    let price = 0;
+
+    var maxBuyGroup = _.maxBy(orderBook.buy, 'price');
+    var maxBuyPrice = maxBuyGroup ? maxBuyGroup.price : 0;
+
+    var minSellGroup = _.minBy(orderBook.buy, 'price');
+    var minSellPrice = minSellGroup ? minSellGroup.price : 0;
+
+    if (maxBuyPrice > 0 && minSellPrice > 0) {
+      if (maxBuyPrice < minSellPrice) {
+        if ((maxBuyPrice > currentPrice && minSellPrice > currentPrice)
+          || (maxBuyPrice < currentPrice && minSellPrice < currentPrice)) {
+          price = (maxBuyPrice + minSellPrice) / 2;
+        }
+      }
+    } else if (maxBuyPrice > 0) {
+      price = maxBuyPrice;
+    } else if (minSellPrice > 0) {
+      price = minSellPrice;
+    } else {
+      price = parseFloat(currentPrice);
+    }
+
+    price = Math.round(price / tickerSize) * tickerSize;
+    return price;
   }
 
   _combineOrderBooks() {
@@ -382,19 +451,19 @@ export default class OrderBook extends BaseScreen {
     return (
       <View style={styles.orderBookHeader}>
         <View style={styles.userQuantityHeader}>
-          <Text style={styles.headerText}>매도</Text>
+          <Text style={styles.headerText}>{I18n.t('orderBook.sell')}</Text>
         </View>
         <View style={styles.quantityHeader}>
-          <Text style={styles.headerText}>잔량</Text>
+          <Text style={styles.headerText}>{I18n.t('orderBook.balance')}</Text>
         </View>
         <View style={styles.priceHeader}>
-          <Text style={styles.headerText}>가격</Text>
+          <Text style={styles.headerText}>{I18n.t('orderBook.price')}</Text>
         </View>
         <View style={styles.quantityHeader}>
-          <Text style={styles.headerText}>잔량</Text>
+          <Text style={styles.headerText}>{I18n.t('orderBook.balance')}</Text>
         </View>
         <View style={styles.userQuantityHeader}>
-          <Text style={styles.headerText}>매도</Text>
+          <Text style={styles.headerText}>{I18n.t('orderBook.buy')}</Text>
         </View>
       </View>
     );
@@ -410,8 +479,8 @@ export default class OrderBook extends BaseScreen {
           <View style={[styles.sellPercent, this._getPercentViewStyle(item)]} />
           <Text style={styles.quantityText}>{this._formatQuantity(item.quantity)}</Text>
         </View>
-        <View style={[styles.priceCell, styles.topBorder]}>
-          <Text style={styles.priceText}>{this._formatPrice(item.price)}</Text>
+        <View style={[styles.priceCell, styles.topBorder, this._getPriceCellStyle(item.price)]}>
+          <Text style={[styles.priceText, this._getPriceTextStyle(item.price)]}>{this._formatPrice(item.price)}</Text>
         </View>
         <View style={[styles.quantityCell, styles.topBorder]}>
         </View>
@@ -430,8 +499,8 @@ export default class OrderBook extends BaseScreen {
         </View>
         <View style={[styles.quantityCell, styles.bottomBorder]}>
         </View>
-        <View style={[styles.priceCell, styles.bottomBorder]}>
-          <Text style={styles.priceText}>{this._formatPrice(item.price)}</Text>
+        <View style={[styles.priceCell, styles.bottomBorder, this._getPriceCellStyle(item.price)]}>
+          <Text style={[styles.priceText, this._getPriceTextStyle(item.price)]}>{this._formatPrice(item.price)}</Text>
         </View>
         <View style={[styles.quantityCell, styles.bottomBorder]}>
           <View style={[styles.sellPercent, this._getPercentViewStyle(item)]} />
@@ -442,6 +511,24 @@ export default class OrderBook extends BaseScreen {
         </View>
       </View>
     );
+  }
+
+  _getPriceCellStyle(price) {
+    if (price == this.currentPrice) {
+      return styles.currentPriceCell;
+    } else {
+      return {};
+    }
+  }
+
+  _getPriceTextStyle(price) {
+    if (price == this.currentPrice) {
+      return styles.currentPrice;
+    } else if (price >= this.yesterdayPrice) {
+      return styles.increasedPrice;
+    } else {
+      return styles.decreasedPrice;
+    }
   }
 
   _rowClick(item) {
@@ -470,10 +557,6 @@ export default class OrderBook extends BaseScreen {
     return {
       width: (item.quantityPercent || 0) + '%'
     };
-  }
-
-  _getFiatPrice() {
-    return this.state.marketData.price * this.state.currencyPrice;
   }
 
   _renderSmallOrderBook() {
@@ -507,7 +590,7 @@ export default class OrderBook extends BaseScreen {
   }
 }
 
-const fontSize = PixelRatio.getFontScale() * 10;
+const fontSize = scale(12);
 const borderColor = '#DCDCDC';
 const borderWidth = 1;
 const sellCellBorder = {
@@ -627,6 +710,19 @@ const styles = ScaledSheet.create({
     borderBottomWidth: borderWidth,
     borderLeftWidth: borderWidth,
     borderColor: borderColor
+  },
+
+  currentPriceCell: {
+    backgroundColor: '#002A68'
+  },
+  currentPrice: {
+    color: '#FFF'
+  },
+  increasedPrice: {
+    color: '#FE0000'
+  },
+  decreasedPrice: {
+    color: '#0065BF'
   },
 
   buyPrice: {
