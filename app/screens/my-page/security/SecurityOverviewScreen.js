@@ -5,7 +5,6 @@ import {
   View,
   Image,
   TouchableHighlight,
-  ScrollView,
   TouchableOpacity,
   TextInput,
   ScrollView
@@ -105,21 +104,8 @@ export default class SecurityOverviewScreen extends BaseScreen {
 
         <View style={styles.valueGroup}>
           {
-            // this.state.info[item.propVerify] ? 
-            // <TouchableHighlight style={styles.cancelOTPButton}
-            //   onPress={this._onCancelGoogleAuth.bind(this)}
-            //   onPressIn={() => this.setState({cancelOtpButtonPressed: true})}
-            //   onPressOut={() => this.setState({cancelOtpButtonPressed: false})}
-            //   underlayColor='#FF3300'>
-            //   <Text style={[styles.text, this.state.cancelOtpButtonPressed ? {color: '#FFF'} : {color: '#FF3300'}]}>
-            //     {I18n.t('myPage.security.cancelOTP')}
-            //   </Text>
-            // </TouchableHighlight> :
-            // <Text style={styles.text}>
-            //   {I18n.t('myPage.security.notAllowed')}
-            // </Text>
-
-            <TouchableHighlight style={styles.cancelOtpButton}
+            this.state.info[item.propVerify] ? 
+            <TouchableHighlight style={styles.cancelOTPButton}
               onPress={this._onCancelGoogleAuth.bind(this)}
               onPressIn={() => this.setState({cancelOtpButtonPressed: true})}
               onPressOut={() => this.setState({cancelOtpButtonPressed: false})}
@@ -127,7 +113,10 @@ export default class SecurityOverviewScreen extends BaseScreen {
               <Text style={[styles.text, this.state.cancelOtpButtonPressed ? {color: '#FFF'} : {color: '#FF3300'}]}>
                 {I18n.t('myPage.security.cancelOTP')}
               </Text>
-            </TouchableHighlight>
+            </TouchableHighlight> :
+            <Text style={styles.text}>
+              {I18n.t('myPage.security.notAllowed')}
+            </Text>
           }
         </View>
 
@@ -285,14 +274,14 @@ export default class SecurityOverviewScreen extends BaseScreen {
             {I18n.t('myPage.security.initOtpVerificationDesc')}
           </Text>
           <ScrollView
-            style={{marginTop: 8, marginStart: 16, marginEnd: 16, height: 200}}
+            style={{marginTop: 8, marginStart: 16, marginEnd: 16, height: 200, borderRadius: 5, borderWidth: 1, borderColor: '#D9D9D9'}}
             contentContainerStyle={{padding: 10}}>
             <Text style={{fontSize: 13}}>
               {I18n.t('myPage.security.initOtpVerificationInstruction')}
             </Text>
           </ScrollView>
           <TouchableOpacity
-            style={[styles.submitCancelOtpButton, { marginTop: 30, marginBottom: 30 }]}
+            style={[styles.submitCancelOtpButton, { marginTop: 20, marginBottom: 30 }]}
             onPress={this._onRemoveGoogleAuth.bind(this)}>
             <Text style={{fontSize: 13, color: '#FFF'}}>
               {I18n.t('myPage.security.cancelOtpSubmit')}
