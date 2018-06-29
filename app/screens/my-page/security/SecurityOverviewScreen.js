@@ -5,9 +5,13 @@ import {
   View,
   Image,
   TouchableHighlight,
+  ScrollView,
+  TouchableOpacity,
+  TextInput,
   ScrollView
 } from 'react-native';
-
+import Modal from 'react-native-modal';
+import { Card } from 'react-native-elements';
 import BaseScreen from '../../BaseScreen';
 import rf from '../../../libs/RequestFactory';
 import I18n from '../../../i18n/i18n';
@@ -33,11 +37,16 @@ export default class SecurityOverviewScreen extends BaseScreen {
     image: require('../../../../assets/common/password.png')
   }];
 
+  _otpCode = '';
+  _recoveryCode = '';
+
   constructor(props) {
     super(props);
 
     this.state = {
       info: {},
+      cancelOtpDialogVisible: false,
+      initVerificationDialogVisible: false,
       cancelOtpButtonPressed: false
     }
   }
@@ -49,19 +58,23 @@ export default class SecurityOverviewScreen extends BaseScreen {
 
   render() {
     return(
-      <ScrollView
-        style={styles.listView}
-        ItemSeparatorComponent={this._renderSeparator}>
-        {this._renderVerifyEmail()}
-        <View style={styles.separator}/>
-        {this._renderVerifyGoogle()}
-        <View style={styles.separator}/>
-        {this._renderVerifyPhone()}
-        <View style={styles.separator}/>
-        {this._renderVerifyBankAccount()}
-        <View style={styles.separator}/>
-        {this._renderVerifyPassword()}
-      </ScrollView>
+      <View style={styles.listView}>
+        <ScrollView
+          style={{flex: 1}}
+          ItemSeparatorComponent={this._renderSeparator}>
+          {this._renderVerifyEmail()}
+          <View style={styles.separator}/>
+          {this._renderVerifyGoogle()}
+          <View style={styles.separator}/>
+          {this._renderVerifyPhone()}
+          <View style={styles.separator}/>
+          {this._renderVerifyBankAccount()}
+          <View style={styles.separator}/>
+          {this._renderVerifyPassword()}
+        </ScrollView>
+        {this._renderSubmitModal()}
+        {this._renderInitVerificationModal()}
+      </View>
     )
   }
 
@@ -92,8 +105,21 @@ export default class SecurityOverviewScreen extends BaseScreen {
 
         <View style={styles.valueGroup}>
           {
-            this.state.info[item.propVerify] ? 
-            <TouchableHighlight style={styles.cancelOTPButton}
+            // this.state.info[item.propVerify] ? 
+            // <TouchableHighlight style={styles.cancelOTPButton}
+            //   onPress={this._onCancelGoogleAuth.bind(this)}
+            //   onPressIn={() => this.setState({cancelOtpButtonPressed: true})}
+            //   onPressOut={() => this.setState({cancelOtpButtonPressed: false})}
+            //   underlayColor='#FF3300'>
+            //   <Text style={[styles.text, this.state.cancelOtpButtonPressed ? {color: '#FFF'} : {color: '#FF3300'}]}>
+            //     {I18n.t('myPage.security.cancelOTP')}
+            //   </Text>
+            // </TouchableHighlight> :
+            // <Text style={styles.text}>
+            //   {I18n.t('myPage.security.notAllowed')}
+            // </Text>
+
+            <TouchableHighlight style={styles.cancelOtpButton}
               onPress={this._onCancelGoogleAuth.bind(this)}
               onPressIn={() => this.setState({cancelOtpButtonPressed: true})}
               onPressOut={() => this.setState({cancelOtpButtonPressed: false})}
@@ -101,10 +127,7 @@ export default class SecurityOverviewScreen extends BaseScreen {
               <Text style={[styles.text, this.state.cancelOtpButtonPressed ? {color: '#FFF'} : {color: '#FF3300'}]}>
                 {I18n.t('myPage.security.cancelOTP')}
               </Text>
-            </TouchableHighlight> :
-            <Text style={styles.text}>
-              {I18n.t('myPage.security.notAllowed')}
-            </Text>
+            </TouchableHighlight>
           }
         </View>
 
@@ -191,6 +214,95 @@ export default class SecurityOverviewScreen extends BaseScreen {
     )
   }
 
+  _renderSubmitModal() {
+    return (
+      <Modal
+        isVisible={this.state.cancelOtpDialogVisible}
+        avoidKeyboard={true}
+        useNativeDriver={true}
+        backdropColor='transparent'
+        onBackdropPress={() => this.setState({cancelOtpDialogVisible: false})}>
+        <Card
+          style={styles.dialog}
+          containerStyle={{borderRadius: 5, padding: 0, marginStart: 30, marginEnd: 30}}>
+          <Text style={{fontSize: 13, marginTop: 16, marginBottom: 16, marginStart: 16, marginEnd: 16}}>
+            {I18n.t('myPage.security.cancelOtpHeader')}
+          </Text>
+          <View style={{height: 1, backgroundColor: '#EBEBEB'}}/>
+          <Text style={{fontSize: 13, marginTop: 16, marginBottom: 3, marginStart: 16, marginEnd: 16}}>
+            {I18n.t('myPage.security.cancelOtpDesc')}
+          </Text>
+          <Text style={{fontSize: 13, marginBottom: 3, marginStart: 16, marginEnd: 16}}>
+            {I18n.t('myPage.security.otpVerificationNumber')}
+          </Text>
+          <TextInput
+            style={styles.textInput}
+            onChangeText={text => this._otpCode = text}
+            underlineColorAndroid='transparent'
+            />
+          <Text style={{fontSize: 13, marginTop: 10, marginBottom: 3, marginStart: 16, marginEnd: 16}}>
+            {I18n.t('myPage.security.dialogRecoveryCode')}
+          </Text>
+          <TextInput
+            style={styles.textInput}
+            onChangeText={text => this._recoveryCode = text}
+            underlineColorAndroid='transparent'
+            />
+          <TouchableOpacity
+            style={styles.submitCancelOtpButton}
+            onPress={this._onRemoveGoogleAuth.bind(this)}>
+            <Text style={{fontSize: 13, color: '#FFF'}}>
+              {I18n.t('myPage.security.cancelOtpSubmit')}
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.initVerificationButton}
+            onPress={this._onShowInitVerificationDialog.bind(this)}>
+            <Text style={{fontSize: 13, color: '#0070C0', textDecorationStyle: 'solid', textDecorationLine: 'underline', textDecorationColor: '#0070C0'}}>
+              {I18n.t('myPage.security.initOtpVerification')}
+            </Text>
+          </TouchableOpacity>
+        </Card>
+      </Modal>
+    )
+  }
+
+  _renderInitVerificationModal() {
+    return (
+      <Modal
+        isVisible={this.state.initVerificationDialogVisible}
+        avoidKeyboard={true}
+        useNativeDriver={true}
+        backdropColor='transparent'
+        onBackdropPress={() => this.setState({initVerificationDialogVisible: false})}>
+        <Card
+          style={styles.dialog}
+          containerStyle={{borderRadius: 5, padding: 0, marginStart: 30, marginEnd: 30}}>
+          <Text style={{fontSize: 13, marginTop: 16, marginBottom: 16, marginStart: 16, marginEnd: 16}}>
+            {I18n.t('myPage.security.initOtpVerification')}
+          </Text>
+          <View style={{height: 1, backgroundColor: '#EBEBEB'}}/>
+          <Text style={{fontSize: 13, marginTop: 16, marginStart: 16, marginEnd: 16}}>
+            {I18n.t('myPage.security.initOtpVerificationDesc')}
+          </Text>
+          <ScrollView
+            style={{marginTop: 8, marginStart: 16, marginEnd: 16, height: 200}}
+            contentContainerStyle={{padding: 10}}>
+            <Text style={{fontSize: 13}}>
+              {I18n.t('myPage.security.initOtpVerificationInstruction')}
+            </Text>
+          </ScrollView>
+          <TouchableOpacity
+            style={[styles.submitCancelOtpButton, { marginTop: 30, marginBottom: 30 }]}
+            onPress={this._onRemoveGoogleAuth.bind(this)}>
+            <Text style={{fontSize: 13, color: '#FFF'}}>
+              {I18n.t('myPage.security.cancelOtpSubmit')}
+            </Text>
+          </TouchableOpacity>
+        </Card>
+      </Modal>
+    )
+  }
+
   _onVerifyGoogle() {
     this.navigate('OTPGuideScreen');
   }
@@ -208,7 +320,19 @@ export default class SecurityOverviewScreen extends BaseScreen {
   }
 
   _onCancelGoogleAuth() {
+    this.setState({cancelOtpDialogVisible: true});
+  }
 
+  _onRemoveGoogleAuth() {
+    this._removeGoogleAuth();
+  }
+
+  _onShowInitVerificationDialog() {
+    this.setState({cancelOtpDialogVisible: false}, () => {
+      this.setState({
+        initVerificationDialogVisible: true
+      })
+    })
   }
 
   async _getCurrentUser() {
@@ -226,7 +350,20 @@ export default class SecurityOverviewScreen extends BaseScreen {
       this.setState({ info })
     }
     catch(err) {
-      console.log('BasicInfoScreen._getCurrentUser', err);
+      console.log('SecurityOverviewScreen._getCurrentUser', err);
+    }
+  }
+
+  async _removeGoogleAuth() {
+    try {
+      await rf.getRequest('UserRequest').delGoogleAuth({
+        otp: this._otpCode
+      })
+
+      this.setState({cancelOtpDialogVisible: false})
+    }
+    catch(err) {
+      console.log('SecurityOverviewScreen._removeGoogleAuth', err);
     }
   }
 }
@@ -281,7 +418,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#BFBFBF',
     justifyContent: 'center'
   },
-  cancelOTPButton: {
+  cancelOtpButton: {
     borderRadius: 5,
     height: 40,
     backgroundColor: '#FFF',
@@ -290,5 +427,37 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#FF3300',
     marginEnd: 30
+  },
+  dialog: {
+    marginStart: 40,
+    marginEnd: 40,
+    backgroundColor: '#FFF'
+  },
+  textInput: {
+    height: 40,
+    borderRadius: 5,
+    borderWidth: 1,
+    borderColor: '#BFBFBF',
+    marginStart: 16,
+    marginEnd: 16
+  },
+  submitCancelOtpButton: {
+    marginTop: 30,
+    marginStart: 16,
+    marginEnd: 16,
+    height: 40,
+    backgroundColor: '#0070C0',
+    borderRadius: 5,
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
+  initVerificationButton: {
+    marginTop: 20,
+    marginBottom: 30,
+    marginStart: 16,
+    marginEnd: 16,
+    height: 30,
+    alignItems: 'center',
+    justifyContent: 'center'
   }
 });

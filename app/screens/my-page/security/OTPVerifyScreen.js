@@ -184,7 +184,7 @@ export default class OTPVerifyScreen extends BaseScreen {
 
   async _verifyOTP(code) {
     try {
-      await rf.getRequest('UserRequest').verify(this._otpCode);
+      await rf.getRequest('UserRequest').addSecuritySettingOtp(this._otpCode);
       this.navigate('OTPSecretCodeScreen', {
         secretCode: this._secretCode
       });
