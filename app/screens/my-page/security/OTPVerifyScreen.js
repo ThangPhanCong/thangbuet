@@ -8,12 +8,14 @@ import {
   View,
   Clipboard,
   Image,
-  Platform
+  Platform,
+  KeyboardAvoidingView,
+  Keyboard
 } from 'react-native';
 import { BoxShadow } from 'react-native-shadow';
 import BaseScreen from '../../BaseScreen'
 import { CommonStyles } from '../../../utils/CommonStyles';
-import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+// import KeyboardAvoidingView from '../../../utils/KeyboardAvoidingView';
 import rf from '../../../libs/RequestFactory';
 import _ from 'lodash';
 
@@ -45,13 +47,20 @@ export default class OTPVerifyScreen extends BaseScreen {
     this._getGoogleAuthenKey();
   }
 
+  componentWillUnmount() {
+    super.componentWillUnmount();
+    Keyboard.dismiss();
+  }
+
   render() {
     return(
-      <KeyboardAwareScrollView
+      <KeyboardAvoidingView
         style={styles.screen}
-        enableOnAndroid={true}
-        keyboardOpeningTime={0}
-        extraHeight={PixelRatio.getPixelSizeForLayoutSize(20)}>
+        behavior='position'
+        keyboardVerticalOffset={Platform.select({
+          ios: 104,
+          android: 200
+        })}>
         <Text style={styles.textHeader}>
           {`1. '추가' 를 선택하고 'SECRET KEY'를 입력하세요\n2. APP에 표시된 6자리의 OTP CODE를 입력하고 'ACTIVATE'를 클릭하세요`}
         </Text>
@@ -118,7 +127,8 @@ export default class OTPVerifyScreen extends BaseScreen {
                 <TextInput
                   style={styles.otpInput}
                   underlineColorAndroid='transparent'
-                  onChangeText={this._onOTPTextChanged.bind(this)}/>
+                  onChangeText={this._onOTPTextChanged.bind(this)}
+                  onSubmitEditing={Keyboard.dismiss}/>
                 <View style={styles.buttonSpace}/>
                 <TouchableOpacity
                   style={[styles.button, {flex: 1, backgroundColor: '#ED7D31'}]}
@@ -131,7 +141,7 @@ export default class OTPVerifyScreen extends BaseScreen {
             </View>
           </View>
         </View>
-      </KeyboardAwareScrollView>
+      </KeyboardAvoidingView>
     )
   }
 
@@ -196,8 +206,8 @@ const styles = StyleSheet.create({
     fontSize: 13
   },
   qrcodeContainer: {
-    marginTop: 50,
-    marginBottom: 30,
+    marginTop: 40,
+    marginBottom: 20,
     aspectRatio: 1,
     width: 160,
     alignSelf: 'center',
@@ -242,11 +252,6 @@ const styles = StyleSheet.create({
     height: 40,
     borderRadius: 5,
     borderWidth: 1,
-    borderColor: '#BFBFBF',
-    ...Platform.select({
-      android: {
-        marginBottom: -20
-      }
-    })
+    borderColor: '#BFBFBF'
   }
 });

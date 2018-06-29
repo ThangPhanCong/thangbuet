@@ -53,6 +53,7 @@ export default class BasicInfoScreen extends BaseScreen {
         extraData={this.state}
         renderItem={this._renderItem.bind(this)}
         ItemSeparatorComponent={this._renderSeparator}
+        keyExtractor={(item, index) => index.toString()}
       />
     )
   }

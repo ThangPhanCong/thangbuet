@@ -261,12 +261,7 @@ const styles = StyleSheet.create({
     fontSize: 12,
     height: 36,
     borderColor: null,
-    alignSelf: 'center',
-    ...Platform.select({
-      android: {
-        marginBottom: -10
-      }
-    })
+    alignSelf: 'center'
   },
   listView: {
     flex: 1,
