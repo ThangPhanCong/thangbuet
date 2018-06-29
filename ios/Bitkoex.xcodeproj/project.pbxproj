@@ -5,7 +5,6 @@
 	};
 	objectVersion = 46;
 	objects = {
-
 /* Begin PBXBuildFile section */
 		00C302E51ABCBA2D00DB3ED1 /* libRCTActionSheet.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 00C302AC1ABCB8CE00DB3ED1 /* libRCTActionSheet.a */; };
 		00C302E71ABCBA2D00DB3ED1 /* libRCTGeolocation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 00C302BA1ABCB90400DB3ED1 /* libRCTGeolocation.a */; };
@@ -665,6 +664,91 @@
 				306523C02436434E91E7F651 /* Zocial.ttf */,
 			);
 			name = Resources;
+			sourceTree = "<group>";
+		};
+		1317084520D829B000FC4838 /* Recovered References */ = {
+			isa = PBXGroup;
+			children = (
+				89819383A5DD4F428BD2087A /* libRNCamera.a */,
+				41DAA740AB814B95947D05C5 /* libRNFS.a */,
+				EE6F31E358914ED6A9F017E2 /* libRNI18n.a */,
+				E20D684B03A54BBEA8EE2DEE /* libRNKeychain.a */,
+				447F13354BF243BC8729BA69 /* libRCTOrientation.a */,
+				244128BC90A74C6AB9748EC4 /* libRCTRestart.a */,
+				DDAFDB96543347FBB933C690 /* libRNSVG.a */,
+				13517AFBDE8146149D41D4B3 /* libRNVectorIcons.a */,
+				B706F8F1144245D4AD3100B2 /* libRNI18n-tvOS.a */,
+				497E5A2DBB6B4D5EB2A21682 /* libRNSVG-tvOS.a */,
+			);
+			name = "Recovered References";
+			sourceTree = "<group>";
+		};
+		1317084620D829B400FC4838 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				1317087320D829B500FC4838 /* libRNCamera.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		1317084820D829B400FC4838 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				1317087720D829B500FC4838 /* libRNFS.a */,
+				1317087920D829B500FC4838 /* libRNFS.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		1317084A20D829B400FC4838 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				1317087D20D829B500FC4838 /* libRNI18n.a */,
+				1317087F20D829B500FC4838 /* libRNI18n-tvOS.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		1317088020D829B500FC4838 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				1317089320D829B600FC4838 /* libRNKeychain.a */,
+				1317089520D829B600FC4838 /* libRNKeychain.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		1317088220D829B500FC4838 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				1317088C20D829B600FC4838 /* libRCTOrientation.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		1317088420D829B500FC4838 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				1317088F20D829B600FC4838 /* libRCTRestart.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		1317088620D829B500FC4838 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				1317089920D829B600FC4838 /* libRNSVG.a */,
+				1317089B20D829B600FC4838 /* libRNSVG-tvOS.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		1317088820D829B500FC4838 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				1317089E20D829B600FC4838 /* libRNVectorIcons.a */,
+			);
+			name = Products;
 			sourceTree = "<group>";
 		};
 		139105B71AF99BAD00B5F7CC /* Products */ = {
