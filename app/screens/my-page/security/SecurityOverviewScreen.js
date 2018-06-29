@@ -10,6 +10,7 @@ import {
 
 import BaseScreen from '../../BaseScreen';
 import rf from '../../../libs/RequestFactory';
+import I18n from '../../../i18n/i18n';
 
 export default class SecurityOverviewScreen extends BaseScreen {
   _infoProps = [{
@@ -73,7 +74,7 @@ export default class SecurityOverviewScreen extends BaseScreen {
 
         <View style={styles.valueGroup}>
           <Text style={styles.text}>
-            {this.state.info[item.propVerify] ? this.state.info[item.propValue] : '미인증'}
+            {this.state.info[item.propVerify] ? this.state.info[item.propValue] : I18n.t('myPage.security.notAllowed')}
           </Text>
         </View>
 
@@ -98,11 +99,11 @@ export default class SecurityOverviewScreen extends BaseScreen {
               onPressOut={() => this.setState({cancelOtpButtonPressed: false})}
               underlayColor='#FF3300'>
               <Text style={[styles.text, this.state.cancelOtpButtonPressed ? {color: '#FFF'} : {color: '#FF3300'}]}>
-                {'사용 중단하기'}
+                {I18n.t('myPage.security.cancelOTP')}
               </Text>
             </TouchableHighlight> :
             <Text style={styles.text}>
-              { '미인증' }
+              {I18n.t('myPage.security.notAllowed')}
             </Text>
           }
         </View>
@@ -121,7 +122,7 @@ export default class SecurityOverviewScreen extends BaseScreen {
 
         <View style={styles.valueGroup}>
           <Text style={styles.text}>
-            {this.state.info[item.propVerify] ? this.state.info[item.propValue] : '미인증'}
+            {this.state.info[item.propVerify] ? this.state.info[item.propValue] : I18n.t('myPage.security.notAllowed')}
           </Text>
         </View>
 
@@ -139,7 +140,7 @@ export default class SecurityOverviewScreen extends BaseScreen {
 
         <View style={styles.valueGroup}>
           <Text style={styles.text}>
-            {this.state.info[item.propVerify] ? this.state.info[item.propValue] : '미인증'}
+            {this.state.info[item.propVerify] ? this.state.info[item.propValue] : I18n.t('myPage.security.notAllowed')}
           </Text>
         </View>
 
@@ -183,7 +184,7 @@ export default class SecurityOverviewScreen extends BaseScreen {
           disabled={this.state.info[item.propVerify] > 0}
           underlayColor='#595959'>
           <Text style = {{ alignSelf: 'center', color: '#FFF' }}>
-            {this.state.info[item.propVerify] ? '인증 완료' : '인증하기' }
+            {this.state.info[item.propVerify] ? I18n.t('myPage.security.verified') : I18n.t('myPage.security.unverified') }
           </Text>
         </TouchableHighlight>
       </View>

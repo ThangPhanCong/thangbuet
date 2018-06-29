@@ -17,6 +17,7 @@ import BaseScreen from '../../BaseScreen'
 import { CommonStyles } from '../../../utils/CommonStyles';
 // import KeyboardAvoidingView from '../../../utils/KeyboardAvoidingView';
 import rf from '../../../libs/RequestFactory';
+import I18n from '../../../i18n/i18n';
 import _ from 'lodash';
 
 const shadowOpt = {
@@ -62,7 +63,7 @@ export default class OTPVerifyScreen extends BaseScreen {
           android: 200
         })}>
         <Text style={styles.textHeader}>
-          {`1. '추가' 를 선택하고 'SECRET KEY'를 입력하세요\n2. APP에 표시된 6자리의 OTP CODE를 입력하고 'ACTIVATE'를 클릭하세요`}
+          {I18n.t('myPage.security.verificationGuide')}
         </Text>
         <View style={styles.qrcodeContainer}>
           {
@@ -94,7 +95,7 @@ export default class OTPVerifyScreen extends BaseScreen {
           <View style={{flex: 1}}>
             <View style={styles.buttonRowContainer}>
               <Text style={styles.title}>
-                {'SECRET KEY'}
+                {I18n.t('myPage.security.secretKey').toLocaleUpperCase()}
               </Text>
               <View style={styles.buttonContainer}>
                 <TouchableOpacity
@@ -102,7 +103,7 @@ export default class OTPVerifyScreen extends BaseScreen {
                   onPress={this._onShowSecretCode.bind(this)}
                   disabled={this.state.isShowSecretCode}>
                   <Text style = {styles.buttonText}>
-                    {this.state.isShowSecretCode ? this._secretCode : 'VIEW SECRET KEY' }
+                    {this.state.isShowSecretCode ? this._secretCode : I18n.t('myPage.security.viewSecretKey').toLocaleUpperCase()}
                   </Text>
                 </TouchableOpacity>
                 <View style={styles.buttonSpace}/>
@@ -111,7 +112,7 @@ export default class OTPVerifyScreen extends BaseScreen {
                   onPress={this._onCopySecretCode.bind(this)}
                   disabled={!this.state.isShowSecretCode}>
                   <Text style = {styles.buttonText}>
-                    {'COPY'}
+                    {I18n.t('myPage.security.copy').toLocaleUpperCase()}
                   </Text>
                 </TouchableOpacity>
               </View>
@@ -121,7 +122,7 @@ export default class OTPVerifyScreen extends BaseScreen {
 
             <View style={styles.buttonRowContainer}>
               <Text style={styles.title}>
-                {'OTP CODE'}
+                {I18n.t('myPage.security.otpCode').toLocaleUpperCase()}
               </Text>
               <View style={styles.buttonContainer}>
                 <TextInput
@@ -134,7 +135,7 @@ export default class OTPVerifyScreen extends BaseScreen {
                   style={[styles.button, {flex: 1, backgroundColor: '#ED7D31'}]}
                   onPress={this._onActiveOTP.bind(this)}>
                   <Text style = {styles.buttonText}>
-                    {'ACTIVATE'}
+                    {I18n.t('myPage.security.activate').toLocaleUpperCase()}
                   </Text>
                 </TouchableOpacity>
               </View>

@@ -15,6 +15,7 @@ import { getCurrencyName, formatCurrency, formatPercent } from "../../utils/Filt
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import rf from '../../libs/RequestFactory';
 import _ from 'lodash';
+import I18n from '../../i18n/i18n';
 
 class MarketScreen extends BaseScreen {
   static SORT_FIELDS = {
@@ -125,7 +126,7 @@ class MarketScreen extends BaseScreen {
 
           <View style={styles.volumeGroup}>
             <Text style={{ color: '#000' }}>
-              {formatCurrency(item.volume, Consts.CURRENCY_KRW, 0) + '백만'}
+              {formatCurrency(item.volume, Consts.CURRENCY_KRW, 0) + I18n.t('marketList.unit')}
             </Text>
           </View>
         </View>
@@ -145,7 +146,7 @@ class MarketScreen extends BaseScreen {
         <TouchableWithoutFeedback onPress={() => this._onSortField(MarketScreen.SORT_FIELDS.SYMBOL)}>
           <View style={{ flex: 3, alignItems: 'center' }}>
             <Text style={styles.normalHeader}>
-              코인
+              {I18n.t('marketList.symbol')}
               {this._renderArrow(MarketScreen.SORT_FIELDS.SYMBOL)}
             </Text>
           </View>
@@ -154,7 +155,7 @@ class MarketScreen extends BaseScreen {
         <TouchableWithoutFeedback onPress={() => this._onSortField(MarketScreen.SORT_FIELDS.PRICE)}>
           <View style={{ flex: 3, alignItems: 'flex-end' }}>
             <Text style={styles.normalHeader}>
-              현재가
+              {I18n.t('marketList.price')}
               {this._renderArrow(MarketScreen.SORT_FIELDS.PRICE)}
             </Text>
           </View>
@@ -163,7 +164,7 @@ class MarketScreen extends BaseScreen {
         <TouchableWithoutFeedback onPress={() => this._onSortField(MarketScreen.SORT_FIELDS.CHANGE)}>
           <View style={{ flex: 2, alignItems: 'flex-end' }}>
             <Text style={styles.normalHeader}>
-              전일대비
+              {I18n.t('marketList.change')}
               {this._renderArrow(MarketScreen.SORT_FIELDS.CHANGE)}
             </Text>
           </View>
@@ -172,7 +173,7 @@ class MarketScreen extends BaseScreen {
         <TouchableWithoutFeedback onPress={() => this._onSortField(MarketScreen.SORT_FIELDS.VOLUME)}>
           <View style={{ flex: 3, alignItems: 'flex-end' }}>
             <Text style={styles.normalHeader}>
-              거래대금
+              {I18n.t('marketList.volume')}
               {this._renderArrow(MarketScreen.SORT_FIELDS.VOLUME)}
             </Text>
           </View>

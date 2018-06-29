@@ -9,7 +9,7 @@ import {
 import { TabNavigator, TabBarTop } from 'react-navigation';
 import BaseScreen from '../BaseScreen';
 import { CommonStyles } from '../../utils/CommonStyles';
-
+import I18n from '../../i18n/i18n';
 import BasicInfoScreen from './basic/BasicInfoScreen';
 import ConnectionScreen from './connection/ConnectionScreen';
 import SecurityScreen from './security/SecurityScreen';
@@ -20,25 +20,25 @@ const TabBarNavigator = TabNavigator({
   BasicInfoScreen: {
     screen: BasicInfoScreen,
     navigationOptions: () => ({
-      tabBarLabel: '내 정보',
+      tabBarLabel: I18n.t('myPage.tab.basic'),
     })
   },
   SecurityScreen: {
     screen: SecurityScreen,
     navigationOptions: () => ({
-      tabBarLabel: '보안설정',
+      tabBarLabel: I18n.t('myPage.tab.security'),
     })
   },
   ConnectionScreen: {
     screen: ConnectionScreen,
     navigationOptions: () => ({
-      tabBarLabel: '접속관리',
+      tabBarLabel: I18n.t('myPage.tab.connection'),
     })
   },
   WalletScreen: {
     screen: WalletScreen,
     navigationOptions: () => ({
-      tabBarLabel: '출금주소록',
+      tabBarLabel: I18n.t('myPage.tab.wallet'),
     })
   }
 },{

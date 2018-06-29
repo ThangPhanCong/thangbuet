@@ -11,7 +11,11 @@ export default {
     fiatSign: '₫',
     message: {
       network_error: "Không thể kết nối"
-    }
+    },
+    iPhone: 'iPhone',
+    android: 'Android',
+    appStore: 'Apple App Store',
+    playStore: 'Google Play Store'
   },
 
   login: {
@@ -55,6 +59,14 @@ export default {
       termOfUse: 'Điều khoản sử dụng',
       googleAuthentication: '2FA'
     }
+  },
+  marketList: {
+    symbol: '코인',
+    price: '현재가',
+    change: '전일대비',
+    volume: '거래대금',
+    unit: '백만',
+    favorite: '즐겨찾기'
   },
   marketDetail: {
     time: '시간',
@@ -112,5 +124,35 @@ export default {
     profitAndLoss: '손익',
     valuation: '평가',
     total: 'TOTAL'
+  },
+  myPage: {
+    tab: {
+      basic: '내 정보',
+      security: '보안설정',
+      connection: '접속관리',
+      wallet: '출금주소록'
+    },
+    basic: {
+      securityLevel: '인증 레벨',
+      feeLevel: '수수료 등급',
+      id: '아이디',
+      phone: '휴대전화'
+    },
+    security: {
+      verified: '인증 완료',
+      unverified: '인증하기',
+      cancelOTP: '사용 중단하기',
+      notAllowed: '미인증',
+      otpGuide: `안전한 거래를 위해 구글 OTP 인증을 사용하세요.\nAPP을 다운로드&설치하고 'NEXT'를 누르세요`,
+      recoveryGuide: `구글 OTP인증이 완료되었습니다. \n이 화면을 벗어나면 복구 코드는 다시 볼 수 없습니다.\n반드시 아래 복구코드를 다른 곳에 잘 보관하세요.`,
+      verificationGuide: `1. '추가' 를 선택하고 'SECRET KEY'를 입력하세요\n2. APP에 표시된 6자리의 OTP CODE를 입력하고 'ACTIVATE'를 클릭하세요`,
+      next: 'next',
+      recoveryCode: 'recovery code',
+      secretKey: 'secret key',
+      viewSecretKey: 'view secret key',
+      copy: 'copy',
+      otpCode: 'otp code',
+      activate: 'activate'
+    }
   }
 }

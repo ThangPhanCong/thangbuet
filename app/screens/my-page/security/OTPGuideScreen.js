@@ -9,6 +9,7 @@ import {
 import LinearGradient from 'react-native-linear-gradient';
 import BaseScreen from '../../BaseScreen';
 import { CommonStyles } from '../../../utils/CommonStyles';
+import I18n from '../../../i18n/i18n';
 
 const GoogleAuthIcon = require('../../../../assets/common/googleAuthBig.png')
 const SmallAppleIcon = require('../../../../assets/common/appleSmall.png');
@@ -21,7 +22,7 @@ export default class OTPGuideScreen extends BaseScreen {
     return(
       <View style={styles.screen}>
         <Text style={styles.textHeader}>
-          {`안전한 거래를 위해 구글 OTP 인증을 사용하세요.\nAPP을 다운로드&설치하고 'NEXT'를 누르세요`}
+          {I18n.t('myPage.security.otpGuide')}
         </Text>
         <View style={styles.googleAuthContainer}>
           <View style={{alignItems: 'center', justifyContent: 'center'}}>
@@ -41,7 +42,7 @@ export default class OTPGuideScreen extends BaseScreen {
                     resizeMode='contain'/>
                   <View style = {styles.storeInfoHorizontalSpace}/>
                   <Text style={[styles.storeInfoText, {flex: 3}]}>
-                    {'iPhone'}
+                    {I18n.t('common.iPhone')}
                   </Text>
                 </View>
                 <View style = {styles.storeInfoHorizontalSpace}/>
@@ -51,7 +52,7 @@ export default class OTPGuideScreen extends BaseScreen {
                     resizeMode='contain'/>
                   <View style = {styles.storeInfoHorizontalSpace}/>
                   <Text style={[styles.storeInfoText, {flex: 4}]}>
-                    {'Apple App Store'}
+                    {I18n.t('common.appStore')}
                   </Text>
                 </View>
               </View>
@@ -63,7 +64,7 @@ export default class OTPGuideScreen extends BaseScreen {
                     resizeMode='contain'/>
                   <View style = {styles.storeInfoHorizontalSpace}/>
                   <Text style={[styles.storeInfoText, {flex: 3}]}>
-                    {'Android'}
+                    {I18n.t('common.android')}
                   </Text>
                 </View>
                 <View style = {styles.storeInfoHorizontalSpace}/>
@@ -73,7 +74,7 @@ export default class OTPGuideScreen extends BaseScreen {
                     resizeMode='contain'/>
                   <View style = {styles.storeInfoHorizontalSpace}/>
                   <Text style={[styles.storeInfoText, {flex: 4}]}>
-                    {'Google Play Store'}
+                    {I18n.t('common.playStore')}
                   </Text>
                 </View>
               </View>
@@ -89,7 +90,7 @@ export default class OTPGuideScreen extends BaseScreen {
             colors={['#7CB953', '#70AD47']}
             start={{x: 0.0, y: 1.0}} end={{x: 1.0, y: 1.0}}>
             <Text style={[styles.text, {color: '#FFF'}]}>
-              {'NEXT'}
+              {I18n.t('myPage.security.next').toLocaleUpperCase()}
             </Text>
           </LinearGradient>
         </TouchableOpacity>

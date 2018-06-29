@@ -9,26 +9,26 @@ import {
 } from 'react-native';
 
 import BaseScreen from '../../BaseScreen';
-import ScaledSheet from '../../../libs/reactSizeMatter/ScaledSheet';
+import I18n from '../../../i18n/i18n';
 import rf from '../../../libs/RequestFactory';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 export default class BasicInfoScreen extends BaseScreen {
   _infoProps = [{
     prop: 'security_level',
-    locale: '인증 레벨',
+    locale: I18n.t('myPage.basic.securityLevel'),
     prefix: 'Level '
   }, {
     prop: 'fee_level',
-    locale: '수수료 등급',
+    locale: I18n.t('myPage.basic.feeLevel'),
     prefix: 'Level '
   }, {
     prop: 'id',
-    locale: '아이디',
+    locale: I18n.t('myPage.basic.id'),
     prefix: ''
   }, {
     prop: 'phone_no',
-    locale: '휴대전화',
+    locale: I18n.t('myPage.basic.phone'),
     prefix: ''
   }];
 

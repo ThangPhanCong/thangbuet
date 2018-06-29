@@ -6,6 +6,7 @@ import {
 } from 'react-native';
 import BaseScreen from '../../BaseScreen'
 import { CommonStyles } from '../../../utils/CommonStyles';
+import I18n from '../../../i18n/i18n';
 
 export default class OTPSecretCodeScreen extends BaseScreen {
   render() {
@@ -14,10 +15,10 @@ export default class OTPSecretCodeScreen extends BaseScreen {
     return(
       <View style={styles.screen}>
         <Text style={styles.textHeader}>
-          {`구글 OTP인증이 완료되었습니다. \n이 화면을 벗어나면 복구 코드는 다시 볼 수 없습니다.\n반드시 아래 복구코드를 다른 곳에 잘 보관하세요.`}
+          {I18n.t('myPage.security.recoveryGuide')}
         </Text>
         <Text style={styles.recoveryCodeText}>
-          {'RECOVERY CODE'}
+          {I18n.t('myPage.security.recoveryCode').toLocaleUpperCase()}
         </Text>
         <View style={styles.secretCodeContainer}>
           <Text style={styles.secretCode}>

@@ -60,7 +60,7 @@ class MarketSearchScreen extends BaseScreen {
               color={this.state.isFavoriteFilter ? '#FFC000' : '#D9D9D9'} />
           </TouchableOpacity>
           <Text style = {styles.titleLeftView}>
-            즐겨찾기
+            {I18n.t('marketList.favorite')}
           </Text>
         </View>
         <View style={styles.searchViewContainer}>
