@@ -107,8 +107,8 @@ export default class SecurityOverviewScreen extends BaseScreen {
             this.state.info[item.propVerify] ? 
             <TouchableHighlight style={styles.cancelOTPButton}
               onPress={this._onCancelGoogleAuth.bind(this)}
-              onPressIn={() => this.setState({cancelOtpButtonPressed: true})}
-              onPressOut={() => this.setState({cancelOtpButtonPressed: false})}
+              onPressIn={this._onPressInCancelOtpButton.bind(this)}
+              onPressOut={this._onPressOutCancelOtpButton.bind(this)}
               underlayColor='#FF3300'>
               <Text style={[styles.text, this.state.cancelOtpButtonPressed ? {color: '#FFF'} : {color: '#FF3300'}]}>
                 {I18n.t('myPage.security.cancelOTP')}
@@ -210,7 +210,7 @@ export default class SecurityOverviewScreen extends BaseScreen {
         avoidKeyboard={true}
         useNativeDriver={true}
         backdropColor='transparent'
-        onBackdropPress={() => this.setState({cancelOtpDialogVisible: false})}>
+        onBackdropPress={this._dismissSubmitModal.bind(this)}>
         <Card
           style={styles.dialog}
           containerStyle={{borderRadius: 5, padding: 0, marginStart: 30, marginEnd: 30}}>
@@ -262,7 +262,7 @@ export default class SecurityOverviewScreen extends BaseScreen {
         avoidKeyboard={true}
         useNativeDriver={true}
         backdropColor='transparent'
-        onBackdropPress={() => this.setState({initVerificationDialogVisible: false})}>
+        onBackdropPress={this._dismissInitVerificationModal.bind(this)}>
         <Card
           style={styles.dialog}
           containerStyle={{borderRadius: 5, padding: 0, marginStart: 30, marginEnd: 30}}>
@@ -317,11 +317,25 @@ export default class SecurityOverviewScreen extends BaseScreen {
   }
 
   _onShowInitVerificationDialog() {
-    this.setState({cancelOtpDialogVisible: false}, () => {
-      this.setState({
-        initVerificationDialogVisible: true
-      })
+    this.setState({
+      initVerificationDialogVisible: true
     })
+  }
+
+  _onPressInCancelOtpButton() {
+    this.setState({cancelOtpButtonPressed: true})
+  }
+
+  _onPressOutCancelOtpButton() {
+    this.setState({cancelOtpButtonPressed: false})
+  }
+
+  _dismissSubmitModal() {
+    this.setState({cancelOtpDialogVisible: false})
+  }
+
+  _dismissInitVerificationModal() {
+    this.setState({initVerificationDialogVisible: false})
   }
 
   async _getCurrentUser() {
