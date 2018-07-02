@@ -7,14 +7,15 @@ import {
   TouchableHighlight,
   TouchableOpacity,
   TextInput,
-  ScrollView,
-  KeyboardAvoidingView
+  ScrollView
 } from 'react-native';
+import { Picker } from 'native-base';
 import Modal from 'react-native-modal';
 import { Card } from 'react-native-elements';
 import BaseScreen from '../../BaseScreen';
 import rf from '../../../libs/RequestFactory';
 import I18n from '../../../i18n/i18n';
+import _ from 'lodash';
 
 export default class SecurityOverviewScreen extends BaseScreen {
   _infoProps = [{
@@ -39,6 +40,8 @@ export default class SecurityOverviewScreen extends BaseScreen {
 
   _otp = {};
   _bank = {};
+  _banks = ['1', '2', '3', '3', '3', '3', '3' , '3' , '3', '3', '3'];
+  _password = {}
 
   constructor(props) {
     super(props);
@@ -49,6 +52,7 @@ export default class SecurityOverviewScreen extends BaseScreen {
       initVerificationDialogVisible: false,
       existedPhoneDialogVisible: false,
       bankAccountDialogVisible: false,
+      changePasswordDialogVisible: false,
 
       cancelOtpButtonPressed: false,
     }
@@ -79,6 +83,7 @@ export default class SecurityOverviewScreen extends BaseScreen {
         {this._renderInitVerificationModal()}
         {this._renderExistedPhoneModal()}
         {this._renderBankAccountModal()}
+        {this._renderChangePasswordModal()}
       </View>
     )
   }
@@ -333,43 +338,111 @@ export default class SecurityOverviewScreen extends BaseScreen {
         <Card
           style={styles.dialog}
           containerStyle={{borderRadius: 5, padding: 0, marginStart: 30, marginEnd: 30}}>
-          <KeyboardAvoidingView>
-            <Text style={{fontSize: 13, marginTop: 16, marginBottom: 16, marginStart: 16, marginEnd: 16}}>
-              {I18n.t('myPage.security.bankAccountHeader')}
-            </Text>
-            <View style={{height: 1, backgroundColor: '#EBEBEB'}}/>
-            <Text style={styles.bankAccountTitle}>
-              {I18n.t('myPage.security.bankAccountOwner')}
-            </Text>
-            <TextInput style={styles.bankAccountTextInput}
-              onChangeText={text => this._bank.owner = text}/>
-            
-            <Text style={styles.bankAccountTitle}>
-              {I18n.t('myPage.security.dateOfBirth')}
-            </Text>
-            <TextInput style={styles.bankAccountTextInput}
-              onChangeText={text => this._bank.dateOfBirth = text}/>
+          <Text style={{fontSize: 13, marginTop: 16, marginBottom: 16, marginStart: 16, marginEnd: 16}}>
+            {I18n.t('myPage.security.bankAccountHeader')}
+          </Text>
+          <View style={{height: 1, backgroundColor: '#EBEBEB'}}/>
+          <Text style={styles.bankAccountTitle}>
+            {I18n.t('myPage.security.bankAccountOwner')}
+          </Text>
+          <TextInput style={styles.bankAccountTextInput}
+            underlineColorAndroid='transparent'
+            onChangeText={text => this._bank.account_name = text}/>
+          
+          <Text style={styles.bankAccountTitle}>
+            {I18n.t('myPage.security.dateOfBirth')}
+          </Text>
+          <TextInput style={styles.bankAccountTextInput}
+            underlineColorAndroid='transparent'
+            onChangeText={text => this._bank.date_of_birth = text}/>
 
-            <Text style={styles.bankAccountTitle}>
-              {I18n.t('myPage.security.bank')}
-            </Text>
-            <TextInput style={styles.bankAccountTextInput}
-              onChangeText={text => this._bank.bank = text}/>
+          <Text style={styles.bankAccountTitle}>
+            {I18n.t('myPage.security.bank')}
+          </Text>
+          <Picker
+            ref = {ref => this._bankPicker = ref}
+            style={styles.bankAccountPicker}
+            mode='dropdown'
+            onValueChange={this._onBankPickerSelect.bind(this)}
+            itemStyle={{width: '100%'}}>
+            {this._renderBankItems()}
+          </Picker>
 
-            <Text style={styles.bankAccountTitle}>
-              {I18n.t('myPage.security.bankAccountNumber')}
+          <Text style={styles.bankAccountTitle}>
+            {I18n.t('myPage.security.bankAccountNumber')}
+          </Text>
+          <TextInput style={styles.bankAccountTextInput}
+            underlineColorAndroid='transparent'
+            onChangeText={text => this._bank.account_number = text}/>
+          
+          <TouchableOpacity
+            style={[styles.submitCancelOtpButton, { marginTop: 20, marginBottom: 30 }]}
+            onPress={this._onSubmitBankAccount.bind(this)}>
+            <Text style={{fontSize: 13, color: '#FFF'}}>
+              {I18n.t('myPage.security.bankAccountSubmitText')}
             </Text>
-            <TextInput style={styles.bankAccountTextInput}
-              onChangeText={text => this._bank.accountNumber = text}/>
-            
-            <TouchableOpacity
-              style={[styles.submitCancelOtpButton, { marginTop: 20, marginBottom: 30 }]}
-              onPress={this._onSubmitBankAccount.bind(this)}>
-              <Text style={{fontSize: 13, color: '#FFF'}}>
-                {I18n.t('myPage.security.bankAccountSubmitText')}
-              </Text>
-            </TouchableOpacity>
-          </KeyboardAvoidingView>
+          </TouchableOpacity>
+        </Card>
+      </Modal>
+    )
+  }
+
+  _renderBankItems() {
+    return _.map(this._banks, (bank, index) => (
+      <Picker.Item value={bank} label={bank} key={`${index}`}/>
+    ));
+  }
+
+  _renderChangePasswordModal() {
+    return (
+      <Modal
+        isVisible={this.state.changePasswordDialogVisible}
+        avoidKeyboard={true}
+        useNativeDriver={true}
+        backdropColor='transparent'
+        onBackdropPress={this._dismissChangePasswordModal.bind(this)}>
+        <Card
+          style={styles.dialog}
+          containerStyle={{borderRadius: 5, padding: 0, marginStart: 30, marginEnd: 30}}>
+          <Text style={{fontSize: 13, marginTop: 16, marginBottom: 16, marginStart: 16, marginEnd: 16}}>
+            {I18n.t('myPage.security.changePasswordHeader')}
+          </Text>
+          <View style={{height: 1, backgroundColor: '#EBEBEB'}}/>
+          <Text style={styles.bankAccountTitle}>
+            {I18n.t('myPage.security.bankAccountOwner')}
+          </Text>
+          <TextInput style={styles.bankAccountTextInput}
+            underlineColorAndroid='transparent'
+            onChangeText={text => this._password.password = text}/>
+          
+          <Text style={styles.bankAccountTitle}>
+            {I18n.t('myPage.security.newPassword')}
+          </Text>
+          <TextInput style={styles.bankAccountTextInput}
+            underlineColorAndroid='transparent'
+            onChangeText={text => this._password.new_password = text}/>
+
+          <Text style={styles.bankAccountTitle}>
+            {I18n.t('myPage.security.repeatPassword')}
+          </Text>
+          <TextInput style={styles.bankAccountTextInput}
+            underlineColorAndroid='transparent'
+            onChangeText={text => this._password.new_password_confirm = text}/>
+
+          <Text style={styles.bankAccountTitle}>
+            {I18n.t('myPage.security.otpCode').toLocaleUpperCase()}
+          </Text>
+          <TextInput style={styles.bankAccountTextInput}
+            underlineColorAndroid='transparent'
+            onChangeText={text => this._password.otp = text}/>
+          
+          <TouchableOpacity
+            style={[styles.submitCancelOtpButton, { marginTop: 20, marginBottom: 30 }]}
+            onPress={this._onSubmitBankAccount.bind(this)}>
+            <Text style={{fontSize: 13, color: '#FFF'}}>
+              {I18n.t('myPage.security.changePasswordSubmit')}
+            </Text>
+          </TouchableOpacity>
         </Card>
       </Modal>
     )
@@ -388,7 +461,7 @@ export default class SecurityOverviewScreen extends BaseScreen {
   }
 
   _onVerifyPassword() {
-
+    this.setState({changePasswordDialogVisible: true})
   }
 
   _onCancelGoogleAuth() {
@@ -414,7 +487,12 @@ export default class SecurityOverviewScreen extends BaseScreen {
   }
 
   _onSubmitBankAccount() {
+    this._updateBankAccount();
+  }
 
+  _onBankPickerSelect(itemValue, itemPosition) {
+    this._bank.bank_id = itemValue.id;
+    this._bank.bank_name = itemValue.name;
   }
 
   _dismissSubmitModal() {
@@ -431,6 +509,10 @@ export default class SecurityOverviewScreen extends BaseScreen {
 
   _dismissBankAccountModal() {
     this.setState({bankAccountDialogVisible: false})
+  }
+
+  _dismissChangePasswordModal() {
+    this.setState({changePasswordDialogVisible: false})
   }
 
   async _getCurrentUser() {
@@ -458,10 +540,43 @@ export default class SecurityOverviewScreen extends BaseScreen {
         otp: this._otp.otpCode
       })
 
-      this.setState({cancelOtpDialogVisible: false})
+      this.setState({
+        cancelOtpDialogVisible: false,
+        info: {
+          ...this.state.info,
+          [this._infoProps[1].propVerify]: false
+        }
+      })
     }
     catch(err) {
       console.log('SecurityOverviewScreen._removeGoogleAuth', err);
+    }
+  }
+
+  async _updateBankAccount() {
+    try {
+      await rf.getRequest('UserRequest').verifyBankAccount(this._bank)
+      this.setState({
+        bankAccountDialogVisible: false,
+        info: {
+          ...this.state.info,
+          [this._infoProps[3].propVerify]: true,
+          [this._infoProps[3].propValue]: bank
+        }
+      })
+    }
+    catch(err) {
+      console.log('SecurityOverviewScreen._updateBankAccount', err);
+    }
+  }
+
+  async _changePassword() {
+    try {
+      await rf.getRequest('UserRequest').changePassword(this._password);
+      this._dismissChangePasswordModal();
+    }
+    catch(err) {
+      console.log('SecurityOverviewScreen._changePassword', err);
     }
   }
 }
@@ -572,5 +687,14 @@ const styles = StyleSheet.create({
     borderColor: '#D9D9D9',
     borderRadius: 5,
     borderWidth: 1
+  },
+  bankAccountPicker: {
+    marginTop: 2,
+    marginStart: 16,
+    marginEnd: 16,
+    height: 40,
+    borderColor: '#D9D9D9',
+    borderRadius: 5,
+    borderWidth: 1,
   }
 });

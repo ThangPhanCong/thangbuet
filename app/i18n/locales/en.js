@@ -175,7 +175,12 @@ export default {
       dateOfBirth: '생년월일(6자리)',
       bank: '은행',
       bankAccountNumber: '계좌번호',
-      bankAccountSubmitText: '계좌번호 인증하기'
+      bankAccountSubmitText: '계좌번호 인증하기',
+      changePasswordHeader: '비밀번호 변경',
+      currentPassword: '현재 비밀번호',
+      newPassword: '새 비밀번호',
+      repeatPassword: '새 비밀번호 확인',
+      changePasswordSubmit: '비밀번호 변경'
     }
   }
 };
