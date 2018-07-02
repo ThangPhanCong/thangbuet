@@ -7,6 +7,7 @@ import {
   Text,
   TextInput,
   TouchableOpacity,
+  TouchableWithoutFeedback,
   View,
   Image
 } from 'react-native';
@@ -331,7 +332,7 @@ export default class OrderBook extends BaseScreen {
   }
 
   _getMiddlePrice(orderBook, currentPrice, tickerSize) {
-    let price = 0;
+    let price = parseFloat(currentPrice);
 
     var maxBuyGroup = _.maxBy(orderBook.buy, 'price');
     var maxBuyPrice = maxBuyGroup ? maxBuyGroup.price : 0;
@@ -350,8 +351,6 @@ export default class OrderBook extends BaseScreen {
       price = maxBuyPrice;
     } else if (minSellPrice > 0) {
       price = minSellPrice;
-    } else {
-      price = parseFloat(currentPrice);
     }
 
     price = Math.round(price / tickerSize) * tickerSize;
@@ -568,35 +567,43 @@ export default class OrderBook extends BaseScreen {
 
   _renderSmallSellRow(item, index) {
     return (
-      <View style={styles.orderBookRow} key={index} onPress={() => this._rowClick(item)}>
-        <View
-          style={[styles.priceCell, styles.smallTopBorder, styles.smallSellPrice, this._getPriceCellStyle(item.price)]}>
-          <Text style={[styles.priceText, this._getPriceTextStyle(item.price)]}>{this._formatPrice(item.price)}</Text>
+      <TouchableWithoutFeedback onPress={() => this._onPressSmallOrderBookRow(item)}>
+        <View style={styles.orderBookRow} key={index}>
+          <View
+            style={[styles.priceCell, styles.smallTopBorder, styles.smallSellPrice, this._getPriceCellStyle(item.price)]}>
+            <Text style={[styles.priceText, this._getPriceTextStyle(item.price)]}>{this._formatPrice(item.price)}</Text>
+          </View>
+          <View style={[styles.quantityCell, styles.smallTopBorder, styles.smallQuantity]}>
+            <View style={[styles.sellPercent, this._getPercentViewStyle(item)]} />
+            <Text style={styles.quantityText}>{this._formatQuantity(item.quantity)}</Text>
+          </View>
         </View>
-        <View style={[styles.quantityCell, styles.smallTopBorder, styles.smallQuantity]}>
-          <View style={[styles.sellPercent, this._getPercentViewStyle(item)]} />
-          <Text style={styles.quantityText}>{this._formatQuantity(item.quantity)}</Text>
-        </View>
-      </View>
+      </TouchableWithoutFeedback>
     );
   }
 
   _renderSmallBuyRow(item, index) {
     return (
-      <View style={styles.orderBookRow} key={index} onPress={() => this._rowClick(item)}>
-        <View style={[
-            styles.priceCell,
-            styles.smallBottomBorder,
-            styles.smallBuyPrice,
-            this._getPriceCellStyle(item.price)]}>
-          <Text style={[styles.priceText, this._getPriceTextStyle(item.price)]}>{this._formatPrice(item.price)}</Text>
+      <TouchableWithoutFeedback onPress={() => this._onPressSmallOrderBookRow(item)}>
+        <View style={styles.orderBookRow} key={index}>
+          <View style={[
+              styles.priceCell,
+              styles.smallBottomBorder,
+              styles.smallBuyPrice,
+              this._getPriceCellStyle(item.price)]}>
+            <Text style={[styles.priceText, this._getPriceTextStyle(item.price)]}>{this._formatPrice(item.price)}</Text>
+          </View>
+          <View style={[styles.quantityCell, styles.smallBottomBorder, styles.smallQuantity]}>
+            <View style={[styles.sellPercent, this._getPercentViewStyle(item)]} />
+            <Text style={styles.quantityText}>{this._formatQuantity(item.quantity)}</Text>
+          </View>
         </View>
-        <View style={[styles.quantityCell, styles.smallBottomBorder, styles.smallQuantity]}>
-          <View style={[styles.sellPercent, this._getPercentViewStyle(item)]} />
-          <Text style={styles.quantityText}>{this._formatQuantity(item.quantity)}</Text>
-        </View>
-      </View>
+      </TouchableWithoutFeedback>
     );
+  }
+
+  _onPressSmallOrderBookRow(item) {
+    this.notify(Events.ORDER_BOOK_ROW_CLICKED, item);
   }
 }
 

@@ -15,6 +15,7 @@ import CurrencyInput from '../common/CurrencyInput';
 import BaseScreen from '../BaseScreen'
 import rf from '../../libs/RequestFactory'
 import I18n from '../../i18n/i18n';
+import Events from '../../utils/Events';
 
 import ScaledSheet from '../../libs/reactSizeMatter/ScaledSheet';
 import { scale } from '../../libs/reactSizeMatter/scalingUtils';
@@ -55,17 +56,17 @@ export default class OrderForm extends BaseScreen {
       { type: Consts.ORDER_TYPE_MARKET, label: I18n.t('orderForm.market') },
       { type: Consts.ORDER_TYPE_STOP_LIMIT, label: I18n.t('orderForm.stopLimit') },
       { type: Consts.ORDER_TYPE_STOP_MARKET, label: I18n.t('orderForm.stopMarket') }
-    ]
+    ];
     this.percents = [
       { value: 10, label: '10%' }, { value: 20, label: '20%' }, { value: 30, label: '30%' }, { value: 40, label: '40%' },
       { value: 50, label: '50%' }, { value: 60, label: '60%' }, { value: 70, label: '70%' }, { value: 80, label: '80%' },
       { value: 90, label: '90%' }, { value: 100, label: '100%' }
-    ]
+    ];
     this.krws = [
       { value: 50, label: '50K KRW' }, { value: 100, label: '100K KRW' }, { value: 300, label: '300K KRW' },
       { value: 500, label: '500K KRW' }, { value: 1000, label: '1000K KRW' }, { value: 1500, label: '1500K KRW' },
       { value: 2000, label: '2000K KRW' }, { value: 3000, label: '3000K KRW' }, { value: 5000, label: '5000K KRW' }
-    ]
+    ];
   }
 
   componentDidMount() {
@@ -74,6 +75,12 @@ export default class OrderForm extends BaseScreen {
     if (coin && currency) {
       this._loadData()
     }
+  }
+
+  getDataEventHandlers() {
+    return {
+      [Events.ORDER_BOOK_ROW_CLICKED]: this._onOrderBookRowClicked.bind(this)
+    };
   }
 
   _getCurrency() {
@@ -151,8 +158,7 @@ export default class OrderForm extends BaseScreen {
     return type == Consts.ORDER_TYPE_MARKET || type == Consts.ORDER_TYPE_STOP_MARKET;
   }
 
-  _onPriceChanged(formatted, extracted) {
-    let price = this._getMaskInputValue(formatted, extracted);
+  _onPriceChanged(price) {
     const {type, quantity, total, enableQuantity} = this.state;
 
     let newState = { price, enableQuantity };
@@ -210,6 +216,13 @@ export default class OrderForm extends BaseScreen {
       newState.quantity = total ? this.floor(BigNumber(total).div(price), 4) : '';
     }
     this.setState(newState);
+  }
+
+  _onOrderBookRowClicked(data) {
+    this._onPriceChanged(data.price);
+    if (this._isStopOrder()) {
+      this.setState({ stop: data.price });
+    }
   }
 
   _onPressSubmit() {
@@ -303,13 +316,13 @@ export default class OrderForm extends BaseScreen {
           style={styles.caretDown}
           source={require('../../../assets/common/caretdown.png')}/>
         <ModalDropdown
-          defaultValue={I18n.t('orderForm.limit')}
+          defaultValue={this._getOrderTypeText() + ' ' + I18n.t('orderForm.order')}
           style={styles.typeButton}
           textStyle={styles.typeLabel}
           dropdownStyle={styles.typeDropdown}
           dropdownTextStyle={styles.typeDropdownText}
           renderSeparator={() => <View style={{height: 0}}/>}
-          options={this.types.map(item => item.label)}
+          options={this.types.map(item => item.label + ' ' + I18n.t('orderForm.order'))}
           onSelect={this._onTypeSelected.bind(this)}/>
       </View>
     );
@@ -351,7 +364,7 @@ export default class OrderForm extends BaseScreen {
             value={this.state.price}
             precision={0}
             editable={!this._isMarketOrder()}
-            onChangeText={this._onPriceChanged.bind(this)}
+            onChangeText={(formatted, extracted) => this._onPriceChanged(this._getMaskInputValue(formatted, extracted))}
             keyboardType='numeric'
             style={styles.inputText}
             underlineColorAndroid='transparent'/>
@@ -551,11 +564,15 @@ export default class OrderForm extends BaseScreen {
   }
 
   _getOrderTypeText() {
-    return '지정가';
+    for (let orderType of this.types) {
+      if (orderType.type == this.state.type) {
+        return orderType.label;
+      }
+    }
   }
 
   _getTradeTypeText() {
-    return '매수';
+    return this._isBuyOrder() ? I18n.t('orderForm.buy') : I18n.t('orderForm.sell');
   }
 }
 
