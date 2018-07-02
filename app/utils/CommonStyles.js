@@ -5,8 +5,8 @@ import { scale } from '../libs/reactSizeMatter/scalingUtils';
 class CommonColors {
   static screenBgColor = '#FFF';
   static toolbarBgColor = '#202732';
-  static increased = '#2ba81e';
-  static decreased = '#ee4949';
+  static increased = '#FD0001';
+  static decreased = '#0065BF';
   static mainText = 'white';
   static secondaryText = '#898B8E';
   static highlightText = '#F0B353';
