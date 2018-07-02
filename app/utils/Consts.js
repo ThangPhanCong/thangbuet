@@ -7,8 +7,10 @@ export default class Consts {
   static ORDER_TYPE_MARKET = 'market';
   static ORDER_TYPE_STOP_LIMIT = 'stop_limit';
   static ORDER_TYPE_STOP_MARKET = 'stop_market';
+
   static DEPOSITE_HISTORY = 'Deposite History';
   static WITHDRAW_HISTORY = 'Withdraw History';
+  
   static TRADE_TYPE_BUY = 'buy';
   static TRADE_TYPE_SELL = 'sell';
 

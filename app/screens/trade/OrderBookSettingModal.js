@@ -12,7 +12,6 @@ import CheckBox from 'react-native-check-box'
 import _ from 'lodash';
 import BaseScreen from '../BaseScreen'
 import OrderBook from './OrderBook';
-import TextInputMask from 'react-native-text-input-mask';
 import I18n from '../../i18n/i18n';
 import rf from '../../libs/RequestFactory';
 import ScaledSheet from '../../libs/reactSizeMatter/ScaledSheet';

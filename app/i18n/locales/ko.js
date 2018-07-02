@@ -85,6 +85,25 @@ export default {
     depth: 'Depth',
     full: 'Full'
   },
+  orderForm: {
+    buy: '매수',
+    sell: '매도',
+    pendingOrder: '미체결',
+    limit: '지정가',
+    market: '시장가',
+    stopLimit: 'STOP 지정가',
+    stopMarket: 'STOP 시장가',
+    order: '주문',
+    type: '주문종류',
+    price: '주문가격',
+    stop: '기준가격',
+    quantity: '주문수량',
+    total: '매수대금',
+    balance: '주문가능금액',
+    estimateTotal: '매수대금',
+    fee: '수수료',
+    estimateQuantity: '총매수량'
+  },
   orderBook: {
     sell: '매도',
     buy: '매수',
