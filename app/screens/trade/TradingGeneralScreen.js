@@ -20,6 +20,10 @@ export default class TradingGeneralScreen extends BaseScreen {
 
   constructor(props) {
     super(props)
+    this.state = {
+      selectedTab: Consts.TRADE_TYPE_BUY
+    }
+
   }
 
   render() {
@@ -31,9 +35,7 @@ export default class TradingGeneralScreen extends BaseScreen {
           <View style={styles.orderBook}>
             <OrderBook currency='krw' coin='btc' type={OrderBook.TYPE_SMALL}/>
           </View>
-          <View style={styles.trades}>
-            <OrderForm currency='krw' coin='btc'/>
-          </View>
+          {this._renderOrderForm()}
         </View>
       </View>
     )
@@ -71,6 +73,53 @@ export default class TradingGeneralScreen extends BaseScreen {
   _openOrderBookSettingModal() {
     this._orderBookSettingModal.setModalVisible(true);
   }
+
+  _renderOrderForm() {
+    const isSelectedBuy = this.state.selectedTab == Consts.TRADE_TYPE_BUY;
+    return (
+      <View style={styles.trades}>
+        {this._renderTypeTabs()}
+        <View style={[CommonStyles.matchParent, isSelectedBuy ? {} : { display: 'none' }]}>
+          <OrderForm currency='krw' coin='btc' tradeType={Consts.TRADE_TYPE_BUY}/>
+        </View>
+        <View style={[CommonStyles.matchParent, !isSelectedBuy ? {} : { display: 'none' }]}>
+          <OrderForm currency='krw' coin='btc' tradeType={Consts.TRADE_TYPE_SELL}/>
+        </View>
+      </View>
+    );
+  }
+
+  _renderTypeTabs() {
+    const isSelectedBuy = this.state.selectedTab == Consts.TRADE_TYPE_BUY;
+    const isSelectedSell = this.state.selectedTab == Consts.TRADE_TYPE_SELL;
+    return (
+      <View style={styles.tabs}>
+        <TouchableOpacity
+          activeOpacity={1}
+          style={[styles.tab, isSelectedBuy ? styles.selectedBuy : {}]}
+          onPress={() => this.setState({selectedTab: Consts.TRADE_TYPE_BUY})}>
+          <Text style={[CommonStyles.priceIncreased]}>{I18n.t('orderForm.buy')}</Text>
+        </TouchableOpacity>
+
+        <View style={styles.tabSeparator}/>
+
+        <TouchableOpacity
+          activeOpacity={1}
+          style={[styles.tab, isSelectedSell ? styles.selectedSell : {}]}
+          onPress={() => this.setState({selectedTab: Consts.TRADE_TYPE_SELL})}>
+          <Text style={[CommonStyles.priceDecreased]}>{I18n.t('orderForm.sell')}</Text>
+        </TouchableOpacity>
+
+        <View style={styles.tabSeparator}/>
+
+        <TouchableOpacity
+          activeOpacity={1}
+          style={styles.tab}>
+          <Text>{I18n.t('orderForm.pendingOrder')}</Text>
+        </TouchableOpacity>
+      </View>
+    );
+  }
 }
 
 const styles = ScaledSheet.create({
@@ -91,5 +140,38 @@ const styles = ScaledSheet.create({
   },
   trades: {
     flex: 3
+  },
+  tabs: {
+    flexDirection: 'row',
+    height: '35@s',
+    alignItems: 'stretch'
+  },
+  tab: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderBottomWidth: 1,
+    borderColor: '#EEF1F5',
+    marginBottom: 1,
+    paddingBottom: 1
+  },
+  tabSeparator: {
+    width: 1,
+    height: '15@s',
+    marginBottom: 3,
+    alignSelf: 'center',
+    backgroundColor: '#515151'
+  },
+  selectedBuy: {
+    borderBottomWidth: 3,
+    borderColor: '#FF2C0D',
+    marginBottom: 0,
+    paddingBottom: 0
+  },
+  selectedSell: {
+    borderBottomWidth: 3,
+    borderColor: '#007AC5',
+    marginBottom: 0,
+    paddingBottom: 0
   }
 });

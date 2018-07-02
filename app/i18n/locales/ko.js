@@ -83,6 +83,7 @@ export default {
     stopMarket: 'STOP 시장가 주문',
     type: '주문종류',
     price: '주문가격',
+    stop: '기준가격',
     quantity: '주문수량',
     total: '매수대금',
     balance: '주문가능금액',

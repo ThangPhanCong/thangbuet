@@ -1,14 +1,17 @@
 import React from 'react';
 import {
+  Image,
+  NativeModules,
   Text,
   TextInput,
   TouchableOpacity,
   TouchableWithoutFeedback,
-  View,
-  Image
+  View
 } from 'react-native';
-import { Popover, PopoverController } from 'react-native-modal-popover';
+import ModalDropdown from 'react-native-modal-dropdown';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import BigNumber from 'bignumber.js';
+import CurrencyInput from '../common/CurrencyInput';
 import BaseScreen from '../BaseScreen'
 import rf from '../../libs/RequestFactory'
 import I18n from '../../i18n/i18n';
@@ -22,15 +25,29 @@ import { getCurrencyName, formatCurrency } from '../../utils/Filters';
 import OrderBook from './OrderBook';
 import OrderBookSettingModal from './OrderBookSettingModal';
 
+
+const mask = NativeModules.RNTextInputMask.mask
+const unmask = NativeModules.RNTextInputMask.unmask
+const setMask = NativeModules.RNTextInputMask.setMask
+
 export default class OrderForm extends BaseScreen {
 
   constructor(props) {
     super(props)
     this.state = {
-      selectedTab: Consts.TRADE_TYPE_BUY,
+      tradeType: Consts.TRADE_TYPE_BUY,
       type: Consts.ORDER_TYPE_LIMIT,
+      price: undefined,
+      stop: undefined,
+      quantity: undefined,
+      total: undefined,
+
       currencyBalance: undefined,
       coinBalance: undefined,
+      coinSetting: {},
+
+      enableQuantity: true
+
     }
     this.balances = {};
     this.types = [
@@ -68,12 +85,20 @@ export default class OrderForm extends BaseScreen {
   }
 
   async _loadData() {
-    await this._getBalance();
+    await Promise.all([
+      this._getBalance(),
+      this._getCoinSetting(),
+      this._getFeeRate()
+    ]);
   }
 
   async _getBalance() {
-    let response = await rf.getRequest('UserRequest').getBalance();
-    this._onBalanceUpdated(response.data);
+    try {
+      let response = await rf.getRequest('UserRequest').getBalance();
+      this._onBalanceUpdated(response.data);
+    } catch (error) {
+      console.log('OrderForm._getBalance', error);
+    }
   }
 
   _onBalanceUpdated(balances) {
@@ -92,51 +117,108 @@ export default class OrderForm extends BaseScreen {
     this.setState(newState);
   }
 
-  _typesSelected() {
-    return true
+  async _getCoinSetting() {
+    const { coin, currency } = this.props;
+    let response = await rf.getRequest('MasterdataRequest').getAll();
+    const coinSetting = response.coin_settings.find((item) => item.coin == coin && item.currency == currency);
+
+    this.setState({
+      coinSetting
+    });
+  }
+
+  async _getFeeRate() {
+    const response = await rf.getRequest('UserRequest').getCurrentUser();
+    const user = response.data;
+
+    const masterdata = await rf.getRequest('MasterdataRequest').getAll();
+    let setting = masterdata.fee_levels.find(setting => user.fee_level == setting.level);
+
+    this.setState({ feeRate: setting.fee });
+  }
+
+  _isBuyOrder() {
+    return this.props.tradeType == Consts.TRADE_TYPE_BUY;
+  }
+
+  _isStopOrder() {
+    const type = this.state.type;
+    return type == Consts.ORDER_TYPE_STOP_LIMIT || type == Consts.ORDER_TYPE_STOP_MARKET;
+  }
+
+  _isMarketOrder() {
+    const type = this.state.type;
+    return type == Consts.ORDER_TYPE_MARKET || type == Consts.ORDER_TYPE_STOP_MARKET;
+  }
+
+  _onPriceChanged(formatted, extracted) {
+    let price = this._getMaskInputValue(formatted, extracted);
+    const {type, quantity, total, enableQuantity} = this.state;
+
+    let newState = { price, enableQuantity };
+    if (type == Consts.ORDER_TYPE_LIMIT) {
+      if (enableQuantity && !quantity && total) {
+        newState.enableQuantity = false;
+      }
+      if (!enableQuantity && quantity && !total) {
+        newState.enableQuantity = true;
+      }
+      if (newState.enableQuantity) {
+        newState.total = price && quantity ? BigNumber(quantity).times(price).toString() : '';
+      } else {
+        newState.quantity = price && total ? this.floor(BigNumber(total).div(price), 4).toString() : '';
+      }
+    }
+
+    this.setState(newState);
+  }
+
+  floor(value, decimals) {
+    return value.toFixed(decimals, BigNumber.ROUND_FLOOR);
+  }
+
+  _getMaskInputValue(formatted, extracted) {
+    if (formatted.endsWith('.')) {
+      return extracted;
+    } else {
+      return formatted;
+    }
+  }
+
+  _onStopChanged(formatted, extracted) {
+    let stop = this._getMaskInputValue(formatted, extracted);
+    this.setState({ stop })
+  }
+
+  _onQuantityChanged(formatted, extracted) {
+    let quantity = this._getMaskInputValue(formatted, extracted);
+    const { type, enableQuantity, price } = this.state;
+
+    let newState = { quantity };
+    if (type == Consts.ORDER_TYPE_LIMIT && enableQuantity && price) {
+      newState.total = quantity ? BigNumber(price).times(quantity).toString() : '';
+    }
+    this.setState(newState);
+  }
+
+  _onTotalChanged(formatted, extracted) {
+    const {type, price, enableQuantity} = this.state;
+    let total = this._getMaskInputValue(formatted, extracted);
+
+    let newState = { total };
+    if (type == Consts.ORDER_TYPE_LIMIT && !enableQuantity && price) {
+      newState.quantity = total ? this.floor(BigNumber(total).div(price), 4) : '';
+    }
+    this.setState(newState);
   }
 
   render() {
-    const tradeType = this.state.selectedTab;
     return (
       <View style={CommonStyles.matchParent}>
-        {this._renderTabs()}
         {this._renderInputs()}
-        {tradeType == Consts.TRADE_TYPE_BUY && this._renderEstimationBuyValues()}
-        {tradeType == Consts.TRADE_TYPE_SELL && this._renderEstimationSellValues()}
+        {this._isBuyOrder() && this._renderEstimationBuyValues()}
+        {!this._isBuyOrder() && this._renderEstimationSellValues()}
         {this._renderSubmitButton()}
-      </View>
-    );
-  }
-
-  _renderTabs() {
-    const isSelectedBuy = this.state.selectedTab == Consts.TRADE_TYPE_BUY;
-    const isSelectedSell = this.state.selectedTab == Consts.TRADE_TYPE_SELL;
-    return (
-      <View style={styles.tabs}>
-        <TouchableOpacity
-          activeOpacity={1}
-          style={[styles.tab, isSelectedBuy ? styles.selectedBuy : {}]}
-          onPress={() => this.setState({selectedTab: Consts.TRADE_TYPE_BUY})}>
-          <Text style={[CommonStyles.priceIncreased]}>{I18n.t('orderForm.buy')}</Text>
-        </TouchableOpacity>
-
-        <View style={styles.tabSeparator}/>
-
-        <TouchableOpacity
-          activeOpacity={1}
-          style={[styles.tab, isSelectedSell ? styles.selectedSell : {}]}
-          onPress={() => this.setState({selectedTab: Consts.TRADE_TYPE_SELL})}>
-          <Text style={[CommonStyles.priceDecreased]}>{I18n.t('orderForm.sell')}</Text>
-        </TouchableOpacity>
-
-        <View style={styles.tabSeparator}/>
-
-        <TouchableOpacity
-          activeOpacity={1}
-          style={styles.tab}>
-          <Text>{I18n.t('orderForm.pendingOrder')}</Text>
-        </TouchableOpacity>
       </View>
     );
   }
@@ -147,99 +229,137 @@ export default class OrderForm extends BaseScreen {
 
         <View style={styles.inputRow}>
           <Text style={styles.inputLabel}>{I18n.t('orderForm.type')}</Text>
-          <View style={styles.inputValue}>
             {this._renderOrderType()}
-          </View>
         </View>
 
-        <View style={styles.inputRow}>
-          <Text style={styles.inputLabel}>{I18n.t('orderForm.price')}</Text>
-          <View style={styles.inputValue}>
-            <TextInput keyboardType='numeric' style={{ flex: 1 }} />
-          </View>
-        </View>
-
-        <View style={styles.inputRow}>
-          <Text style={styles.inputLabel}>{I18n.t('orderForm.quantity')}</Text>
-          <View style={styles.inputValue}>
-            <TextInput keyboardType='numeric' style={{ flex: 1 }} />
-          </View>
-        </View>
-
-        <View style={styles.inputRow}>
-          <Text style={styles.inputLabel}>{I18n.t('orderForm.total')}</Text>
-          <View style={styles.inputValue}>
-            <TextInput keyboardType='numeric' style={{ flex: 1 }} />
-          </View>
-        </View>
+        {this._isStopOrder() && this._renderStopInput()}
+        {this._renderPriceInput()}
+        {this._renderQuantityInput()}
+        {!this._isStopOrder() && this._renderTotalInput()}
       </View>
     );
   }
 
   _renderOrderType() {
     return (
-      <View style={CommonStyles.matchParent}>
-        <PopoverController>
-          {({ openPopover, closePopover, popoverVisible, setPopoverAnchor, popoverAnchorRect }) => (
-            <View style={CommonStyles.matchParent}>
-              <TouchableWithoutFeedback onPress={() => openPopover()}>
-                <View ref={setPopoverAnchor} style={styles.orderTypeGroup}>
-                  <Text style={styles.typeLabel}>{this._getTypeLabel()}</Text>
-                  <Icon style={styles.typeArrow}
-                        name="caret-down"
-                        size={scale(20)}
-                        color='black'/>
-                </View>
-              </TouchableWithoutFeedback>
-              <Popover
-                duration={0}
-                arrowStyle={styles.arrow}
-                contentStyle={styles.popupContainer}
-                visible={popoverVisible}
-                onClose={() => closePopover()}
-                fromRect={popoverAnchorRect}
-                placement='bottom'
-                supportedOrientations={['portrait']}>
-                {this._renderOrderTypeList(closePopover)}
-              </Popover>
-            </View>
-          )}
-        </PopoverController>
+      <View style={styles.inputValue}>
+        <Image
+          resizeMode={'contain'}
+          style={styles.caretDown}
+          source={require('../../../assets/common/caretdown.png')}/>
+        <ModalDropdown
+          defaultValue={I18n.t('orderForm.limit')}
+          style={styles.typeButton}
+          textStyle={styles.typeLabel}
+          dropdownStyle={styles.typeDropdown}
+          dropdownTextStyle={styles.typeDropdownText}
+          renderSeparator={() => <View style={{height: 0}}/>}
+          options={this.types.map(item => item.label)}
+          onSelect={this._onTypeSelected.bind(this)}/>
       </View>
     );
   }
 
-  _getTypeLabel() {
-    for (let orderType of this.types) {
-      if (orderType.type == this.state.type) {
-        return orderType.label;
-      }
+  _onTypeSelected(index) {
+    const type = this.types[index].type;
+    let newState = { type }
+    switch (type) {
+      case Consts.ORDER_TYPE_LIMIT:
+        newState.ioc = true;
+        newState.basePrice = '';
+        break;
+      case Consts.ORDER_TYPE_MARKET:
+        newState.price = '';
+        newState.basePrice = '';
+        newState.amount = '';
+        newState.enableQuantity = true;
+        break;
+      case Consts.ORDER_TYPE_STOP_LIMIT:
+        newState.ioc = true;
+        newState.enableQuantity = true;
+        break;
+      case Consts.ORDER_TYPE_STOP_MARKET:
+        newState.ioc = true;
+        newState.price = '';
+        newState.enableQuantity = true;
+        break;
     }
+    this.setState(newState);
   }
 
-  _renderOrderTypeList(closePopover) {
+  _renderPriceInput() {
     return (
-      <View style={styles.typesPopup}>
-        {this.types.map((item, index) => {
-          return (
-            <TouchableOpacity key={index} onPress={() => {
-              this._onPressOrderTypeItem(item, closePopover);
-            }}>
-              <View>
-                <Text style={[styles.typesPopupItem, index == 0 ? styles.firstPopupItem : {}]}>{item.label}</Text>
-              </View>
-            </TouchableOpacity>
-          );
-        })}
+      <View style={styles.inputRow}>
+        <Text style={styles.inputLabel}>{I18n.t('orderForm.price')}</Text>
+        <View style={[styles.inputValue, this._isMarketOrder() ? styles.disabled : {}]}>
+          <CurrencyInput
+            value={this.state.price}
+            precision={0}
+            editable={!this._isMarketOrder()}
+            onChangeText={this._onPriceChanged.bind(this)}
+            keyboardType='numeric'
+            style={styles.inputText}
+            underlineColorAndroid='transparent'/>
+        </View>
       </View>
     );
   }
 
-  _onPressOrderTypeItem(item, closePopover) {
-    closePopover();
-    this.setState({ type: item.type });
+  _renderStopInput() {
+    return (
+      <View style={styles.inputRow}>
+        <Text style={styles.inputLabel}>{I18n.t('orderForm.stop')}</Text>
+        <View style={styles.inputValue}>
+          <CurrencyInput
+            value={this.state.stop}
+            precision={0}
+            onChangeText={this._onStopChanged.bind(this)}
+            keyboardType='numeric'
+            style={styles.inputText}
+            underlineColorAndroid='transparent'/>
+        </View>
+      </View>
+    );
   }
 
+  _renderQuantityInput() {
+    const enableQuantity = this.state.enableQuantity;
+    return (
+      <View style={styles.inputRow}>
+        <Text style={styles.inputLabel}>{I18n.t('orderForm.quantity')}</Text>
+        <View style={[styles.inputValue, !enableQuantity ? styles.disabled : {}]}>
+          <CurrencyInput
+            value={this.state.quantity}
+            precision={4}
+            onChangeText={this._onQuantityChanged.bind(this)}
+            onFocus={() => this.setState({enableQuantity: true})}
+            keyboardType='numeric'
+            style={styles.inputText}
+            underlineColorAndroid='transparent'/>
+        </View>
+      </View>
+    );
+  }
+
+  _renderTotalInput() {
+    const enableQuantity = this.state.enableQuantity;
+    return (
+      <View style={styles.inputRow}>
+        <Text style={styles.inputLabel}>{I18n.t('orderForm.total')}</Text>
+        <View style={[styles.inputValue, enableQuantity || this._isMarketOrder() ? styles.disabled : {}]}>
+          <CurrencyInput
+            value={this.state.total}
+            precision={4}
+            editable={!this._isMarketOrder()}
+            onChangeText={this._onTotalChanged.bind(this)}
+            onFocus={() => this.setState({enableQuantity: false})}
+            keyboardType='numeric'
+            style={styles.inputText}
+            underlineColorAndroid='transparent'/>
+        </View>
+      </View>
+    );
+  }
 
   _renderEstimationBuyValues() {
     const balance = this.state.currencyBalance;
@@ -262,7 +382,7 @@ export default class OrderForm extends BaseScreen {
             <Text style={styles.estimateLabel}>{I18n.t('orderForm.estimateTotal')}</Text>
           </View>
           <View style={styles.estimationRightCell}>
-            <Text style={styles.estimateValue}>999,755</Text>
+            <Text style={styles.estimateValue}>{this._getOrderTotal()}</Text>
             <Text style={styles.insideText}>{getCurrencyName(currency)}</Text>
           </View>
         </View>
@@ -272,7 +392,7 @@ export default class OrderForm extends BaseScreen {
             <Text style={styles.estimateLabel}>{I18n.t('orderForm.fee')}</Text>
           </View>
           <View style={styles.estimationRightCell}>
-            <Text style={styles.estimateValue}>0.000321</Text>
+            <Text style={styles.estimateValue}>{this._getOrderFee()}</Text>
             <Text style={styles.insideText}>{getCurrencyName(coin)}</Text>
           </View>
         </View>
@@ -282,12 +402,38 @@ export default class OrderForm extends BaseScreen {
             <Text style={styles.estimateLabel}>{I18n.t('orderForm.estimateQuantity')}</Text>
           </View>
           <View style={styles.estimationRightCell}>
-            <Text style={styles.estimateValue}>0.320679</Text>
+            <Text style={styles.estimateValue}>{this.state.quantity}</Text>
             <Text style={styles.insideText}>{getCurrencyName(coin)}</Text>
           </View>
         </View>
       </View>
     );
+  }
+
+  _getOrderTotal() {
+    const { price, quantity } = this.state;
+    if (price && quantity) {
+      return BigNumber(price).times(quantity).toString();
+    } else {
+      return '';
+    }
+  }
+
+  _getOrderFee() {
+    const { price, quantity, feeRate } = this.state;
+    if (this._isBuyOrder()) {
+      if (quantity) {
+        return BigNumber(quantity).times(feeRate).toString();
+      } else {
+        return '';
+      }
+    } else {
+      if (quantity && price) {
+        return BigNumber(quantity).times(price).times(feeRate).toString();
+      } else {
+        return '';
+      }
+    }
   }
 
   _renderEstimationSellValues() {
@@ -310,7 +456,7 @@ export default class OrderForm extends BaseScreen {
             <Text style={styles.estimateLabel}>{I18n.t('orderForm.estimateTotal')}</Text>
           </View>
           <View style={styles.estimationRightCell}>
-            <Text style={styles.estimateValue}>999,755</Text>
+            <Text style={styles.estimateValue}>{this.state.quantity}</Text>
             <Text style={styles.insideText}>{getCurrencyName(coin)}</Text>
           </View>
         </View>
@@ -319,7 +465,7 @@ export default class OrderForm extends BaseScreen {
             <Text style={styles.estimateLabel}>{I18n.t('orderForm.fee')}</Text>
           </View>
           <View style={styles.estimationRightCell}>
-            <Text style={styles.estimateValue}>0.000321</Text>
+            <Text style={styles.estimateValue}>{this._getOrderFee()}</Text>
             <Text style={styles.insideText}>{getCurrencyName(currency)}</Text>
           </View>
         </View>
@@ -328,7 +474,7 @@ export default class OrderForm extends BaseScreen {
             <Text style={styles.estimateLabel}>{I18n.t('orderForm.estimateQuantity')}</Text>
           </View>
           <View style={styles.estimationRightCell}>
-            <Text style={styles.estimateValue}>0.320679</Text>
+            <Text style={styles.estimateValue}>{this._getOrderTotal()}</Text>
             <Text style={styles.insideText}>{getCurrencyName(currency)}</Text>
           </View>
         </View>
@@ -337,9 +483,8 @@ export default class OrderForm extends BaseScreen {
   }
 
   _renderSubmitButton() {
-    const isSubmitBuy = this.state.selectedTab == Consts.TRADE_TYPE_BUY;
     return (
-      <TouchableOpacity style={[styles.submitButton, isSubmitBuy ? styles.submitBuy : styles.submitSell]}>
+      <TouchableOpacity style={[styles.submitButton, this._isBuyOrder() ? styles.submitBuy : styles.submitSell]}>
         <Text style={styles.submitText}>
           {getCurrencyName(this._getCoin()) + '/ ' + getCurrencyName(this._getCurrency())
             + ' ' + this._getOrderTypeText() + ' ' + this._getTradeTypeText()}
@@ -358,42 +503,9 @@ export default class OrderForm extends BaseScreen {
 }
 
 const margin = scale(10);
+const dropdownRowHeight = scale(35);
 
 const styles = ScaledSheet.create({
-  tabs: {
-    flexDirection: 'row',
-    height: '35@s',
-    alignItems: 'stretch'
-  },
-  tab: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderBottomWidth: 1,
-    borderColor: '#EEF1F5',
-    marginBottom: 1,
-    paddingBottom: 1
-  },
-  tabSeparator: {
-    width: 1,
-    height: '15@s',
-    marginBottom: 3,
-    alignSelf: 'center',
-    backgroundColor: '#515151'
-  },
-  selectedBuy: {
-    borderBottomWidth: 3,
-    borderColor: '#FF2C0D',
-    marginBottom: 0,
-    paddingBottom: 0
-  },
-  selectedSell: {
-    borderBottomWidth: 3,
-    borderColor: '#007AC5',
-    marginBottom: 0,
-    paddingBottom: 0
-  },
-
   inputGroup: {
     flex: 1,
     margin: margin,
@@ -410,31 +522,45 @@ const styles = ScaledSheet.create({
   },
   inputValue: {
     flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
     height: '100%',
     borderWidth: 1,
     borderColor: '#D9D9D9',
     borderRadius: scale(3)
   },
-  orderTypeGroup: {
+  inputText: {
+    width: '100%',
+    height: '100%',
+    padding: margin,
+    textAlign: 'right'
+  },
+  disabled: {
+    backgroundColor: '#F4F3F4'
+  },
+  typeButton: {
     flex: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginLeft: margin,
-    marginRight: margin
+    alignItems: 'stretch',
   },
   typeLabel: {
-    flex: 1,
+    paddingRight: margin,
+    textAlign: 'center'
+  },
+  caretDown: {
+    width: '10@s',
+    position: 'absolute',
+    right: '10@s'
+  },
+  typeDropdown: {
+    width: '150@s',
+    height: dropdownRowHeight * 4 + 4,
+    marginTop: '12@s'
+  },
+  typeDropdownText: {
+    height: dropdownRowHeight,
+    color: '#000',
     textAlign: 'center',
-    includeFontPadding: false
-  },
-  popupContainer: {
-
-  },
-  typesPopup: {
-
-  },
-  typesPopupItem: {
-
+    borderColor: '#0000'
   },
 
   estimationValues: {

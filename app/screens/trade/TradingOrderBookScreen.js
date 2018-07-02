@@ -12,7 +12,6 @@ import {
   createBottomTabNavigator,
   createStackNavigator,
 } from 'react-navigation'
-import TextInputMask from 'react-native-text-input-mask';
 import ScaledSheet from '../../libs/reactSizeMatter/ScaledSheet';
 import { CommonColors, CommonSize, CommonStyles } from '../../utils/CommonStyles';
 import I18n from '../../i18n/i18n';
