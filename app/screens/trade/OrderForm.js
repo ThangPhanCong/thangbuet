@@ -20,6 +20,7 @@ import ScaledSheet from '../../libs/reactSizeMatter/ScaledSheet';
 import { scale } from '../../libs/reactSizeMatter/scalingUtils';
 import Utils from '../../utils/Utils';
 import Consts from '../../utils/Consts'
+import OrderUtils from '../../utils/OrderUtils';
 import { CommonColors, CommonSize, CommonStyles } from '../../utils/CommonStyles';
 import { getCurrencyName, formatCurrency } from '../../utils/Filters';
 import OrderBook from './OrderBook';
@@ -35,7 +36,6 @@ export default class OrderForm extends BaseScreen {
   constructor(props) {
     super(props)
     this.state = {
-      tradeType: Consts.TRADE_TYPE_BUY,
       type: Consts.ORDER_TYPE_LIMIT,
       price: undefined,
       stop: undefined,
@@ -210,6 +210,61 @@ export default class OrderForm extends BaseScreen {
       newState.quantity = total ? this.floor(BigNumber(total).div(price), 4) : '';
     }
     this.setState(newState);
+  }
+
+  _onPressSubmit() {
+    var stopCondition = undefined;
+    if (this._isStopOrder()) {
+      if (this.state.stop) {
+        if (BigNumber(this.state.stop).gte(BigNumber(this.state.currentPrice))) {
+          stopCondition = 'ge';
+        } else {
+          stopCondition = 'le';
+        }
+      }
+    }
+    var data = {
+      trade_type: this.props.tradeType,
+      currency: this._getCurrency(),
+      coin: this._getCoin(),
+      type: this.state.type,
+      ioc: true,
+      quantity: this.state.quantity,
+      price: this.state.price || undefined,
+      base_price: this.state.stop,
+      stop_condition: stopCondition
+    };
+    var errors = OrderUtils.validateOrderInput(data);
+    if (errors.length > 0) {
+      this._showError(errors[0].message);
+      return;
+    }
+    if (this.settingsOrderConfirmation) {
+      this.confirmCreateOrder(data);
+    } else {
+      this._sendOrderRequest(data);
+    }
+  }
+
+  confirmCreateOrder(data) {
+    this._sendOrderRequest(data);
+  }
+
+  async _sendOrderRequest(data) {
+    try {
+      await rf.getRequest('OrderRequest').createANewOne(data);
+    } catch(error) {
+      if (!error.response) {
+        self._showError(window.i18n.t('common.message.network_error'));
+      } else {
+        self._showError(error.response.data.message);
+      }
+    };
+  }
+
+  _showError(message) {
+    //TODO show error
+    console.log(message);
   }
 
   render() {
@@ -484,9 +539,11 @@ export default class OrderForm extends BaseScreen {
 
   _renderSubmitButton() {
     return (
-      <TouchableOpacity style={[styles.submitButton, this._isBuyOrder() ? styles.submitBuy : styles.submitSell]}>
+      <TouchableOpacity
+        style={[styles.submitButton, this._isBuyOrder() ? styles.submitBuy : styles.submitSell]}
+        onPress={this._onPressSubmit.bind(this)}>
         <Text style={styles.submitText}>
-          {getCurrencyName(this._getCoin()) + '/ ' + getCurrencyName(this._getCurrency())
+          {getCurrencyName(this._getCoin()) + ' / ' + getCurrencyName(this._getCurrency())
             + ' ' + this._getOrderTypeText() + ' ' + this._getTradeTypeText()}
         </Text>
       </TouchableOpacity>
