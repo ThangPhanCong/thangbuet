@@ -46,7 +46,9 @@ export default class SecurityOverviewScreen extends BaseScreen {
       info: {},
       cancelOtpDialogVisible: false,
       initVerificationDialogVisible: false,
-      cancelOtpButtonPressed: false
+      existedPhoneDialogVisible: false,
+
+      cancelOtpButtonPressed: false,
     }
   }
 
@@ -73,6 +75,7 @@ export default class SecurityOverviewScreen extends BaseScreen {
         </ScrollView>
         {this._renderSubmitModal()}
         {this._renderInitVerificationModal()}
+        {this._renderExistedPhoneModal()}
       </View>
     )
   }
@@ -292,6 +295,32 @@ export default class SecurityOverviewScreen extends BaseScreen {
     )
   }
 
+  _renderExistedPhoneModal() {
+    return (
+      <Modal
+        isVisible={this.state.existedPhoneDialogVisible}
+        avoidKeyboard={true}
+        useNativeDriver={true}
+        backdropColor='transparent'
+        onBackdropPress={this._dismissExistedPhoneModal.bind(this)}>
+        <Card
+          style={styles.dialog}
+          containerStyle={{borderRadius: 5, padding: 0, marginStart: 30, marginEnd: 30}}>
+          <Text style={{fontSize: 13, marginTop: 16, marginBottom: 16, marginStart: 16, marginEnd: 16}}>
+            {I18n.t('myPage.security.existedPhoneHeader')}
+          </Text>
+          <TouchableOpacity
+            style={[styles.submitCancelOtpButton, { marginTop: 20, marginBottom: 30 }]}
+            onPress={this._dismissExistedPhoneModal.bind(this)}>
+            <Text style={{fontSize: 13, color: '#FFF', marginStart: 20, marginEnd: 20}}>
+              {I18n.t('myPage.security.existedPhoneButtonText')}
+            </Text>
+          </TouchableOpacity>
+        </Card>
+      </Modal>
+    )
+  }
+
   _onVerifyGoogle() {
     this.navigate('OTPGuideScreen');
   }
@@ -301,7 +330,7 @@ export default class SecurityOverviewScreen extends BaseScreen {
   }
 
   _onVerifyPhone() {
-
+    
   }
 
   _onVerifyPassword() {
@@ -336,6 +365,10 @@ export default class SecurityOverviewScreen extends BaseScreen {
 
   _dismissInitVerificationModal() {
     this.setState({initVerificationDialogVisible: false})
+  }
+
+  _dismissExistedPhoneModal() {
+    this.setState({existedPhoneDialogVisible: false})
   }
 
   async _getCurrentUser() {
