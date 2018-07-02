@@ -670,7 +670,7 @@ const styles = StyleSheet.create({
     marginBottom: 30,
     marginStart: 16,
     marginEnd: 16,
-    height: 30,
+    height: 40,
     alignItems: 'center',
     justifyContent: 'center'
   },

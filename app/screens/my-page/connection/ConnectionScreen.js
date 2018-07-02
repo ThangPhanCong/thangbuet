@@ -29,9 +29,6 @@ export default class ConnectionScreen extends BaseScreen {
 
   componentWillMount() {
     super.componentWillMount()
-    this.setState({
-      isLoading: true
-    })
     this._loadConnections();
   }
 
@@ -129,8 +126,7 @@ export default class ConnectionScreen extends BaseScreen {
     this._page = 1;
     this._hasNext = true;
     this.setState({
-      connections: [],
-      isLoading: true
+      connections: []
     })
     this._loadConnections();
   }
@@ -149,6 +145,11 @@ export default class ConnectionScreen extends BaseScreen {
         isLoading: false
       })
       return;
+    }
+    else {
+      this.setState({
+        isLoading: true
+      })
     }
 
     try {
@@ -173,6 +174,9 @@ export default class ConnectionScreen extends BaseScreen {
     }
     catch(err) {
       console.log('ConnectionScreen._loadConnections', err);
+      this.setState({
+        isLoading: false
+      })
     }
   }
 }
@@ -218,7 +222,7 @@ const styles = StyleSheet.create({
   },
   normalHeader: {
     color: '#000',
-    fontSize: 12,
+    fontSize: 13,
     fontWeight: 'bold'
   },
   tabBar: {
@@ -230,7 +234,7 @@ const styles = StyleSheet.create({
     paddingRight: 10,
   },
   valueItem: {
-    fontSize: 12,
+    fontSize: 13,
     textAlign: 'center'
   }
 });

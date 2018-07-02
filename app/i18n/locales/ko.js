@@ -192,6 +192,19 @@ export default {
       device: '기기',
       operatingSystem: '운영체제',
       ipAddress: 'IP 주소'
+    },
+    wallet: {
+      coin: '코인',
+      walletName: '지갑 이름',
+      withdraw: '출금',
+      remove: '삭제',
+
+      addNewWalletHeader: '출금 주소 등록',
+      coinType: '코인 종류',
+      walletAddress: '지갑 주소',
+      destination: '데스티네이션',
+      walletName: '지갑 이름(별칭)',
+      addNewWalletSubmit: '입출금 계좌 등록'
     }
   }
 }
