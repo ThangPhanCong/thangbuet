@@ -541,6 +541,7 @@ export default class SecurityOverviewScreen extends BaseScreen {
       })
 
       this.setState({
+        initVerificationDialogVisible: false,
         cancelOtpDialogVisible: false,
         info: {
           ...this.state.info,
