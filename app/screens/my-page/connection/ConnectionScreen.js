@@ -49,7 +49,7 @@ export default class ConnectionScreen extends BaseScreen {
           onEndReachedThreshold={1}
           onEndReached={this._onLoadMore.bind(this)}
           refreshing={this.state.isLoading}
-        />
+          keyExtractor={(item, index) => index.toString()}/>
       </View>
     )
   }
@@ -58,28 +58,29 @@ export default class ConnectionScreen extends BaseScreen {
     return (
       <TouchableHighlight
         style={styles.listItem}
+        onPress={() => this._onPressItem(item)}
         underlayColor='#FFECED'>
         <View style = {styles.listItemContainer}>
           <View style={styles.dateTimeGroup}>
-            <Text style={{fontSize: 12}}>
+            <Text style={styles.valueItem}>
               {item.created_at}
             </Text>
           </View>
 
           <View style={styles.deviceGroup}>
-            <Text style={{fontSize: 12}}>
+            <Text style={styles.valueItem}>
               {item.device}
             </Text>
           </View>
 
           <View style={styles.osGroup}>
-            <Text style={{fontSize: 12}}>
+            <Text style={styles.valueItem}>
               {item.operating_system}
             </Text>
           </View>
 
           <View style={styles.ipGroup}>
-            <Text style={{fontSize: 12}}>
+            <Text style={styles.valueItem}>
               {item.ip_address}
             </Text>
           </View>
@@ -132,6 +133,10 @@ export default class ConnectionScreen extends BaseScreen {
       isLoading: true
     })
     this._loadConnections();
+  }
+
+  _onPressItem(item) {
+
   }
 
   _onLoadMore(info) {
@@ -223,5 +228,9 @@ const styles = StyleSheet.create({
     backgroundColor: '#F8F9FB',
     paddingLeft: 10,
     paddingRight: 10,
+  },
+  valueItem: {
+    fontSize: 12,
+    textAlign: 'center'
   }
 });
