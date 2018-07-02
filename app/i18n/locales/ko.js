@@ -174,7 +174,13 @@ export default {
       ★ 메모 입력 사항:otp 사용 중단 요청, 빗코엑스 가입한 이메일, 요청 날짜
       ★ 피싱 등 금융사고 예방을 위한 것으로 조금 불편하시더라도 양해 부탁드립니다`,
       existedPhoneHeader: '이미 등록된 전화번호입니다.',
-      existedPhoneButtonText: '확인'
+      existedPhoneButtonText: '확인',
+      bankAccountHeader: '입출금 계좌 등록',
+      bankAccountOwner: '예금주',
+      dateOfBirth: '생년월일(6자리)',
+      bank: '은행',
+      bankAccountNumber: '계좌번호',
+      bankAccountSubmitText: '계좌번호 인증하기'
     }
   }
 }

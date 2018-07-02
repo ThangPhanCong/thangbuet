@@ -7,7 +7,8 @@ import {
   TouchableHighlight,
   TouchableOpacity,
   TextInput,
-  ScrollView
+  ScrollView,
+  KeyboardAvoidingView
 } from 'react-native';
 import Modal from 'react-native-modal';
 import { Card } from 'react-native-elements';
@@ -36,8 +37,8 @@ export default class SecurityOverviewScreen extends BaseScreen {
     image: require('../../../../assets/common/password.png')
   }];
 
-  _otpCode = '';
-  _recoveryCode = '';
+  _otp = {};
+  _bank = {};
 
   constructor(props) {
     super(props);
@@ -47,6 +48,7 @@ export default class SecurityOverviewScreen extends BaseScreen {
       cancelOtpDialogVisible: false,
       initVerificationDialogVisible: false,
       existedPhoneDialogVisible: false,
+      bankAccountDialogVisible: false,
 
       cancelOtpButtonPressed: false,
     }
@@ -76,6 +78,7 @@ export default class SecurityOverviewScreen extends BaseScreen {
         {this._renderSubmitModal()}
         {this._renderInitVerificationModal()}
         {this._renderExistedPhoneModal()}
+        {this._renderBankAccountModal()}
       </View>
     )
   }
@@ -229,17 +232,15 @@ export default class SecurityOverviewScreen extends BaseScreen {
           </Text>
           <TextInput
             style={styles.textInput}
-            onChangeText={text => this._otpCode = text}
-            underlineColorAndroid='transparent'
-            />
+            onChangeText={text => this._otp.otpCode = text}
+            underlineColorAndroid='transparent' />
           <Text style={{fontSize: 13, marginTop: 10, marginBottom: 3, marginStart: 16, marginEnd: 16}}>
             {I18n.t('myPage.security.dialogRecoveryCode')}
           </Text>
           <TextInput
             style={styles.textInput}
-            onChangeText={text => this._recoveryCode = text}
-            underlineColorAndroid='transparent'
-            />
+            onChangeText={text => this._otp.recoveryCode = text}
+            underlineColorAndroid='transparent' />
           <TouchableOpacity
             style={styles.submitCancelOtpButton}
             onPress={this._onRemoveGoogleAuth.bind(this)}>
@@ -321,12 +322,65 @@ export default class SecurityOverviewScreen extends BaseScreen {
     )
   }
 
+  _renderBankAccountModal() {
+    return (
+      <Modal
+        isVisible={this.state.bankAccountDialogVisible}
+        avoidKeyboard={true}
+        useNativeDriver={true}
+        backdropColor='transparent'
+        onBackdropPress={this._dismissBankAccountModal.bind(this)}>
+        <Card
+          style={styles.dialog}
+          containerStyle={{borderRadius: 5, padding: 0, marginStart: 30, marginEnd: 30}}>
+          <KeyboardAvoidingView>
+            <Text style={{fontSize: 13, marginTop: 16, marginBottom: 16, marginStart: 16, marginEnd: 16}}>
+              {I18n.t('myPage.security.bankAccountHeader')}
+            </Text>
+            <View style={{height: 1, backgroundColor: '#EBEBEB'}}/>
+            <Text style={styles.bankAccountTitle}>
+              {I18n.t('myPage.security.bankAccountOwner')}
+            </Text>
+            <TextInput style={styles.bankAccountTextInput}
+              onChangeText={text => this._bank.owner = text}/>
+            
+            <Text style={styles.bankAccountTitle}>
+              {I18n.t('myPage.security.dateOfBirth')}
+            </Text>
+            <TextInput style={styles.bankAccountTextInput}
+              onChangeText={text => this._bank.dateOfBirth = text}/>
+
+            <Text style={styles.bankAccountTitle}>
+              {I18n.t('myPage.security.bank')}
+            </Text>
+            <TextInput style={styles.bankAccountTextInput}
+              onChangeText={text => this._bank.bank = text}/>
+
+            <Text style={styles.bankAccountTitle}>
+              {I18n.t('myPage.security.bankAccountNumber')}
+            </Text>
+            <TextInput style={styles.bankAccountTextInput}
+              onChangeText={text => this._bank.accountNumber = text}/>
+            
+            <TouchableOpacity
+              style={[styles.submitCancelOtpButton, { marginTop: 20, marginBottom: 30 }]}
+              onPress={this._onSubmitBankAccount.bind(this)}>
+              <Text style={{fontSize: 13, color: '#FFF'}}>
+                {I18n.t('myPage.security.bankAccountSubmitText')}
+              </Text>
+            </TouchableOpacity>
+          </KeyboardAvoidingView>
+        </Card>
+      </Modal>
+    )
+  }
+
   _onVerifyGoogle() {
     this.navigate('OTPGuideScreen');
   }
 
   _onVerifyBankAccount() {
-
+    this.setState({bankAccountDialogVisible: true})
   }
 
   _onVerifyPhone() {
@@ -359,6 +413,10 @@ export default class SecurityOverviewScreen extends BaseScreen {
     this.setState({cancelOtpButtonPressed: false})
   }
 
+  _onSubmitBankAccount() {
+
+  }
+
   _dismissSubmitModal() {
     this.setState({cancelOtpDialogVisible: false})
   }
@@ -369,6 +427,10 @@ export default class SecurityOverviewScreen extends BaseScreen {
 
   _dismissExistedPhoneModal() {
     this.setState({existedPhoneDialogVisible: false})
+  }
+
+  _dismissBankAccountModal() {
+    this.setState({bankAccountDialogVisible: false})
   }
 
   async _getCurrentUser() {
@@ -393,7 +455,7 @@ export default class SecurityOverviewScreen extends BaseScreen {
   async _removeGoogleAuth() {
     try {
       await rf.getRequest('UserRequest').delGoogleAuth({
-        otp: this._otpCode
+        otp: this._otp.otpCode
       })
 
       this.setState({cancelOtpDialogVisible: false})
@@ -495,5 +557,20 @@ const styles = StyleSheet.create({
     height: 30,
     alignItems: 'center',
     justifyContent: 'center'
+  },
+  bankAccountTitle: {
+    fontSize: 13,
+    marginTop: 16,
+    marginStart: 16,
+    marginEnd: 16
+  },
+  bankAccountTextInput: {
+    marginTop: 2,
+    marginStart: 16,
+    marginEnd: 16,
+    height: 40,
+    borderColor: '#D9D9D9',
+    borderRadius: 5,
+    borderWidth: 1
   }
 });
