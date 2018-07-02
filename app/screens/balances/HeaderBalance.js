@@ -18,17 +18,16 @@ import ScaledSheet from '../../libs/reactSizeMatter/ScaledSheet'
 import { Icon } from 'react-native-elements'
 import rf from '../../libs/RequestFactory'
 import I18n from '../../i18n/i18n'
-import AppConfig from '../../utils/AppConfig'
-import AppPreferences from '../../utils/AppPreferences'
-import { formatCurrency, formatPercent, getCurrencyName } from '../../utils/Filters'
-import HeaderBalance from './HeaderBalance'
+import AppConfig from '../../utils/AppConfig';
+import AppPreferences from '../../utils/AppPreferences';
+import { formatCurrency, formatPercent, getCurrencyName } from '../../utils/Filters';
 
-export default class BalanceScreen extends BaseScreen {
+export default class HeaderBalance extends BaseScreen {
   constructor(props) {
     super(props)
     this.state = {
+      assetsValuation: 0,
       symbols: [],
-      assetsValuation: 0
     }
     this.currency = 'krw'
   }
@@ -61,7 +60,7 @@ export default class BalanceScreen extends BaseScreen {
 
       this._onBalanceUpdated(coinList);
     } catch (err) {
-      console.log('Error in BalanceScreen._getSymbols: ', err)
+      console.log('Error in HeaderScreen._getSymbols: ', err)
     }
   }
 
@@ -70,7 +69,7 @@ export default class BalanceScreen extends BaseScreen {
       let priceResponse = await rf.getRequest('PriceRequest').getPrices();
       this._onPricesUpdated(priceResponse.data);
     } catch (err) {
-      console.log('BalanceScreen._getPrices', err);
+      console.log('HeaderScreen._getPrices', err);
     }
   }
 
@@ -98,7 +97,7 @@ export default class BalanceScreen extends BaseScreen {
   }
 
   _onPricesUpdated(prices) {
-    console.log('prices', prices)
+    // console.log('prices', prices)
     const coinList = this.state.symbols
     coinList.map((coin, index) => {
       if (coin.code.toLowerCase() === this.currency) {
@@ -121,41 +120,27 @@ export default class BalanceScreen extends BaseScreen {
 
   render() {
     return (
-      <SafeAreaView style={styles.fullScreen}>
-        <View style={styles.content}>
-          <HeaderBalance />
-          <View style={{ flex: 1 }}>
-            <View style={styles.tableHeader}>
-              <Text style={{ flex: 1 }}>{I18n.t('balances.coin')}</Text>
-              <Text style={{ flex: 1 }}> {I18n.t('balances.quantity')}</Text>
-              <Text style={{ flex: 1 }}>{I18n.t('balances.action')}</Text>
+      <View>
+        <View style={styles.header}>
+          <View style={styles.logo}>
+            <Icon name="assessment" />
+            <Text>{I18n.t('balances.depositAndWithdrawal')}</Text>
+          </View>
+          <View style={styles.info}>
+            <View style={styles.infoRow}>
+              <Text style={styles.infoRowLeft}>{I18n.t('balances.totalAssets')}</Text>
+              <Text style={styles.infoRowRight}>
+                {formatCurrency(this.state.assetsValuation, this.currency)}
+                <Text style={{ fontSize: 11 }}>{I18n.t('balances.currency')}</Text>
+              </Text>
             </View>
-            <ScrollView>
-              {
-                this.state.symbols.map((symbol, index) => (
-                  <View
-                    key={symbol + "_" + index}
-                    style={styles.tableRow}>
-                    <View style={styles.tableRowDetail}>
-                      <Image
-                        style={{ width: 24, height: 24 }}
-                        source={{ uri: symbol.icon }} />
-                      <Text>{symbol.code.toUpperCase()}</Text>
-                    </View>
-                    <Text style={{ flex: 1, fontSize: 12 }}>
-                      {symbol.code.toUpperCase() !== 'KRW' && parseFloat(symbol.balance)}
-                    </Text>
-                    <View style={{ flex: 1, flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'flex-start' }}>
-                      <Button title={I18n.t('balances.deposit')} onPress={() => this.navigate('Deposit', { symbol })} />
-                      <Button title={I18n.t('balances.withdrawal')} onPress={() => { }} />
-                    </View>
-                  </View>
-                ))
-              }
-            </ScrollView>
           </View>
         </View>
-      </SafeAreaView>
+        <View style={{ height: 25, marginLeft: 5, marginRight: 5, marginBottom: 10, marginTop: 5, borderWidth: 1, flexDirection: 'row' }}>
+          <TextInput style={{ flex: 1, textAlign: 'center' }} placeholder='검색' underlineColorAndroid='rgba(0, 0, 0, 0)' autoCorrect={false} />
+          <Icon name="search" size={20} />
+        </View>
+      </View>
     )
   }
 }

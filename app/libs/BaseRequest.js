@@ -81,7 +81,7 @@ export default class BaseRequest {
       if (response.status == '401') {
         AppPreferences.removeAccessToken();
         window.GlobalSocket.disconnect();
-        RNRestart.Restart();
+        // RNRestart.Restart();
       }
 
       const content = await response.text();
