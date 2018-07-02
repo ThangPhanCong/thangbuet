@@ -15,7 +15,6 @@ import {
 import { BoxShadow } from 'react-native-shadow';
 import BaseScreen from '../../BaseScreen'
 import { CommonStyles } from '../../../utils/CommonStyles';
-// import KeyboardAvoidingView from '../../../utils/KeyboardAvoidingView';
 import rf from '../../../libs/RequestFactory';
 import I18n from '../../../i18n/i18n';
 import _ from 'lodash';

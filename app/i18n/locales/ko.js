@@ -186,6 +186,12 @@ export default {
       newPassword: '새 비밀번호',
       repeatPassword: '새 비밀번호 확인',
       changePasswordSubmit: '비밀번호 변경'
+    },
+    connection: {
+      dateTime: '일시',
+      device: '기기',
+      operatingSystem: '운영체제',
+      ipAddress: 'IP 주소'
     }
   }
 }

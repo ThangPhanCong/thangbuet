@@ -1,23 +1,234 @@
 import React from 'react';
 import {
-  PixelRatio,
   StyleSheet,
   Text,
-  TextInput,
-  TouchableOpacity,
+  TouchableHighlight,
   View,
-  Image
+  FlatList
 } from 'react-native';
 
 import BaseScreen from '../../BaseScreen';
-import ScaledSheet from '../../../libs/reactSizeMatter/ScaledSheet';
+import rf from '../../../libs/RequestFactory';
+import { CommonStyles } from '../../../utils/CommonStyles';
+import I18n from '../../../i18n/i18n';
 
 export default class ConnectionScreen extends BaseScreen {
+
+  _page = 1;
+  _hasNext = true;
+  _limit = 10;
+
+  constructor(props){
+    super(props);
+
+    this.state = {
+      connections: [],
+      isLoading: false
+    }
+  }
+
+  componentWillMount() {
+    super.componentWillMount()
+    this.setState({
+      isLoading: true
+    })
+    this._loadConnections();
+  }
+
   render() {
-    return(<Text>Sreen</Text>)
+    return (
+      <View style={styles.screen}>
+        {this._renderHeader()}
+        <FlatList
+          style={styles.listView}
+          data={this.state.connections}
+          extraData={this.state}
+          renderItem={this._renderItem.bind(this)}
+          ItemSeparatorComponent={this._renderSeparator}
+          onRefresh={this._onRefresh.bind(this)}
+          onEndReachedThreshold={1}
+          onEndReached={this._onLoadMore.bind(this)}
+          refreshing={this.state.isLoading}
+        />
+      </View>
+    )
+  }
+
+  _renderItem({ item }) {
+    return (
+      <TouchableHighlight
+        style={styles.listItem}
+        underlayColor='#FFECED'>
+        <View style = {styles.listItemContainer}>
+          <View style={styles.dateTimeGroup}>
+            <Text style={{fontSize: 12}}>
+              {item.created_at}
+            </Text>
+          </View>
+
+          <View style={styles.deviceGroup}>
+            <Text style={{fontSize: 12}}>
+              {item.device}
+            </Text>
+          </View>
+
+          <View style={styles.osGroup}>
+            <Text style={{fontSize: 12}}>
+              {item.operating_system}
+            </Text>
+          </View>
+
+          <View style={styles.ipGroup}>
+            <Text style={{fontSize: 12}}>
+              {item.ip_address}
+            </Text>
+          </View>
+        </View>
+      </TouchableHighlight>
+    );
+  }
+
+  _renderSeparator(sectionID, rowID, adjacentRowHighlighted) {
+    return (
+      <View key="rowID" style={styles.separator}/>
+    );
+  }
+
+  _renderHeader() {
+    return (
+      <View style={styles.tabBar}>
+        <View style={styles.dateTimeGroup}>
+          <Text style={styles.normalHeader}>
+            {I18n.t('myPage.connection.dateTime')}
+          </Text>
+        </View>
+
+        <View style={styles.deviceGroup}>
+          <Text style={styles.normalHeader}>
+            {I18n.t('myPage.connection.device')}
+          </Text>
+        </View>
+
+        <View style={styles.osGroup}>
+          <Text style={styles.normalHeader}>
+            {I18n.t('myPage.connection.operatingSystem')}
+          </Text>
+        </View>
+
+        <View style={styles.ipGroup}>
+          <Text style={styles.normalHeader}>
+            {I18n.t('myPage.connection.ipAddress')}
+          </Text>
+        </View>
+      </View>
+    );
+  }
+
+  _onRefresh() {
+    this._page = 1;
+    this._hasNext = true;
+    this.setState({
+      connections: [],
+      isLoading: true
+    })
+    this._loadConnections();
+  }
+
+  _onLoadMore(info) {
+    this._loadConnections();
+  }
+
+  async _loadConnections() {
+    if (!this._hasNext) {
+      this.setState({
+        isLoading: false
+      })
+      return;
+    }
+
+    try {
+      let response = await rf.getRequest('UserRequest').getHistoryConnection({
+        page: this._page,
+        limit: this._limit
+      })
+      let data = response.data;
+      let newConections = data.data;
+      if (this._page < data.last_page) {
+        this._page += 1;
+        this._hasNext = true;
+      }
+      else {
+        this._hasNext = false;
+      }
+
+      this.setState({
+        connections: this.state.connections.concat(newConections),
+        isLoading: false
+      })
+    }
+    catch(err) {
+      console.log('ConnectionScreen._loadConnections', err);
+    }
   }
 }
 
-const styles = ScaledSheet.create({
-
+const styles = StyleSheet.create({
+  screen: {
+    ...CommonStyles.screen
+  },
+  listView: {
+    flex: 1,
+  },
+  listItem: {
+    height: 64
+  },
+  listItemContainer: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingLeft: 10,
+    paddingRight: 10
+  },
+  separator: {
+    flex: 1,
+    height: 1,
+    backgroundColor: '#DEE3EB',
+    opacity: 0.3
+  },
+  dateTimeGroup: {
+    flex: 3,
+    alignItems: 'center',
+  },
+  deviceGroup: {
+    flex: 2,
+    alignItems: 'center',
+  },
+  osGroup: {
+    flex: 4,
+    alignItems: 'center',
+  },
+  ipGroup: {
+    flex: 4,
+    alignItems: 'center',
+  },
+  changeSubGroup: {
+    width: 72,
+    height: 30,
+    borderRadius: 10,
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
+  normalHeader: {
+    color: '#000',
+    fontSize: 12,
+    fontWeight: 'bold'
+  },
+  tabBar: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    height: 36,
+    backgroundColor: '#F8F9FB',
+    paddingLeft: 10,
+    paddingRight: 10,
+  }
 });
