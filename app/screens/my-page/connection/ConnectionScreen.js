@@ -211,13 +211,6 @@ const styles = StyleSheet.create({
     flex: 4,
     alignItems: 'center',
   },
-  changeSubGroup: {
-    width: 72,
-    height: 30,
-    borderRadius: 10,
-    justifyContent: 'center',
-    alignItems: 'center'
-  },
   normalHeader: {
     color: '#000',
     fontSize: 12,
