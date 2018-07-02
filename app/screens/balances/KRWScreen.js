@@ -9,7 +9,6 @@ import {
   Image,
   SafeAreaView,
   ScrollView,
-  Modal,
   Button,
   Alert
 } from 'react-native';
@@ -23,6 +22,7 @@ import AppConfig from '../../utils/AppConfig'
 import AppPreferences from '../../utils/AppPreferences'
 import { formatCurrency, formatPercent, getCurrencyName } from '../../utils/Filters'
 import { withNavigationFocus } from 'react-navigation'
+import Modal from "react-native-modal"
 
 class KRWScreen extends BaseScreen {
   constructor(props) {
@@ -41,29 +41,34 @@ class KRWScreen extends BaseScreen {
 
   }
 
-  _reload() {
-    //TODO something to reload 
-    return
-  }
-
-  async _checkPendingTransaction() {
-    let pendingDepositTransaction = await rf.getRequest('TransactionRequest').getPendingDepositTransaction()
-    if (!pendingDepositTransaction.data || pendingDepositTransaction.data === null) {
-      let currency = this.currency
-      let amount = this.state.amount
-      let depositKrw = await rf.getRequest('TransactionRequest').depositKrw({ currency, amount })
-      if (depositKrw.success) {
-        Alert.alert(
-          I18n.t('deposit.info'),
-          I18n.t('deposit.success'),
-          [{ text: I18n.t('deposit.accept'), onPress: () => { this._reload() } },],
-          { cancelable: false }
-        )
+  async _execute() {
+    try {
+      let pendingDepositTransaction = await rf.getRequest('TransactionRequest').getPendingDepositTransaction()
+      // if (!pendingDepositTransaction.data || pendingDepositTransaction.data === null) {
+      if (false) {
+        let currency = this.currency
+        let amount = this.state.amount
+        let depositKrw = await rf.getRequest('TransactionRequest').depositKrw({ currency, amount })
+        if (depositKrw.success) {
+          Alert.alert(
+            I18n.t('deposit.info'),
+            I18n.t('deposit.success'),
+            [{ text: I18n.t('deposit.accept'), onPress: () => { this._reload() } },],
+            { cancelable: false }
+          )
+        }
+      } else {
+        this.setState({ modalConfirm: false })
+        this.props.navigation.navigate('KRWPendingScreen', {
+          transaction: pendingDepositTransaction.data,
+          symbol: this.props.symbol
+        })
       }
-    } else {
+    } catch (err) {
+      console.log('Some errors has occurred in KRWScreen ', err)
       Alert.alert(
-        I18n.t('deposit.warning'),
-        I18n.t('deposit.pending'),
+        I18n.t('deposit.error'),
+        err.message,
         [{ text: I18n.t('deposit.accept'), onPress: () => { } },],
         { cancelable: false }
       )
@@ -215,7 +220,54 @@ class KRWScreen extends BaseScreen {
             <Text style={{ flexWrap: 'wrap', fontSize: 13, fontWeight: 'bold' }}>{I18n.t('deposit.noteTimeMore')}</Text>
           </View>
         </View>
-      </ScrollView >
+
+        {/* Confirm deposit */}
+        <Modal
+          isVisible={this.state.modalConfirm}
+          onBackdropPress={() => this.setState({ modalConfirm: false })}>
+          <View style={{
+            backgroundColor: "white",
+            justifyContent: "center",
+            alignItems: "center",
+            alignContent: 'center',
+            borderRadius: 4,
+            borderColor: "rgba(0, 0, 0, 0.1)"
+          }}>
+            <View style={{
+              borderBottomWidth: 1, borderColor: '#aaa', height: 50, width: '100%',
+              justifyContent: 'center', alignItems: 'center'
+            }}>
+              <Text>{I18n.t('deposit.confirmTitle')}</Text>
+            </View>
+
+            <View style={{
+              width: '100%', justifyContent: 'center',
+              alignItems: 'center', flexDirection: 'row',
+              marginBottom: 10, marginTop: 20
+            }}>
+              <Text style={{ marginRight: 10 }}>{I18n.t('deposit.amountToDeposit')}</Text>
+              <Text>{formatCurrency(this.state.amount, this.currency)}<Text style={{ fontSize: 11 }}>{I18n.t('funds.currency')}</Text></Text>
+            </View>
+            <Text style={{ marginTop: 10, marginBottom: 10 }}>{I18n.t('deposit.confirmContent')}</Text>
+            <View style={{
+              width: '70%', justifyContent: 'space-between',
+              alignItems: 'center', flexDirection: 'row',
+              marginBottom: 20, marginTop: 10
+            }}>
+              <TouchableOpacity
+                onPress={() => this.setState({ modalConfirm: false })}
+                style={{ width: '45%', justifyContent: 'center', backgroundColor: '#aaa', height: 45 }}>
+                <Text style={{ color: 'white', textAlign: 'center' }}>{I18n.t('deposit.actionCancel')}</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={async () => await this._execute()}
+                style={{ width: '45%', justifyContent: 'center', backgroundColor: 'blue', height: 45 }}>
+                <Text style={{ color: 'white', textAlign: 'center' }}>{I18n.t('deposit.actionConfirm')}</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </Modal>
+      </ScrollView>
     )
   }
 }

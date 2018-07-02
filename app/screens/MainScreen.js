@@ -9,6 +9,7 @@ import TransactionScreen from './transaction/TransactionScreen'
 import BalanceScreen from './balances/BalanceScreen'
 import MyPageScreen from './my-page/MyPageScreen'
 import DepositScreen from './balances/DepositScreen'
+import KRWPendingScreen from './balances/KRWPendingScreen'
 
 export const BalanceStack = StackNavigator({
   Balance: {
@@ -17,6 +18,9 @@ export const BalanceStack = StackNavigator({
   Deposit: {
     screen: DepositScreen,
   },
+  KRWPendingScreen: {
+    screen: KRWPendingScreen
+  }
 });
 import MarketSearchScreen from './market/MarketSearchScreen';
 

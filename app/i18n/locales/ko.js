@@ -162,13 +162,18 @@ export default {
     noteMore: '은행 시스템 점검 시간 중에는 출금이 제한됩니다.',
     noteTimeMore: '은행 점검 시간 : 매일 23:00 ~ 01:00 / 토요일 23:00 ~ 일요일 05:00',
     warning: 'Warning',
-    bankAccount : 'Please verify your bank account first.',
+    bankAccount: 'Please verify your bank account first.',
     accept: 'OK',
     pending: 'You have a pending transasction, please contact administrator!',
     info: 'Information',
     success: 'Successful transaction!',
     error: 'Some errors has occurred',
-    confirm : '입금신청확인',
+    confirm: '입금신청확인',
+    confirmTitle: '입금신청취소확인',
+    amountToDeposit: '입금신청금액',
+    confirmContent: '위와같이입금을신청하시겠습니까?',
+    actionConfirm: '확인',
+    actionCancel: '취소'
 
   }
 }

@@ -98,7 +98,7 @@ export default class BalanceScreen extends BaseScreen {
   }
 
   _onPricesUpdated(prices) {
-    console.log('prices', prices)
+    // console.log('prices', prices)
     const coinList = this.state.symbols
     coinList.map((coin, index) => {
       if (coin.code.toLowerCase() === this.currency) {

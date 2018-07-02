@@ -41,7 +41,7 @@ class DepositScreen extends BaseScreen {
       <SafeAreaView style={styles.fullScreen}>
         <View style={styles.content}>
           <HeaderBalance />
-          {symbol && symbol.code === 'krw' && <KRWScreen symbol={symbol} />}
+          {symbol && symbol.code === 'krw' && <KRWScreen symbol={symbol} navigation={navigation} />}
           {/* {symbol && symbol.code !== 'krw' && <KRWScreen symbol={symbol} />} */}
         </View>
       </SafeAreaView>
