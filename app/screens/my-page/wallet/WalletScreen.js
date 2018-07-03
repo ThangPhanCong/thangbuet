@@ -19,6 +19,7 @@ import Utils from '../../../utils/Utils';
 import I18n from '../../../i18n/i18n';
 import _ from 'lodash';
 import Consts from '../../../utils/Consts';
+import TouchableTextHighlight from '../../../utils/TouchableTextHighlight';
 import ActionButton from 'react-native-action-button';
 
 export default class WalletScreen extends BaseScreen {
@@ -81,8 +82,10 @@ export default class WalletScreen extends BaseScreen {
 
   _renderItem({ item }) {
     return (
-      <View
-        style={styles.listItem}>
+      <TouchableHighlight
+        style={styles.listItem}
+        underlayColor='#FFECED'
+        onPress={() => this._onShowWalletEditor(item)}>
         <View style = {styles.listItemContainer}>
           <View style={styles.coinGroup}>
             <Text style={styles.valueItem}>
@@ -97,26 +100,30 @@ export default class WalletScreen extends BaseScreen {
           </View>
 
           <View style={styles.withdrawGroup}>
-            <TouchableHighlight style={styles.withdrawButton}
-              onPress={() => this._onWithdraw(wallet)}
-              underlayColor='#FF3300'>
-              <Text style={styles.buttonTitle}>
-                {I18n.t('myPage.wallet.withdraw')}
-              </Text>
-            </TouchableHighlight>
+            <TouchableTextHighlight
+              style={styles.withdrawButton}
+              onPress={() => this._onWithdraw(item)}
+              underlayColor='#FF3300'
+              textStyle={styles.buttonTitle}
+              underlayTextColor='#FFF'
+              normalTextColor='#FF3300'
+              text={I18n.t('myPage.wallet.withdraw')}
+            />
           </View>
 
           <View style={styles.removeGroup}>
-            <TouchableHighlight style={styles.withdrawButton}
-              onPress={() => this._onShowRemoveWalletConfirmation(item)}
-              underlayColor='#FF3300'>
-              <Text style={styles.buttonTitle}>
-                {I18n.t('myPage.wallet.remove')}
-              </Text>
-            </TouchableHighlight>
+            <TouchableTextHighlight
+                style={styles.withdrawButton}
+                onPress={() => this._onShowRemoveWalletConfirmation(item)}
+                underlayColor='#FF3300'
+                textStyle={styles.buttonTitle}
+                underlayTextColor='#FFF'
+                normalTextColor='#FF3300'
+                text={I18n.t('myPage.wallet.remove')}
+              />
           </View>
         </View>
-      </View>
+      </TouchableHighlight>
     );
   }
 
@@ -188,6 +195,7 @@ export default class WalletScreen extends BaseScreen {
             {I18n.t('myPage.wallet.walletAddress')}
           </Text>
           <TextInput style={styles.addNewWalletTextInput}
+            value={this._newWalletParams.wallet_address}
             underlineColorAndroid='transparent'
             onChangeText={text => this._newWalletParams.wallet_address = text}/>
 
@@ -199,6 +207,7 @@ export default class WalletScreen extends BaseScreen {
                   {I18n.t('myPage.wallet.destination')}
                 </Text>
                 <TextInput style={styles.addNewWalletTextInput}
+                  value={this._newWalletParams.tag}
                   underlineColorAndroid='transparent'
                   onChangeText={text => this._newWalletParams.tag = text}/>
               </View>
@@ -209,6 +218,7 @@ export default class WalletScreen extends BaseScreen {
             {I18n.t('myPage.wallet.walletName')}
           </Text>
           <TextInput style={styles.addNewWalletTextInput}
+            value={this._newWalletParams.wallet_name}
             underlineColorAndroid='transparent'
             onChangeText={text => this._newWalletParams.wallet_name = text}/>
           
@@ -243,7 +253,7 @@ export default class WalletScreen extends BaseScreen {
             style={[styles.submitAddNewWallet, { marginTop: 20, marginBottom: 30 }]}
             onPress={this._onRemove.bind(this)}>
             <Text style={{fontSize: 13, color: '#FFF'}}>
-              {I18n.t('myPage.wallet.removeConfirm')}
+              {String.format(I18n.t('myPage.wallet.removeConfirm'), this._selectedWallet.wallet_name)}
             </Text>
           </TouchableOpacity>
         </Card>
@@ -255,6 +265,19 @@ export default class WalletScreen extends BaseScreen {
     return _.map(this._coinTypes, (coin, index) => (
       <Picker.Item value={coin} label={Utils.getCurrencyName(coin)} key={`${index}`}/>
     ));
+  }
+
+  _onShowWalletEditor(wallet) {
+    this._newWalletParams = {
+      wallet_name: wallet.wallet_name,
+      wallet_address: wallet.wallet_address,
+      tag: wallet.tag
+    };
+
+    this.setState({
+      addNewWalletDialogVisible: true,
+      selectedCoinType: wallet.coin
+    })
   }
 
   _onRefresh() {
@@ -287,8 +310,8 @@ export default class WalletScreen extends BaseScreen {
     this.setState({removeWalletDialogVisible: true})
   }
 
-  _onRemove(wallet) {
-    this._removeWallet(wallet);
+  _onRemove() {
+    this._removeWallet();
   }
 
   _dismissAddNewWalletModal() {
@@ -307,7 +330,7 @@ export default class WalletScreen extends BaseScreen {
   }
 
   async _loadWallets() {
-    if (!this.state._hasNext) {
+    if (!this._hasNext) {
       this.setState({
         isLoading: false
       })
@@ -324,9 +347,7 @@ export default class WalletScreen extends BaseScreen {
       this._hasNext = false;
       this.setState({
         wallets: this.state.wallets.concat(wallets),
-        isLoading: false,
-
-        addNewWalletDialogVisible: false
+        isLoading: false
       })
     }
     catch(err) {
@@ -355,20 +376,23 @@ export default class WalletScreen extends BaseScreen {
       wallets.push(newWallet);
       this._newWalletParams = {};
       this.state.selectedCoinType = '';
-      this.setState({ wallets });
+      this.setState({ wallets, addNewWalletDialogVisible: false });
     }
     catch(err) {
-      console.log('WalletScreen._loadWallets', err);
+      console.log('WalletScreen._addWallet', err);
     }
   }
 
-  async _removeWallet(wallet) {
+  async _removeWallet() {
     try {
-      
-      this._dismissRemoveConfirmationModal();
+      await rf.getRequest('UserRequest').deleteWithdrawallAddress(this._selectedWallet.id);
+      let wallets = _.filter(this.state.wallets, w => w === this._selectedWallet);
+
+      this._selectedWallet = {};
+      this.setState({ wallets, removeWalletDialogVisible: false })
     }
     catch(err) {
-      console.log('WalletScreen._loadWallets', err);
+      console.log('WalletScreen._removeWallet', err);
     }
   }
 
@@ -441,8 +465,9 @@ const styles = StyleSheet.create({
   },
   buttonTitle: {
     fontSize: 13,
-    marginStart: 5,
-    marginEnd: 5
+    marginStart: 15,
+    marginEnd: 15,
+    color: '#FF3300'
   },
   withdrawButton: {
     alignItems: 'center',

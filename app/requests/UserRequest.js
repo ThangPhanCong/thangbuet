@@ -164,6 +164,11 @@ export default class UserRequest extends BaseModelRequest {
     return this.post(url, params);
   }
 
+  deleteWithdrawallAddress(id) {
+    let url = '/withdrawal-address/' + id;
+    return this.del(url);
+  }
+
   generateDepositAddress(params) {
     let url = '/deposit-address';
     return this.put(url, params);
