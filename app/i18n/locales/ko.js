@@ -161,19 +161,34 @@ export default {
     note5Link: '[입금 사실 증명] .',
     noteMore: '은행 시스템 점검 시간 중에는 출금이 제한됩니다.',
     noteTimeMore: '은행 점검 시간 : 매일 23:00 ~ 01:00 / 토요일 23:00 ~ 일요일 05:00',
-    warning: 'Warning',
-    bankAccount: 'Please verify your bank account first.',
-    accept: 'OK',
-    pending: 'You have a pending transasction, please contact administrator!',
-    info: 'Information',
-    success: 'Successful transaction!',
-    error: 'Some errors has occurred',
+    warning: '경고',
+    bankAccount: '먼저 은행 계좌를 확인하십시오.',
+    accept: '승인',
+    pending: '대기중인 거래가 있으니 관리자에게 문의하십시오!',
+    info: '정보',
+    error: '몇 가지 오류가 발생했습니다.',
     confirm: '입금신청확인',
     confirmTitle: '입금신청취소확인',
     amountToDeposit: '입금신청금액',
     confirmContent: '위와같이입금을신청하시겠습니까?',
     actionConfirm: '확인',
-    actionCancel: '취소'
+    actionCancel: '취소',
+    successMessage: '입금 신청이 접수되었습니다. 신청이 처리될 때까지 잠시 기다려주세요.',
 
+    pendingAccount: '계좌잔액',
+    pendingAmount: '입금신청금액',
+    pendingBankName: '입금할은행',
+    pendingAccountNote: '계좌주',
+    pendingDepositCode: '입금코드',
+    pendingCheck: '을 확인 했습니다',
+    pendingNote: '입금시 주의 사항',
+    pendingCancel: '입금 신청 취소',
+    pendingBankAccount: '입금할 계좌',
+    pendingConfirmContent: '입금 신청을 취소하시겠습니까?',
+    pendingInfo: '이전 입금 신청이 처리 되지 않았습니다. 입금처리가 끝날 때까지 기다리시거나 입금 신청 취소 후 다시 신청하시기 바랍니다.'
+
+  },
+  currency: {
+    symbol: '₩'
   }
 }

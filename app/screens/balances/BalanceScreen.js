@@ -138,15 +138,22 @@ export default class BalanceScreen extends BaseScreen {
                     style={styles.tableRow}>
                     <View style={styles.tableRowDetail}>
                       <Image
-                        style={{ width: 24, height: 24 }}
+                        style={styles.imageSize}
                         source={{ uri: symbol.icon }} />
                       <Text>{symbol.code.toUpperCase()}</Text>
                     </View>
-                    <Text style={{ flex: 1, fontSize: 12 }}>
+                    <Text style={styles.balance}>
                       {symbol.code.toUpperCase() !== 'KRW' && parseFloat(symbol.balance)}
                     </Text>
-                    <View style={{ flex: 1, flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'flex-start' }}>
-                      <Button title={I18n.t('balances.deposit')} onPress={() => this.navigate('Deposit', { symbol })} />
+                    <View style={styles.action}>
+                      <Button title={I18n.t('balances.deposit')} onPress={() => {
+                        if (symbol.code == 'krw') {
+                          this.navigate('DepositKRW', { symbol })
+                        } else {
+                          this.navigate('Deposit', { symbol })
+                        }
+
+                      }} />
                       <Button title={I18n.t('balances.withdrawal')} onPress={() => { }} />
                     </View>
                   </View>
@@ -177,5 +184,8 @@ const styles = ScaledSheet.create({
     flexDirection: "row", height: 40,
     alignItems: 'center', justifyContent: 'center', borderBottomWidth: 1
   },
-  tableRowDetail: { flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-start' }
+  tableRowDetail: { flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-start' },
+  imageSize: { width: 24, height: 24 },
+  balance: { flex: 1, fontSize: 12 },
+  action: { flex: 1, flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'flex-start' }
 });
