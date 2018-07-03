@@ -24,7 +24,6 @@ import ActionButton from 'react-native-action-button';
 
 export default class WalletScreen extends BaseScreen {
 
-  _newWalletParams = {};
   _coinTypes = [];
 
   _selectedWallet = {};
@@ -40,6 +39,8 @@ export default class WalletScreen extends BaseScreen {
       wallets: [],
       isLoading: false,
       selectedCoinType: '',
+
+      newWalletParams: {},
 
       addNewWalletDialogVisible: false,
       removeWalletDialogVisible: false
@@ -195,9 +196,16 @@ export default class WalletScreen extends BaseScreen {
             {I18n.t('myPage.wallet.walletAddress')}
           </Text>
           <TextInput style={styles.addNewWalletTextInput}
-            value={this._newWalletParams.wallet_address}
+            value={this.state.newWalletParams.wallet_address}
             underlineColorAndroid='transparent'
-            onChangeText={text => this._newWalletParams.wallet_address = text}/>
+            onChangeText={text =>
+              this.setState({
+                newWalletParams: {
+                  ...this.state.newWalletParams,
+                  wallet_address: text
+                }
+              })
+            }/>
 
           <Animated.View>
             {
@@ -207,9 +215,16 @@ export default class WalletScreen extends BaseScreen {
                   {I18n.t('myPage.wallet.destination')}
                 </Text>
                 <TextInput style={styles.addNewWalletTextInput}
-                  value={this._newWalletParams.tag}
+                  value={this.state.newWalletParams.tag}
                   underlineColorAndroid='transparent'
-                  onChangeText={text => this._newWalletParams.tag = text}/>
+                  onChangeText={text => 
+                    this.setState({
+                      newWalletParams: {
+                        ...this.state.newWalletParams,
+                        tag: text
+                      }
+                    })
+                  }/>
               </View>
             }
           </Animated.View>
@@ -218,9 +233,16 @@ export default class WalletScreen extends BaseScreen {
             {I18n.t('myPage.wallet.walletName')}
           </Text>
           <TextInput style={styles.addNewWalletTextInput}
-            value={this._newWalletParams.wallet_name}
+            value={this.state.newWalletParams.wallet_name}
             underlineColorAndroid='transparent'
-            onChangeText={text => this._newWalletParams.wallet_name = text}/>
+            onChangeText={text =>
+              this.setState({
+                newWalletParams: {
+                  ...this.state.newWalletParams,
+                  wallet_name: text
+                }
+              })
+            }/>
           
           <TouchableOpacity
             style={[styles.submitAddNewWallet, { marginTop: 20, marginBottom: 30 }]}
@@ -246,14 +268,14 @@ export default class WalletScreen extends BaseScreen {
           style={styles.dialog}
           containerStyle={{borderRadius: 5, padding: 0, marginStart: 30, marginEnd: 30}}>
           <Text style={[styles.addNewWalletTitle, {textAlign: 'center'}]}>
-            {I18n.t('myPage.wallet.removeConfirmDesc')}
+            {I18n.t('myPage.wallet.removeConfirmDesc').format(this._selectedWallet.wallet_name)}
           </Text>
           
           <TouchableOpacity
             style={[styles.submitAddNewWallet, { marginTop: 20, marginBottom: 30 }]}
             onPress={this._onRemove.bind(this)}>
             <Text style={{fontSize: 13, color: '#FFF'}}>
-              {String.format(I18n.t('myPage.wallet.removeConfirm'), this._selectedWallet.wallet_name)}
+              {I18n.t('myPage.wallet.removeConfirm')}
             </Text>
           </TouchableOpacity>
         </Card>
@@ -268,13 +290,13 @@ export default class WalletScreen extends BaseScreen {
   }
 
   _onShowWalletEditor(wallet) {
-    this._newWalletParams = {
-      wallet_name: wallet.wallet_name,
-      wallet_address: wallet.wallet_address,
-      tag: wallet.tag
-    };
-
     this.setState({
+      newWalletParams: {
+        wallet_name: wallet.wallet_name,
+        wallet_address: wallet.wallet_address,
+        tag: wallet.tag
+      },
+
       addNewWalletDialogVisible: true,
       selectedCoinType: wallet.coin
     })
@@ -315,14 +337,17 @@ export default class WalletScreen extends BaseScreen {
   }
 
   _dismissAddNewWalletModal() {
-    this._newWalletParams = {};
     this.state.selectedCoinType = '';
-    this.setState({addNewWalletDialogVisible: false})
+    this.setState({
+      newWalletParams: {},
+      addNewWalletDialogVisible: false
+    })
   }
 
   _dismissRemoveConfirmationModal() {
-    this._selectedWallet = {};
-    this.setState({removeWalletDialogVisible: false})
+    this.setState({removeWalletDialogVisible: false}, () => {
+      this._selectedWallet = {};
+    })
   }
 
   _onCoinPickerSelect(itemValue, itemPosition) {
@@ -369,14 +394,17 @@ export default class WalletScreen extends BaseScreen {
 
   async _addWallet() {
     try {
-      let res = await rf.getRequest('UserRequest').updateOrCreateWithdrawalAddress(this._newWalletParams, this.state.selectedCoinType);
+      let res = await rf.getRequest('UserRequest').updateOrCreateWithdrawalAddress(this.state.newWalletParams, this.state.selectedCoinType);
       let newWallet = res.data;
 
       let wallets = this.state.wallets;
       wallets.push(newWallet);
-      this._newWalletParams = {};
       this.state.selectedCoinType = '';
-      this.setState({ wallets, addNewWalletDialogVisible: false });
+      this.setState({
+        newWalletParams: {},
+        wallets,
+        addNewWalletDialogVisible: false
+      });
     }
     catch(err) {
       console.log('WalletScreen._addWallet', err);
