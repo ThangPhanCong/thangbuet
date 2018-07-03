@@ -46,6 +46,8 @@ class TransactionContainerScreen extends Component {
 
       const params = {
         page,
+        limit: 20,
+        is_all_order: true,
         start_date: parseStartDate,
         end_date: parseEndDate,
       };

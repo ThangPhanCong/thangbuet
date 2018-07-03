@@ -46,11 +46,8 @@ export default class OrderRequest extends BaseModelRequest {
     return this.get(url, params, cancelToken);
   }
 
-  getOrderHistory(paramsTransaction) {
+  getOrderHistory(params) {
     const url = '/orders/transactions';
-    const limit = 20;
-    const is_all_order = true;
-    const params = { limit, is_all_order, ...paramsTransaction };
 
     return this.get(url, params);
   }
