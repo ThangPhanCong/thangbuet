@@ -226,18 +226,8 @@ export default class KRWScreen extends BaseScreen {
         <Modal
           isVisible={this.state.krwConfirm}
           onBackdropPress={() => this.setState({ krwConfirm: false })}>
-          <View style={{
-            backgroundColor: "white",
-            justifyContent: "center",
-            alignItems: "center",
-            alignContent: 'center',
-            borderRadius: 4,
-            borderColor: "rgba(0, 0, 0, 0.1)"
-          }}>
-            <View style={{
-              borderBottomWidth: 1, borderColor: '#aaa', height: 50, width: '100%',
-              justifyContent: 'center', alignItems: 'center'
-            }}>
+          <View style={styles.modalStyle}>
+            <View style={headerModalStyle}>
               <Text>{I18n.t('deposit.confirmTitle')}</Text>
             </View>
 
@@ -305,5 +295,16 @@ const styles = ScaledSheet.create({
     marginTop: 10, marginLeft: 40, marginRight: 40
   },
   noteTitle: { flexWrap: 'wrap', fontSize: 13, fontWeight: 'bold' },
-
+  modalStyle: {
+    backgroundColor: "white",
+    justifyContent: "center",
+    alignItems: "center",
+    alignContent: 'center',
+    borderRadius: 4,
+    borderColor: "rgba(0, 0, 0, 0.1)"
+  },
+  headerModalStyle: {
+    borderBottomWidth: 1, borderColor: '#aaa', height: 50, width: '100%',
+    justifyContent: 'center', alignItems: 'center'
+  }
 });

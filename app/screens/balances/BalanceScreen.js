@@ -152,9 +152,14 @@ export default class BalanceScreen extends BaseScreen {
                         } else {
                           this.navigate('Deposit', { symbol })
                         }
-
                       }} />
-                      <Button title={I18n.t('balances.withdrawal')} onPress={() => { }} />
+                      <Button title={I18n.t('balances.withdrawal')} onPress={() => {
+                        if (symbol.code == 'krw') {
+                          this.navigate('WithdrawalKRW', { symbol })
+                        } else {
+                          this.navigate('WithdrawalKRW', { symbol })
+                        }
+                      }} />
                     </View>
                   </View>
                 ))

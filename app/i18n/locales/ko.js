@@ -190,5 +190,31 @@ export default {
   },
   currency: {
     symbol: '₩'
+  },
+
+  withdrawal: {
+    balance: '계좌 잔액',
+    available: '출금 가능액',
+    request: '출금 신청 금액',
+    maximum: '최대',
+    accountRegister: '등록된 입출금 계좌',
+    confirm: '출금 신청',
+    noteTitle: '출금시 주의 사항',
+    noteLine1: 'KRW 출금은 신청 후 약 10분 이내로 반영됩니다.',
+    noteLine2: '출금은 기존에 등록된 고객 명의의 계좌로만 가능합니다.',
+    noteLine3: ' 은행 시스템 점검 시간 동안에는 KRW 입출금이 불가능합니다.',
+    noteLine4: '은행 점검 시간 : 평일 23:00 ~ 01:00 / 토요일 23:00 ~ 일요일 05:00',
+    noteLine5: '은행 점검 시간은 은행의 사정에 따라 지연 될 수 있습니다.',
+    noteLine6: '부정거래가 의심될 경우 출금이 제한될 수 있습니다.',
+    noteLine7: '1회 출금 한도 : 10,000,000 KRW',
+    noteLine8: '1일 출금 한도 : 50,000,000 KRW',
+    noteLine9: ' 출금 수수료 : 1,000 KRW',
+    noteLine10: '보이스피싱, 파밍, 자금 세탁 등의 금융 사고 예방을 위해 이엑스코인에서는 암호화폐의 출금에 일부 제한 정책을 실시하고 있습니다.',
+    noteLine11: '제한 사항은 첫 KRW 입금 후 암호화폐를 구입해서 다른 외부의 지갑으로 송금할 경우에만 해당됩니다. 이 경우 72시간 동안 출금이 제한 됩니다. KRW입금 없이 암호화폐만 입금했을 경우는 제한 없이 바로 출금할 수 있습니다.',
+    tbTitleDepost: '입금',
+    tbTitleTrades: '매매',
+    tbtitleWithdrawal :'출금/송금',
+    tbTitleLimit: '제한',
+
   }
 }
