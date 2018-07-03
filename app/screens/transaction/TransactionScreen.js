@@ -1,19 +1,12 @@
 import React from 'react';
-import {
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
-  Image
-} from 'react-native';
+import { View } from 'react-native';
 import BaseScreen from '../BaseScreen'
 
 import ScaledSheet from '../../libs/reactSizeMatter/ScaledSheet';
 import { TabBarTop, TabNavigator } from "react-navigation";
-import Consts from "../../utils/Consts";
 import TransactionContainerScreen from "./TransactionContainerScreen";
 import { CommonStyles } from "../../utils/CommonStyles";
+import I18n from "../../i18n/i18n";
 
 let TabBarNavigatorTransaction;
 
@@ -28,27 +21,27 @@ export default class TransactionScreen extends BaseScreen {
     return TabNavigator(
       {
         OrderHistoryScreen: {
-          screen: (props) => <TransactionContainerScreen {...props} title={Consts.ORDER_HISTORY}/>,
+          screen: (props) => <TransactionContainerScreen {...props} title={I18n.t('transactions.orderHistoryTab')}/>,
           navigationOptions: () => ({
-            tabBarLabel: Consts.ORDER_HISTORY,
+            tabBarLabel: I18n.t('transactions.orderHistoryTab'),
           })
         },
         OpenOrderScreen: {
-          screen: (props) => <TransactionContainerScreen {...props} title={Consts.OPEN_ORDERS}/>,
+          screen: (props) => <TransactionContainerScreen {...props} title={I18n.t('transactions.openOrderTab')}/>,
           navigationOptions: () => ({
-            tabBarLabel: Consts.OPEN_ORDERS,
+            tabBarLabel: I18n.t('transactions.openOrderTab'),
           })
         },
         FundsHistory: {
-          screen: (props) => <TransactionContainerScreen {...props} title={Consts.FUNDS_HISTORY}/>,
+          screen: (props) => <TransactionContainerScreen {...props} title={I18n.t('transactions.fundsHistoryTab')}/>,
           navigationOptions: () => ({
-            tabBarLabel: Consts.FUNDS_HISTORY,
+            tabBarLabel: I18n.t('transactions.fundsHistoryTab'),
           })
         },
         ProfitScreen: {
-          screen: (props) => <TransactionContainerScreen {...props} title={Consts.PROFIT_LOST}/>,
+          screen: (props) => <TransactionContainerScreen {...props} title={I18n.t('transactions.profitLostTab')}/>,
           navigationOptions: () => ({
-            tabBarLabel: Consts.PROFIT_LOST,
+            tabBarLabel: I18n.t('transactions.profitLostTab'),
           })
         }
       },

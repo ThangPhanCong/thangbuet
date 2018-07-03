@@ -50,11 +50,11 @@ class TransactionContainerScreen extends Component {
         end_date: parseEndDate,
       };
 
-      const responseTransaction = await rf.getRequest('TransactionRequest').getOrderHistory(params);
+      const responseTransaction = await rf.getRequest('OrderRequest').getOrderHistory(params);
 
       this.setState({ transactions: [...transactions, ...responseTransaction.data.data] })
     } catch (err) {
-      console.log('TransactionRequest._error:', err)
+      console.log('OrderRequest._error:', err)
     }
 
   }

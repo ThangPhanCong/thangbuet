@@ -128,6 +128,10 @@ export default {
     total: 'TOTAL'
   },
   transactions: {
+    orderHistoryTab: '체결내역',
+    openOrderTab: '미체결내역',
+    fundsHistoryTab: '입출금내역',
+    profitLostTab: '기간별손익',
     search: '조회',
     time: '시간',
     pair: '종목',
