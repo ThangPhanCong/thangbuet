@@ -7,7 +7,9 @@ import {
   TouchableHighlight,
   TouchableOpacity,
   TextInput,
-  ScrollView
+  ScrollView,
+  WebView,
+  Dimensions
 } from 'react-native';
 import { Picker } from 'native-base';
 import Modal from 'react-native-modal';
@@ -53,6 +55,7 @@ export default class SecurityOverviewScreen extends BaseScreen {
       info: {},
       cancelOtpDialogVisible: false,
       initVerificationDialogVisible: false,
+      registerPhoneDialogVisible: false,
       existedPhoneDialogVisible: false,
       bankAccountDialogVisible: false,
       changePasswordDialogVisible: false,
@@ -84,6 +87,7 @@ export default class SecurityOverviewScreen extends BaseScreen {
         </ScrollView>
         {this._renderSubmitModal()}
         {this._renderInitVerificationModal()}
+        {this._renderRegisterPhoneModal()}
         {this._renderExistedPhoneModal()}
         {this._renderBankAccountModal()}
         {this._renderChangePasswordModal()}
@@ -304,6 +308,30 @@ export default class SecurityOverviewScreen extends BaseScreen {
     )
   }
 
+  _renderRegisterPhoneModal() {
+    let { height } = Dimensions.get('window');
+
+    return (
+      <Modal
+        isVisible={this.state.registerPhoneDialogVisible}
+        avoidKeyboard={true}
+        useNativeDriver={true}
+        backdropColor='transparent'
+        onBackdropPress={this._dismissRegisterPhoneModal.bind(this)}>
+        <Card
+          style={styles.dialog}
+          containerStyle={{borderRadius: 5, padding: 0, marginStart: 10, marginEnd: 10, height: 0.8 * height}}>
+          <WebView
+            source={{uri: 'https://google.com'}}
+            style={{flex: 1}}
+            javaScriptEnabled={true}
+            domStorageEnabled={true}
+            startInLoadingState={true}/>
+        </Card>
+      </Modal>
+    )
+  }
+
   _renderExistedPhoneModal() {
     return (
       <Modal
@@ -456,15 +484,15 @@ export default class SecurityOverviewScreen extends BaseScreen {
   }
 
   _onVerifyBankAccount() {
-    this.setState({bankAccountDialogVisible: true})
+    this.setState({bankAccountDialogVisible: true});
   }
 
   _onVerifyPhone() {
-    
+    this.setState({registerPhoneDialogVisible: true});
   }
 
   _onVerifyPassword() {
-    this.setState({changePasswordDialogVisible: true})
+    this.setState({changePasswordDialogVisible: true});
   }
 
   _onCancelGoogleAuth() {
@@ -508,6 +536,11 @@ export default class SecurityOverviewScreen extends BaseScreen {
     this.setState({initVerificationDialogVisible: false})
   }
 
+  _dismissRegisterPhoneModal() {
+    this.setState({registerPhoneDialogVisible: false})
+    this._getCurrentUser(false);
+  }
+
   _dismissExistedPhoneModal() {
     this.setState({existedPhoneDialogVisible: false})
   }
@@ -523,9 +556,9 @@ export default class SecurityOverviewScreen extends BaseScreen {
     this.setState({changePasswordDialogVisible: false})
   }
 
-  async _getCurrentUser() {
+  async _getCurrentUser(useCache = true) {
     try {
-      let userRes = await rf.getRequest('UserRequest').getCurrentUser();
+      let userRes = await rf.getRequest('UserRequest').getCurrentUser(useCache);
       let settingRes = await rf.getRequest('UserRequest').getSecuritySettings();
       let user = userRes.data;
       let settings = settingRes.data;
