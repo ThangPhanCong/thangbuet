@@ -131,5 +131,14 @@ export default {
     profitAndLoss: '손익',
     valuation: '평가',
     total: 'TOTAL'
+  },
+  transactions: {
+    search: '조회',
+    time: '시간',
+    pair: '종목',
+    amount: '수량',
+    orderPrice: '가격',
+    excutedPrice: '거래 대금',
+    fee: '수수료',
   }
 }

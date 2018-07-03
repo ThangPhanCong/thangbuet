@@ -24,8 +24,8 @@ export default class Consts {
   static DEPOSIT_DETAIL = 'Deposit detail';
   static WITHDRAW_DETAIL = 'Withdraw detail';
 
-  static ORDER_HISTORY = 'orders_history';
-  static OPEN_ORDERS = 'withdrawls_history';
-  static FUNDS_HISTORY = 'Deposit detail';
-  static PROFIT_LOST = 'Withdraw detail';
+  static ORDER_HISTORY = '체결내역';
+  static OPEN_ORDERS = '미체결내역';
+  static FUNDS_HISTORY = '입출금내역';
+  static PROFIT_LOST = '기간별손익';
 }
