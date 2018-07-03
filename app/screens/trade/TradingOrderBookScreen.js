@@ -18,11 +18,31 @@ import I18n from '../../i18n/i18n';
 import BaseScreen from '../BaseScreen'
 import OrderBook from './OrderBook';
 import OrderBookSettingModal from './OrderBookSettingModal';
+import CurrencyInput from '../common/CurrencyInput';
 
 
 export default class TradingOrderBookScreen extends BaseScreen {
-  componentDidMount() {
-    super.componentDidMount();
+  constructor(props) {
+    super(props)
+    this.state = {
+      currency: props.screenProps.currency,
+      coin: props.screenProps.coin
+    }
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    const { currency, coin } = this.props.screenProps;
+    if (currency != this.state.currency || coin != this.state.coin) {
+      this.setState({ currency, coin });
+    }
+  }
+
+  _getCurrency() {
+    return this.state.currency;
+  }
+
+  _getCoin() {
+    return this.state.coin;
   }
 
   render() {
@@ -30,14 +50,17 @@ export default class TradingOrderBookScreen extends BaseScreen {
       <View style={CommonStyles.matchParent}>
         {this._renderOrderBookSettingModal()}
         {this._renderQuantityAndSetting()}
-        <OrderBook currency='krw' coin='btc' type={OrderBook.TYPE_FULL}/>
+        <OrderBook currency={this._getCurrency()} coin={this._getCoin()} type={OrderBook.TYPE_FULL}/>
       </View>
     )
   }
 
   _renderOrderBookSettingModal() {
     return (
-      <OrderBookSettingModal ref={ref => this._orderBookSettingModal = ref} currency='krw' coin='btc'/>
+      <OrderBookSettingModal
+        ref={ref => this._orderBookSettingModal = ref}
+        currency={this._getCurrency()}
+        coin={this._getCoin()}/>
     );
   }
 
@@ -45,7 +68,7 @@ export default class TradingOrderBookScreen extends BaseScreen {
     return (
       <View style={styles.quantityAndSettingGroup}>
         <Text style={styles.quantityLabel}>{I18n.t('orderBook.quantity')}</Text>
-        <TextInputMask
+        <CurrencyInput
             keyboardType='numeric'
             style={styles.quantityInput}
             underlineColorAndroid='transparent'

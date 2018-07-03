@@ -82,7 +82,10 @@ export default class TradingGeneralScreen extends BaseScreen {
 
   _renderOrderBookSettingModal() {
     return (
-      <OrderBookSettingModal ref={ref => this._orderBookSettingModal = ref} currency='krw' coin='btc'/>
+      <OrderBookSettingModal
+        ref={ref => this._orderBookSettingModal = ref}
+        currency={this._getCurrency()}
+        coin={this._getCoin()}/>
     );
   }
 

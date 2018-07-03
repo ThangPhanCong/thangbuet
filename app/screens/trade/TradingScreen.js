@@ -38,7 +38,7 @@ const TradeTabs = TabNavigator(
       })
     },
     Order: {
-      screen: TradingOrderBookScreen,
+      screen:  props => <TradingOrderBookScreen {...props}/>,
       navigationOptions: () => ({
         tabBarLabel: 'Order'
       })

@@ -40,6 +40,12 @@ export default class OrderBookSettingModal extends BaseScreen {
     this._loadData();
   }
 
+  componentDidUpdate(prevProps, prevState) {
+    if (prevProps.currency != this.props.currency || prevProps.coin != this.props.coin) {
+      this._loadData();
+    }
+  }
+
   _getCoin() {
     return this.props.coin;
   }
