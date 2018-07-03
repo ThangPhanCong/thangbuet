@@ -14,6 +14,7 @@ import Modal from 'react-native-modal';
 import BaseScreen from '../../BaseScreen';
 import rf from '../../../libs/RequestFactory';
 import { CommonStyles } from '../../../utils/CommonStyles';
+import Utils from '../../../utils/Utils';
 import I18n from '../../../i18n/i18n';
 import _ from 'lodash';
 import Consts from '../../../utils/Consts';
@@ -84,13 +85,13 @@ export default class WalletScreen extends BaseScreen {
         <View style = {styles.listItemContainer}>
           <View style={styles.coinGroup}>
             <Text style={styles.valueItem}>
-              {item.created_at}
+              {Utils.getCurrencyName(item.coin)}
             </Text>
           </View>
 
           <View style={styles.nameGroup}>
             <Text style={styles.valueItem}>
-              {item.device}
+              {item.wallet_name}
             </Text>
           </View>
 
@@ -217,7 +218,7 @@ export default class WalletScreen extends BaseScreen {
   _renderRemoveConfirmationModal() {
     return (
       <Modal
-        isVisible={this.state.addNewWalletDialogVisible}
+        isVisible={this.state.removeWalletDialogVisible}
         avoidKeyboard={true}
         useNativeDriver={true}
         backdropColor='transparent'
@@ -225,15 +226,15 @@ export default class WalletScreen extends BaseScreen {
         <Card
           style={styles.dialog}
           containerStyle={{borderRadius: 5, padding: 0, marginStart: 30, marginEnd: 30}}>
-          <Text style={styles.addNewWalletTitle}>
-            {I18n.t('myPage.wallet.coinType')}
+          <Text style={[styles.addNewWalletTitle, {textAlign: 'center'}]}>
+            {I18n.t('myPage.wallet.removeConfirmDesc')}
           </Text>
           
           <TouchableOpacity
             style={[styles.submitAddNewWallet, { marginTop: 20, marginBottom: 30 }]}
             onPress={this._onRemove.bind(this)}>
             <Text style={{fontSize: 13, color: '#FFF'}}>
-              {I18n.t('myPage.wallet.addNewWalletSubmit')}
+              {I18n.t('myPage.wallet.removeConfirm')}
             </Text>
           </TouchableOpacity>
         </Card>
@@ -243,7 +244,7 @@ export default class WalletScreen extends BaseScreen {
 
   _renderItems() {
     return _.map(this._coinTypes, (coin, index) => (
-      <Picker.Item value={coin} label={coin.toLocaleUpperCase()} key={`${index}`}/>
+      <Picker.Item value={coin} label={Utils.getCurrencyName(coin)} key={`${index}`}/>
     ));
   }
 
