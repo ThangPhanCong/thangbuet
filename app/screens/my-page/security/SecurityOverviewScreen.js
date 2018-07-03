@@ -40,13 +40,16 @@ export default class SecurityOverviewScreen extends BaseScreen {
 
   _otpParams = {};
   _bankParams = {};
-  _banks = ['1', '2', '3', '3', '3', '3', '3' , '3' , '3', '3', '3'];
+  
+  _banks = [{id: 1, name: 'ABC'}, {id: 2, name: 'DEF'}];
   _passwordParams = {}
 
   constructor(props) {
     super(props);
 
     this.state = {
+      selectedBank: {},
+    
       info: {},
       cancelOtpDialogVisible: false,
       initVerificationDialogVisible: false,
@@ -360,9 +363,9 @@ export default class SecurityOverviewScreen extends BaseScreen {
             {I18n.t('myPage.security.bank')}
           </Text>
           <Picker
-            ref = {ref => this._bankPicker = ref}
             style={styles.bankAccountPicker}
             mode='dropdown'
+            selectedValue={this.state.selectedBank}
             onValueChange={this._onBankPickerSelect.bind(this)}
             itemStyle={{width: '100%'}}>
             {this._renderBankItems()}
@@ -491,6 +494,7 @@ export default class SecurityOverviewScreen extends BaseScreen {
   }
 
   _onBankPickerSelect(itemValue, itemPosition) {
+    this.setState({selectedBank: itemValue});
     this._bankParams.bank_id = itemValue.id;
     this._bankParams.bank_name = itemValue.name;
   }
@@ -509,6 +513,7 @@ export default class SecurityOverviewScreen extends BaseScreen {
   }
 
   _dismissBankAccountModal() {
+    this.state.selectedBank = {}
     this._bankParams = {}
     this.setState({bankAccountDialogVisible: false})
   }
