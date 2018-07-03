@@ -23,4 +23,9 @@ export default class Consts {
   static WITHDRAWLS_HISTORY = 'withdrawls_history';
   static DEPOSIT_DETAIL = 'Deposit detail';
   static WITHDRAW_DETAIL = 'Withdraw detail';
+
+  static ORDER_HISTORY = 'orders_history';
+  static OPEN_ORDERS = 'withdrawls_history';
+  static FUNDS_HISTORY = 'Deposit detail';
+  static PROFIT_LOST = 'Withdraw detail';
 }

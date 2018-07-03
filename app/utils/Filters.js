@@ -26,9 +26,19 @@ function getDateTime(timestamp) {
   return moment(timestamp, 'x').format('DD.MM.YYYY HH:mm:ss');
 };
 
+function getDayMonth(timestamp) {
+  return moment(timestamp, 'x').format('DD.MM');
+};
+
+function getTime(timestamp) {
+  return moment(timestamp, 'x').format('HH:mm:ss');
+};
+
 export {
   formatCurrency,
   formatPercent,
   getCurrencyName,
   getDateTime,
+  getDayMonth,
+  getTime
 };

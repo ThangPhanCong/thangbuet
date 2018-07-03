@@ -49,4 +49,13 @@ export default class TransactionRequest extends BaseRequest {
     }
     return this.get(url, params);
   }
+
+  getOrderHistory(paramsTransaction) {
+    const url = '/orders/transactions';
+    const limit = 20;
+    const is_all_order = true;
+    const params = { limit, is_all_order, ...paramsTransaction };
+
+    return this.get(url, params);
+  }
 }
