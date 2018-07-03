@@ -38,10 +38,10 @@ export default class SecurityOverviewScreen extends BaseScreen {
     image: require('../../../../assets/common/password.png')
   }];
 
-  _otp = {};
-  _bank = {};
+  _otpParams = {};
+  _bankParams = {};
   _banks = ['1', '2', '3', '3', '3', '3', '3' , '3' , '3', '3', '3'];
-  _password = {}
+  _passwordParams = {}
 
   constructor(props) {
     super(props);
@@ -237,14 +237,14 @@ export default class SecurityOverviewScreen extends BaseScreen {
           </Text>
           <TextInput
             style={styles.textInput}
-            onChangeText={text => this._otp.otpCode = text}
+            onChangeText={text => this._otpParams.otp = text}
             underlineColorAndroid='transparent' />
           <Text style={{fontSize: 13, marginTop: 10, marginBottom: 3, marginStart: 16, marginEnd: 16}}>
             {I18n.t('myPage.security.dialogRecoveryCode')}
           </Text>
           <TextInput
             style={styles.textInput}
-            onChangeText={text => this._otp.recoveryCode = text}
+            onChangeText={text => this._otpParams.recovery_code = text}
             underlineColorAndroid='transparent' />
           <TouchableOpacity
             style={styles.submitCancelOtpButton}
@@ -347,14 +347,14 @@ export default class SecurityOverviewScreen extends BaseScreen {
           </Text>
           <TextInput style={styles.bankAccountTextInput}
             underlineColorAndroid='transparent'
-            onChangeText={text => this._bank.account_name = text}/>
+            onChangeText={text => this._bankParams.account_name = text}/>
           
           <Text style={styles.bankAccountTitle}>
             {I18n.t('myPage.security.dateOfBirth')}
           </Text>
           <TextInput style={styles.bankAccountTextInput}
             underlineColorAndroid='transparent'
-            onChangeText={text => this._bank.date_of_birth = text}/>
+            onChangeText={text => this._bankParams.date_of_birth = text}/>
 
           <Text style={styles.bankAccountTitle}>
             {I18n.t('myPage.security.bank')}
@@ -373,7 +373,7 @@ export default class SecurityOverviewScreen extends BaseScreen {
           </Text>
           <TextInput style={styles.bankAccountTextInput}
             underlineColorAndroid='transparent'
-            onChangeText={text => this._bank.account_number = text}/>
+            onChangeText={text => this._bankParams.account_number = text}/>
           
           <TouchableOpacity
             style={[styles.submitCancelOtpButton, { marginTop: 20, marginBottom: 30 }]}
@@ -413,28 +413,28 @@ export default class SecurityOverviewScreen extends BaseScreen {
           </Text>
           <TextInput style={styles.bankAccountTextInput}
             underlineColorAndroid='transparent'
-            onChangeText={text => this._password.password = text}/>
+            onChangeText={text => this._passwordParams.password = text}/>
           
           <Text style={styles.bankAccountTitle}>
             {I18n.t('myPage.security.newPassword')}
           </Text>
           <TextInput style={styles.bankAccountTextInput}
             underlineColorAndroid='transparent'
-            onChangeText={text => this._password.new_password = text}/>
+            onChangeText={text => this._passwordParams.new_password = text}/>
 
           <Text style={styles.bankAccountTitle}>
             {I18n.t('myPage.security.repeatPassword')}
           </Text>
           <TextInput style={styles.bankAccountTextInput}
             underlineColorAndroid='transparent'
-            onChangeText={text => this._password.new_password_confirm = text}/>
+            onChangeText={text => this._passwordParams.new_password_confirm = text}/>
 
           <Text style={styles.bankAccountTitle}>
             {I18n.t('myPage.security.otpCode').toLocaleUpperCase()}
           </Text>
           <TextInput style={styles.bankAccountTextInput}
             underlineColorAndroid='transparent'
-            onChangeText={text => this._password.otp = text}/>
+            onChangeText={text => this._passwordParams.otp = text}/>
           
           <TouchableOpacity
             style={[styles.submitCancelOtpButton, { marginTop: 20, marginBottom: 30 }]}
@@ -491,11 +491,12 @@ export default class SecurityOverviewScreen extends BaseScreen {
   }
 
   _onBankPickerSelect(itemValue, itemPosition) {
-    this._bank.bank_id = itemValue.id;
-    this._bank.bank_name = itemValue.name;
+    this._bankParams.bank_id = itemValue.id;
+    this._bankParams.bank_name = itemValue.name;
   }
 
   _dismissSubmitModal() {
+    this._otpParams = {};
     this.setState({cancelOtpDialogVisible: false})
   }
 
@@ -508,10 +509,12 @@ export default class SecurityOverviewScreen extends BaseScreen {
   }
 
   _dismissBankAccountModal() {
+    this._bankParams = {}
     this.setState({bankAccountDialogVisible: false})
   }
 
   _dismissChangePasswordModal() {
+    this._passwordParams = {};
     this.setState({changePasswordDialogVisible: false})
   }
 
@@ -536,9 +539,8 @@ export default class SecurityOverviewScreen extends BaseScreen {
 
   async _removeGoogleAuth() {
     try {
-      await rf.getRequest('UserRequest').delGoogleAuth({
-        otp: this._otp.otpCode
-      })
+      await rf.getRequest('UserRequest').delGoogleAuth(this._otpParams)
+      this._otpParams = {};
 
       this.setState({
         initVerificationDialogVisible: false,
@@ -556,7 +558,9 @@ export default class SecurityOverviewScreen extends BaseScreen {
 
   async _updateBankAccount() {
     try {
-      await rf.getRequest('UserRequest').verifyBankAccount(this._bank)
+      await rf.getRequest('UserRequest').verifyBankAccount(this._bankParams)
+      this._bankParams = {};
+
       this.setState({
         bankAccountDialogVisible: false,
         info: {
@@ -573,7 +577,7 @@ export default class SecurityOverviewScreen extends BaseScreen {
 
   async _changePassword() {
     try {
-      await rf.getRequest('UserRequest').changePassword(this._password);
+      await rf.getRequest('UserRequest').changePassword(this._passwordParams);
       this._dismissChangePasswordModal();
     }
     catch(err) {

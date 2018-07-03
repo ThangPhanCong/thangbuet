@@ -223,7 +223,9 @@ export default {
       walletAddress: '지갑 주소',
       destination: '데스티네이션',
       walletName: '지갑 이름(별칭)',
-      addNewWalletSubmit: '입출금 계좌 등록'
+      addNewWalletSubmit: '입출금 계좌 등록',
+      removeConfirmDesc: `'{0}' 을 삭제하시겠습니까`,
+      removeConfirm: '확인'
     }
   }
 }

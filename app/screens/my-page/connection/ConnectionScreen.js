@@ -146,11 +146,10 @@ export default class ConnectionScreen extends BaseScreen {
       })
       return;
     }
-    else {
-      this.setState({
-        isLoading: true
-      })
-    }
+    
+    this.setState({
+      isLoading: true
+    })
 
     try {
       let response = await rf.getRequest('UserRequest').getHistoryConnection({
