@@ -75,15 +75,14 @@ export default class OrderBook extends BaseScreen {
     };
   }
 
-  reloadData() {
-    return this._loadData();
-  }
-
   componentDidUpdate(prevProps, prevState) {
-    // Reload order type list when change order type
-    if (prevProps.type != this.props.type) {
+    if (prevProps.currency != this.props.currency || prevProps.coin != this.props.coin) {
       this.reloadData();
     }
+  }
+
+  reloadData() {
+    return this._loadData();
   }
 
   _getCurrency() {
@@ -567,8 +566,8 @@ export default class OrderBook extends BaseScreen {
 
   _renderSmallSellRow(item, index) {
     return (
-      <TouchableWithoutFeedback onPress={() => this._onPressSmallOrderBookRow(item)}>
-        <View style={styles.orderBookRow} key={index}>
+      <TouchableWithoutFeedback key={index} onPress={() => this._onPressSmallOrderBookRow(item)}>
+        <View style={styles.orderBookRow}>
           <View
             style={[styles.priceCell, styles.smallTopBorder, styles.smallSellPrice, this._getPriceCellStyle(item.price)]}>
             <Text style={[styles.priceText, this._getPriceTextStyle(item.price)]}>{this._formatPrice(item.price)}</Text>
@@ -584,8 +583,8 @@ export default class OrderBook extends BaseScreen {
 
   _renderSmallBuyRow(item, index) {
     return (
-      <TouchableWithoutFeedback onPress={() => this._onPressSmallOrderBookRow(item)}>
-        <View style={styles.orderBookRow} key={index}>
+      <TouchableWithoutFeedback key={index} onPress={() => this._onPressSmallOrderBookRow(item)}>
+        <View style={styles.orderBookRow}>
           <View style={[
               styles.priceCell,
               styles.smallBottomBorder,

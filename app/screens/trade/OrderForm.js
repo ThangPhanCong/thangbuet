@@ -77,6 +77,12 @@ export default class OrderForm extends BaseScreen {
     }
   }
 
+  componentDidUpdate(prevProps, prevState) {
+    if (prevProps.currency != this.props.currency || prevProps.coin != this.props.coin) {
+      this._loadData();
+    }
+  }
+
   getDataEventHandlers() {
     return {
       [Events.ORDER_BOOK_ROW_CLICKED]: this._onOrderBookRowClicked.bind(this)

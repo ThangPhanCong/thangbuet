@@ -74,6 +74,9 @@ const CommonStyles = {
       fontSize: scale(9),
       paddingLeft: scale(1)
     }
+  },
+  bold: {
+    fontWeight: 'bold'
   }
 };
 

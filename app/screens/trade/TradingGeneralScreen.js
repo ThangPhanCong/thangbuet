@@ -21,9 +21,25 @@ export default class TradingGeneralScreen extends BaseScreen {
   constructor(props) {
     super(props)
     this.state = {
-      selectedTab: Consts.TRADE_TYPE_BUY
+      selectedTab: Consts.TRADE_TYPE_BUY,
+      currency: props.screenProps.currency,
+      coin: props.screenProps.coin
     }
+  }
 
+  componentDidUpdate(prevProps, prevState) {
+    const { currency, coin } = this.props.screenProps;
+    if (currency != this.state.currency || coin != this.state.coin) {
+      this.setState({ currency, coin });
+    }
+  }
+
+  _getCurrency() {
+    return this.state.currency;
+  }
+
+  _getCoin() {
+    return this.state.coin;
   }
 
   render() {
@@ -33,7 +49,7 @@ export default class TradingGeneralScreen extends BaseScreen {
         {this._renderQuantityAndSetting()}
         <View style={styles.content}>
           <View style={styles.orderBook}>
-            <OrderBook currency='krw' coin='btc' type={OrderBook.TYPE_SMALL}/>
+            <OrderBook currency={this._getCurrency()} coin={this._getCoin()} type={OrderBook.TYPE_SMALL}/>
           </View>
           {this._renderOrderForm()}
         </View>
@@ -80,10 +96,10 @@ export default class TradingGeneralScreen extends BaseScreen {
       <View style={styles.trades}>
         {this._renderTypeTabs()}
         <View style={[CommonStyles.matchParent, isSelectedBuy ? {} : { display: 'none' }]}>
-          <OrderForm currency='krw' coin='btc' tradeType={Consts.TRADE_TYPE_BUY}/>
+          <OrderForm currency={this._getCurrency()} coin={this._getCoin()} tradeType={Consts.TRADE_TYPE_BUY}/>
         </View>
         <View style={[CommonStyles.matchParent, !isSelectedBuy ? {} : { display: 'none' }]}>
-          <OrderForm currency='krw' coin='btc' tradeType={Consts.TRADE_TYPE_SELL}/>
+          <OrderForm currency={this._getCurrency()} coin={this._getCoin()} tradeType={Consts.TRADE_TYPE_SELL}/>
         </View>
       </View>
     );
