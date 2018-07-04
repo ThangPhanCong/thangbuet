@@ -66,8 +66,8 @@ export default class SecurityOverviewScreen extends BaseScreen {
     }
   }
 
-  componentWillMount(){
-    super.componentWillMount()
+  componentDidMount(){
+    super.componentDidMount()
     this._getCurrentUser();
   }
 
@@ -252,7 +252,7 @@ export default class SecurityOverviewScreen extends BaseScreen {
           </Text>
           <TextInput
             style={styles.textInput}
-            onChangeText={text => this._otpParams.recovery_code = text}
+            onChangeText={text => this._otpParams.authentication_code = text}
             underlineColorAndroid='transparent' />
           <TouchableOpacity
             style={styles.submitCancelOtpButton}
@@ -299,7 +299,7 @@ export default class SecurityOverviewScreen extends BaseScreen {
           </ScrollView>
           <TouchableOpacity
             style={[styles.submitCancelOtpButton, { marginTop: 20, marginBottom: 30 }]}
-            onPress={this._onRemoveGoogleAuth.bind(this)}>
+            onPress={this._dismissInitVerificationModal.bind(this)}>
             <Text style={{fontSize: 13, color: '#FFF'}}>
               {I18n.t('myPage.security.cancelOtpSubmit')}
             </Text>
@@ -486,7 +486,7 @@ export default class SecurityOverviewScreen extends BaseScreen {
           
           <TouchableOpacity
             style={[styles.submitCancelOtpButton, { marginTop: 20, marginBottom: 30 }]}
-            onPress={this._onSubmitBankAccount.bind(this)}>
+            onPress={this._onSubmitChangePassword.bind(this)}>
             <Text style={{fontSize: 13, color: '#FFF'}}>
               {I18n.t('myPage.security.changePasswordSubmit')}
             </Text>
@@ -497,7 +497,9 @@ export default class SecurityOverviewScreen extends BaseScreen {
   }
 
   _onVerifyGoogle() {
-    this.navigate('OTPGuideScreen');
+    this.navigate('OTPGuideScreen', {
+      addOtpVerificationHandler: this._addOtpVerificationHandler.bind(this)
+    });
   }
 
   _onVerifyBankAccount() {
@@ -536,6 +538,10 @@ export default class SecurityOverviewScreen extends BaseScreen {
     this.setState({selectedBank});
     this._bankParams.bank_id = selectedBank.id;
     this._bankParams.bank_name = selectedBank.name;
+  }
+
+  _onSubmitChangePassword() {
+    this._changePassword();
   }
 
   _dismissSubmitModal() {
@@ -633,6 +639,15 @@ export default class SecurityOverviewScreen extends BaseScreen {
       console.log('SecurityOverviewScreen._changePassword', err);
     }
   }
+
+  _addOtpVerificationHandler() {
+    this.setState({
+      info: {
+        ...this.state.info,
+        [this._infoProps[1].propVerify]: true
+      }
+    })
+  }
 }
 
 const styles = StyleSheet.create({
@@ -688,7 +703,6 @@ const styles = StyleSheet.create({
   cancelOtpButton: {
     borderRadius: 5,
     height: 40,
-    backgroundColor: '#FFF',
     justifyContent: 'center',
     alignItems: 'center',
     borderWidth: 1,

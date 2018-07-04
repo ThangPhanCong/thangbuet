@@ -99,7 +99,7 @@ export default class OTPGuideScreen extends BaseScreen {
   }
 
   _onNext() {
-    this.navigate('OTPVerifyScreen');
+    this.navigate('OTPVerifyScreen', this.props.navigation.state.params);
   }
 }
 

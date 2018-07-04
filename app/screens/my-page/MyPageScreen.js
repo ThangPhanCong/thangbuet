@@ -100,6 +100,7 @@ const styles = StyleSheet.create({
     paddingStart: 16
   },
   headerTitle: {
+    fontWeight: 'bold',
     marginStart: 10,
     fontSize: 14
   }
