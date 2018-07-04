@@ -1,8 +1,6 @@
 import React, { Component } from 'react';
 import { FlatList, Text, View, TouchableWithoutFeedback } from "react-native";
 import rf from "../../libs/RequestFactory";
-import TransactionRequest from "../../requests/TransactionRequest";
-import DatePicker from 'react-native-datepicker'
 import moment from "moment";
 import { scale } from "../../libs/reactSizeMatter/scalingUtils";
 import { getDayMonth, formatCurrency, getTime, getCurrencyName } from "../../utils/Filters";
@@ -11,6 +9,8 @@ import ScaledSheet from "../../libs/reactSizeMatter/ScaledSheet";
 import I18n from "../../i18n/i18n";
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { orderBy } from "lodash";
+import BitkoexDatePicker from "./common/BitkoexDatePicker";
+import HeaderTransaction from "./common/HeaderTransaction";
 
 class TransactionContainerScreen extends Component {
   static SORT_FIELDS = {
@@ -88,33 +88,7 @@ class TransactionContainerScreen extends Component {
     const showIcon = titleDate === 'start_date';
 
     return (
-      <DatePicker
-        style={{ width: scale(120) }}
-        date={date}
-        mode="date"
-        showIcon={showIcon}
-        placeholder="select date"
-        format="YYYY-MM-DD"
-        confirmBtnText="Confirm"
-        cancelBtnText="Cancel"
-        customStyles={{
-          dateIcon: {
-            position: 'absolute',
-            left: scale(0),
-            top: scale(4),
-            marginLeft: scale(0)
-          },
-          dateInput: {
-            marginLeft: scale(30),
-            height: scale(25),
-            borderRadius: scale(4)
-          },
-          dateText: {
-            fontSize: scale(11)
-          }
-        }}
-        onDateChange={(date) => this._changeDate(titleDate, date)}
-      />
+      <BitkoexDatePicker date={date} showIcon={showIcon} changeDate={(date) => this._changeDate(titleDate, date)}/>
     )
   }
 
@@ -148,7 +122,6 @@ class TransactionContainerScreen extends Component {
     }
 
     this._changeSortField(sortField, sortDirection);
-
   }
 
   _onSortPair() {
@@ -201,39 +174,6 @@ class TransactionContainerScreen extends Component {
           name='menu-down'
           size={scale(20)}
           color='#000'/>
-    )
-  }
-
-  _renderHeader() {
-    return (
-      <View style={styles.headerContainer}>
-        <View style={{
-          flexDirection: 'row', flex: 1, marginLeft: scale(8),
-        }}>
-          <TouchableWithoutFeedback onPress={() => this._onSortDate()}>
-            <View style={{ flex: 1, flexDirection: 'row' }}>
-              <Text>{I18n.t('transactions.time')}</Text>
-              {this._renderArrow(TransactionContainerScreen.SORT_FIELDS.DATE)}
-            </View>
-          </TouchableWithoutFeedback>
-
-          <TouchableWithoutFeedback onPress={() => this._onSortPair()}>
-            <View style={{ flexDirection: 'row', flex: 1.5 }}>
-              <Text>{I18n.t('transactions.pair')}</Text>
-              {this._renderArrow(TransactionContainerScreen.SORT_FIELDS.PAIR)}
-            </View>
-          </TouchableWithoutFeedback>
-        </View>
-
-        <View style={{ flex: 1, flexDirection: 'row' }}>
-          <Text style={{
-            flex: 1, alignItems: 'flex-end',
-          }}> {I18n.t('transactions.amount')}</Text>
-          <Text style={{ flex: 1 }}>{I18n.t('transactions.orderPrice')}</Text>
-          <Text style={{ flex: 1 }}>{I18n.t('transactions.excutedPrice')}</Text>
-          <Text style={{ flex: 1 }}>{I18n.t('transactions.fee')}</Text>
-        </View>
-      </View>
     )
   }
 
@@ -309,6 +249,8 @@ class TransactionContainerScreen extends Component {
 
   render() {
     const { transactions } = this.state;
+    const titles= [I18n.t('transactions.amount'), I18n.t('transactions.orderPrice'),
+      I18n.t('transactions.excutedPrice'), I18n.t('transactions.fee')];
 
     return (
       <View style={styles.screen}>
@@ -322,7 +264,13 @@ class TransactionContainerScreen extends Component {
         </View>
 
         <View>
-          {this._renderHeader()}
+          {/*{this._renderHeader()}*/}
+          <HeaderTransaction sortDate={() => this._onSortDate()}
+                             titles={titles}
+                             sortPair={() => this._onSortPair()}
+                             renderArrowDate={this._renderArrow(TransactionContainerScreen.SORT_FIELDS.DATE)}
+                             renderArrowPair={this._renderArrow(TransactionContainerScreen.SORT_FIELDS.PAIR)}
+          />
           <FlatList data={transactions}
                     renderItem={this._renderItem.bind(this)}
                     onEndReached={this._handleLoadMore.bind(this)}
@@ -369,7 +317,8 @@ const styles = ScaledSheet.create({
     color: CommonColors.mainText
   },
   itemCurrency: {
-    color: CommonColors.mainText
+    color: CommonColors.mainText,
+    fontSize: '14@s'
   },
   itemQuantity: {
     fontSize: '12@s',

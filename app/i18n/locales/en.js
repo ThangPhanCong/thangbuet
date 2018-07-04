@@ -139,6 +139,13 @@ export default {
     orderPrice: '가격',
     excutedPrice: '거래 대금',
     fee: '수수료',
-    cancel: '취소'
+    cancel: '취소',
+    success: '완료',
+    pending: '진행중',
+    funds: {
+      amount: '수량/금액',
+      account: 'TXID/계좌',
+      status: '상태'
+    }
   }
 };
