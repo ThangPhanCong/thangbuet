@@ -1,7 +1,6 @@
 import React from 'react';
 import {
   StyleSheet,
-  PixelRatio,
   Text,
   TextInput,
   TouchableOpacity,
@@ -152,7 +151,7 @@ export default class OTPVerifyScreen extends BaseScreen {
   }
 
   async _onCopySecretCode() {
-    await Clipboard.setString(this.state.secretCode);
+    await Clipboard.setString(this._secretCode);
   }
 
   _onActiveOTP() {
@@ -184,6 +183,7 @@ export default class OTPVerifyScreen extends BaseScreen {
   async _verifyOTP(code) {
     try {
       await rf.getRequest('UserRequest').addSecuritySettingOtp(this._otpCode);
+      Keyboard.dismiss();
       this.navigate('OTPSecretCodeScreen', {
         secretCode: this._secretCode
       });

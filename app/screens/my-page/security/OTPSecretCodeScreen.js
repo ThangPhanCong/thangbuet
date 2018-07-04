@@ -3,6 +3,8 @@ import {
   StyleSheet,
   Text,
   View,
+  TouchableOpacity,
+  Clipboard
 } from 'react-native';
 import BaseScreen from '../../BaseScreen'
 import { CommonStyles } from '../../../utils/CommonStyles';
@@ -20,13 +22,19 @@ export default class OTPSecretCodeScreen extends BaseScreen {
         <Text style={styles.recoveryCodeText}>
           {I18n.t('myPage.security.recoveryCode').toLocaleUpperCase()}
         </Text>
-        <View style={styles.secretCodeContainer}>
+        <TouchableOpacity style={styles.secretCodeContainer}
+          onPress={this._onCopySecretCode.bind(this)}>
           <Text style={styles.secretCode}>
             {secretCode}
           </Text>
-        </View>
+        </TouchableOpacity>
       </View>
     )
+  }
+
+  async _onCopySecretCode() {
+    let { secretCode } = this.props.navigation.state.params;
+    await Clipboard.setString(secretCode);
   }
 }
 

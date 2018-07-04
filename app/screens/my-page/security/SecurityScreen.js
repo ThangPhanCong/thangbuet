@@ -47,8 +47,5 @@ const opacityTransition = {
     })
     
     return { opacity };
-  },
-  containerStyle: {
-    backgroundColor: 'transparent',
   }
 } 

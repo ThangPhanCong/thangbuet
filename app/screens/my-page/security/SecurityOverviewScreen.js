@@ -486,7 +486,7 @@ export default class SecurityOverviewScreen extends BaseScreen {
           
           <TouchableOpacity
             style={[styles.submitCancelOtpButton, { marginTop: 20, marginBottom: 30 }]}
-            onPress={this._onSubmitBankAccount.bind(this)}>
+            onPress={this._onSubmitChangePassword.bind(this)}>
             <Text style={{fontSize: 13, color: '#FFF'}}>
               {I18n.t('myPage.security.changePasswordSubmit')}
             </Text>
@@ -536,6 +536,10 @@ export default class SecurityOverviewScreen extends BaseScreen {
     this.setState({selectedBank});
     this._bankParams.bank_id = selectedBank.id;
     this._bankParams.bank_name = selectedBank.name;
+  }
+
+  _onSubmitChangePassword() {
+    this._changePassword();
   }
 
   _dismissSubmitModal() {
@@ -688,7 +692,6 @@ const styles = StyleSheet.create({
   cancelOtpButton: {
     borderRadius: 5,
     height: 40,
-    backgroundColor: '#FFF',
     justifyContent: 'center',
     alignItems: 'center',
     borderWidth: 1,
