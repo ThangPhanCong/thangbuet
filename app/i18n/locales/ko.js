@@ -227,5 +227,18 @@ export default {
       removeConfirmDesc: `'{0}' 을 삭제하시겠습니까`,
       removeConfirm: '확인'
     }
+  },
+  transactions: {
+    orderHistoryTab: '체결내역',
+    openOrderTab: '미체결내역',
+    fundsHistoryTab: '입출금내역',
+    profitLostTab: '기간별손익',
+    search: '조회',
+    time: '시간',
+    pair: '종목',
+    amount: '수량',
+    orderPrice: '가격',
+    excutedPrice: '거래 대금',
+    fee: '수수료',
   }
 }

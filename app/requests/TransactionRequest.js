@@ -49,4 +49,5 @@ export default class TransactionRequest extends BaseRequest {
     }
     return this.get(url, params);
   }
+
 }
