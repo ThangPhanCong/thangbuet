@@ -82,15 +82,21 @@ export default class BalanceScreen extends BaseScreen {
   }
 
   _onBalanceUpdated(newAccountBalances, ) {
-    console.log('newAccountBalances', newAccountBalances)
+    // console.log('balcnce newAccountBalances', newAccountBalances)
     for (balance in newAccountBalances) {
       if (!newAccountBalances[balance].name) {
         newAccountBalances[balance].name = balance
       }
+      if (!newAccountBalances[balance].code) {
+        newAccountBalances[balance].code = balance
+      }
+      if (!newAccountBalances[balance].icon) {
+        newAccountBalances[balance].icon = AppConfig.getAssetServer() + '/images/color_coins/' + balance + '.png'
+      }
     }
 
     this.accountBalances = Object.assign({}, this.accountBalances, newAccountBalances);
-    // console.log('this.accountBalances ', Object.values(this.accountBalances))
+    // console.log('blance this.accountBalances ',  this.accountBalances )
 
     let balanceList = Object.values(this.accountBalances)
 

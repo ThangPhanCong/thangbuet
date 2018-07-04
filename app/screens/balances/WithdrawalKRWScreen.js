@@ -202,7 +202,7 @@ class WithdrawalKRWScreen extends BaseScreen {
       let params = {
         amount: this.state.amount * -1 + '',
         currency: this.currency,
-        otp: this.state.otp + "|"
+        otp: this.state.otpConfirm ? this.state.otp + '|' : '|' + this.state.otp
       }
       const withdrawalRes = await rf.getRequest('TransactionRequest').withdrawKrw(params)
       this.setState({ optErr: false })
@@ -210,6 +210,14 @@ class WithdrawalKRWScreen extends BaseScreen {
     } catch (err) {
       console.log("_getWithdrawalKrw:", err)
       this.setState({ optErr: true })
+    }
+  }
+
+  async _doRequestSmsOtp() {
+    try {
+      const smsOtpRes = await rf.getRequest('UserRequest').sendSmsOtp({})
+    } catch (err) {
+      console.log("_getWithdrawalKrw:", err)
     }
   }
 
@@ -510,11 +518,11 @@ class WithdrawalKRWScreen extends BaseScreen {
         }}>
           <TextInput
             keyboardType='numeric'
-            style={{
-              flex: 1, height: 30, lineHeight: 30, textAlign: 'center'
-            }} />
+            value={this.state.otp}
+            onChangeText={(text) => this.setState({ otp: text })}
+            style={{ flex: 1, height: 30, textAlign: 'center' }} />
           <TouchableOpacity
-            onPress={() => { }}
+            onPress={this._doRequestSmsOtp.bind(this)}
             style={{
               justifyContent: 'center', backgroundColor: '#e0742c', height: 30, borderWidth: 0,
               borderColor: "rgba(0, 0, 0, 0.1)", borderTopRightRadius: 4, borderBottomRightRadius: 4, padding: 5
@@ -523,8 +531,15 @@ class WithdrawalKRWScreen extends BaseScreen {
           </TouchableOpacity>
         </View>
 
+        {
+          this.state.optErr &&
+          <Text style={{ color: 'red', marginTop: 10, marginBottom: 10, textAlign: 'center' }}>
+            {I18n.t('withdrawal.optErrMsg')}
+          </Text>
+        }
+
         <TouchableOpacity
-          onPress={() => { }}
+          onPress={this._doWithdrawal.bind(this)}
           style={{
             width: '80%', justifyContent: 'center', backgroundColor: 'blue', height: 30, borderRadius: 4,
             marginTop: 10, marginBottom: 20
@@ -558,11 +573,13 @@ class WithdrawalKRWScreen extends BaseScreen {
             style={{ flex: 1, height: 30, textAlign: 'center' }} />
         </View>
 
-        {this.state.optErr &&
+        {
+          this.state.optErr &&
           <Text style={{ color: 'red', marginTop: 10, marginBottom: 10, textAlign: 'center' }}>
             {I18n.t('withdrawal.optErrMsg')}
           </Text>
         }
+
         <TouchableOpacity
           onPress={this._doWithdrawal.bind(this)}
           style={{
