@@ -18,26 +18,71 @@ import I18n from '../../i18n/i18n';
 import BaseScreen from '../BaseScreen'
 import OrderBook from './OrderBook';
 import OrderBookSettingModal from './OrderBookSettingModal';
+import OrderQuantityModal from './OrderQuantityModal';
+import CurrencyInput from '../common/CurrencyInput';
+import Events from '../../utils/Events';
 
 
 export default class TradingOrderBookScreen extends BaseScreen {
-  componentDidMount() {
-    super.componentDidMount();
+  constructor(props) {
+    super(props)
+    this.state = {
+      currency: props.screenProps.currency,
+      coin: props.screenProps.coin
+    }
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    const { currency, coin } = this.props.screenProps;
+    if (currency != this.state.currency || coin != this.state.coin) {
+      this.setState({ currency, coin });
+    }
+  }
+
+  getDataEventHandlers() {
+    return {
+      [Events.ORDER_BOOK_ROW_PRESSED]: this._onOrderBookRowClicked.bind(this)
+    };
+  }
+
+  _getCurrency() {
+    return this.state.currency;
+  }
+
+  _getCoin() {
+    return this.state.coin;
+  }
+
+  _onOrderBookRowClicked(data) {
+    this._orderQuantityModal.showModal(data.tradeType, data.price);
   }
 
   render() {
     return (
       <View style={CommonStyles.matchParent}>
         {this._renderOrderBookSettingModal()}
+        {this._renderQuantityModal()}
         {this._renderQuantityAndSetting()}
-        <OrderBook currency='krw' coin='btc' type={OrderBook.TYPE_FULL}/>
+        <OrderBook currency={this._getCurrency()} coin={this._getCoin()} type={OrderBook.TYPE_FULL}/>
       </View>
     )
   }
 
   _renderOrderBookSettingModal() {
     return (
-      <OrderBookSettingModal ref={ref => this._orderBookSettingModal = ref} currency='krw' coin='btc'/>
+      <OrderBookSettingModal
+        ref={ref => this._orderBookSettingModal = ref}
+        currency={this._getCurrency()}
+        coin={this._getCoin()}/>
+    );
+  }
+
+  _renderQuantityModal() {
+    return (
+      <OrderQuantityModal
+        ref={ref => this._orderQuantityModal = ref}
+        currency={this._getCurrency()}
+        coin={this._getCoin()}/>
     );
   }
 
@@ -45,7 +90,7 @@ export default class TradingOrderBookScreen extends BaseScreen {
     return (
       <View style={styles.quantityAndSettingGroup}>
         <Text style={styles.quantityLabel}>{I18n.t('orderBook.quantity')}</Text>
-        <TextInputMask
+        <CurrencyInput
             keyboardType='numeric'
             style={styles.quantityInput}
             underlineColorAndroid='transparent'

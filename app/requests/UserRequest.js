@@ -138,7 +138,7 @@ export default class UserRequest extends BaseModelRequest {
 
   addSecuritySettingOtp(authentication_code) {
     let url = '/add-security-setting-otp';
-    return this.put(url, authentication_code);
+    return this.put(url, { authentication_code });
   }
 
   verify(authentication_code) {
@@ -162,6 +162,11 @@ export default class UserRequest extends BaseModelRequest {
       url += '/' + typeCoin;
     }
     return this.post(url, params);
+  }
+
+  deleteWithdrawallAddress(id) {
+    let url = '/withdrawal-address/' + id;
+    return this.del(url);
   }
 
   generateDepositAddress(params) {
