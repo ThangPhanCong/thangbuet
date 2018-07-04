@@ -252,7 +252,7 @@ export default class SecurityOverviewScreen extends BaseScreen {
           </Text>
           <TextInput
             style={styles.textInput}
-            onChangeText={text => this._otpParams.recovery_code = text}
+            onChangeText={text => this._otpParams.authentication_code = text}
             underlineColorAndroid='transparent' />
           <TouchableOpacity
             style={styles.submitCancelOtpButton}
