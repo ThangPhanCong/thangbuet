@@ -1,8 +1,9 @@
 import Numeral from '../libs/numeral';
 import I18n from '../i18n/i18n';
 
-export default {
-  validateOrderInput: function (data) {
+export default class OrderUtils {
+
+  static validateOrderInput(data) {
     var errors = [];
     if (!data.base_price && (data.type == 'stop_limit' || data.type == 'stop_market')) {
       errors.push({
@@ -23,6 +24,13 @@ export default {
       });
     }
     return errors;
-  },
+  }
 
+  static getMaskInputValue(formatted, extracted) {
+    if (formatted.endsWith('.')) {
+      return extracted;
+    } else {
+      return formatted;
+    }
+  }
 };
