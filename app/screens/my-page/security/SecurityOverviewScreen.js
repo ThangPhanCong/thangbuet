@@ -299,7 +299,7 @@ export default class SecurityOverviewScreen extends BaseScreen {
           </ScrollView>
           <TouchableOpacity
             style={[styles.submitCancelOtpButton, { marginTop: 20, marginBottom: 30 }]}
-            onPress={this._onRemoveGoogleAuth.bind(this)}>
+            onPress={this._dismissInitVerificationModal.bind(this)}>
             <Text style={{fontSize: 13, color: '#FFF'}}>
               {I18n.t('myPage.security.cancelOtpSubmit')}
             </Text>
