@@ -131,5 +131,18 @@ export default {
     profitAndLoss: '손익',
     valuation: '평가',
     total: 'TOTAL'
+  },
+  transactions: {
+    orderHistoryTab: '체결내역',
+    openOrderTab: '미체결내역',
+    fundsHistoryTab: '입출금내역',
+    profitLostTab: '기간별손익',
+    search: '조회',
+    time: '시간',
+    pair: '종목',
+    amount: '수량',
+    orderPrice: '가격',
+    excutedPrice: '거래 대금',
+    fee: '수수료',
   }
 }

@@ -46,8 +46,9 @@ export default class OrderRequest extends BaseModelRequest {
     return this.get(url, params, cancelToken);
   }
 
-  getOrdersHistory(params) {
-    let url = '/orders/transactions';
+  getOrderHistory(params) {
+    const url = '/orders/transactions';
+
     return this.get(url, params);
   }
 
