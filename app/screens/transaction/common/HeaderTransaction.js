@@ -14,14 +14,14 @@ class HeaderTransaction extends Component {
         <View style={{
           flexDirection: 'row', flex: 1, marginLeft: scale(8),
         }}>
-          <TouchableWithoutFeedback onPress={() => sortDate()}>
+          <TouchableWithoutFeedback onPress={sortDate ? () => sortDate() : () => {}}>
             <View style={{ flex: 1, flexDirection: 'row' }}>
               <Text>{I18n.t('transactions.time')}</Text>
               {renderArrowDate}
             </View>
           </TouchableWithoutFeedback>
 
-          <TouchableWithoutFeedback onPress={() => sortPair()}>
+          <TouchableWithoutFeedback onPress={sortPair ? () => sortPair() : () => {}}>
             <View style={{ flexDirection: 'row', flex: 1.5 }}>
               <Text>{I18n.t('transactions.pair')}</Text>
               {renderArrowPair}

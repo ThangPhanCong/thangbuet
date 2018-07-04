@@ -122,6 +122,12 @@ class FundsHistoryScreen extends Component {
     }
   }
 
+  _searchByDate() {
+    this.setState({ page: 1, transactions: [] }, () => {
+      this._loadData();
+    })
+  }
+
   _renderButtonSeach() {
     return (
       <TouchableWithoutFeedback onPress={() => this._searchByDate()}>
@@ -189,8 +195,6 @@ class FundsHistoryScreen extends Component {
             {item.status === 'pending' ? <Text style={styles.itemPending}> {I18n.t('transactions.pending')}</Text>
               : <Text style={styles.itemSuccess}>{I18n.t('transactions.success')}</Text>}
           </View>
-
-
         </View>
       </View>
     )
