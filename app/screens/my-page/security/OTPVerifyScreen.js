@@ -184,6 +184,11 @@ export default class OTPVerifyScreen extends BaseScreen {
     try {
       await rf.getRequest('UserRequest').addSecuritySettingOtp(this._otpCode);
       Keyboard.dismiss();
+      let { addOtpVerificationHandler } = this.props.navigation.state.params;
+      if (addOtpVerificationHandler) {
+        addOtpVerificationHandler();
+      }
+      
       this.navigate('OTPSecretCodeScreen', {
         secretCode: this._secretCode
       });

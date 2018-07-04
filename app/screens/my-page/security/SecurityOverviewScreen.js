@@ -66,8 +66,8 @@ export default class SecurityOverviewScreen extends BaseScreen {
     }
   }
 
-  componentWillMount(){
-    super.componentWillMount()
+  componentDidMount(){
+    super.componentDidMount()
     this._getCurrentUser();
   }
 
@@ -497,7 +497,9 @@ export default class SecurityOverviewScreen extends BaseScreen {
   }
 
   _onVerifyGoogle() {
-    this.navigate('OTPGuideScreen');
+    this.navigate('OTPGuideScreen', {
+      addOtpVerificationHandler: this._addOtpVerificationHandler.bind(this)
+    });
   }
 
   _onVerifyBankAccount() {
@@ -636,6 +638,15 @@ export default class SecurityOverviewScreen extends BaseScreen {
     catch(err) {
       console.log('SecurityOverviewScreen._changePassword', err);
     }
+  }
+
+  _addOtpVerificationHandler() {
+    this.setState({
+      info: {
+        ...this.state.info,
+        [this._infoProps[1].propVerify]: true
+      }
+    })
   }
 }
 
