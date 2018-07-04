@@ -310,8 +310,6 @@ export default class SecurityOverviewScreen extends BaseScreen {
   }
 
   _renderRegisterPhoneModal() {
-    let { height } = Dimensions.get('window');
-
     return (
       <Modal
         isVisible={this.state.registerPhoneDialogVisible}
@@ -321,13 +319,13 @@ export default class SecurityOverviewScreen extends BaseScreen {
         onBackdropPress={this._dismissRegisterPhoneModal.bind(this)}>
         <Card
           style={styles.dialog}
-          containerStyle={{borderRadius: 5, padding: 0, marginStart: 10, marginEnd: 10, height: 0.8 * height}}>
-          <WebView
-            source={{uri: 'https://google.com'}}
-            style={{flex: 1}}
-            javaScriptEnabled={true}
-            domStorageEnabled={true}
-            startInLoadingState={true}/>
+          containerStyle={{borderRadius: 5, padding: 0, marginStart: 10, marginEnd: 10, height: 0.8 * Dimensions.get('window').height}}
+          wrapperStyle={{flex: 1}}>
+            <WebView
+              source={{uri: 'https://www.google.com'}}
+              javaScriptEnabled={true}
+              domStorageEnabled={true}
+              startInLoadingState={true}/>
         </Card>
       </Modal>
     )
