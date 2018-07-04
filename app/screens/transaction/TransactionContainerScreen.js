@@ -40,19 +40,31 @@ class TransactionContainerScreen extends Component {
   async _loadData() {
     try {
       const { page, start_date, end_date, transactions } = this.state;
-
+      const { title } = this.props;
       const parseStartDate = moment(start_date).format('x');
       const parseEndDate = moment(end_date).format('x');
+      let responseTransaction = {}, params = {};
 
-      const params = {
-        page,
-        limit: 20,
-        is_all_order: true,
-        start_date: parseStartDate,
-        end_date: parseEndDate,
-      };
 
-      const responseTransaction = await rf.getRequest('OrderRequest').getOrderHistory(params);
+      if (title === I18n.t('transactions.openOrderTab')) {
+        params = {
+          page,
+          limit: 20,
+          start_date: parseStartDate,
+          currency: 'krw',
+          end_date: parseEndDate,
+        };
+        responseTransaction = await rf.getRequest('OrderRequest').getOrdersPending(params);
+      } else {
+        params = {
+          page,
+          limit: 20,
+          is_all_order: true,
+          start_date: parseStartDate,
+          end_date: parseEndDate,
+        };
+        responseTransaction = await rf.getRequest('OrderRequest').getOrderHistory(params);
+      }
 
       this.setState({ transactions: [...transactions, ...responseTransaction.data.data] })
     } catch (err) {
@@ -225,7 +237,28 @@ class TransactionContainerScreen extends Component {
     )
   }
 
+  async _cancelTransaction(item) {
+    await rf.getRequest('OrderRequest').cancel(item.id);
+    this.setState({ page: 1, transactions: [] }, () => {
+      this._loadData();
+    })
+  }
+
+  _renderStatusOrder(item) {
+    return (
+      <TouchableWithoutFeedback onPress={() => this._cancelTransaction(item)}>
+        <View style={styles.itemRight}>
+          <View style={styles.viewCancel}>
+            <Text style={styles.textCancel}>{I18n.t('transactions.cancel')}</Text>
+          </View>
+        </View>
+      </TouchableWithoutFeedback>
+    )
+  }
+
   _renderItem({ item }) {
+    const { title } = this.props;
+
     return (
       <View style={styles.itemContainer}>
         <View style={styles.itemLeftContainer}>
@@ -260,17 +293,15 @@ class TransactionContainerScreen extends Component {
             <Text style={styles.itemCurrency}>{getCurrencyName(item.currency)}</Text>
           </View>
 
-          <View style={{
-            flexDirection: 'column',
-            flex: 1.8,
-            alignItems: 'flex-end',
-            justifyContent: 'center',
-          }}>
-            <Text style={styles.itemFee}>
-              {formatCurrency(item.fee, item.coin)}
-            </Text>
-            <Text style={styles.itemCoin}>{getCurrencyName(item.coin)}</Text>
-          </View>
+          {title === I18n.t('transactions.openOrderTab') ? this._renderStatusOrder(item) :
+            <View style={styles.itemRight}>
+              <Text style={styles.itemFee}>
+                {formatCurrency(item.fee, item.coin)}
+              </Text>
+              <Text style={styles.itemCoin}>{getCurrencyName(item.coin)}</Text>
+            </View>}
+
+
         </View>
       </View>
     )
@@ -382,5 +413,22 @@ const styles = ScaledSheet.create({
     flex: 2,
     alignItems: 'flex-end',
     justifyContent: 'center',
+  },
+  itemStatus: {
+    flexDirection: 'column',
+    flex: 1,
+    alignItems: 'flex-end',
+    justifyContent: 'center',
+  },
+  viewCancel: {
+    backgroundColor: '#ff5d5d',
+    width: '40@s',
+    height: '30@s',
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
+  textCancel: {
+    fontSize: '12@s',
+    color: '#FFF'
   }
 });

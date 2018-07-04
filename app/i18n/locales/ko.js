@@ -144,5 +144,6 @@ export default {
     orderPrice: '가격',
     excutedPrice: '거래 대금',
     fee: '수수료',
+    cancel: '취소'
   }
 }
