@@ -14,6 +14,7 @@ import {
 import {
   Card
 } from 'react-native-elements';
+import Modal from 'react-native-modal';
 import BaseScreen from '../BaseScreen';
 import { TabNavigator, TabBarTop } from 'react-navigation';
 import Consts from '../../utils/Consts';
@@ -34,6 +35,7 @@ class MarketSearchScreen extends BaseScreen {
     super(props);
     this.state = {
       searchList: [],
+      searchListVisible: false,
       isFavoriteFilter: false
     }
     TabBarNavigator = this._initTabNavigator();
@@ -77,8 +79,9 @@ class MarketSearchScreen extends BaseScreen {
                 style={styles.searchIcon}
                 color="#000" />
             </View>
+
+            {this._renderSearchList()}
           </View>
-          {this._renderSearchList()}
         </View>
       </View>
     )
@@ -90,14 +93,22 @@ class MarketSearchScreen extends BaseScreen {
       return null;
 
     return (
-      <Card style={styles.searchResult}>
-        <FlatList
-          style={styles.listView}
-          data={this.state.searchList}
-          extraData={this.state}
-          renderItem={this._renderItem.bind(this)}
-        />
-      </Card>
+      <Modal
+        isVisible={this.state.searchListVisible}
+        avoidKeyboard={true}
+        useNativeDriver={true}
+        backdropColor='transparent'
+        onBackdropPress={this._dismissSearchList.bind(this)}>
+        <Card style={styles.searchResult}
+          containerStyle={{flex: 1}}>
+          <FlatList
+            style={styles.listView}
+            data={this.state.searchList}
+            extraData={this.state}
+            renderItem={this._renderItem.bind(this)}
+            keyExtractor={(item, index) => index.toString()}/>
+        </Card>
+      </Modal>
     )
   }
 
@@ -185,16 +196,22 @@ class MarketSearchScreen extends BaseScreen {
     })
   }
 
-  async _onTextChanged(searchText) {
-    let searchList;
-    if (_.isEmpty(searchText))
-      searchList = [];
-    else
-      searchList = await this._searchList(searchText.toLowerCase());
-    
+  _dismissSearchList() {
     this.setState({
-      searchList
+      searchListVisible: false
     })
+  }
+
+  _onTextChanged(searchText) {
+    if (_.isEmpty(searchText)) {
+      this.setState({
+        searchList: [],
+        searchListVisible: false
+      })
+      return;
+    }
+    
+    this._searchList(searchText.toLowerCase());
   }
 
   async _searchList(searchText) {
@@ -205,7 +222,10 @@ class MarketSearchScreen extends BaseScreen {
         symbol.coinPair = symbol.currency.toUpperCase() + '/' + symbol.coin.toUpperCase();        
         return symbol;
       })
-      return symbols;
+      this.setState({
+        searchList: symbols,
+        searchListVisible: true
+      })
     } catch (err) {
       console.log('MarketScreen._getSymbols', err);
     }
