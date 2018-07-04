@@ -18,7 +18,9 @@ import I18n from '../../i18n/i18n';
 import BaseScreen from '../BaseScreen'
 import OrderBook from './OrderBook';
 import OrderBookSettingModal from './OrderBookSettingModal';
+import OrderQuantityModal from './OrderQuantityModal';
 import CurrencyInput from '../common/CurrencyInput';
+import Events from '../../utils/Events';
 
 
 export default class TradingOrderBookScreen extends BaseScreen {
@@ -37,6 +39,12 @@ export default class TradingOrderBookScreen extends BaseScreen {
     }
   }
 
+  getDataEventHandlers() {
+    return {
+      [Events.ORDER_BOOK_ROW_PRESSED]: this._onOrderBookRowClicked.bind(this)
+    };
+  }
+
   _getCurrency() {
     return this.state.currency;
   }
@@ -45,10 +53,15 @@ export default class TradingOrderBookScreen extends BaseScreen {
     return this.state.coin;
   }
 
+  _onOrderBookRowClicked(data) {
+    this._orderQuantityModal.showModal(data.tradeType, data.price);
+  }
+
   render() {
     return (
       <View style={CommonStyles.matchParent}>
         {this._renderOrderBookSettingModal()}
+        {this._renderQuantityModal()}
         {this._renderQuantityAndSetting()}
         <OrderBook currency={this._getCurrency()} coin={this._getCoin()} type={OrderBook.TYPE_FULL}/>
       </View>
@@ -59,6 +72,15 @@ export default class TradingOrderBookScreen extends BaseScreen {
     return (
       <OrderBookSettingModal
         ref={ref => this._orderBookSettingModal = ref}
+        currency={this._getCurrency()}
+        coin={this._getCoin()}/>
+    );
+  }
+
+  _renderQuantityModal() {
+    return (
+      <OrderQuantityModal
+        ref={ref => this._orderQuantityModal = ref}
         currency={this._getCurrency()}
         coin={this._getCoin()}/>
     );

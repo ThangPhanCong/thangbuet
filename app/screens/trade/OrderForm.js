@@ -85,7 +85,8 @@ export default class OrderForm extends BaseScreen {
 
   getDataEventHandlers() {
     return {
-      [Events.ORDER_BOOK_ROW_CLICKED]: this._onOrderBookRowClicked.bind(this)
+      [Events.ORDER_BOOK_SETTINGS_UPDATED]: this._onOrderBookSettingsUpdated.bind(this),
+      [Events.ORDER_BOOK_ROW_PRESSED]: this._onOrderBookRowClicked.bind(this)
     };
   }
 
@@ -101,7 +102,8 @@ export default class OrderForm extends BaseScreen {
     await Promise.all([
       this._getBalance(),
       this._getCoinSetting(),
-      this._getFeeRate()
+      this._getFeeRate(),
+      this._getOrderBookSettings()
     ]);
   }
 
@@ -150,6 +152,15 @@ export default class OrderForm extends BaseScreen {
     this.setState({ feeRate: setting.fee });
   }
 
+  async _getOrderBookSettings() {
+    const params = {
+      currency: this._getCurrency(),
+      coin: this._getCoin()
+    };
+    const response = await rf.getRequest('UserRequest').getOrderBookSettings(params);
+    this._onOrderBookSettingsUpdated(response.data);
+  }
+
   _isBuyOrder() {
     return this.props.tradeType == Consts.TRADE_TYPE_BUY;
   }
@@ -183,6 +194,10 @@ export default class OrderForm extends BaseScreen {
     }
 
     this.setState(newState);
+  }
+
+  _onOrderBookSettingsUpdated(settings) {
+    this.settingsOrderConfirmation = settings.order_confirmation;
   }
 
   floor(value, decimals) {

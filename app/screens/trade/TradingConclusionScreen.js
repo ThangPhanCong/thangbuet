@@ -31,12 +31,11 @@ export default class TradingConclusionScreen extends BaseScreen {
   }
 
   componentDidUpdate() {
-    let { coin, currency } = this.props.screenProps
+    let { coin, currency } = this.props.screenProps;
     if (coin != this.state.coin || currency != this.state.currency) {
-      this.setState({ coin, currency })
-      this.reloadData()
+      this.setState({ coin, currency });
+      this.reloadData();
     }
-    return
   }
 
   async reloadData() {

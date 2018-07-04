@@ -51,6 +51,7 @@ export default class OrderBook extends BaseScreen {
     this.yesterdayPrice = undefined;
     this.priceSetting = undefined;
     this.quantityPrecision = undefined;
+    this.settings = {};
   }
 
   async componentWillMount() {
@@ -211,6 +212,7 @@ export default class OrderBook extends BaseScreen {
 
   async _onOrderBookSettingsUpdated(data) {
     this.settings = data;
+    console.log(this.settings);
     await this._getPriceSetting();
     this._updateOrderBook();
   }
@@ -459,45 +461,49 @@ export default class OrderBook extends BaseScreen {
 
   _renderSellRow(item, index) {
     return (
-      <View style={styles.orderBookRow} key={index} onPress={() => this._rowClick(item)}>
-        <View style={[styles.userSellQuantityCell, styles.topBorder]}>
-          <Text style={styles.userSellQuantityText}>{this._formatQuantity(item.userQuantity)}</Text>
+      <TouchableWithoutFeedback key={index} onPress={() => this._onPressSmallOrderBookRow(item, Consts.TRADE_TYPE_SELL)}>
+        <View style={styles.orderBookRow}>
+          <View style={[styles.userSellQuantityCell, styles.topBorder]}>
+            <Text style={styles.userSellQuantityText}>{this._formatQuantity(item.userQuantity)}</Text>
+          </View>
+          <View style={[styles.quantityCell, styles.topBorder]}>
+            <View style={[styles.sellPercent, this._getPercentViewStyle(item)]} />
+            <Text style={styles.quantityText}>{this._formatQuantity(item.quantity)}</Text>
+          </View>
+          <View style={[styles.priceCell, styles.topBorder, this._getPriceCellStyle(item.price)]}>
+            <Text style={[styles.priceText, this._getPriceTextStyle(item.price)]}>{this._formatPrice(item.price)}</Text>
+          </View>
+          <View style={[styles.quantityCell, styles.topBorder]}>
+          </View>
+          <View style={[styles.userBuyQuantityCell, styles.topBorder]}>
+            <Text style={styles.userBuyQuantityText}></Text>
+          </View>
         </View>
-        <View style={[styles.quantityCell, styles.topBorder]}>
-          <View style={[styles.sellPercent, this._getPercentViewStyle(item)]} />
-          <Text style={styles.quantityText}>{this._formatQuantity(item.quantity)}</Text>
-        </View>
-        <View style={[styles.priceCell, styles.topBorder, this._getPriceCellStyle(item.price)]}>
-          <Text style={[styles.priceText, this._getPriceTextStyle(item.price)]}>{this._formatPrice(item.price)}</Text>
-        </View>
-        <View style={[styles.quantityCell, styles.topBorder]}>
-        </View>
-        <View style={[styles.userBuyQuantityCell, styles.topBorder]}>
-          <Text style={styles.userBuyQuantityText}></Text>
-        </View>
-      </View>
+      </TouchableWithoutFeedback>
     );
   }
 
   _renderBuyRow(item, index) {
     return (
-      <View style={styles.orderBookRow} key={index} onPress={() => this._rowClick(item)}>
-        <View style={[styles.userSellQuantityCell, styles.bottomBorder]}>
-          <Text style={styles.userSellQuantityText}></Text>
+      <TouchableWithoutFeedback key={index} onPress={() => this._onPressOrderBookCell(item, Consts.TRADE_TYPE_BUY)}>
+        <View style={styles.orderBookRow}>
+          <View style={[styles.userSellQuantityCell, styles.bottomBorder]}>
+            <Text style={styles.userSellQuantityText}></Text>
+          </View>
+          <View style={[styles.quantityCell, styles.bottomBorder]}>
+          </View>
+          <View style={[styles.priceCell, styles.bottomBorder, this._getPriceCellStyle(item.price)]}>
+            <Text style={[styles.priceText, this._getPriceTextStyle(item.price)]}>{this._formatPrice(item.price)}</Text>
+          </View>
+          <View style={[styles.quantityCell, styles.bottomBorder]}>
+            <View style={[styles.sellPercent, this._getPercentViewStyle(item)]} />
+            <Text style={styles.quantityText}>{this._formatQuantity(item.quantity)}</Text>
+          </View>
+          <View style={[styles.userBuyQuantityCell, styles.bottomBorder]}>
+            <Text style={styles.userBuyQuantityText}>{this._formatQuantity(item.userQuantity)}</Text>
+          </View>
         </View>
-        <View style={[styles.quantityCell, styles.bottomBorder]}>
-        </View>
-        <View style={[styles.priceCell, styles.bottomBorder, this._getPriceCellStyle(item.price)]}>
-          <Text style={[styles.priceText, this._getPriceTextStyle(item.price)]}>{this._formatPrice(item.price)}</Text>
-        </View>
-        <View style={[styles.quantityCell, styles.bottomBorder]}>
-          <View style={[styles.sellPercent, this._getPercentViewStyle(item)]} />
-          <Text style={styles.quantityText}>{this._formatQuantity(item.quantity)}</Text>
-        </View>
-        <View style={[styles.userBuyQuantityCell, styles.bottomBorder]}>
-          <Text style={styles.userBuyQuantityText}>{this._formatQuantity(item.userQuantity)}</Text>
-        </View>
-      </View>
+      </TouchableWithoutFeedback>
     );
   }
 
@@ -519,10 +525,8 @@ export default class OrderBook extends BaseScreen {
     }
   }
 
-  _rowClick(item) {
-    if (item.price) {
-      this.props.parentOrderForm.setPrice(item.price);
-    }
+  _onPressOrderBookCell(item, tradeType) {
+    this._notifyOrderBookPressed(item, tradeType, OrderBook.TYPE_FULL);
   }
 
   _formatQuantity(value) {
@@ -566,7 +570,7 @@ export default class OrderBook extends BaseScreen {
 
   _renderSmallSellRow(item, index) {
     return (
-      <TouchableWithoutFeedback key={index} onPress={() => this._onPressSmallOrderBookRow(item)}>
+      <TouchableWithoutFeedback key={index} onPress={() => this._onPressSmallOrderBookRow(item, Consts.TRADE_TYPE_SELL)}>
         <View style={styles.orderBookRow}>
           <View
             style={[styles.priceCell, styles.smallTopBorder, styles.smallSellPrice, this._getPriceCellStyle(item.price)]}>
@@ -583,7 +587,7 @@ export default class OrderBook extends BaseScreen {
 
   _renderSmallBuyRow(item, index) {
     return (
-      <TouchableWithoutFeedback key={index} onPress={() => this._onPressSmallOrderBookRow(item)}>
+      <TouchableWithoutFeedback key={index} onPress={() => this._onPressSmallOrderBookRow(item, Consts.TRADE_TYPE_BUY)}>
         <View style={styles.orderBookRow}>
           <View style={[
               styles.priceCell,
@@ -601,8 +605,17 @@ export default class OrderBook extends BaseScreen {
     );
   }
 
-  _onPressSmallOrderBookRow(item) {
-    this.notify(Events.ORDER_BOOK_ROW_CLICKED, item);
+  _onPressSmallOrderBookRow(item, tradeType) {
+    this._notifyOrderBookPressed(item, tradeType, OrderBook.TYPE_SMALL);
+  }
+
+  _notifyOrderBookPressed(item, tradeType, orderBookType) {
+    if (this.settings.click_to_order && item.price) {
+      let data = { ...item }
+      data.tradeType = tradeType;
+      data.orderBookType = orderBookType;
+      this.notify(Events.ORDER_BOOK_ROW_PRESSED, data);
+    }
   }
 }
 
