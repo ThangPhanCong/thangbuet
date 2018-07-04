@@ -40,6 +40,18 @@ export default class OrderBookSettingModal extends BaseScreen {
     this._loadData();
   }
 
+  componentDidUpdate(prevProps, prevState) {
+    if (prevProps.currency != this.props.currency || prevProps.coin != this.props.coin) {
+      this._loadData();
+    }
+  }
+
+  getDataEventHandlers() {
+    return {
+      [Events.ORDER_BOOK_SETTINGS_UPDATED]: this._onOrderBookSettingsUpdated.bind(this)
+    };
+  }
+
   _getCoin() {
     return this.props.coin;
   }
@@ -76,7 +88,11 @@ export default class OrderBookSettingModal extends BaseScreen {
       coin: this._getCoin(),
     };
     const response = await rf.getRequest('UserRequest').getOrderBookSettings(params);
-    const state = this._convertSettingsToState(response.data);
+    this._onOrderBookSettingsUpdated(response.data);
+  }
+
+  _onOrderBookSettingsUpdated(data) {
+    const state = this._convertSettingsToState(data);
     this.setState({
       ...state
     });

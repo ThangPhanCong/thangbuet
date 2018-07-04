@@ -1,7 +1,6 @@
 import React from 'react';
 import {
   PixelRatio,
-  Modal,
   Text,
   TextInput,
   TouchableOpacity,
@@ -10,31 +9,36 @@ import {
   FlatList,
   SafeAreaView
 } from 'react-native';
-import BaseScreen from '../BaseScreen'
-import { TabNavigator, TabBarBottom } from 'react-navigation'
-import rf from '../../libs/RequestFactory'
-import MasterdataUtils from '../../utils/MasterdataUtils'
-import ScaledSheet from '../../libs/reactSizeMatter/ScaledSheet'
+import Modal from "react-native-modal";
+import BaseScreen from '../BaseScreen';
+import { TabNavigator, TabBarBottom } from 'react-navigation';
+import rf from '../../libs/RequestFactory';
+import Numeral from '../../libs/numeral';
+import MasterdataUtils from '../../utils/MasterdataUtils';
+import ScaledSheet from '../../libs/reactSizeMatter/ScaledSheet';
+import { scale } from '../../libs/reactSizeMatter/scalingUtils';
 import { filter, pickBy, startsWith, orderBy } from 'lodash'
 import Utils from '../../utils/Utils'
-import TradingGeneralScreen from './TradingGeneralScreen'
-import TradingOrderBookScreen from './TradingOrderBookScreen'
-import TradingChartScreen from './TradingChartScreen'
-import TradingConclusionScreen from './TradingConclusionScreen'
-import I18n from '../../i18n/i18n'
-import Consts from '../../utils/Consts'
-import { ListItem, List, Icon } from 'react-native-elements'
+import TradingGeneralScreen from './TradingGeneralScreen';
+import TradingOrderBookScreen from './TradingOrderBookScreen';
+import TradingChartScreen from './TradingChartScreen';
+import TradingConclusionScreen from './TradingConclusionScreen';
+import I18n from '../../i18n/i18n';
+import Consts from '../../utils/Consts';
+import { ListItem, List, Icon } from 'react-native-elements';
+import { formatCurrency, formatPercent, getCurrencyName } from '../../utils/Filters';
+import { CommonColors, CommonStyles } from '../../utils/CommonStyles';
 
 const TradeTabs = TabNavigator(
   {
     General: {
-      screen: TradingGeneralScreen,
+      screen: props => <TradingGeneralScreen {...props}/>,
       navigationOptions: () => ({
         tabBarLabel: 'General'
       })
     },
     Order: {
-      screen: TradingOrderBookScreen,
+      screen:  props => <TradingOrderBookScreen {...props}/>,
       navigationOptions: () => ({
         tabBarLabel: 'Order'
       })
@@ -88,8 +92,10 @@ export default class TradingScreen extends BaseScreen {
       modalVisible: false,
       itemSelected: {},
       currency: 'krw',
+      coin: 'btc',
       symbols: [],
       prices: {},
+      balances: {}
     }
   }
 
@@ -101,64 +107,22 @@ export default class TradingScreen extends BaseScreen {
   getSocketEventHandlers() {
     return {
       PricesUpdated: this._onPriceUpdated.bind(this),
+      BalanceUpdated: this._onBalanceUpdated.bind(this)
     };
+  }
+
+  _getCurrency() {
+    return this.state.currency;
+  }
+
+  _getCoin() {
+    return this.state.coin;
   }
 
   async _loadData() {
     await this._getSymbols()
     await this._getPrices()
     await this._getBalance()
-    this.setState({ itemSelected: this.state.symbols[0] })
-    // console.log('this.state.symbols[0]', this.state.symbols[0])
-  }
-
-  _onPriceUpdated(data) {
-    const prices = Object.assign({}, this.state.prices, data);
-
-    let symbols = this.state.symbols;
-    for (let symbolKey in data) {
-      let [currency, coin] = symbolKey.split('_');
-      this._updateSymbolData(symbols, currency, coin, data[symbolKey]);
-    }
-
-    this.setState({
-      prices,
-      symbols: orderBy(symbols, 'price', 'desc')
-    });
-  }
-
-  _updateSymbolData(symbols, currency, coin, data) {
-    let index = symbols.findIndex((item) => {
-      return item.currency == currency && item.coin == coin;
-    });
-    if (index >= 0) {
-      Object.assign(symbols[index], data);
-    }
-  }
-
-  async _getBalance() {
-    try {
-      let result = await rf.getRequest('UserRequest').getBalance()
-      // console.log('_getBalance', result)
-
-      let symbols = this.state.symbols;
-      for (let symbolKey in result.data) {
-        this._updateSymbolData(symbols, this.state.currency, symbolKey, result.data[symbolKey]);
-      }
-
-      this.setState({
-        symbols: orderBy(symbols, 'price', 'desc')
-      });
-
-    } catch (err) {
-      console.log('TradingScreen._getBalance', err);
-    }
-  }
-
-  _getPrice(currency, coin) {
-    let key = Utils.getPriceKey(currency, coin);
-    const priceObject = this.state.prices[key];
-    return priceObject ? priceObject.price : 1;
   }
 
   async _getSymbols() {
@@ -171,8 +135,6 @@ export default class TradingScreen extends BaseScreen {
       });
 
       this.setState({ symbols });
-
-      // console.log('symbols', symbols)
     } catch (err) {
       console.log('TradingScreen._getSymbols', err);
     }
@@ -183,84 +145,152 @@ export default class TradingScreen extends BaseScreen {
       let priceResponse = await rf.getRequest('PriceRequest').getPrices();
       let prices = priceResponse.data;
 
-      if (this.state.currency != Consts.CURRENCY_KRW) {
-        let key = Utils.getPriceKey(Consts.CURRENCY_KRW, this.state.currency);
-        if (prices[key]) {
-          this.setState({ currencyPrice: prices[key].price });
-        }
-      }
-
       this._onPriceUpdated(prices);
     } catch (err) {
       console.log('TradingScreen._getPrices', err);
     }
   }
 
+  _onPriceUpdated(data) {
+    const prices = Object.assign({}, this.state.prices, data);
+    this.setState({ prices });
+  }
+
+  async _getBalance() {
+    try {
+      let response = await rf.getRequest('UserRequest').getBalance()
+      this._onBalanceUpdated(response.data);
+    } catch (err) {
+      console.log('TradingScreen._getBalance', err);
+    }
+  }
+
+  _onBalanceUpdated(data) {
+    const balances = Object.assign({}, this.state.balances, data);
+    this.setState({ balances });
+  }
+
+  _getPrice() {
+    const key = Utils.getPriceKey(this._getCurrency(), this._getCoin());
+    return this.state.prices[key] || {};
+  }
+
+  _getCoinBalance() {
+    return this.state.balances[this._getCoin()] || {};
+  }
+
   render() {
     return (
       <SafeAreaView style={{ flex: 1, backgroundColor: '#fff' }}>
         <View style={styles.main}>
-          <View style={styles.header}>
-            <View style={styles.headerLeft}>
-              <TouchableOpacity
-                style={styles.headerContent}
-                onPress={() => this.setState({ modalVisible: true })}>
-                <Icon name="arrow-drop-down" />
-                <Text>
-                  {(this.state.itemSelected.coin + "/" + this.state.itemSelected.currency).toUpperCase()}
-                </Text>
-              </TouchableOpacity>
-              <View style={styles.headerContent}>
-                <Text>{this.state.itemSelected.available_balance * this.state.itemSelected.price}</Text>
-                <Icon name="help" />
-                <Text>{this.state.itemSelected.change + "%"}</Text>
-              </View>
-            </View>
-            <View style={styles.headerRight}>
-              <View style={styles.headerContent}>
-                <Text>{"보유 잔고  " + this.state.itemSelected.available_balance + " BTC"}</Text>
-              </View>
-              <View style={styles.headerContent}>
-                {/* //TODO */}
-                <Text>수익률 11.26 %</Text>
-              </View>
-            </View>
-          </View>
-          {this.state.itemSelected &&
+          {this._renderHeader()}
           <TradeTabs
             style={styles.body}
             screenProps={{
-              coin: this.state.itemSelected.coin,
-              currency: this.state.itemSelected.currency,
-              count: 50
-            }} />
-          }
-          <Modal
-            animationType="slide"
-            transparent={true}
-            visible={this.state.modalVisible}
-            onRequestClose={() => { }}>
-            <View style={{ justifyContent: "center", alignItems: "center" }}>
-              <List containerStyle={{ borderTopWidth: 0, borderBottomWidth: 0, width: 200, backgroundColor: '#11151C', height: 400, marginTop: 100 }} >
-                <FlatList
-                  data={this.state.symbols}
-                  keyExtractor={item => item.key + "_" + item.id}
-                  ItemSeparatorComponent={() => <View style={styles.saparator} />}
-                  renderItem={({ item }) => (
-                    <ListItem
-                      onPress={() => this.setState({ itemSelected: item, modalVisible: false })}
-                      hideChevron
-                      key={item.key + "_" + item.id}
-                      title={(item.coin + "/" + item.currency).toString().toUpperCase()}
-                      containerStyle={{ borderBottomWidth: 0 }} />
-                  )} />
-              </List>
-            </View>
-          </Modal>
-
+              coin: this._getCoin(),
+              currency: this._getCurrency()
+            }}/>
+          {this._renderSymbolSelector()}
         </View>
       </SafeAreaView>
-    )
+    );
+  }
+
+  _renderHeader() {
+    const priceData = this._getPrice();
+    const balanceData = this._getCoinBalance();
+    const priceColor = this._getChangeColor(priceData.change);
+    const profit = this._getProfit(balanceData);
+    const profitColor = this._getChangeColor(profit);
+
+    return (
+      <View style={styles.header}>
+        <View style={styles.headerLeft}>
+          <TouchableOpacity
+            style={styles.headerContent}
+            onPress={() => this.setState({ modalVisible: true })}>
+            <View style={styles.caretContainer}>
+              <Icon name='triangle-down' type='entypo' size={scale(18)}/>
+            </View>
+            <Text>{this._getCurrencyName(this._getCoin())}</Text>
+            <Text style={CommonStyles.bold}>{' / ' + getCurrencyName(this._getCurrency())}</Text>
+          </TouchableOpacity>
+          <View style={[styles.headerContent, priceData.price ? {} : {opacity: 0}]}>
+            <Text style={[styles.price, {color: priceColor}]}>{formatCurrency(priceData.price, this._getCurrency)}</Text>
+            <Icon
+              name={priceData.change >= 0 ? 'triangle-up' : 'triangle-down'}
+              type='entypo'
+              color={priceColor}
+              size={scale(15)}
+              containerStyle={styles.changeIndicator}/>
+            <Text style={[styles.pricePercent, {color: priceColor}]}>{formatPercent(priceData.change)}</Text>
+          </View>
+        </View>
+        <View style={styles.headerRight}>
+          <View style={styles.headerContent}>
+            <Text style={styles.balanceLabel}>{I18n.t('tradeScreen.balance')}</Text>
+            <Text style={styles.balance}>{formatCurrency(balanceData.balance, this._getCoin())}</Text>
+            <Text style={styles.balanceCurrency}>{getCurrencyName(this._getCurrency())}</Text>
+          </View>
+          <View style={styles.headerContent}>
+            <Text style={styles.balanceLabel}>{I18n.t('tradeScreen.profit')}</Text>
+            <Text style={[styles.profit, {color: profitColor}]}>{Numeral(profit).format("0.00")}</Text>
+            <Text style={[styles.balanceCurrency, {color: profitColor}]}>%</Text>
+          </View>
+        </View>
+      </View>
+    );
+  }
+
+  _getCurrencyName(currency) {
+    const key = 'currency.' + currency + '.fullname';
+    return I18n.t(key);
+  }
+
+  _getChangeColor(value) {
+    let color = '#000';
+    if (value > 0) {
+      color = CommonColors.increased;
+    } else if (value < 0) {
+      color = CommonColors.decreased;
+    }
+    return color;
+  }
+
+  _getProfit(balanceData) {
+    let profit = 0;
+    if (balanceData.krm_amount) {
+      profit = (balanceData.krm_amount - balanceData.balance * priceData.price) / balanceData.krm_amount;
+    }
+    return profit;
+  }
+
+  _renderSymbolSelector() {
+    return (
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={this.state.modalVisible}
+        onRequestClose={() => { }}>
+        <View style={styles.popup}>
+          <List containerStyle={styles.coinList} >
+            <FlatList
+              data={this.state.symbols}
+              keyExtractor={item => item.key + "_" + item.id}
+              ItemSeparatorComponent={() => <View style={styles.separator} />}
+              renderItem={({ item }) => (
+                <ListItem
+                  onPress={() => this.setState({ currency: item.currency, coin: item.coin, modalVisible: false })}
+                  hideChevron
+                  key={item.key + "_" + item.id}
+                  title={this._getCurrencyName(item.coin) + ' ' + getCurrencyName(item.coin) + '/' + getCurrencyName(item.currency)}
+                  titleStyle={styles.itemText}
+                  containerStyle={styles.item} />
+              )} />
+          </List>
+        </View>
+      </Modal>
+    );
   }
 }
 
@@ -275,44 +305,77 @@ const styles = ScaledSheet.create({
     justifyContent: 'space-between'
   },
   headerLeft: {
-    flex: 1,
-    // backgroundColor: 'red',
-    flexDirection: 'column',
-  },
-  headerContent: {
-    flexDirection: 'row',
-    justifyContent: 'flex-start'
+    flex: 0.8,
+    marginLeft: '10@s'
   },
   headerRight: {
-    flex: 1,
-    // backgroundColor: 'blue'
+    flex: 1
   },
-  modalContent: {
-    width: 200,
-    height: 400,
-    backgroundColor: '#11151C',
+  headerContent: {
+    flex: 1,
+    flexDirection: 'row',
+    justifyContent: 'flex-start',
+    alignItems: 'center'
+  },
+  caretContainer: {
+    width: '20@s',
+    height: '20@s',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: '#CBCBCB',
+    borderRadius: '3@s',
+    marginRight: '10@s'
+  },
+  price: {
+    fontSize: '16@s'
+  },
+  pricePercent: {
+    fontSize: '10@s',
+    marginTop: '5@s'
+  },
+  changeIndicator: {
+    marginTop: '5@s'
+  },
+  balanceLabel: {
+    color: '#595959',
+    fontSize: '12@s'
+  },
+  balance: {
+    flex: 1,
+    textAlign: 'right'
+  },
+  profit: {
+    flex: 1,
+    textAlign: 'right'
+  },
+  balanceCurrency: {
+    width: '30@s',
+    fontSize: '10@s',
+    marginLeft: '5@s'
+  },
+
+  popup: {
     justifyContent: "center",
     alignItems: "center"
   },
-  modalContainer: {
-    flex: 1,
-    flexDirection: 'column',
-    justifyContent: 'center',
-    alignItems: 'center'
+  coinList: {
+    width: '270@s',
+    backgroundColor: '#515151'
   },
   item: {
-    color: '#FFFFFF',
-    display: 'flex',
-    width: '100%'
+    height: '50@s',
+    alignItems: 'center',
+    justifyContent: 'center'
   },
-  saparator: {
-    height: 1,
-    width: "100%",
-    backgroundColor: "#CED0CE"
+  itemText: {
+    color: '#D9D9D9',
+    textAlign: 'center',
+    fontWeight: 'bold'
   },
-  containerItem: {
-
-  },
-  body: {
+  separator: {
+    height: 0.5,
+    width: '100%',
+    backgroundColor: "#5F5F5F"
   }
 });

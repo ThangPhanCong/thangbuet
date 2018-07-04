@@ -17,6 +17,52 @@ export default {
     appStore: 'Apple App Store',
     playStore: 'Google Play Store'
   },
+  currency: {
+    krw: {
+      fullname: '원',
+      shortname: 'KRW'
+    },
+    btc: {
+      fullname: '비트코인',
+      shortname: 'BITCOIN'
+    },
+    eth: {
+      fullname: '이더리움',
+      shortname: 'ETHEREUM'
+    },
+    bch: {
+      fullname: '비트코인캐시',
+      shortname: 'BITCOINCASH'
+    },
+    xrp: {
+      fullname: '리플',
+      shortname: 'RIPPLE'
+    },
+    ltc: {
+      fullname: '라이트코인',
+      shortname: 'LITECOIN'
+    },
+    etc: {
+      fullname: '이더리움클래식',
+      shortname: 'ETHEREUM CLASSIC'
+    },
+    dash: {
+      fullname: '대시',
+      shortname: 'DASH'
+    },
+    wbc: {
+      fullname: '윈윈윈',
+      shortname: 'WinWinWin'
+    },
+    krm: {
+      fullname: '카르마',
+      shortname: 'Karma'
+    },
+    espo: {
+      fullname: '에스포',
+      shortname: 'ESPO'
+    },
+  },
 
   login: {
     email: 'Email',
@@ -84,6 +130,10 @@ export default {
     _week: '{{weeks}}w',
     depth: 'Depth',
     full: 'Full'
+  },
+  tradeScreen: {
+    balance: '보유 잔고',
+    profit: '수익률'
   },
   orderForm: {
     buy: '매수',
