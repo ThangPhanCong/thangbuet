@@ -10,7 +10,8 @@ import {
   SafeAreaView,
   ScrollView,
   Modal,
-  Button
+  Button,
+  Alert
 } from 'react-native';
 import BaseScreen from '../BaseScreen'
 import MasterdataUtils from '../../utils/MasterdataUtils'
@@ -44,6 +45,18 @@ class DepositKRWScreen extends BaseScreen {
   componentWillUnmount() {
     this.setState({ isComplete: false })
   }
+
+  getSocketEventHandlers() {
+    return {
+      BalanceUpdated: this._onBalanceUpdated.bind(this),
+    };
+  }
+
+  _onBalanceUpdated(data) {
+    //TODO
+    console.log('DepositKRWScreen update', data)
+  }
+
 
   async _getPendingTransaction() {
     try {

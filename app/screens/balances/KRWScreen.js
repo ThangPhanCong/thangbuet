@@ -227,7 +227,7 @@ export default class KRWScreen extends BaseScreen {
           isVisible={this.state.krwConfirm}
           onBackdropPress={() => this.setState({ krwConfirm: false })}>
           <View style={styles.modalStyle}>
-            <View style={headerModalStyle}>
+            <View style={styles.headerModalStyle}>
               <Text>{I18n.t('deposit.confirmTitle')}</Text>
             </View>
 

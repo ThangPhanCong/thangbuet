@@ -49,4 +49,10 @@ export default class TransactionRequest extends BaseRequest {
     }
     return this.get(url, params);
   }
+
+  getWithdrawalDailyKrw(params) {
+    let url = '/transactions/withdraw-daily'
+
+    return this.post(url, params)
+  }
 }
