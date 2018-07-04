@@ -11,13 +11,17 @@ import {
   WebView,
   Dimensions
 } from 'react-native';
-import { Picker } from 'native-base';
+import ModalDropdown from 'react-native-modal-dropdown';
+import TouchableTextHighlight from '../../../utils/TouchableTextHighlight';
 import Modal from 'react-native-modal';
 import { Card } from 'react-native-elements';
 import BaseScreen from '../../BaseScreen';
 import rf from '../../../libs/RequestFactory';
 import I18n from '../../../i18n/i18n';
 import _ from 'lodash';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+
+// const DownArrowIcon = require('../../../../assets/common/caretdown.png');
 
 export default class SecurityOverviewScreen extends BaseScreen {
   _infoProps = [{
@@ -58,9 +62,7 @@ export default class SecurityOverviewScreen extends BaseScreen {
       registerPhoneDialogVisible: false,
       existedPhoneDialogVisible: false,
       bankAccountDialogVisible: false,
-      changePasswordDialogVisible: false,
-
-      cancelOtpButtonPressed: false,
+      changePasswordDialogVisible: false
     }
   }
 
@@ -123,19 +125,18 @@ export default class SecurityOverviewScreen extends BaseScreen {
         <View style={styles.valueGroup}>
           {
             this.state.info[item.propVerify] ? 
-            <TouchableHighlight style={styles.cancelOTPButton}
+            <TouchableTextHighlight style={styles.cancelOtpButton}
               onPress={this._onCancelGoogleAuth.bind(this)}
-              onPressIn={this._onPressInCancelOtpButton.bind(this)}
-              onPressOut={this._onPressOutCancelOtpButton.bind(this)}
-              underlayColor='#FF3300'>
-              <Text style={[styles.text, this.state.cancelOtpButtonPressed ? {color: '#FFF'} : {color: '#FF3300'}]}>
-                {I18n.t('myPage.security.cancelOTP')}
-              </Text>
-            </TouchableHighlight> :
+              underlayColor='#FF3300'
+              underlayTextColor='#FFF'
+              normalTextColor='#FF3300'
+              text={I18n.t('myPage.security.cancelOTP')}
+              textStyle={styles.text}/> :
             <Text style={styles.text}>
               {I18n.t('myPage.security.notAllowed')}
             </Text>
           }
+          
         </View>
 
         {this._renderVerifyButtonView(item, this._onVerifyGoogle.bind(this))}
@@ -390,14 +391,28 @@ export default class SecurityOverviewScreen extends BaseScreen {
           <Text style={styles.bankAccountTitle}>
             {I18n.t('myPage.security.bank')}
           </Text>
-          <Picker
-            style={styles.bankAccountPicker}
-            mode='dropdown'
-            selectedValue={this.state.selectedBank}
-            onValueChange={this._onBankPickerSelect.bind(this)}
-            itemStyle={{width: '100%'}}>
-            {this._renderBankItems()}
-          </Picker>
+
+          <View style={styles.bankAccountTextInput}>
+            <View style={{ position: 'absolute', right: 0, justifyContent: 'center', flex: 1, height: '100%'}}>
+              <Icon
+                name='menu-down'
+                size={22}
+                color= '#000'/>
+            </View>
+            <ModalDropdown
+              style={{flex: 1, justifyContent: 'center'}}
+              defaultValue=''
+              dropdownStyle={{
+                position: 'absolute',
+                marginTop: 20,
+                left: 0,
+                right: 65,
+                height: 120
+              }}
+              renderSeparator={() => <View style={{height: 0}}/>}
+              options={_.map(this._banks, 'name')}
+              onSelect={this._onBankPickerSelect.bind(this)}/>
+          </View>
 
           <Text style={styles.bankAccountTitle}>
             {I18n.t('myPage.security.bankAccountNumber')}
@@ -420,7 +435,9 @@ export default class SecurityOverviewScreen extends BaseScreen {
 
   _renderBankItems() {
     return _.map(this._banks, (bank, index) => (
-      <Picker.Item value={bank} label={bank} key={`${index}`}/>
+      <Option>
+        {bank.name}
+      </Option>
     ));
   }
 
@@ -509,22 +526,16 @@ export default class SecurityOverviewScreen extends BaseScreen {
     })
   }
 
-  _onPressInCancelOtpButton() {
-    this.setState({cancelOtpButtonPressed: true})
-  }
-
-  _onPressOutCancelOtpButton() {
-    this.setState({cancelOtpButtonPressed: false})
-  }
-
   _onSubmitBankAccount() {
     this._updateBankAccount();
   }
 
-  _onBankPickerSelect(itemValue, itemPosition) {
-    this.setState({selectedBank: itemValue});
-    this._bankParams.bank_id = itemValue.id;
-    this._bankParams.bank_name = itemValue.name;
+  _onBankPickerSelect(index) {
+    let selectedBank = this._banks[index];
+
+    this.setState({selectedBank});
+    this._bankParams.bank_id = selectedBank.id;
+    this._bankParams.bank_name = selectedBank.name;
   }
 
   _dismissSubmitModal() {

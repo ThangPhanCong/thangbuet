@@ -9,7 +9,7 @@ import {
   FlatList,
   Animated
 } from 'react-native';
-import { Picker } from 'native-base';
+import ModalDropdown from 'react-native-modal-dropdown';
 import { Card } from 'react-native-elements'
 import Modal from 'react-native-modal';
 import BaseScreen from '../../BaseScreen';
@@ -21,6 +21,7 @@ import _ from 'lodash';
 import Consts from '../../../utils/Consts';
 import TouchableTextHighlight from '../../../utils/TouchableTextHighlight';
 import ActionButton from 'react-native-action-button';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 export default class WalletScreen extends BaseScreen {
 
@@ -183,14 +184,27 @@ export default class WalletScreen extends BaseScreen {
           <Text style={styles.addNewWalletTitle}>
             {I18n.t('myPage.wallet.coinType')}
           </Text>
-          <Picker
-            style={styles.picker}
-            selectedValue={this.state.selectedCoinType}
-            mode='dropdown'
-            onValueChange={this._onCoinPickerSelect.bind(this)}
-            itemStyle={{width: '100%'}}>
-            {this._renderItems()}
-          </Picker>
+          <View style={styles.addNewWalletTextInput}>
+            <View style={{ position: 'absolute', right: 0, justifyContent: 'center', flex: 1, height: '100%'}}>
+              <Icon
+                name='menu-down'
+                size={22}
+                color= '#000'/>
+            </View>
+            <ModalDropdown
+              style={{flex: 1, justifyContent: 'center'}}
+              defaultValue=''
+              dropdownStyle={{
+                position: 'absolute',
+                marginTop: 20,
+                left: 0,
+                right: 65,
+                height: 200
+              }}
+              renderSeparator={() => <View style={{height: 0}}/>}
+              options={_.map(this._coinTypes, e => Utils.getCurrencyName(e))}
+              onSelect={this._onCoinPickerSelect.bind(this)}/>
+          </View>
 
           <Text style={styles.addNewWalletTitle}>
             {I18n.t('myPage.wallet.walletAddress')}
@@ -283,12 +297,6 @@ export default class WalletScreen extends BaseScreen {
     )
   }
 
-  _renderItems() {
-    return _.map(this._coinTypes, (coin, index) => (
-      <Picker.Item value={coin} label={Utils.getCurrencyName(coin)} key={`${index}`}/>
-    ));
-  }
-
   _onShowWalletEditor(wallet) {
     this.setState({
       newWalletParams: {
@@ -350,8 +358,9 @@ export default class WalletScreen extends BaseScreen {
     })
   }
 
-  _onCoinPickerSelect(itemValue, itemPosition) {
-    this.setState({selectedCoinType: itemValue});
+  _onCoinPickerSelect(index) {
+    let selectedCoinType = this._coinTypes[index];
+    this.setState({selectedCoinType});
   }
 
   async _loadWallets() {
