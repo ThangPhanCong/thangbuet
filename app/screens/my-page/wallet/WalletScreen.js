@@ -201,6 +201,8 @@ export default class WalletScreen extends BaseScreen {
                 right: 65,
                 height: 200
               }}
+              textStyle={{marginStart: 6.5}}
+              dropdownTextStyle={{fontSize: 13}}
               renderSeparator={() => <View style={{height: 0}}/>}
               options={_.map(this._coinTypes, e => Utils.getCurrencyName(e))}
               onSelect={this._onCoinPickerSelect.bind(this)}/>

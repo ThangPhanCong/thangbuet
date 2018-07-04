@@ -407,6 +407,8 @@ export default class SecurityOverviewScreen extends BaseScreen {
                 right: 65,
                 height: 120
               }}
+              textStyle={{marginStart: 6.5}}
+              dropdownTextStyle={{fontSize: 13}}
               renderSeparator={() => <View style={{height: 0}}/>}
               options={_.map(this._banks, 'name')}
               onSelect={this._onBankPickerSelect.bind(this)}/>

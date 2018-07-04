@@ -69,9 +69,8 @@ class MarketSearchScreen extends BaseScreen {
               underlineColorAndroid='transparent'
               onChangeText={this._onTextChanged.bind(this)}
               placeholder='검색'
-              placeholderTextColor="#A6A6A6"
-              
-            />
+              placeholderTextColor="#A6A6A6"/>
+            
             <View style={styles.iconContainer}>
               <Icon name="magnify"
                 size={PixelRatio.getPixelSizeForLayoutSize(12)}
@@ -232,6 +231,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row'
   },
   titleLeftView: {
+    fontSize: 13,
     marginStart: 5
   },
   searchViewContainer: {
@@ -258,7 +258,7 @@ const styles = StyleSheet.create({
     flex: 1,
     color: '#000',
     textAlign: 'center',
-    fontSize: 12,
+    fontSize: 13,
     height: 36,
     borderColor: null,
     alignSelf: 'center'
@@ -277,7 +277,7 @@ const styles = StyleSheet.create({
   },
   searchResultLabel: {
     color: '#3B3838',
-    fontSize: 14
+    fontSize: 13
   },
   searchResult: {
     zIndex: 99,

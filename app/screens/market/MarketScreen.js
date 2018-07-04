@@ -438,20 +438,12 @@ const styles = StyleSheet.create({
     width: 3
   },
   itemCoin: {
+    fontSize: 13,
     color: '#000'
-  },
-  secondaryText: {
-    color: CommonColors.secondaryText
   },
   priceGroup: {
     flex: 3,
     alignItems: 'flex-end',
-  },
-  increasedPrice: {
-    color: '#3ea954'
-  },
-  decreasedPrice: {
-    color: '#e0533c'
   },
   changeGroup: {
     flex: 2,
@@ -461,30 +453,15 @@ const styles = StyleSheet.create({
     flex: 3,
     alignItems: 'flex-end'
   },
-  changeSubGroup: {
-    width: 72,
-    height: 30,
-    borderRadius: 10,
-    justifyContent: 'center',
-    alignItems: 'center'
-  },
   increasedChange: {
     backgroundColor: '#3ea954',
   },
   decreasedChange: {
     backgroundColor: '#e0533c',
   },
-  changedText: {
-    color: '#FFFFFF'
-  },
-  itemSort: {
-    flex: 1,
-  },
   normalHeader: {
+    fontSize: 13,
     color: '#000'
-  },
-  volTab: {
-    color: '#656b7c'
   },
   tabBar: {
     flexDirection: 'row',
@@ -499,12 +476,15 @@ const styles = StyleSheet.create({
     width: 14,
   },
   negativeText: {
+    fontSize: 13,
     color: '#0070C0'
   },
   positiveText: {
+    fontSize: 13,
     color: '#FF0000'
   },
   normalText: {
+    fontSize: 13,
     color: '#000'
   }
 });
