@@ -56,9 +56,10 @@ export default class HeaderBalance extends BaseScreen {
         coinList[coin].name = coin
         coinList[coin].code = coin
         coinList[coin].icon = AppConfig.getAssetServer() + '/images/color_coins/' + coin + '.png'
-      });
+        coinList[coin].price = 1
+      })
 
-      this._onBalanceUpdated(coinList);
+      this._updateState(coinList)
     } catch (err) {
       console.log('Error in HeaderScreen._getSymbols: ', err)
     }
@@ -80,48 +81,58 @@ export default class HeaderBalance extends BaseScreen {
     }
   }
 
-  _onBalanceUpdated(newAccountBalances, ) {
-    console.log('header ', newAccountBalances)
-    for (balance in newAccountBalances) {
-      if (!newAccountBalances[balance].name) {
-        newAccountBalances[balance].name = balance
-      }
-      if (!newAccountBalances[balance].code) {
-        newAccountBalances[balance].code = balance
-      }
-      if (!newAccountBalances[balance].icon) {
-        newAccountBalances[balance].icon = AppConfig.getAssetServer() + '/images/color_coins/' + balance + '.png'
-      }
-    }
+  _onBalanceUpdated(symbolsUpdate) {
+    const data = this._fillData(symbolsUpdate)
 
-    this.accountBalances = Object.assign({}, this.accountBalances, newAccountBalances);
-    console.log('blance this.accountBalances ', this.accountBalances)
+    let symbols = this.state.symbols ? this.state.symbols : {}
+    symbols = Object.assign({}, symbols, data)
 
-    let balanceList = Object.values(this.accountBalances)
-
-    this._updateState(balanceList);
+    this._updateState(symbols)
   }
 
   _onPricesUpdated(prices) {
-    // console.log('prices', prices)
-    const coinList = this.state.symbols
-    coinList.map((coin, index) => {
-      if (coin.code.toLowerCase() === this.currency) {
-        coinList[index] = Object.assign({}, coinList[index], { price: 1 })
-      } else if (prices[this.currency + "_" + coin.code.toLowerCase()]) {
-        coinList[index] = Object.assign({}, coinList[index], prices[this.currency + "_" + coin.code.toLowerCase()])
-      }
-    })
+    const symbols = this.state.symbols
 
-    this._updateState(coinList);
+    for (symbol in symbols) {
+      if (symbol.toLowerCase() === this.currency) {
+        symbols[symbol] = Object.assign({}, symbols[symbol], { price: 1 })
+      } else if (prices[this.currency + "_" + symbol.toLowerCase()]) {
+        symbols[symbol] = Object.assign({}, symbols[symbol], prices[this.currency + "_" + symbol.toLowerCase()])
+      }
+    }
+
+    this._updateState(symbols, prices)
   }
 
-  _updateState(symbols) {
-    const assetsValuation = symbols.reduce(function (total, symbol) {
+  _fillData(symbols) {
+    const prices = this.state.prices
+
+    for (symbol in symbols) {
+      symbols[symbol].name = symbol
+      symbols[symbol].code = symbol
+      symbols[symbol].icon = AppConfig.getAssetServer() + '/images/color_coins/' + symbol + '.png'
+      if (symbol.toLowerCase() === this.currency) {
+        symbols[symbol] = Object.assign({}, symbols[symbol], { price: 1 })
+      } else if (prices[this.currency + "_" + symbol.toLowerCase()]) {
+        symbols[symbol] = Object.assign({}, symbols[symbol], prices[this.currency + "_" + symbol.toLowerCase()])
+      }
+    }
+
+    return symbols
+  }
+
+  _updateState(symbols, prices) {
+    const symbolArr = Object.values(symbols)
+
+    const assetsValuation = symbolArr.reduce(function (total, symbol) {
       return total + parseFloat(symbol.balance * symbol.price)
     }, 0)
 
-    this.setState({ symbols, assetsValuation })
+    if (prices) {
+      this.setState({ symbols, assetsValuation, prices })
+    } else {
+      this.setState({ symbols, assetsValuation })
+    }
   }
 
   render() {
