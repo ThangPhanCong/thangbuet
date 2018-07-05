@@ -66,22 +66,8 @@ class TransactionContainerScreen extends Component {
         responseTransaction = await rf.getRequest('OrderRequest').getOrderHistory(params);
       }
 
-      console.log("dcm:", transactions);
-      let transRightList = [];
-
-      transactions.forEach(trans => {
-        let transRight = {};
-
-        transRight['quantity'] = trans.quantity;
-        transRight['price'] = trans.price;
-        transRight['fee'] = trans.fee;
-        transRightList.push(transRight)
-      });
-
-      console.log("tranRIghtList:", transRightList)
       this.setState({
         transactions: [...transactions, ...responseTransaction.data.data],
-        transRightList: [...transRightList, ...responseTransaction.data.data],
       })
     } catch (err) {
       console.log('OrderRequest._error:', err)
