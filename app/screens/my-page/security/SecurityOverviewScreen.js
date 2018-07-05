@@ -405,7 +405,7 @@ export default class SecurityOverviewScreen extends BaseScreen {
                 marginTop: 20,
                 left: 0,
                 right: 65,
-                height: 120
+                height: this._calculateModalHeight()
               }}
               textStyle={{marginStart: 6.5}}
               dropdownTextStyle={{fontSize: 13}}
@@ -431,6 +431,15 @@ export default class SecurityOverviewScreen extends BaseScreen {
         </Card>
       </Modal>
     )
+  }
+
+  _calculateModalHeight() {
+    if (this._banks.length == 0)
+      return 39;
+    if (this._banks.length > 3) 
+      return 120;
+    
+    return this._banks.length * 39;
   }
 
   _renderBankItems() {
