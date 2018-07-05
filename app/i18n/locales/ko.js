@@ -423,6 +423,7 @@ export default {
     }
   },
   transactions: {
+    title: '주문/체결 내역',
     orderHistoryTab: '체결내역',
     openOrderTab: '미체결내역',
     fundsHistoryTab: '입출금내역',
