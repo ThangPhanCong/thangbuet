@@ -199,7 +199,7 @@ class ProfitAndLossScreen extends BaseScreen {
           </View>
 
           <View style={styles.profitGroup}>
-            <Text>{sum.endingBalance}</Text>
+            <Text style={[styles.itemCurrency]}>{sum.endingBalance}</Text>
             <Text style={[styles.itemCurrency]}>{Consts.CURRENCY_KRW.toUpperCase()}</Text>
           </View>
 
@@ -250,7 +250,7 @@ class ProfitAndLossScreen extends BaseScreen {
         </View>
 
         <View style={styles.profitGroup}>
-          <Text>{formatCurrency(item.ending_balance, item.currency)}</Text>
+          <Text style={[styles.itemCurrency]}>{formatCurrency(item.ending_balance, item.currency)}</Text>
           <Text style={[styles.itemCurrency]}>{getCurrencyName(item.currency)}</Text>
         </View>
 
@@ -278,9 +278,9 @@ class ProfitAndLossScreen extends BaseScreen {
 
     return (
       <View style={styles.screen}>
-        <View style={{ flexDirection: 'row' }}>
+        <View style={styles.viewDatePicker}>
           {this._renderDatePicker('start_date')}
-          <View style={{ alignSelf: 'center', marginLeft: scale(20) }}>
+          <View style={styles.viewSymbol}>
             <Text>~</Text>
           </View>
           {this._renderDatePicker('end_date')}
@@ -362,5 +362,13 @@ const styles = ScaledSheet.create({
     width: '50@s',
     borderRightColor: CommonColors.separator,
     borderRightWidth: '1@s',
+  },
+  viewDatePicker: {
+    flexDirection: 'row',
+    alignItems: 'center'
+  },
+  viewSymbol: {
+    alignSelf: 'center',
+    marginLeft: scale(20)
   }
 });

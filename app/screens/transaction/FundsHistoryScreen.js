@@ -207,9 +207,9 @@ class FundsHistoryScreen extends Component {
 
     return (
       <View style={styles.screen}>
-        <View style={{ flexDirection: 'row' }}>
+        <View style={styles.viewDatePicker}>
           {this._renderDatePicker('start_date')}
-          <View style={{ alignSelf: 'center', marginLeft: scale(20) }}>
+          <View style={styles.viewSymbol}>
             <Text>~</Text>
           </View>
           {this._renderDatePicker('end_date')}
@@ -321,5 +321,13 @@ const styles = ScaledSheet.create({
     alignItems: 'center',
     marginLeft: '20@s',
     marginRight: '20@s'
+  },
+  viewDatePicker: {
+    flexDirection: 'row',
+    alignItems: 'center'
+  },
+  viewSymbol: {
+    alignSelf: 'center',
+    marginLeft: scale(20)
   }
 })
