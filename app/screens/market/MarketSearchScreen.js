@@ -1,20 +1,16 @@
 import React from 'react';
 import {
-  Platform,
   StyleSheet,
   Text,
   TouchableOpacity,
   TouchableHighlight,
+  TouchableWithoutFeedback,
   PixelRatio,
   TextInput,
   SafeAreaView,
   View,
   FlatList
 } from 'react-native';
-import {
-  Card
-} from 'react-native-elements';
-import Modal from 'react-native-modal';
 import BaseScreen from '../BaseScreen';
 import { TabNavigator, TabBarTop } from 'react-navigation';
 import Consts from '../../utils/Consts';
@@ -46,6 +42,7 @@ class MarketSearchScreen extends BaseScreen {
       <SafeAreaView style = {styles.screen}>
         {this._renderHeader()}
         <TabBarNavigator onNavigationStateChange={this._onTabChanged.bind(this)}/>
+        {this._renderSearchList()}
       </SafeAreaView>
     )
   }
@@ -79,8 +76,6 @@ class MarketSearchScreen extends BaseScreen {
                 style={styles.searchIcon}
                 color="#000" />
             </View>
-
-            {this._renderSearchList()}
           </View>
         </View>
       </View>
@@ -89,30 +84,31 @@ class MarketSearchScreen extends BaseScreen {
 
   _renderSearchList() {
     let { searchList } = this.state;
-    if (_.isEmpty(searchList))
-      return null;
-
     return (
-      <Modal
-        isVisible={this.state.searchListVisible}
-        avoidKeyboard={true}
-        useNativeDriver={true}
-        backdropColor='transparent'
-        onBackdropPress={this._dismissSearchList.bind(this)}>
-        <Card style={styles.searchResult}
-          containerStyle={{flex: 1}}>
-          <FlatList
-            style={styles.listView}
-            data={this.state.searchList}
-            extraData={this.state}
-            renderItem={this._renderItem.bind(this)}
-            keyExtractor={(item, index) => index.toString()}/>
-        </Card>
-      </Modal>
+      this.state.searchListVisible && 
+      <View
+        style={{position: 'absolute', top: 50, left: 0, right: 0, bottom: 0, zIndex: 99, backgroundColor: 'transparent'}}>
+        <TouchableWithoutFeedback
+          style={{flex: 1}}
+          onPress={this._dismissSearchList.bind(this)}>
+          <View style={{flex: 1, backgroundColor: 'transparent'}}>
+            <View
+              style={styles.searchResult}>
+              <FlatList
+                style={styles.listView}
+                data={searchList}
+                extraData={this.state}
+                renderItem={this._renderItem.bind(this)}
+                keyExtractor={(item, index) => index.toString()}
+                ItemSeparatorComponent={this._renderSeparator}/>
+            </View>
+          </View>
+        </TouchableWithoutFeedback>
+      </View>
     )
   }
 
-  _renderItem(item){
+  _renderItem({ item }){
     return (
       <TouchableHighlight
         style={styles.listItem}
@@ -125,6 +121,12 @@ class MarketSearchScreen extends BaseScreen {
         </View>
       </TouchableHighlight>
     )
+  }
+
+  _renderSeparator(sectionID, rowID, adjacentRowHighlighted) {
+    return (
+      <View key="rowID" style={styles.separator}/>
+    );
   }
 
   _initTabNavigator() {
@@ -197,9 +199,11 @@ class MarketSearchScreen extends BaseScreen {
   }
 
   _dismissSearchList() {
-    this.setState({
-      searchListVisible: false
-    })
+    if (this.state.searchListVisible) {
+      this.setState({
+        searchListVisible: false
+      })
+    }
   }
 
   _onTextChanged(searchText) {
@@ -222,12 +226,23 @@ class MarketSearchScreen extends BaseScreen {
         symbol.coinPair = symbol.currency.toUpperCase() + '/' + symbol.coin.toUpperCase();        
         return symbol;
       })
+
       this.setState({
         searchList: symbols,
         searchListVisible: true
       })
     } catch (err) {
       console.log('MarketScreen._getSymbols', err);
+    }
+  }
+
+  onBackButtonPressAndroid() {
+    super.onBackButtonPressAndroid();
+
+    if (this.state.searchListVisible) {
+      this.setState({
+        searchListVisible: false
+      })
     }
   }
 }
@@ -284,14 +299,14 @@ const styles = StyleSheet.create({
     alignSelf: 'center'
   },
   listView: {
-    flex: 1,
+    flex: 1
   },
   listItem: {
     height: 44
   },
   listItemContainer: {
     flex: 1,
-    alignItems: 'center',
+    justifyContent: 'center',
     paddingLeft: 10,
     paddingRight: 10
   },
@@ -300,8 +315,15 @@ const styles = StyleSheet.create({
     fontSize: 13
   },
   searchResult: {
-    zIndex: 99,
-    marginTop: 3
+    borderColor: '#D9D9D9',
+    borderRadius: 2,
+    borderWidth: 1,
+    backgroundColor: '#FFF',
+    position: 'absolute',
+    width: '75%',
+    bottom: 0,
+    right: 16,
+    top: 0
   }
 });
 
