@@ -10,17 +10,21 @@ import HeaderTransaction from "./common/HeaderTransaction";
 import rf from "../../libs/RequestFactory";
 import BigNumber from 'bignumber.js';
 import { formatCurrency, getCurrencyName } from "../../utils/Filters";
+import BaseScreen from "../BaseScreen";
+import Consts from "../../../app/utils/Consts";
 
-class ProfitAndLossScreen extends Component {
+class ProfitAndLossScreen extends BaseScreen {
   state = {
     start_date: moment(new Date()).subtract(1, 'months'),
     end_date: new Date(),
     transactions: [],
-    statsPrices: [],
+    statsPrices: {},
+    sum: {}
   }
 
   componentDidMount() {
     this._loadData();
+    this._loadPrices();
   }
 
   getStartingBalanceByCoin(coin) {
@@ -52,50 +56,87 @@ class ProfitAndLossScreen extends Component {
       };
 
       const responseProfit = await rf.getRequest('TransactionRequest').getStats(params);
-      const responsePrice = responseProfit.data.startPrices;
-      let statsPrices = [];
-
-      for (let j in responsePrice) {
-        if (responsePrice.hasOwnProperty(j)) {
-          let innerObj = {};
-
-          innerObj[j] = responsePrice[j];
-          statsPrices.push(innerObj[j]);
-        }
-      }
-
-      this._calculateSumStartBalance(statsPrices, responseProfit.data.balances);
+      const statsPrices = responseProfit.data.startPrices;
 
       this.setState({
         transactions: [...transactions, ...responseProfit.data.balances],
         statsPrices
-      })
+      });
+
+      this._getSum();
 
     } catch (err) {
       console.log("ProfitHistory._error:", err)
     }
   }
 
-  _calculateSumStartBalance(statsPrices, transactions) {
-    let sum = 0;
-    const findKrw = transactions.find(item => item.currency === 'krw');
+  onPricesUpdated(newPrices) {
+    const { prices } = this.state;
 
-    for (let i = 0; i < statsPrices.length; i++) {
-      for (let j = 0; j < transactions.length; j++) {
-        const startBalance = parseFloat(this.getStartingBalanceByCoin(transactions[j]));
+    this.setState({ prices: { ...prices, ...newPrices } })
+    this._getSum();
+  }
 
-        if (statsPrices[i].currency === 'krw' && statsPrices[i].coin === transactions[j].currency) {
-          sum += parseFloat(statsPrices[i].price) * startBalance + parseFloat(this.getStartingBalanceByCoin(findKrw));
-        }
-      }
+  getSocketEventHandlers() {
+    return {
+      PricesUpdated: this.onPricesUpdated
+    }
+  }
+
+  async _loadPrices() {
+    try {
+      const responsePrice = await rf.getRequest('PriceRequest').getPrices();
+
+      this.onPricesUpdated(responsePrice.data);
+    } catch (err) {
+      console.log("LoadPrices._error:", err)
     }
 
-    return sum;
+  }
+
+  _calculateSum(title, startPrice, value) {
+    return (new BigNumber(title).times(startPrice).integerValue()).plus(value).toString();
+  }
+
+  _getSum() {
+    const { statsPrices, transactions, prices } = this.state;
+    let sum = {};
+
+    sum.deposit = '0';
+    sum.withdraw = '0';
+    sum.endingBalance = '0';
+    sum.startingBalance = '0';
+    sum.increaseBalance = '0';
+
+    transactions.forEach(trans => {
+      let price = 1;
+      let startPrice = 1;
+
+      if (trans.currency !== 'krw') {
+        const priceCurrency = prices['krw_' + trans.currency].price;
+        const statPriceCurrency = statsPrices['krw_' + trans.currency].price;
+
+        prices['krw_' + trans.currency] ? price = priceCurrency : price = 0;
+        statsPrices['krw_' + trans.currency] ? startPrice = statPriceCurrency : startPrice = 0;
+      }
+
+      sum.deposit = this._calculateSum(trans.deposit, price, sum.deposit);
+      sum.withdraw = this._calculateSum(trans.withdraw, price, sum.withdraw);
+      sum.endingBalance = this._calculateSum(trans.ending_balance, price, sum.endingBalance);
+      sum.startingBalance = this._calculateSum(this.getStartingBalanceByCoin(trans), startPrice, sum.startingBalance);
+    });
+
+    sum.increaseBalance = (new BigNumber(sum.endingBalance)).minus(sum.startingBalance).toString();
+    sum.percentIncrease = this.getPercentIncreaseBalance(sum.increaseBalance, sum.startingBalance);
+
+    this.setState({ sum })
+
   }
 
   _searchByDate() {
     this.setState({ page: 1, transactions: [] }, () => {
       this._loadData();
+      this._getSum();
     })
   }
 
@@ -131,47 +172,53 @@ class ProfitAndLossScreen extends Component {
   }
 
   _renderSum() {
-    return (
-      <View style={styles.itemContainer}>
-        <View style={{ flex: 1 }}>
-          <Text style={[styles.itemCurrency, { fontWeight: 'bold' }]}>{getCurrencyName(item.currency)}</Text>
-        </View>
+    const { sum } = this.state;
 
-        <View style={{ flex: 1, flexDirection: 'column' }}>
-          <Text style={[styles.itemCurrency]}>{startBalance}</Text>
-          <Text style={[styles.itemCurrency]}>{getCurrencyName(item.currency)}</Text>
+    if (sum.deposit) {
+      return (
+        <View style={styles.itemContainer}>
+          <View style={{ flex: 1 }}>
+            <Text style={[styles.itemCurrency, { fontWeight: 'bold' }]}>합계</Text>
+          </View>
 
-        </View>
+          <View style={{ flex: 1, flexDirection: 'column' }}>
+            <Text style={[styles.itemCurrency]}>{sum.startingBalance}</Text>
+            <Text style={[styles.itemCurrency]}>{Consts.CURRENCY_KRW.toUpperCase()}</Text>
 
-        <View style={{ flex: 1, flexDirection: 'column' }}>
-          <Text style={styles.itemDeposit}>{formatCurrency(item.deposit, item.currency)}</Text>
-          <Text style={styles.itemDeposit}>{getCurrencyName(item.currency)}</Text>
-        </View>
+          </View>
 
-        <View style={{ flex: 1, flexDirection: 'column' }}>
-          <Text style={styles.itemWithDrawl}>{formatCurrency(item.deposit, item.currency)}</Text>
-          <Text style={styles.itemWithDrawl}>{getCurrencyName(item.currency)}</Text>
-        </View>
+          <View style={{ flex: 1, flexDirection: 'column' }}>
+            <Text style={styles.itemDeposit}>{sum.deposit}</Text>
+            <Text style={styles.itemDeposit}>{Consts.CURRENCY_KRW.toUpperCase()}</Text>
+          </View>
 
-        <View style={{ flex: 1, flexDirection: 'column' }}>
-          <Text>{formatCurrency(item.ending_balance, item.currency)}</Text>
-          <Text style={[styles.itemCurrency]}>{getCurrencyName(item.currency)}</Text>
-        </View>
+          <View style={{ flex: 1, flexDirection: 'column' }}>
+            <Text style={styles.itemWithDrawl}>{sum.withdraw}</Text>
+            <Text style={styles.itemWithDrawl}>{Consts.CURRENCY_KRW.toUpperCase()}</Text>
+          </View>
 
-        <View style={{ flex: 1, flexDirection: 'column' }}>
-          <Text
-            style={this._checkDecrease(increase) ? styles.decreaseChange : styles.increaseChange}>
-            {increase}
-          </Text>
-          <Text
-            style={this._checkDecrease(increase) ? styles.decreaseChange : styles.increaseChange}>{getCurrencyName(item.currency)}</Text>
-        </View>
+          <View style={{ flex: 1, flexDirection: 'column' }}>
+            <Text>{sum.endingBalance}</Text>
+            <Text style={[styles.itemCurrency]}>{Consts.CURRENCY_KRW.toUpperCase()}</Text>
+          </View>
 
-        <View style={{ flex: 1 }}>
-          <Text style={this._checkDecrease(percent) ? styles.decreaseChange : styles.increaseChange}>{percent}</Text>
+          <View style={{ flex: 1, flexDirection: 'column' }}>
+            <Text
+              style={this._checkDecrease(sum.increaseBalance) ? styles.decreaseChange : styles.increaseChange}>
+              {sum.increaseBalance}
+            </Text>
+            <Text
+              style={this._checkDecrease(sum.increaseBalance) ? styles.decreaseChange : styles.increaseChange}>{Consts.CURRENCY_KRW.toUpperCase()}</Text>
+          </View>
+
+          <View style={{ flex: 1 }}>
+            <Text
+              style={this._checkDecrease(sum.percentIncrease) ? styles.decreaseChange : styles.increaseChange}>{sum.percentIncrease}</Text>
+          </View>
         </View>
-      </View>
-    )
+      )
+    }
+
   }
 
   _renderItem({ item }) {
@@ -241,6 +288,7 @@ class ProfitAndLossScreen extends Component {
 
         <View>
           <HeaderTransaction titles={titles}/>
+          {this._renderSum()}
           <FlatList data={transactions}
                     renderItem={this._renderItem.bind(this)}
             // onEndReached={this._handleLoadMore.bind(this)}
