@@ -5,9 +5,9 @@ import { scale } from '../libs/reactSizeMatter/scalingUtils';
 class CommonColors {
   static screenBgColor = '#FFF';
   static toolbarBgColor = '#202732';
-  static increased = '#2ba81e';
-  static decreased = '#ee4949';
-  static mainText = 'white';
+  static increased = '#FD0001';
+  static decreased = '#0065BF';
+  static mainText = '#000000';
   static secondaryText = '#898B8E';
   static highlightText = '#F0B353';
   static sencondaryTextColor = '#AAAAAA';
@@ -19,6 +19,7 @@ class CommonColors {
   static btnSubmitBgColor = '#1aa4fa';
   static headerTintColor = '#ffffff';
   static listItemBgColor = '#1a2030';
+  static separator = '#DEE3EB';
 };
 
 class CommonSize {
@@ -74,6 +75,9 @@ const CommonStyles = {
       fontSize: scale(9),
       paddingLeft: scale(1)
     }
+  },
+  bold: {
+    fontWeight: 'bold'
   }
 };
 

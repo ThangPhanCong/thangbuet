@@ -7,6 +7,7 @@ import {
   Text,
   TextInput,
   TouchableOpacity,
+  TouchableWithoutFeedback,
   View,
   Image
 } from 'react-native';
@@ -50,6 +51,7 @@ export default class OrderBook extends BaseScreen {
     this.yesterdayPrice = undefined;
     this.priceSetting = undefined;
     this.quantityPrecision = undefined;
+    this.settings = {};
   }
 
   async componentWillMount() {
@@ -74,15 +76,14 @@ export default class OrderBook extends BaseScreen {
     };
   }
 
-  reloadData() {
-    return this._loadData();
-  }
-
   componentDidUpdate(prevProps, prevState) {
-    // Reload order type list when change order type
-    if (prevProps.type != this.props.type) {
+    if (prevProps.currency != this.props.currency || prevProps.coin != this.props.coin) {
       this.reloadData();
     }
+  }
+
+  reloadData() {
+    return this._loadData();
   }
 
   _getCurrency() {
@@ -211,6 +212,7 @@ export default class OrderBook extends BaseScreen {
 
   async _onOrderBookSettingsUpdated(data) {
     this.settings = data;
+    console.log(this.settings);
     await this._getPriceSetting();
     this._updateOrderBook();
   }
@@ -235,7 +237,7 @@ export default class OrderBook extends BaseScreen {
       result = this._getOrderBookWithoutEmptyRow(orderBook, middlePrice, orderBookSize + 1, tickerSize);
     }
 
-    this._removeRedundantRows(result.buyOrderBook, result.sellOrderBook, orderBookSize);
+    result = this._removeRedundantRows(result.buyOrderBook, result.sellOrderBook, orderBookSize);
 
     this.setState(result);
   }
@@ -319,6 +321,8 @@ export default class OrderBook extends BaseScreen {
     if (sellOrderBook.length > orderBookSize) {
       sellOrderBook = sellOrderBook.slice(sellOrderBook.length - orderBookSize);
     }
+
+    return { buyOrderBook, sellOrderBook };
   }
 
   _getOrderBookSize() {
@@ -329,7 +333,7 @@ export default class OrderBook extends BaseScreen {
   }
 
   _getMiddlePrice(orderBook, currentPrice, tickerSize) {
-    let price = 0;
+    let price = parseFloat(currentPrice);
 
     var maxBuyGroup = _.maxBy(orderBook.buy, 'price');
     var maxBuyPrice = maxBuyGroup ? maxBuyGroup.price : 0;
@@ -348,8 +352,6 @@ export default class OrderBook extends BaseScreen {
       price = maxBuyPrice;
     } else if (minSellPrice > 0) {
       price = minSellPrice;
-    } else {
-      price = parseFloat(currentPrice);
     }
 
     price = Math.round(price / tickerSize) * tickerSize;
@@ -405,32 +407,20 @@ export default class OrderBook extends BaseScreen {
     }
   }
 
-  _renderBuyRowVertical(item, index) {
-    return (
-      <TouchableOpacity activeOpacity={1} style={styles.orderBookRow} key={index} onPress={() => this._rowClick(item)}>
-        <View style={[styles.buyPercentVertical, this._getPercentViewStyle(item)]} />
-        <Text style={styles.buyPriceVertical} >{this._formatPrice(item.price)}</Text>
-        <Text style={styles.buyQuantityVertical}>{this._formatQuantity(item.quantity)}</Text>
-      </TouchableOpacity>
-    );
-  }
-
-  _renderSellRowVertical(item, index) {
-    const { currency } = this.props;
-
-    return (
-      <TouchableOpacity activeOpacity={1} style={styles.orderBookRow} key={index} onPress={() => this._rowClick(item)}>
-        <View style={[styles.sellPercentVertical, this._getPercentViewStyle(item)]} />
-        <Text
-          style={styles.sellPrice}>{this._formatPrice(item.price)}</Text>
-        <Text style={styles.sellQuantity}>{this._formatQuantity(item.quantity)}</Text>
-      </TouchableOpacity>
-    );
+  render() {
+    switch (this.props.type) {
+      case OrderBook.TYPE_FULL:
+        return this._renderFullOrderBook();
+      case OrderBook.TYPE_SMALL:
+        return this._renderSmallOrderBook();
+      default:
+        return this._renderFullOrderBook();
+    }
   }
 
   _renderFullOrderBook() {
     return (
-      <View style={styles.screenFull}>
+      <View style={styles.screen}>
         {this._renderHeader()}
         <View style={styles.sellGroup}>
           {this.state.sellOrderBook.map((item, index) => {
@@ -444,7 +434,7 @@ export default class OrderBook extends BaseScreen {
           })}
         </View>
       </View>
-    )
+    );
   }
 
   _renderHeader() {
@@ -471,45 +461,49 @@ export default class OrderBook extends BaseScreen {
 
   _renderSellRow(item, index) {
     return (
-      <View style={styles.orderBookRow} key={index} onPress={() => this._rowClick(item)}>
-        <View style={[styles.userSellQuantityCell, styles.topBorder]}>
-          <Text style={styles.userSellQuantityText}>{this._formatQuantity(item.userQuantity)}</Text>
+      <TouchableWithoutFeedback key={index} onPress={() => this._onPressSmallOrderBookRow(item, Consts.TRADE_TYPE_SELL)}>
+        <View style={styles.orderBookRow}>
+          <View style={[styles.userSellQuantityCell, styles.topBorder]}>
+            <Text style={styles.userSellQuantityText}>{this._formatQuantity(item.userQuantity)}</Text>
+          </View>
+          <View style={[styles.quantityCell, styles.topBorder]}>
+            <View style={[styles.sellPercent, this._getPercentViewStyle(item)]} />
+            <Text style={styles.quantityText}>{this._formatQuantity(item.quantity)}</Text>
+          </View>
+          <View style={[styles.priceCell, styles.topBorder, this._getPriceCellStyle(item.price)]}>
+            <Text style={[styles.priceText, this._getPriceTextStyle(item.price)]}>{this._formatPrice(item.price)}</Text>
+          </View>
+          <View style={[styles.quantityCell, styles.topBorder]}>
+          </View>
+          <View style={[styles.userBuyQuantityCell, styles.topBorder]}>
+            <Text style={styles.userBuyQuantityText}></Text>
+          </View>
         </View>
-        <View style={[styles.quantityCell, styles.topBorder]}>
-          <View style={[styles.sellPercent, this._getPercentViewStyle(item)]} />
-          <Text style={styles.quantityText}>{this._formatQuantity(item.quantity)}</Text>
-        </View>
-        <View style={[styles.priceCell, styles.topBorder, this._getPriceCellStyle(item.price)]}>
-          <Text style={[styles.priceText, this._getPriceTextStyle(item.price)]}>{this._formatPrice(item.price)}</Text>
-        </View>
-        <View style={[styles.quantityCell, styles.topBorder]}>
-        </View>
-        <View style={[styles.userBuyQuantityCell, styles.topBorder]}>
-          <Text style={styles.userBuyQuantityText}></Text>
-        </View>
-      </View>
+      </TouchableWithoutFeedback>
     );
   }
 
   _renderBuyRow(item, index) {
     return (
-      <View style={styles.orderBookRow} key={index} onPress={() => this._rowClick(item)}>
-        <View style={[styles.userSellQuantityCell, styles.bottomBorder]}>
-          <Text style={styles.userSellQuantityText}></Text>
+      <TouchableWithoutFeedback key={index} onPress={() => this._onPressOrderBookCell(item, Consts.TRADE_TYPE_BUY)}>
+        <View style={styles.orderBookRow}>
+          <View style={[styles.userSellQuantityCell, styles.bottomBorder]}>
+            <Text style={styles.userSellQuantityText}></Text>
+          </View>
+          <View style={[styles.quantityCell, styles.bottomBorder]}>
+          </View>
+          <View style={[styles.priceCell, styles.bottomBorder, this._getPriceCellStyle(item.price)]}>
+            <Text style={[styles.priceText, this._getPriceTextStyle(item.price)]}>{this._formatPrice(item.price)}</Text>
+          </View>
+          <View style={[styles.quantityCell, styles.bottomBorder]}>
+            <View style={[styles.sellPercent, this._getPercentViewStyle(item)]} />
+            <Text style={styles.quantityText}>{this._formatQuantity(item.quantity)}</Text>
+          </View>
+          <View style={[styles.userBuyQuantityCell, styles.bottomBorder]}>
+            <Text style={styles.userBuyQuantityText}>{this._formatQuantity(item.userQuantity)}</Text>
+          </View>
         </View>
-        <View style={[styles.quantityCell, styles.bottomBorder]}>
-        </View>
-        <View style={[styles.priceCell, styles.bottomBorder, this._getPriceCellStyle(item.price)]}>
-          <Text style={[styles.priceText, this._getPriceTextStyle(item.price)]}>{this._formatPrice(item.price)}</Text>
-        </View>
-        <View style={[styles.quantityCell, styles.bottomBorder]}>
-          <View style={[styles.sellPercent, this._getPercentViewStyle(item)]} />
-          <Text style={styles.quantityText}>{this._formatQuantity(item.quantity)}</Text>
-        </View>
-        <View style={[styles.userBuyQuantityCell, styles.bottomBorder]}>
-          <Text style={styles.userBuyQuantityText}>{this._formatQuantity(item.userQuantity)}</Text>
-        </View>
-      </View>
+      </TouchableWithoutFeedback>
     );
   }
 
@@ -525,16 +519,14 @@ export default class OrderBook extends BaseScreen {
     if (price == this.currentPrice) {
       return styles.currentPrice;
     } else if (price >= this.yesterdayPrice) {
-      return styles.increasedPrice;
+      return CommonStyles.priceIncreased;
     } else {
-      return styles.decreasedPrice;
+      return CommonStyles.priceDescreased;
     }
   }
 
-  _rowClick(item) {
-    if (item.price) {
-      this.props.parentOrderForm.setPrice(item.price);
-    }
+  _onPressOrderBookCell(item, tradeType) {
+    this._notifyOrderBookPressed(item, tradeType, OrderBook.TYPE_FULL);
   }
 
   _formatQuantity(value) {
@@ -561,31 +553,68 @@ export default class OrderBook extends BaseScreen {
 
   _renderSmallOrderBook() {
     return (
-      <View
-        style={styles.screenVertical}>
-        <View style={CommonStyles.matchParent}>
-          {reverse([].concat(this.state.sellOrderBook)).map((item, index) => {
-            return this._renderSellRowVertical(item, index);
+      <View style={styles.screen}>
+        <View style={styles.sellGroup}>
+          {this.state.sellOrderBook.map((item, index) => {
+            return this._renderSmallSellRow(item, index);
           })}
         </View>
-
-        <View style={CommonStyles.matchParent}>
+        <View style={styles.buyGroup}>
           {this.state.buyOrderBook.map((item, index) => {
-            return this._renderBuyRowVertical(item, index);
+            return this._renderSmallBuyRow(item, index);
           })}
         </View>
       </View>
-    )
+    );
   }
 
-  render() {
-    switch (this.props.type) {
-      case OrderBook.TYPE_FULL:
-        return this._renderFullOrderBook();
-      case OrderBook.TYPE_SMALL:
-        return this._renderSmallOrderBook();
-      default:
-        return this._renderFullOrderBook();
+  _renderSmallSellRow(item, index) {
+    return (
+      <TouchableWithoutFeedback key={index} onPress={() => this._onPressSmallOrderBookRow(item, Consts.TRADE_TYPE_SELL)}>
+        <View style={styles.orderBookRow}>
+          <View
+            style={[styles.priceCell, styles.smallTopBorder, styles.smallSellPrice, this._getPriceCellStyle(item.price)]}>
+            <Text style={[styles.priceText, this._getPriceTextStyle(item.price)]}>{this._formatPrice(item.price)}</Text>
+          </View>
+          <View style={[styles.quantityCell, styles.smallTopBorder, styles.smallQuantity]}>
+            <View style={[styles.sellPercent, this._getPercentViewStyle(item)]} />
+            <Text style={styles.quantityText}>{this._formatQuantity(item.quantity)}</Text>
+          </View>
+        </View>
+      </TouchableWithoutFeedback>
+    );
+  }
+
+  _renderSmallBuyRow(item, index) {
+    return (
+      <TouchableWithoutFeedback key={index} onPress={() => this._onPressSmallOrderBookRow(item, Consts.TRADE_TYPE_BUY)}>
+        <View style={styles.orderBookRow}>
+          <View style={[
+              styles.priceCell,
+              styles.smallBottomBorder,
+              styles.smallBuyPrice,
+              this._getPriceCellStyle(item.price)]}>
+            <Text style={[styles.priceText, this._getPriceTextStyle(item.price)]}>{this._formatPrice(item.price)}</Text>
+          </View>
+          <View style={[styles.quantityCell, styles.smallBottomBorder, styles.smallQuantity]}>
+            <View style={[styles.sellPercent, this._getPercentViewStyle(item)]} />
+            <Text style={styles.quantityText}>{this._formatQuantity(item.quantity)}</Text>
+          </View>
+        </View>
+      </TouchableWithoutFeedback>
+    );
+  }
+
+  _onPressSmallOrderBookRow(item, tradeType) {
+    this._notifyOrderBookPressed(item, tradeType, OrderBook.TYPE_SMALL);
+  }
+
+  _notifyOrderBookPressed(item, tradeType, orderBookType) {
+    if (this.settings.click_to_order && item.price) {
+      let data = { ...item }
+      data.tradeType = tradeType;
+      data.orderBookType = orderBookType;
+      this.notify(Events.ORDER_BOOK_ROW_PRESSED, data);
     }
   }
 }
@@ -605,7 +634,7 @@ const cellText = {
 };
 
 const styles = ScaledSheet.create({
-  screenFull: {
+  screen: {
     flex: 1
   },
   screenVertical: {
@@ -718,65 +747,24 @@ const styles = ScaledSheet.create({
   currentPrice: {
     color: '#FFF'
   },
-  increasedPrice: {
-    color: '#FE0000'
-  },
-  decreasedPrice: {
-    color: '#0065BF'
-  },
 
-  buyPrice: {
-    flex: 1,
-    textAlign: 'right',
-    color: CommonColors.increased,
-    fontSize: fontSize
+  smallBuyPrice: {
+    backgroundColor: '#FFF0F0'
   },
-  buyQuantity: {
-    color: CommonColors.mainText,
-    fontSize: fontSize
+  smallSellPrice: {
+    backgroundColor: '#F0F6FB'
   },
-  buyPercent: {
-    position: 'absolute',
-    right: 0,
-    top: 0,
-    height: '100%',
-    backgroundColor: '#21281A'
+  smallQuantity: {
+    backgroundColor: '#FBFAFA'
   },
-
-  buyPriceVertical: {
-    color: CommonColors.increased,
-    fontSize: fontSize
+  smallTopBorder: {
+    borderTopWidth: borderWidth,
+    borderLeftWidth: borderWidth,
+    borderColor: '#FFF'
   },
-  buyQuantityVertical: {
-    flex: 1,
-    color: CommonColors.mainText,
-    fontSize: fontSize,
-    textAlign: 'right',
+  smallBottomBorder: {
+    borderBottomWidth: borderWidth,
+    borderLeftWidth: borderWidth,
+    borderColor: '#FFF'
   },
-  buyPercentVertical: {
-    position: 'absolute',
-    right: 0,
-    top: 0,
-    height: '100%',
-    backgroundColor: '#21281A'
-  },
-
-  sellPrice: {
-    color: CommonColors.decreased,
-    fontSize: fontSize
-  },
-  sellQuantity: {
-    flex: 1,
-    textAlign: 'right',
-    color: CommonColors.mainText,
-    fontSize: fontSize
-  },
-
-  sellPercentVertical: {
-    position: 'absolute',
-    right: 0,
-    top: 0,
-    height: '100%',
-    backgroundColor: '#311B2A'
-  }
 });

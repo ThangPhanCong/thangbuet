@@ -14,7 +14,7 @@ export default class BaseRequest {
       headers: this._getHeader()
     });
     this._logRequest('GET', url, params);
-    return await this._processResponse(response);
+    return await this._processResponse(response, url);
   }
 
   async put(url, params = {}) {
@@ -24,7 +24,7 @@ export default class BaseRequest {
       body: JSON.stringify(params)
     });
     this._logRequest('PUT', url, params);
-    return await this._processResponse(response);
+    return await this._processResponse(response, url);
   }
 
   async post(url, params = {}) {
@@ -34,7 +34,7 @@ export default class BaseRequest {
       body: JSON.stringify(params)
     });
     this._logRequest('POST', url, params);
-    return await this._processResponse(response);
+    return await this._processResponse(response, url);
   }
 
   async del(url, params = {}) {
@@ -44,7 +44,7 @@ export default class BaseRequest {
       body: JSON.stringify(params)
     });
     this._logRequest('DELETE', url, params);
-    return await this._processResponse(response);
+    return await this._processResponse(response, url);
   }
 
   _getFullUrl(url) {
@@ -59,8 +59,8 @@ export default class BaseRequest {
     }
   }
 
-  async _processResponse(response) {
-    await this._checkResponseCode(response);
+  async _processResponse(response, url) {
+    await this._checkResponseCode(response, url);
 
     const content = await response.text();
     let data = undefined;
@@ -76,12 +76,15 @@ export default class BaseRequest {
     return data;
   }
 
-  async _checkResponseCode(response) {
+  async _checkResponseCode(response, url) {
     if (!response.ok) {
       if (response.status == '401') {
         AppPreferences.removeAccessToken();
         window.GlobalSocket.disconnect();
         // RNRestart.Restart();
+        if (!this._isLoginRequest(url)) {
+          RNRestart.Restart();
+        }
       }
 
       const content = await response.text();
@@ -96,6 +99,10 @@ export default class BaseRequest {
 
       throw data;
     }
+  }
+
+  _isLoginRequest(url) {
+    return url === '/oauth/token';
   }
 
   _logRequest(method, url, params) {

@@ -2,6 +2,23 @@ import Numeral from '../libs/numeral';
 import Consts from './Consts';
 import { isNil } from 'lodash';
 
+if (!String.prototype.format) {
+  String.prototype.format = function() {
+    var args = arguments;
+    return this.replace(/{(\d+)}/g, (match, number) => { 
+      return typeof args[number] != 'undefined' ? args[number] : match;
+    })
+  }
+}
+
+if (!String.format) {
+  String.format = function(source, ...args) {
+    return source.replace(/{(\d+)}/g, (match, number) => { 
+      return typeof args[number] != 'undefined' ? args[number] : match;
+    })
+  }
+}
+
 export default {
   getPriceKey(currency, coin) {
     return currency + '_' + coin;
