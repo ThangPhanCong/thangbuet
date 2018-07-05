@@ -286,5 +286,22 @@ export default {
     orderPrice: '가격',
     excutedPrice: '거래 대금',
     fee: '수수료',
+    cancel: '취소',
+    success: '완료',
+    pending: '진행중',
+    funds: {
+      amount: '수량/금액',
+      account: 'TXID/계좌',
+      status: '상태'
+    },
+    profit: {
+      type: '구분',
+      excess: '기초 보유 잔고',
+      totalDeposit: '입금 합계',
+      totalWithDrawl: '출금 합계',
+      endingBalance: '기말 보유 잔고',
+      inscreaseAssets: '자산 증감',
+      rateChange: '증감률',
+    }
   }
 };
