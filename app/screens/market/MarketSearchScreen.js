@@ -1,22 +1,21 @@
 import React from 'react';
 import {
+  StyleSheet,
   Text,
   TouchableOpacity,
   TouchableHighlight,
+  TouchableWithoutFeedback,
   PixelRatio,
   TextInput,
   SafeAreaView,
   View,
-  FlatList
+  FlatList,
+  Dimensions
 } from 'react-native';
-import {
-  Card
-} from 'react-native-elements';
 import BaseScreen from '../BaseScreen';
 import { TabNavigator, TabBarTop } from 'react-navigation';
 import Consts from '../../utils/Consts';
 import { CommonStyles } from '../../utils/CommonStyles';
-import ScaledSheet from '../../libs/reactSizeMatter/ScaledSheet';
 import I18n from '../../i18n/i18n';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import MarketScreen from './MarketScreen';
@@ -29,10 +28,13 @@ class MarketSearchScreen extends BaseScreen {
 
   _refs = {};
 
+  _searchInputWidth = 0;
+
   constructor(props) {
     super(props);
     this.state = {
       searchList: [],
+      searchListVisible: false,
       isFavoriteFilter: false
     }
     TabBarNavigator = this._initTabNavigator();
@@ -43,6 +45,7 @@ class MarketSearchScreen extends BaseScreen {
       <SafeAreaView style = {styles.screen}>
         {this._renderHeader()}
         <TabBarNavigator onNavigationStateChange={this._onTabChanged.bind(this)}/>
+        {this._renderSearchList()}
       </SafeAreaView>
     )
   }
@@ -59,25 +62,26 @@ class MarketSearchScreen extends BaseScreen {
               color={this.state.isFavoriteFilter ? '#FFC000' : '#D9D9D9'} />
           </TouchableOpacity>
           <Text style = {styles.titleLeftView}>
-            즐겨찾기
+            {I18n.t('marketList.favorite')}
           </Text>
         </View>
         <View style={styles.searchViewContainer}>
-          <View style={styles.searchView}>
+          <View style={styles.searchView}
+            onLayout={(event) => this._searchInputWidth = event.nativeEvent.layout.width}>
             <TextInput style={styles.inputSearch}
               underlineColorAndroid='transparent'
               onChangeText={this._onTextChanged.bind(this)}
+              onFocus={this._onSearchFocus.bind(this)}
               placeholder='검색'
-              placeholderTextColor="#A6A6A6"
-            />
+              placeholderTextColor="#A6A6A6"/>
+            
             <View style={styles.iconContainer}>
               <Icon name="magnify"
-                size={PixelRatio.getPixelSizeForLayoutSize(8)}
+                size={PixelRatio.getPixelSizeForLayoutSize(12)}
                 style={styles.searchIcon}
                 color="#000" />
             </View>
           </View>
-          {this._renderSearchList()}
         </View>
       </View>
     )
@@ -85,22 +89,31 @@ class MarketSearchScreen extends BaseScreen {
 
   _renderSearchList() {
     let { searchList } = this.state;
-    if (_.isEmpty(searchList))
-      return null;
-
     return (
-      <Card style={styles.searchResult}>
-        <FlatList
-          style={styles.listView}
-          data={this.state.searchList}
-          extraData={this.state}
-          renderItem={this._renderItem.bind(this)}
-        />
-      </Card>
+      this.state.searchListVisible && 
+      <View
+        style={{position: 'absolute', top: 50, left: 0, right: 0, bottom: 0, zIndex: 99, backgroundColor: 'transparent'}}>
+        <TouchableWithoutFeedback
+          style={{flex: 1}}
+          onPress={this._dismissSearchList.bind(this)}>
+          <View style={{flex: 1, backgroundColor: 'transparent'}}>
+            <View
+              style={[styles.searchResult, { width: this._searchInputWidth }]}>
+              <FlatList
+                style={styles.listView}
+                data={searchList}
+                extraData={this.state}
+                renderItem={this._renderItem.bind(this)}
+                keyExtractor={(item, index) => index.toString()}
+                ItemSeparatorComponent={this._renderSeparator}/>
+            </View>
+          </View>
+        </TouchableWithoutFeedback>
+      </View>
     )
   }
 
-  _renderItem(item){
+  _renderItem({ item }){
     return (
       <TouchableHighlight
         style={styles.listItem}
@@ -113,6 +126,12 @@ class MarketSearchScreen extends BaseScreen {
         </View>
       </TouchableHighlight>
     )
+  }
+
+  _renderSeparator(sectionID, rowID, adjacentRowHighlighted) {
+    return (
+      <View key="rowID" style={styles.separator}/>
+    );
   }
 
   _initTabNavigator() {
@@ -184,15 +203,32 @@ class MarketSearchScreen extends BaseScreen {
     })
   }
 
-  async _onTextChanged(searchText) {
-    let searchList;
-    if (_.isEmpty(searchText))
-      searchList = [];
-    else
-      searchList = await this._searchList(searchText.toLowerCase());
+  _dismissSearchList() {
+    if (this.state.searchListVisible) {
+      this.setState({
+        searchListVisible: false
+      })
+    }
+  }
+
+  _onTextChanged(searchText) {
+    if (_.isEmpty(searchText)) {
+      this.setState({
+        searchList: [],
+        searchListVisible: false
+      })
+      return;
+    }
     
+    this._searchList(searchText.toLowerCase());
+  }
+
+  _onSearchFocus(event) {
+    if (_.isEmpty(this.state.searchList))
+      return;
+
     this.setState({
-      searchList
+      searchListVisible: true
     })
   }
 
@@ -204,49 +240,64 @@ class MarketSearchScreen extends BaseScreen {
         symbol.coinPair = symbol.currency.toUpperCase() + '/' + symbol.coin.toUpperCase();        
         return symbol;
       })
-      return symbols;
+
+      this.setState({
+        searchList: symbols,
+        searchListVisible: true
+      })
     } catch (err) {
       console.log('MarketScreen._getSymbols', err);
     }
   }
+
+  onBackButtonPressAndroid() {
+    super.onBackButtonPressAndroid();
+
+    if (this.state.searchListVisible) {
+      this.setState({
+        searchListVisible: false
+      })
+    }
+  }
 }
 
-const styles = ScaledSheet.create({
+const styles = StyleSheet.create({
   screen: {
     ...CommonStyles.screen
   },
 
   header: {
-    height: '60@s',
+    height: 60,
     flexDirection: 'row'
   },
   favoriteButton: {
 
   },
   leftView: {
-    marginStart: '16@s',
+    marginStart: 16,
     flex: 1,
     alignItems: 'center',
     flexDirection: 'row'
   },
   titleLeftView: {
-    marginStart: '5@s'
+    fontSize: 13,
+    marginStart: 5
   },
   searchViewContainer: {
     flex: 3,
     justifyContent: 'center',
-    marginEnd: '16@s'
+    marginEnd: 16
   },
   iconContainer: {
     justifyContent: 'center',
     alignItems: 'center',
-    marginEnd: '2@s'
+    marginEnd: 2
   },
   searchView: {
     borderColor: '#BFBFBF',
     borderWidth: 1,
     flexDirection: 'row',
-    borderRadius: '5@s',
+    borderRadius: 5,
     alignItems: 'center'
   },
   searchIcon: {
@@ -256,31 +307,36 @@ const styles = ScaledSheet.create({
     flex: 1,
     color: '#000',
     textAlign: 'center',
-    fontSize: "12@s",
-    height: "30@s",
-    marginStart: "6@s",
+    fontSize: 13,
+    height: 36,
     borderColor: null,
     alignSelf: 'center'
   },
   listView: {
-    flex: 1,
+    flex: 1
   },
   listItem: {
-    height: "44@s"
+    height: 44
   },
   listItemContainer: {
     flex: 1,
-    alignItems: 'center',
-    paddingLeft: "10@s",
-    paddingRight: "10@s"
+    justifyContent: 'center',
+    paddingLeft: 10,
+    paddingRight: 10
   },
   searchResultLabel: {
     color: '#3B3838',
-    fontSize: '14@s'
+    fontSize: 13
   },
   searchResult: {
-    zIndex: 99,
-    marginTop: '3@s'
+    borderColor: '#D9D9D9',
+    borderRadius: 2,
+    borderWidth: 1,
+    backgroundColor: '#FFF',
+    position: 'absolute',
+    right: 16,
+    top: 0,
+    bottom: 0
   }
 });
 
