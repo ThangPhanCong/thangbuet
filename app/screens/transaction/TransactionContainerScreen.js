@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { FlatList, Text, View, TouchableWithoutFeedback } from "react-native";
+import { FlatList, Text, View, TouchableWithoutFeedback, ScrollView } from "react-native";
 import rf from "../../libs/RequestFactory";
 import moment from "moment";
 import { scale } from "../../libs/reactSizeMatter/scalingUtils";
@@ -66,7 +66,23 @@ class TransactionContainerScreen extends Component {
         responseTransaction = await rf.getRequest('OrderRequest').getOrderHistory(params);
       }
 
-      this.setState({ transactions: [...transactions, ...responseTransaction.data.data] })
+      console.log("dcm:", transactions);
+      let transRightList = [];
+
+      transactions.forEach(trans => {
+        let transRight = {};
+
+        transRight['quantity'] = trans.quantity;
+        transRight['price'] = trans.price;
+        transRight['fee'] = trans.fee;
+        transRightList.push(transRight)
+      });
+
+      console.log("tranRIghtList:", transRightList)
+      this.setState({
+        transactions: [...transactions, ...responseTransaction.data.data],
+        transRightList: [...transRightList, ...responseTransaction.data.data],
+      })
     } catch (err) {
       console.log('OrderRequest._error:', err)
     }
@@ -202,19 +218,18 @@ class TransactionContainerScreen extends Component {
     return (
       <View style={styles.itemContainer}>
         <View style={styles.itemLeftContainer}>
-          <View style={{ flex: 1, alignItems: 'center' }}>
+          <View style={styles.timeContainer}>
             <Text style={styles.itemDayMonth}>{getDayMonth(item.created_at)}</Text>
             <Text style={styles.itemTime}>{getTime(item.created_at)}</Text>
           </View>
 
-          <View style={{ flex: 1.5, flexDirection: 'row', alignItems: 'center' }}>
+          <View style={styles.coinPairContainer}>
             <Text style={[styles.itemCoin, { fontWeight: 'bold' }]}>{getCurrencyName(item.coin)}</Text>
             <Text style={[styles.itemCurrency, { fontWeight: 'bold' }]}>{' / ' + getCurrencyName(item.currency)}</Text>
           </View>
         </View>
 
-        <View style={{ flex: 1.8, flexDirection: 'row' }}
-        >
+        <View style={{ flexDirection: 'row' }}>
           <View style={styles.itemRight}>
             <Text style={styles.itemQuantity}>
               {formatCurrency(item.quantity, item.coin)}
@@ -223,25 +238,23 @@ class TransactionContainerScreen extends Component {
             <Text style={[styles.itemCoin]}>{getCurrencyName(item.coin)}</Text>
           </View>
 
-          <View style={styles.columnPrice}>
+          <View style={styles.itemRight}>
             <Text style={styles.itemPrice}>{formatCurrency(item.price, item.currency)}</Text>
             <Text style={styles.itemCurrency}>{getCurrencyName(item.currency)}</Text>
           </View>
 
-          <View style={styles.columnPrice}>
+          <View style={styles.itemRight}>
             <Text style={styles.itemQuantityPrice}>{formatCurrency(item.price * item.quantity, item.currency)}</Text>
             <Text style={styles.itemCurrency}>{getCurrencyName(item.currency)}</Text>
           </View>
 
           {title === I18n.t('transactions.openOrderTab') ? this._renderStatusOrder(item) :
-            <View style={styles.itemRight}>
+            <View style={[styles.itemRight, {marginRight: scale(10)}]}>
               <Text style={styles.itemFee}>
                 {formatCurrency(item.fee, item.coin)}
               </Text>
               <Text style={styles.itemCoin}>{getCurrencyName(item.coin)}</Text>
             </View>}
-
-
         </View>
       </View>
     )
@@ -249,7 +262,7 @@ class TransactionContainerScreen extends Component {
 
   render() {
     const { transactions } = this.state;
-    const titles= [I18n.t('transactions.amount'), I18n.t('transactions.orderPrice'),
+    const titles = [I18n.t('transactions.amount'), I18n.t('transactions.orderPrice'),
       I18n.t('transactions.excutedPrice'), I18n.t('transactions.fee')];
 
     return (
@@ -264,19 +277,19 @@ class TransactionContainerScreen extends Component {
         </View>
 
         <View>
-          {/*{this._renderHeader()}*/}
-          <HeaderTransaction sortDate={() => this._onSortDate()}
-                             titles={titles}
-                             sortPair={() => this._onSortPair()}
-                             renderArrowDate={this._renderArrow(TransactionContainerScreen.SORT_FIELDS.DATE)}
-                             renderArrowPair={this._renderArrow(TransactionContainerScreen.SORT_FIELDS.PAIR)}
-          />
-          <FlatList data={transactions}
-                    renderItem={this._renderItem.bind(this)}
-                    onEndReached={this._handleLoadMore.bind(this)}
-                    onEndThreshold={100}/>
+          <ScrollView horizontal={true} contentContainerStyle={{ flexDirection: 'column' }}>
+            <HeaderTransaction sortDate={() => this._onSortDate()}
+                               titles={titles}
+                               sortPair={() => this._onSortPair()}
+                               renderArrowDate={this._renderArrow(TransactionContainerScreen.SORT_FIELDS.DATE)}
+                               renderArrowPair={this._renderArrow(TransactionContainerScreen.SORT_FIELDS.PAIR)}
+            />
+            <FlatList data={transactions}
+                      renderItem={this._renderItem.bind(this)}
+                      onEndReached={this._handleLoadMore.bind(this)}
+                      onEndThreshold={100}/>
+          </ScrollView>
         </View>
-
       </View>
     )
   }
@@ -298,7 +311,6 @@ const styles = ScaledSheet.create({
     borderColor: CommonColors.separator
   },
   itemContainer: {
-    alignItems: 'center',
     flexDirection: 'row',
     height: '50@s',
     borderBottomColor: CommonColors.separator,
@@ -314,11 +326,12 @@ const styles = ScaledSheet.create({
     fontSize: '11@s'
   },
   itemCoin: {
-    color: CommonColors.mainText
+    color: CommonColors.mainText,
+    fontSize: '13@s'
   },
   itemCurrency: {
     color: CommonColors.mainText,
-    fontSize: '14@s'
+    fontSize: '13@s'
   },
   itemQuantity: {
     fontSize: '12@s',
@@ -337,9 +350,16 @@ const styles = ScaledSheet.create({
     borderRightColor: CommonColors.separator,
     borderRightWidth: '1@s',
   },
+  timeContainer: {
+    flex: 1,
+    marginLeft: '2@s',
+    justifyContent: 'center',
+    alignItems: 'center',
+    flexDirection: 'column'
+  },
   itemRight: {
     flexDirection: 'column',
-    flex: 1,
+    width: '100@s',
     alignItems: 'flex-end',
     justifyContent: 'center',
   },
@@ -371,13 +391,22 @@ const styles = ScaledSheet.create({
   },
   viewCancel: {
     backgroundColor: '#ff5d5d',
-    width: '40@s',
-    height: '30@s',
+    width: '50@s',
+    height: '25@s',
+    marginRight: '5@s',
+    borderRadius: '5@s',
     alignItems: 'center',
     justifyContent: 'center'
   },
   textCancel: {
     fontSize: '12@s',
     color: '#FFF'
+  },
+  coinPairContainer: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginLeft: '20@s',
+    marginRight: '20@s'
   }
 });

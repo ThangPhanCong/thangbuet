@@ -14,28 +14,39 @@ class HeaderTransaction extends Component {
         <View style={{
           flexDirection: 'row', flex: 1, marginLeft: scale(8),
         }}>
-          <TouchableWithoutFeedback onPress={sortDate ? () => sortDate() : () => {}}>
-            <View style={{ flex: 1, flexDirection: 'row' }}>
-              <Text>{I18n.t('transactions.time')}</Text>
+          <TouchableWithoutFeedback onPress={sortDate ? () => sortDate() : () => {
+          }}>
+            <View style={{ width: scale(50), flexDirection: 'row' }}>
+              <Text style={styles.headerTitle}>{I18n.t('transactions.time')}</Text>
               {renderArrowDate}
             </View>
           </TouchableWithoutFeedback>
 
-          <TouchableWithoutFeedback onPress={sortPair ? () => sortPair() : () => {}}>
-            <View style={{ flexDirection: 'row', flex: 1.5 }}>
-              <Text>{I18n.t('transactions.pair')}</Text>
+          <TouchableWithoutFeedback onPress={sortPair ? () => sortPair() : () => {
+          }}>
+            <View style={styles.headerCoinPair}>
+              <Text style={styles.headerTitle}>{I18n.t('transactions.pair')}</Text>
               {renderArrowPair}
             </View>
           </TouchableWithoutFeedback>
         </View>
 
-        <View style={{ flex: 1, flexDirection: 'row' }}>
-          <Text style={{
-            flex: 1, alignItems: 'flex-end',
-          }}> {titles[0]}</Text>
-          <Text style={{ flex: 1 }}>{titles[1]}</Text>
-          <Text style={{ flex: 1 }}>{titles[2]}</Text>
-          <Text style={{ flex: 1 }}>{titles[3]}</Text>
+        <View style={{ flexDirection: 'row' }}>
+          <View style={styles.headerItem}>
+            <Text style={styles.headerTitle}>{titles[0]}</Text>
+          </View>
+
+          <View style={styles.headerItem}>
+            <Text style={styles.headerTitle}>{titles[1]}</Text>
+          </View>
+
+          <View style={styles.headerItem}>
+            <Text style={styles.headerTitle}>{titles[2]}</Text>
+          </View>
+
+          <View style={[styles.headerItem, { marginRight: scale(10) }]}>
+            <Text style={styles.headerTitle}>{titles[3]}</Text>
+          </View>
         </View>
       </View>
     )
@@ -53,4 +64,19 @@ const styles = ScaledSheet.create({
     borderWidth: '1@s',
     borderColor: CommonColors.separator
   },
+  headerItem: {
+    flexDirection: 'column',
+    width: scale(100),
+    alignItems: 'flex-end',
+    justifyContent: 'center',
+  },
+  headerTitle: {
+    fontSize: '12@s',
+    color: CommonColors.mainText
+  },
+  headerCoinPair: {
+    flexDirection: 'row',
+    width: '50@s',
+    marginLeft: '20@s'
+  }
 })
