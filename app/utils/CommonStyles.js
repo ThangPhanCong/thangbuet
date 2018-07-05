@@ -11,7 +11,7 @@ class CommonColors {
   static secondaryText = '#898B8E';
   static highlightText = '#F0B353';
   static sencondaryTextColor = '#AAAAAA';
-  static border = '#404A55';
+  static border = '#CFCFCF';
   static popupBg = '#202732';
   static headerTitleColor = '#8e929e';
   static textInputBgColor = '#1a2030';
