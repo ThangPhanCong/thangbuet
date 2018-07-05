@@ -7,6 +7,8 @@ import { TabBarTop, TabNavigator } from "react-navigation";
 import TransactionContainerScreen from "./TransactionContainerScreen";
 import { CommonStyles } from "../../utils/CommonStyles";
 import I18n from "../../i18n/i18n";
+import FundsHistoryScreen from "./FundsHistoryScreen";
+import ProfitAndLossScreen from "./ProfitAndLossScreen";
 
 let TabBarNavigatorTransaction;
 
@@ -33,13 +35,13 @@ export default class TransactionScreen extends BaseScreen {
           })
         },
         FundsHistory: {
-          screen: (props) => <TransactionContainerScreen {...props} title={I18n.t('transactions.fundsHistoryTab')}/>,
+          screen: (props) => <FundsHistoryScreen {...props} title={I18n.t('transactions.fundsHistoryTab')}/>,
           navigationOptions: () => ({
             tabBarLabel: I18n.t('transactions.fundsHistoryTab'),
           })
         },
         ProfitScreen: {
-          screen: (props) => <TransactionContainerScreen {...props} title={I18n.t('transactions.profitLostTab')}/>,
+          screen: (props) => <ProfitAndLossScreen {...props} title={I18n.t('transactions.profitLostTab')}/>,
           navigationOptions: () => ({
             tabBarLabel: I18n.t('transactions.profitLostTab'),
           })
