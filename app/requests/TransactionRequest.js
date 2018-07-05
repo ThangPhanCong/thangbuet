@@ -40,14 +40,15 @@ export default class TransactionRequest extends BaseRequest {
     return this.get(url, params);
   }
 
-  getTrasactionHistory(page = 1, limit = 13, type) {
+  getTrasactionHistory(params) {
     let url = '/transactions';
-    let params = {
-      page: page,
-      limit: limit,
-      type: type
-    }
+
     return this.get(url, params);
   }
 
+  getWithdrawalDailyKrw(params) {
+    let url = '/transactions/withdraw-daily'
+
+    return this.post(url, params)
+  }
 }

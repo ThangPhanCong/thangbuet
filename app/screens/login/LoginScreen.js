@@ -30,7 +30,7 @@ export default class LoginScreen extends BaseScreen {
       let responseUser = await rf.getRequest('UserRequest').login(this.state.email, this.state.password);
       AppPreferences.saveAccessToken(responseUser.access_token);
       window.GlobalSocket.connect();
-      // console.log('responseUser', responseUser)
+      console.log('responseUser', responseUser)
       this.navigate('MainScreen', {});
 
     } catch (err) {
