@@ -9,7 +9,8 @@ import {
   TextInput,
   SafeAreaView,
   View,
-  FlatList
+  FlatList,
+  Dimensions
 } from 'react-native';
 import BaseScreen from '../BaseScreen';
 import { TabNavigator, TabBarTop } from 'react-navigation';
@@ -26,6 +27,8 @@ let TabBarNavigator;
 class MarketSearchScreen extends BaseScreen {
 
   _refs = {};
+
+  _searchInputWidth = 0;
 
   constructor(props) {
     super(props);
@@ -63,10 +66,12 @@ class MarketSearchScreen extends BaseScreen {
           </Text>
         </View>
         <View style={styles.searchViewContainer}>
-          <View style={styles.searchView}>
+          <View style={styles.searchView}
+            onLayout={(event) => this._searchInputWidth = event.nativeEvent.layout.width}>
             <TextInput style={styles.inputSearch}
               underlineColorAndroid='transparent'
               onChangeText={this._onTextChanged.bind(this)}
+              onFocus={this._onSearchFocus.bind(this)}
               placeholder='검색'
               placeholderTextColor="#A6A6A6"/>
             
@@ -93,7 +98,7 @@ class MarketSearchScreen extends BaseScreen {
           onPress={this._dismissSearchList.bind(this)}>
           <View style={{flex: 1, backgroundColor: 'transparent'}}>
             <View
-              style={styles.searchResult}>
+              style={[styles.searchResult, { width: this._searchInputWidth }]}>
               <FlatList
                 style={styles.listView}
                 data={searchList}
@@ -218,6 +223,15 @@ class MarketSearchScreen extends BaseScreen {
     this._searchList(searchText.toLowerCase());
   }
 
+  _onSearchFocus(event) {
+    if (_.isEmpty(this.state.searchList))
+      return;
+
+    this.setState({
+      searchListVisible: true
+    })
+  }
+
   async _searchList(searchText) {
     try {
       let symbolResponse = await rf.getRequest('MasterdataRequest').getAll();
@@ -320,10 +334,9 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     backgroundColor: '#FFF',
     position: 'absolute',
-    width: '75%',
-    bottom: 0,
     right: 16,
-    top: 0
+    top: 0,
+    bottom: 0
   }
 });
 
