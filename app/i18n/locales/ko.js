@@ -8,7 +8,7 @@ export default {
   common: {
     buy: 'Mua',
     sell: 'Bán',
-    fiatSign: '₫',
+    fiatSymbol: '₩',
     message: {
       network_error: "Không thể kết nối"
     },
@@ -268,9 +268,6 @@ export default {
     pendingConfirmContent: '입금 신청을 취소하시겠습니까?',
     pendingInfo: '이전 입금 신청이 처리 되지 않았습니다. 입금처리가 끝날 때까지 기다리시거나 입금 신청 취소 후 다시 신청하시기 바랍니다.'
 
-  },
-  currency: {
-    symbol: '₩'
   },
 
   withdrawal: {

@@ -43,17 +43,10 @@ export default class OrderQuantityModal extends BaseScreen {
     }
   }
 
-  getDataEventHandlers() {
-    return {
-      [Events.ORDER_BOOK_SETTINGS_UPDATED]: this._onOrderBookSettingsUpdated.bind(this)
-    };
-  }
-
   async _loadData() {
     await Promise.all([
       this._loadCoinSettings(),
-      this._loadBalances(),
-      this._getOrderBookSettings()
+      this._loadBalances()
     ]);
   }
 
@@ -76,21 +69,8 @@ export default class OrderQuantityModal extends BaseScreen {
     }
   }
 
-  async _getOrderBookSettings() {
-    const params = {
-      currency: this._getCurrency(),
-      coin: this._getCoin()
-    };
-    const response = await rf.getRequest('UserRequest').getOrderBookSettings(params);
-    this._onOrderBookSettingsUpdated(response.data);
-  }
-
   _onBalanceUpdated(balances) {
     this.balances = Object.assign({}, this.balances, balances);
-  }
-
-  _onOrderBookSettingsUpdated(settings) {
-    this.settingsOrderConfirmation = settings.order_confirmation;
   }
 
   _getCoin() {
@@ -101,12 +81,13 @@ export default class OrderQuantityModal extends BaseScreen {
     return this.props.currency;
   }
 
-  showModal(tradeType, price) {
+  showModal(tradeType, price, submitCallback) {
     this.setState({
       tradeType: tradeType,
       price: price,
       modalVisible: true
     });
+    this.submitCallback = submitCallback;
   }
 
   hideModal() {
@@ -140,46 +121,8 @@ export default class OrderQuantityModal extends BaseScreen {
   }
 
   _onPressSubmit() {
-    var data = {
-      trade_type: this.state.tradeType,
-      currency: this._getCurrency(),
-      coin: this._getCoin(),
-      type: Consts.ORDER_TYPE_LIMIT,
-      quantity: this.state.quantity,
-      price: this.state.price
-    };
-    var errors = OrderUtils.validateOrderInput(data);
-    if (errors.length > 0) {
-      this._showError(errors[0].message);
-      return;
-    }
-    if (this.settingsOrderConfirmation) {
-      this.confirmCreateOrder(data);
-    } else {
-      this._sendOrderRequest(data);
-    }
-  }
-
-  confirmCreateOrder(data) {
-    this._sendOrderRequest(data);
-  }
-
-  async _sendOrderRequest(data) {
+    this.submitCallback(this.state.quantity);
     this.hideModal();
-    try {
-      await rf.getRequest('OrderRequest').createANewOne(data);
-    } catch(error) {
-      if (!error.response) {
-        self._showError(window.i18n.t('common.message.network_error'));
-      } else {
-        self._showError(error.response.data.message);
-      }
-    };
-  }
-
-  _showError(message) {
-    //TODO show error
-    console.log(message);
   }
 
   render() {
