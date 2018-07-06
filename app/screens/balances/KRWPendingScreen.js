@@ -109,7 +109,7 @@ export default class KRWPendingScreen extends BaseScreen {
                 <Text style={styles.leftView}>{I18n.t('deposit.pendingAmount')}</Text>
                 <View style={styles.rightView}>
                   <Text style={styles.rightContent}>
-                    <Text>{I18n.t('currency.symbol')}</Text>{formatCurrency(transaction.amount, this.currency)}
+                    <Text>{I18n.t('common.fiatSymbol')}</Text>{formatCurrency(transaction.amount, this.currency)}
                   </Text>
                 </View>
               </View>
