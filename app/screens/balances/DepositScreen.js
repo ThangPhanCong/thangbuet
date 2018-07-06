@@ -10,7 +10,8 @@ import {
   SafeAreaView,
   ScrollView,
   Modal,
-  Button
+  Button,
+  Alert
 } from 'react-native';
 import BaseScreen from '../BaseScreen'
 import MasterdataUtils from '../../utils/MasterdataUtils'
@@ -23,14 +24,26 @@ import AppPreferences from '../../utils/AppPreferences'
 import { formatCurrency, formatPercent, getCurrencyName } from '../../utils/Filters'
 import { withNavigationFocus } from 'react-navigation'
 import KRWScreen from './KRWScreen'
+import KRWPendingScreen from './KRWPendingScreen'
 import HeaderBalance from './HeaderBalance'
 
 class DepositScreen extends BaseScreen {
   constructor(props) {
     super(props)
     this.state = {
+      isPending: false,
+      transaction: {},
+      isComplete: false,
     }
     this.currency = 'krw'
+  }
+
+  componentDidMount() {
+    this.setState({ isComplete: true })
+  }
+
+  componentWillUnmount() {
+    this.setState({ isComplete: false })
   }
 
   render() {
@@ -39,11 +52,14 @@ class DepositScreen extends BaseScreen {
 
     return (
       <SafeAreaView style={styles.fullScreen}>
-        <View style={styles.content}>
-          <HeaderBalance />
-          {symbol && symbol.code === 'krw' && <KRWScreen symbol={symbol} navigation={navigation} />}
-          {/* {symbol && symbol.code !== 'krw' && <KRWScreen symbol={symbol} />} */}
-        </View>
+        {this.state.isComplete &&
+          <View style={styles.content}>
+            <HeaderBalance />
+            <View>
+
+            </View>
+          </View>
+        }
       </SafeAreaView>
     )
   }
