@@ -1,28 +1,9 @@
 import React from 'react';
-import {
-  PixelRatio,
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
-  Image,
-  SafeAreaView,
-  ScrollView,
-  Modal,
-  Button
-} from 'react-native';
-import BaseScreen from '../BaseScreen'
-import MasterdataUtils from '../../utils/MasterdataUtils'
-import ScaledSheet from '../../libs/reactSizeMatter/ScaledSheet'
-import { Icon } from 'react-native-elements'
-import rf from '../../libs/RequestFactory'
-import I18n from '../../i18n/i18n'
-import AppConfig from '../../utils/AppConfig'
-import AppPreferences from '../../utils/AppPreferences'
-import { formatCurrency, formatPercent, getCurrencyName } from '../../utils/Filters'
-import { withNavigationFocus } from 'react-navigation'
-import HeaderBalance from './HeaderBalance'
+import { SafeAreaView, View } from 'react-native';
+import { withNavigationFocus } from 'react-navigation';
+import ScaledSheet from '../../libs/reactSizeMatter/ScaledSheet';
+import BaseScreen from '../BaseScreen';
+import HeaderBalance from './HeaderBalance';
 
 class WithdrawalScreen extends BaseScreen {
   constructor(props) {

@@ -1,26 +1,13 @@
 import React from 'react';
-import {
-  PixelRatio,
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
-  Image,
-  SafeAreaView,
-  ScrollView,
-  Modal,
-  Button
-} from 'react-native';
-import BaseScreen from '../BaseScreen'
-import MasterdataUtils from '../../utils/MasterdataUtils'
-import ScaledSheet from '../../libs/reactSizeMatter/ScaledSheet'
-import { Icon } from 'react-native-elements'
-import rf from '../../libs/RequestFactory'
-import I18n from '../../i18n/i18n'
+import { Text, TextInput, View } from 'react-native';
+import { Icon } from 'react-native-elements';
+import I18n from '../../i18n/i18n';
+import ScaledSheet from '../../libs/reactSizeMatter/ScaledSheet';
+import rf from '../../libs/RequestFactory';
 import AppConfig from '../../utils/AppConfig';
-import AppPreferences from '../../utils/AppPreferences';
-import { formatCurrency, formatPercent, getCurrencyName } from '../../utils/Filters';
+import { formatCurrency } from '../../utils/Filters';
+import MasterdataUtils from '../../utils/MasterdataUtils';
+import BaseScreen from '../BaseScreen';
 
 export default class HeaderBalance extends BaseScreen {
   constructor(props) {
