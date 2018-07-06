@@ -266,8 +266,15 @@ export default {
     pendingCancel: '입금 신청 취소',
     pendingBankAccount: '입금할 계좌',
     pendingConfirmContent: '입금 신청을 취소하시겠습니까?',
-    pendingInfo: '이전 입금 신청이 처리 되지 않았습니다. 입금처리가 끝날 때까지 기다리시거나 입금 신청 취소 후 다시 신청하시기 바랍니다.'
+    pendingInfo: '이전 입금 신청이 처리 되지 않았습니다. 입금처리가 끝날 때까지 기다리시거나 입금 신청 취소 후 다시 신청하시기 바랍니다.',
 
+    coinNote1: '외부의 다른 지갑에서 BITKOEX의 거래용 지갑으로 비트코인을 입금 받을 때 필요한 주소를 생성합니다',
+    coinNote2: '외부로 부터의 BTC입금시 1번의 confirmatnion 발생 후 회원님의 계좌에 반영됩니다. 이 과정은 평균적으로 약 10분의 시간이 소요되지만, 블럭체인 네트워크 상황에 따라 지연될 수 도 있습니다.',
+    coinNote3: '비트코인 입금시에는 입금 주소를 다시 한 번 반드시 확인하고 입금하시기 바랍니다. BTC주소와 BCH주소를 혼동하여 잘못 송금할 경우 발생하는 손실에 대해 BITKOEX는 책임지지 않습니다.',
+    coinBtn : '주소 발급 받기',
+    copyAddress: '주소 복사',
+    tagAddress: 'Destination Tag:',
+    
   },
   currency: {
     symbol: '₩'
