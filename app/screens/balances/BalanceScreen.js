@@ -1,33 +1,19 @@
 import React from 'react';
-import {
-  PixelRatio,
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
-  Image,
-  SafeAreaView,
-  ScrollView,
-  Modal,
-  Button
-} from 'react-native';
+import { Button, Image, SafeAreaView, ScrollView, Text, View } from 'react-native';
 import BaseScreen from '../BaseScreen'
 import MasterdataUtils from '../../utils/MasterdataUtils'
 import ScaledSheet from '../../libs/reactSizeMatter/ScaledSheet'
-import { Icon } from 'react-native-elements'
 import rf from '../../libs/RequestFactory'
 import I18n from '../../i18n/i18n'
 import AppConfig from '../../utils/AppConfig'
-import AppPreferences from '../../utils/AppPreferences'
-import { formatCurrency, formatPercent, getCurrencyName } from '../../utils/Filters'
 import HeaderBalance from './HeaderBalance'
 
 export default class BalanceScreen extends BaseScreen {
   constructor(props) {
     super(props)
     this.state = {
-      symbols: [],
+      symbolArr: [],
+      symbols: {},
       assetsValuation: 0
     }
     this.currency = 'krw'
@@ -57,11 +43,12 @@ export default class BalanceScreen extends BaseScreen {
         coinList[coin].name = coin
         coinList[coin].code = coin
         coinList[coin].icon = AppConfig.getAssetServer() + '/images/color_coins/' + coin + '.png'
-      });
+        coinList[coin].price = 1
+      })
 
-      this._onBalanceUpdated(coinList);
+      this._updateState(coinList)
     } catch (err) {
-      console.log('Error in BalanceScreen._getSymbols: ', err)
+      console.log('Error in HeaderScreen._getSymbols: ', err)
     }
   }
 
@@ -70,7 +57,7 @@ export default class BalanceScreen extends BaseScreen {
       let priceResponse = await rf.getRequest('PriceRequest').getPrices();
       this._onPricesUpdated(priceResponse.data);
     } catch (err) {
-      console.log('BalanceScreen._getPrices', err);
+      console.log('HeaderScreen._getPrices', err);
     }
   }
 
@@ -81,48 +68,58 @@ export default class BalanceScreen extends BaseScreen {
     }
   }
 
-  _onBalanceUpdated(newAccountBalances, ) {
-    // console.log('balcnce newAccountBalances', newAccountBalances)
-    for (balance in newAccountBalances) {
-      if (!newAccountBalances[balance].name) {
-        newAccountBalances[balance].name = balance
-      }
-      if (!newAccountBalances[balance].code) {
-        newAccountBalances[balance].code = balance
-      }
-      if (!newAccountBalances[balance].icon) {
-        newAccountBalances[balance].icon = AppConfig.getAssetServer() + '/images/color_coins/' + balance + '.png'
-      }
-    }
+  _onBalanceUpdated(symbolsUpdate) {
+    const data = this._fillData(symbolsUpdate)
 
-    this.accountBalances = Object.assign({}, this.accountBalances, newAccountBalances);
-    // console.log('blance this.accountBalances ',  this.accountBalances )
+    let symbols = this.state.symbols ? this.state.symbols : {}
+    symbols = Object.assign({}, symbols, data)
 
-    let balanceList = Object.values(this.accountBalances)
-
-    this._updateState(balanceList);
+    this._updateState(symbols)
   }
 
   _onPricesUpdated(prices) {
-    // console.log('prices', prices)
-    const coinList = this.state.symbols
-    coinList.map((coin, index) => {
-      if (coin.code.toLowerCase() === this.currency) {
-        coinList[index] = Object.assign({}, coinList[index], { price: 1 })
-      } else if (prices[this.currency + "_" + coin.code.toLowerCase()]) {
-        coinList[index] = Object.assign({}, coinList[index], prices[this.currency + "_" + coin.code.toLowerCase()])
-      }
-    })
+    const symbols = this.state.symbols
 
-    this._updateState(coinList);
+    for (symbol in symbols) {
+      if (symbol.toLowerCase() === this.currency) {
+        symbols[symbol] = Object.assign({}, symbols[symbol], { price: 1 })
+      } else if (prices[this.currency + "_" + symbol.toLowerCase()]) {
+        symbols[symbol] = Object.assign({}, symbols[symbol], prices[this.currency + "_" + symbol.toLowerCase()])
+      }
+    }
+
+    this._updateState(symbols, prices)
   }
 
-  _updateState(symbols) {
-    const assetsValuation = symbols.reduce(function (total, symbol) {
+  _fillData(symbols) {
+    const prices = this.state.prices
+
+    for (symbol in symbols) {
+      symbols[symbol].name = symbol
+      symbols[symbol].code = symbol
+      symbols[symbol].icon = AppConfig.getAssetServer() + '/images/color_coins/' + symbol + '.png'
+      if (symbol.toLowerCase() === this.currency) {
+        symbols[symbol] = Object.assign({}, symbols[symbol], { price: 1 })
+      } else if (prices[this.currency + "_" + symbol.toLowerCase()]) {
+        symbols[symbol] = Object.assign({}, symbols[symbol], prices[this.currency + "_" + symbol.toLowerCase()])
+      }
+    }
+
+    return symbols
+  }
+
+  _updateState(symbols, prices) {
+    const symbolArr = Object.values(symbols)
+
+    const assetsValuation = symbolArr.reduce(function (total, symbol) {
       return total + parseFloat(symbol.balance * symbol.price)
     }, 0)
 
-    this.setState({ symbols, assetsValuation })
+    if (prices) {
+      this.setState({ symbols, assetsValuation, symbolArr: Object.values(symbols), prices })
+    } else {
+      this.setState({ symbols, assetsValuation, symbolArr: Object.values(symbols) })
+    }
   }
 
   render() {
@@ -138,7 +135,7 @@ export default class BalanceScreen extends BaseScreen {
             </View>
             <ScrollView>
               {
-                this.state.symbols.map((symbol, index) => (
+                this.state.symbolArr.map((symbol, index) => (
                   <View
                     key={symbol + "_" + index}
                     style={styles.tableRow}>

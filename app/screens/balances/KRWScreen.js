@@ -1,27 +1,11 @@
 import React from 'react';
-import {
-  PixelRatio,
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
-  Image,
-  SafeAreaView,
-  ScrollView,
-  Button,
-  Alert
-} from 'react-native';
+import { Alert, ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native'
 import BaseScreen from '../BaseScreen'
-import MasterdataUtils from '../../utils/MasterdataUtils'
 import ScaledSheet from '../../libs/reactSizeMatter/ScaledSheet'
-import { Icon, CheckBox, Divider } from 'react-native-elements'
+import { CheckBox, Divider } from 'react-native-elements'
 import rf from '../../libs/RequestFactory'
 import I18n from '../../i18n/i18n'
-import AppConfig from '../../utils/AppConfig'
-import AppPreferences from '../../utils/AppPreferences'
-import { formatCurrency, formatPercent, getCurrencyName } from '../../utils/Filters'
-import { withNavigationFocus } from 'react-navigation'
+import { formatCurrency } from '../../utils/Filters'
 import Modal from "react-native-modal"
 
 export default class KRWScreen extends BaseScreen {

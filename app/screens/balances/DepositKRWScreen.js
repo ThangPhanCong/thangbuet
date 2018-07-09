@@ -1,31 +1,14 @@
 import React from 'react';
-import {
-  PixelRatio,
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
-  Image,
-  SafeAreaView,
-  ScrollView,
-  Modal,
-  Button,
-  Alert
-} from 'react-native';
+import { Alert, SafeAreaView, View } from 'react-native';
 import BaseScreen from '../BaseScreen'
-import MasterdataUtils from '../../utils/MasterdataUtils'
 import ScaledSheet from '../../libs/reactSizeMatter/ScaledSheet'
-import { Icon } from 'react-native-elements'
 import rf from '../../libs/RequestFactory'
 import I18n from '../../i18n/i18n'
-import AppConfig from '../../utils/AppConfig'
-import AppPreferences from '../../utils/AppPreferences'
-import { formatCurrency, formatPercent, getCurrencyName } from '../../utils/Filters'
 import { withNavigationFocus } from 'react-navigation'
 import KRWScreen from './KRWScreen'
 import KRWPendingScreen from './KRWPendingScreen'
 import HeaderBalance from './HeaderBalance'
+
 
 class DepositKRWScreen extends BaseScreen {
   constructor(props) {
