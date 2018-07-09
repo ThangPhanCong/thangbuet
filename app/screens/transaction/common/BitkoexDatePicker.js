@@ -20,13 +20,13 @@ class BitkoexDatePicker extends Component {
           dateIcon: {
             position: 'absolute',
             left: scale(0),
-            top: scale(4),
+            top: scale(2),
             marginLeft: scale(0)
           },
           dateInput: {
-            marginLeft: scale(30),
-            height: scale(25),
-            borderRadius: scale(4)
+            marginLeft: scale(20),
+            height: '100%',
+            borderRadius: scale(2),
           },
           dateText: {
             fontSize: scale(11)
@@ -34,6 +34,7 @@ class BitkoexDatePicker extends Component {
         }}
         onDateChange={(date) => changeDate(date)}
       />
+
     )
   }
 }

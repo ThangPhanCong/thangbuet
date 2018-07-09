@@ -47,7 +47,8 @@ export default class OrderForm extends BaseScreen {
       coinBalance: undefined,
       coinSetting: {},
 
-      enableQuantity: true
+      enableQuantity: true,
+      settingsOrderConfirmation: undefined
 
     }
     this.balances = {};
@@ -240,6 +241,10 @@ export default class OrderForm extends BaseScreen {
   }
 
   _onOrderBookRowClicked(data) {
+    if (data.orderBookType != OrderBook.TYPE_SMALL) {
+      return;
+    }
+
     this._onPriceChanged(data.price);
     if (this._isStopOrder()) {
       this.setState({ stop: data.price });
@@ -274,13 +279,13 @@ export default class OrderForm extends BaseScreen {
       return;
     }
     if (this.settingsOrderConfirmation) {
-      this.confirmCreateOrder(data);
+      this._confirmCreateOrder(data);
     } else {
       this._sendOrderRequest(data);
     }
   }
 
-  confirmCreateOrder(data) {
+  _confirmCreateOrder(data) {
     this._sendOrderRequest(data);
   }
 
@@ -288,10 +293,10 @@ export default class OrderForm extends BaseScreen {
     try {
       await rf.getRequest('OrderRequest').createANewOne(data);
     } catch(error) {
-      if (!error.response) {
-        self._showError(window.i18n.t('common.message.network_error'));
+      if (!error.errors) {
+        this._showError(I18n.t('common.message.network_error'));
       } else {
-        self._showError(error.response.data.message);
+        this._showError(error.message);
       }
     };
   }

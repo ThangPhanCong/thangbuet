@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { FlatList, Text, TouchableWithoutFeedback, View } from "react-native";
+import { FlatList, Text, TouchableWithoutFeedback, View, ScrollView } from "react-native";
 import { CommonColors, CommonStyles } from "../../utils/CommonStyles";
 import ScaledSheet from "../../libs/reactSizeMatter/ScaledSheet";
 import { scale } from "../../libs/reactSizeMatter/scalingUtils";
@@ -12,6 +12,7 @@ import BigNumber from 'bignumber.js';
 import { formatCurrency, getCurrencyName } from "../../utils/Filters";
 import BaseScreen from "../BaseScreen";
 import Consts from "../../../app/utils/Consts";
+import HeaderProfitAndLoss from "./HeaderProfitAndLoss";
 
 class ProfitAndLossScreen extends BaseScreen {
   state = {
@@ -177,32 +178,32 @@ class ProfitAndLossScreen extends BaseScreen {
     if (sum.deposit) {
       return (
         <View style={styles.itemContainer}>
-          <View style={{ flex: 1 }}>
+          <View style={styles.currencyGroup}>
             <Text style={[styles.itemCurrency, { fontWeight: 'bold' }]}>합계</Text>
           </View>
 
-          <View style={{ flex: 1, flexDirection: 'column' }}>
+          <View style={styles.profitGroup}>
             <Text style={[styles.itemCurrency]}>{sum.startingBalance}</Text>
             <Text style={[styles.itemCurrency]}>{Consts.CURRENCY_KRW.toUpperCase()}</Text>
 
           </View>
 
-          <View style={{ flex: 1, flexDirection: 'column' }}>
+          <View style={styles.profitGroup}>
             <Text style={styles.itemDeposit}>{sum.deposit}</Text>
             <Text style={styles.itemDeposit}>{Consts.CURRENCY_KRW.toUpperCase()}</Text>
           </View>
 
-          <View style={{ flex: 1, flexDirection: 'column' }}>
+          <View style={styles.profitGroup}>
             <Text style={styles.itemWithDrawl}>{sum.withdraw}</Text>
             <Text style={styles.itemWithDrawl}>{Consts.CURRENCY_KRW.toUpperCase()}</Text>
           </View>
 
-          <View style={{ flex: 1, flexDirection: 'column' }}>
-            <Text>{sum.endingBalance}</Text>
+          <View style={styles.profitGroup}>
+            <Text style={[styles.itemCurrency]}>{sum.endingBalance}</Text>
             <Text style={[styles.itemCurrency]}>{Consts.CURRENCY_KRW.toUpperCase()}</Text>
           </View>
 
-          <View style={{ flex: 1, flexDirection: 'column' }}>
+          <View style={styles.profitGroup}>
             <Text
               style={this._checkDecrease(sum.increaseBalance) ? styles.decreaseChange : styles.increaseChange}>
               {sum.increaseBalance}
@@ -211,7 +212,7 @@ class ProfitAndLossScreen extends BaseScreen {
               style={this._checkDecrease(sum.increaseBalance) ? styles.decreaseChange : styles.increaseChange}>{Consts.CURRENCY_KRW.toUpperCase()}</Text>
           </View>
 
-          <View style={{ flex: 1 }}>
+          <View style={[styles.profitGroup, {marginRight: scale(10)}]}>
             <Text
               style={this._checkDecrease(sum.percentIncrease) ? styles.decreaseChange : styles.increaseChange}>{sum.percentIncrease}</Text>
           </View>
@@ -228,32 +229,32 @@ class ProfitAndLossScreen extends BaseScreen {
 
     return (
       <View style={styles.itemContainer}>
-        <View style={{ flex: 1 }}>
+        <View style={styles.currencyGroup}>
           <Text style={[styles.itemCurrency, { fontWeight: 'bold' }]}>{getCurrencyName(item.currency)}</Text>
         </View>
 
-        <View style={{ flex: 1, flexDirection: 'column' }}>
+        <View style={styles.profitGroup}>
           <Text style={[styles.itemCurrency]}>{startBalance}</Text>
           <Text style={[styles.itemCurrency]}>{getCurrencyName(item.currency)}</Text>
 
         </View>
 
-        <View style={{ flex: 1, flexDirection: 'column' }}>
+        <View style={styles.profitGroup}>
           <Text style={styles.itemDeposit}>{formatCurrency(item.deposit, item.currency)}</Text>
           <Text style={styles.itemDeposit}>{getCurrencyName(item.currency)}</Text>
         </View>
 
-        <View style={{ flex: 1, flexDirection: 'column' }}>
+        <View style={styles.profitGroup}>
           <Text style={styles.itemWithDrawl}>{formatCurrency(item.deposit, item.currency)}</Text>
           <Text style={styles.itemWithDrawl}>{getCurrencyName(item.currency)}</Text>
         </View>
 
-        <View style={{ flex: 1, flexDirection: 'column' }}>
-          <Text>{formatCurrency(item.ending_balance, item.currency)}</Text>
+        <View style={styles.profitGroup}>
+          <Text style={[styles.itemCurrency]}>{formatCurrency(item.ending_balance, item.currency)}</Text>
           <Text style={[styles.itemCurrency]}>{getCurrencyName(item.currency)}</Text>
         </View>
 
-        <View style={{ flex: 1, flexDirection: 'column' }}>
+        <View style={styles.profitGroup}>
           <Text
             style={this._checkDecrease(increase) ? styles.decreaseChange : styles.increaseChange}>
             {increase}
@@ -262,7 +263,7 @@ class ProfitAndLossScreen extends BaseScreen {
             style={this._checkDecrease(increase) ? styles.decreaseChange : styles.increaseChange}>{getCurrencyName(item.currency)}</Text>
         </View>
 
-        <View style={{ flex: 1 }}>
+        <View style={[styles.profitGroup, {marginRight: scale(10)}]}>
           <Text style={this._checkDecrease(percent) ? styles.decreaseChange : styles.increaseChange}>{percent}</Text>
         </View>
       </View>
@@ -277,9 +278,9 @@ class ProfitAndLossScreen extends BaseScreen {
 
     return (
       <View style={styles.screen}>
-        <View style={{ flexDirection: 'row' }}>
+        <View style={styles.viewDatePicker}>
           {this._renderDatePicker('start_date')}
-          <View style={{ alignSelf: 'center', marginLeft: scale(20) }}>
+          <View style={styles.viewSymbol}>
             <Text>~</Text>
           </View>
           {this._renderDatePicker('end_date')}
@@ -287,12 +288,15 @@ class ProfitAndLossScreen extends BaseScreen {
         </View>
 
         <View>
-          <HeaderTransaction titles={titles}/>
-          {this._renderSum()}
-          <FlatList data={transactions}
-                    renderItem={this._renderItem.bind(this)}
-            // onEndReached={this._handleLoadMore.bind(this)}
-                    onEndThreshold={100}/>
+          <ScrollView horizontal={true} contentContainerStyle={{ flexDirection: 'column' }}>
+            <HeaderProfitAndLoss titles={titles}/>
+            {this._renderSum()}
+            <FlatList data={transactions}
+                      renderItem={this._renderItem.bind(this)}
+              // onEndReached={this._handleLoadMore.bind(this)}
+                      onEndThreshold={100}/>
+          </ScrollView>
+
         </View>
       </View>
     )
@@ -321,7 +325,6 @@ const styles = ScaledSheet.create({
     color: CommonColors.mainText
   },
   itemContainer: {
-    alignItems: 'center',
     flexDirection: 'row',
     height: '50@s',
     borderBottomColor: CommonColors.separator,
@@ -329,22 +332,43 @@ const styles = ScaledSheet.create({
   },
   itemCurrency: {
     color: CommonColors.mainText,
-    fontSize: '14@s'
+    fontSize: '12@s'
   },
   itemDeposit: {
     color: CommonColors.increased,
-    fontSize: '14@s'
+    fontSize: '12@s'
   },
   itemWithDrawl: {
     color: CommonColors.decreased,
-    fontSize: '14@s'
+    fontSize: '12@s'
   },
   increaseChange: {
     color: CommonColors.increased,
-    fontSize: '14@s'
+    fontSize: '12@s'
   },
   decreaseChange: {
     color: CommonColors.decreased,
-    fontSize: '14@s'
+    fontSize: '12@s'
+  },
+  profitGroup: {
+    width: '100@s',
+    flexDirection: 'column',
+    alignItems: 'flex-end',
+    justifyContent: 'center',
+  },
+  currencyGroup: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: '50@s',
+    borderRightColor: CommonColors.separator,
+    borderRightWidth: '1@s',
+  },
+  viewDatePicker: {
+    flexDirection: 'row',
+    alignItems: 'center'
+  },
+  viewSymbol: {
+    alignSelf: 'center',
+    marginLeft: scale(20)
   }
 });

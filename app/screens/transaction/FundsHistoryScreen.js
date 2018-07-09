@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { FlatList, Text, TouchableWithoutFeedback, View } from "react-native";
+import { FlatList, Text, TouchableWithoutFeedback, View, ScrollView } from "react-native";
 import ScaledSheet from "../../libs/reactSizeMatter/ScaledSheet";
 import { CommonColors, CommonStyles } from "../../utils/CommonStyles";
 import { scale } from "../../libs/reactSizeMatter/scalingUtils";
@@ -162,17 +162,17 @@ class FundsHistoryScreen extends Component {
     return (
       <View style={styles.itemContainer}>
         <View style={styles.itemLeftContainer}>
-          <View style={{ flex: 1, alignItems: 'center' }}>
+          <View style={styles.timeContainer}>
             <Text style={styles.itemDayMonth}>{pardeDayMonth}</Text>
             <Text style={styles.itemTime}>{getTime(item.updated_at)}</Text>
           </View>
 
-          <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center' }}>
+          <View style={styles.coinPairContainer}>
             <Text style={[styles.itemCurrency, { fontWeight: 'bold' }]}>{getCurrencyName(item.currency)}</Text>
           </View>
         </View>
 
-        <View style={{ flex: 1.8, flexDirection: 'row' }}
+        <View style={{ flexDirection: 'row' }}
         >
           <View style={styles.itemRight}>
             <Text style={styles.itemQuantity}>
@@ -191,7 +191,7 @@ class FundsHistoryScreen extends Component {
             <Text style={styles.itemCurrency}>{getCurrencyName(item.currency)}</Text>
           </View>
 
-          <View style={styles.itemRight}>
+          <View style={[styles.itemRight, {marginRight: scale(10)}]}>
             {item.status === 'pending' ? <Text style={styles.itemPending}> {I18n.t('transactions.pending')}</Text>
               : <Text style={styles.itemSuccess}>{I18n.t('transactions.success')}</Text>}
           </View>
@@ -207,9 +207,9 @@ class FundsHistoryScreen extends Component {
 
     return (
       <View style={styles.screen}>
-        <View style={{ flexDirection: 'row' }}>
+        <View style={styles.viewDatePicker}>
           {this._renderDatePicker('start_date')}
-          <View style={{ alignSelf: 'center', marginLeft: scale(20) }}>
+          <View style={styles.viewSymbol}>
             <Text>~</Text>
           </View>
           {this._renderDatePicker('end_date')}
@@ -217,16 +217,18 @@ class FundsHistoryScreen extends Component {
         </View>
 
         <View>
-          <HeaderTransaction sortDate={() => this._onSortDate()}
-                             sortPair={() => this._onSortPair()}
-                             renderArrowDate={this._renderArrow(FundsHistoryScreen.SORT_FIELDS.DATE)}
-                             renderArrowPair={this._renderArrow(FundsHistoryScreen.SORT_FIELDS.PAIR)}
-                             titles={titles}
-          />
-          <FlatList data={transactions}
-                    renderItem={this._renderItem.bind(this)}
-            // onEndReached={this._handleLoadMore.bind(this)}
-                    onEndThreshold={100}/>
+          <ScrollView horizontal={true} contentContainerStyle={{ flexDirection: 'column' }}>
+            <HeaderTransaction sortDate={() => this._onSortDate()}
+                               sortPair={() => this._onSortPair()}
+                               renderArrowDate={this._renderArrow(FundsHistoryScreen.SORT_FIELDS.DATE)}
+                               renderArrowPair={this._renderArrow(FundsHistoryScreen.SORT_FIELDS.PAIR)}
+                               titles={titles}
+            />
+            <FlatList data={transactions}
+                      renderItem={this._renderItem.bind(this)}
+              // onEndReached={this._handleLoadMore.bind(this)}
+                      onEndThreshold={100}/>
+          </ScrollView>
         </View>
       </View>
     )
@@ -256,7 +258,6 @@ const styles = ScaledSheet.create({
     color: CommonColors.mainText
   },
   itemContainer: {
-    alignItems: 'center',
     flexDirection: 'row',
     height: '50@s',
     borderBottomColor: CommonColors.separator,
@@ -279,31 +280,54 @@ const styles = ScaledSheet.create({
   },
   itemCurrency: {
     color: CommonColors.mainText,
-    fontSize: '14@s'
+    fontSize: '13@s'
   },
   itemPending: {
     color: 'red',
-    fontSize: '14@s'
+    fontSize: '13@s'
   },
   itemSuccess: {
     color: CommonColors.mainText,
-    fontSize: '14@s'
+    fontSize: '13@s'
   },
   itemRight: {
     flexDirection: 'column',
-    flex: 1,
+    width: '100@s',
     alignItems: 'flex-end',
     justifyContent: 'center',
   },
   itemBlockchain: {
     color: CommonColors.decreased,
-    fontSize: '10@s',
+    fontSize: '11@s',
     borderBottomColor: CommonColors.decreased,
     borderBottomWidth: '0.5@s'
   },
   viewAddressBlockChain: {
     flexWrap: 'wrap',
-    flex: 1.5,
+    width: '100@s',
+    alignItems: 'flex-end',
     justifyContent: 'center',
+  },
+  timeContainer: {
+    flex: 1,
+    marginLeft: '2@s',
+    justifyContent: 'center',
+    alignItems: 'center',
+    flexDirection: 'column'
+  },
+  coinPairContainer: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginLeft: '20@s',
+    marginRight: '20@s'
+  },
+  viewDatePicker: {
+    flexDirection: 'row',
+    alignItems: 'center'
+  },
+  viewSymbol: {
+    alignSelf: 'center',
+    marginLeft: scale(20)
   }
 })

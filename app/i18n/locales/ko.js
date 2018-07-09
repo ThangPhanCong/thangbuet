@@ -8,7 +8,7 @@ export default {
   common: {
     buy: 'Mua',
     sell: 'Bán',
-    fiatSign: '₫',
+    fiatSymbol: '₩',
     message: {
       network_error: "Không thể kết nối"
     },
@@ -280,9 +280,6 @@ export default {
     coinTagNote3: '리플 입금시에는 입금 주소를 다시 한 번 반드시 확인하고 입금하시기 바랍니다. 경우에 따라서는 데스티네이션 태그를 반드시 입력해야 하는 경우도 있으니 주의하시기 바랍니다.',
     copyInfo: '주소가 성공적으로 복사되었습니다.',
   },
-  currency: {
-    symbol: '₩'
-  },
 
   withdrawal: {
     balance: '계좌 잔액',
@@ -434,6 +431,7 @@ export default {
     }
   },
   transactions: {
+    title: '주문/체결 내역',
     orderHistoryTab: '체결내역',
     openOrderTab: '미체결내역',
     fundsHistoryTab: '입출금내역',
