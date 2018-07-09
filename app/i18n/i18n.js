@@ -6,6 +6,7 @@ import zh from './locales/zh'
 I18n.defaultLocale = 'ko';
 I18n.locale = 'ko';
 I18n.fallbacks = true;
+I18n.missingTranslation = (scope, options) => null;
 
 reloadTranslations();
 

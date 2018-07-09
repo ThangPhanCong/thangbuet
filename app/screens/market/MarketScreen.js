@@ -103,7 +103,7 @@ class MarketScreen extends BaseScreen {
               <View style={styles.spacePairName} />
               <View style={{ alignSelf: 'center' }}>
                 <Text style={styles.itemCoin}>
-                  {I18n.t(`currency.${item.coin}.fullname`)}
+                  {I18n.t(`currency.${item.coin}.fullname`) || getCurrencyName(item.coin)}
                 </Text>
                 <Text style={styles.itemCoin}>
                   {getCurrencyName(item.coin) + ' / ' + getCurrencyName(item.currency)}
