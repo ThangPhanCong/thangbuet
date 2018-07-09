@@ -18,7 +18,8 @@ export default class DropdownMenu extends React.Component {
   state = {
     isVisible: false,
     sourcePosition: undefined,
-    containerPosition: undefined
+    containerPosition: undefined,
+    options: {}
   };
 
   componentDidMount () {
@@ -39,22 +40,23 @@ export default class DropdownMenu extends React.Component {
     this.setState({ isVisible: false });
   }
 
-  show(items, sourceView) {
+  show(items, options) {
     items = items.map((item, index) => { return {label: item, key: index + ''} });
-    sourceView.measure((x, y, width, height, px, py) => {
+    options.sourceView.measure((x, y, width, height, px, py) => {
       this.setState({
         sourcePosition: { x, y, width, height, px, py },
         isVisible: true,
-        items: items
+        items: items,
+        options: options
       });
     });
   }
 
   render() {
-    const { isVisible, items, sourcePosition, containerPosition } = this.state;
+    const { isVisible, items, options, sourcePosition, containerPosition } = this.state;
 
     let dropdownStyle = undefined;
-    if (sourcePosition && containerPosition) {
+    if (isVisible && sourcePosition && containerPosition) {
       let sourceLeft = sourcePosition.px;
       let sourceBottom = sourcePosition.py + sourcePosition.height;
       let width = sourcePosition.width;
@@ -71,7 +73,7 @@ export default class DropdownMenu extends React.Component {
     }
 
     let separatorStyle = this._getStyleProps(this.props.separatorStyle) || {};
-    let dropdownPropsStyle = this._getStyleProps(this.props.dropdownStyle) || {};
+    let dropdownPropsStyle = options.dropdownStyle || this._getStyleProps(this.props.dropdownStyle) || {};
     return (
       <View style={isVisible ? styles.container : {}}
         ref={ref => this._container = ref}
@@ -99,8 +101,9 @@ export default class DropdownMenu extends React.Component {
   }
 
   _renderItem({item, index}) {
-    let itemButtonStyle = this._getStyleProps(this.props.itemButtonStyle) || {};
-    let itemTextStyle = this._getStyleProps(this.props.itemTextStyle) || {};
+    const options = this.state.options;
+    let itemButtonStyle = options.itemButtonStyle || this._getStyleProps(this.props.itemButtonStyle) || {};
+    let itemTextStyle = options.itemTextStyle || this._getStyleProps(this.props.itemTextStyle) || {};
     return (
       <TouchableWithoutFeedback onPress={() => {this._onSelectItem(index)}}>
         <View style={itemButtonStyle}>
@@ -117,7 +120,7 @@ export default class DropdownMenu extends React.Component {
   }
 
   _onSelectItem(index) {
-    const onSelectItem = this.props.onSelectItem;
+    const onSelectItem = this.state.options.onSelectItem || this.props.onSelectItem;
     onSelectItem && onSelectItem(index);
     this.setState({ isVisible: false });
   }
