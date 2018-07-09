@@ -17,13 +17,24 @@ export default {
     appStore: 'Apple App Store',
     playStore: 'Google Play Store'
   },
+  splash: {
+    title: 'BITKOEX',
+    sentence: '디테일이 다르다. 거래가 편한 최고의 암호화폐 거래소'
+  },
   login: {
+    textLogo: 'BITKOEX',
+    titleLogo: '디테일이 다르다. 거래가 편한 최고의 암호화폐 거래소',
     email: 'Email',
     password: 'Password',
-    login: 'Login',
+    login: 'LOGIN',
     register: 'Register',
     forgotText: 'Forgot your password',
     questionRegister: "Don't have an account yet? ",
+    emailEmpty: 'Email not empty',
+    passwordEmpty: 'Password not empty',
+    emailValidation: 'Email is not in the correct format',
+    messageUnCorrect: 'Email or Password not correct',
+
     registerForm: {
       referralID: 'Referral ID (optional)',
       textAcceptterm: "I agree to VCC's",
@@ -215,8 +226,19 @@ export default {
     pendingCancel: '입금 신청 취소',
     pendingBankAccount: '입금할 계좌',
     pendingConfirmContent: '입금 신청을 취소하시겠습니까?',
-    pendingInfo: '이전 입금 신청이 처리 되지 않았습니다. 입금처리가 끝날 때까지 기다리시거나 입금 신청 취소 후 다시 신청하시기 바랍니다.'
+    pendingInfo: '이전 입금 신청이 처리 되지 않았습니다. 입금처리가 끝날 때까지 기다리시거나 입금 신청 취소 후 다시 신청하시기 바랍니다.',
 
+    coinNote1: '외부의 다른 지갑에서 BITKOEX의 거래용 지갑으로 비트코인을 입금 받을 때 필요한 주소를 생성합니다',
+    coinNote2: '외부로 부터의 {{coinName}}입금시 1번의 confirmatnion 발생 후 회원님의 계좌에 반영됩니다. 이 과정은 평균적으로 약 10분의 시간이 소요되지만, 블럭체인 네트워크 상황에 따라 지연될 수 도 있습니다.',
+    coinNote3: '비트코인 입금시에는 입금 주소를 다시 한 번 반드시 확인하고 입금하시기 바랍니다. {{coinName}}주소와 BCH주소를 혼동하여 잘못 송금할 경우 발생하는 손실에 대해 BITKOEX는 책임지지 않습니다.',
+    coinBtn: '주소 발급 받기',
+    copyAddress: 'COPY ADRESS',
+    copyTag: 'COPY Tag',
+    tagAddress: 'Destination Tag:',
+    coinTagNote1: '외부의 다른 지갑에서 BITKOEX의 거래용 지갑으로 리플을 입금 받을 때 필요한 주소를 생성합니다.',
+    coinTagNote2: '외부로 부터의 {{coinName}}입금시 1번의 confirmatnion 발생 후 회원님의 계좌에 반영됩니다. 이 과정은 평균적으로 약 1분의 시간이 소요되지만, 블럭체인 네트워크 상황에 따라 지연될 수 도 있습니다.',
+    coinTagNote3: '리플 입금시에는 입금 주소를 다시 한 번 반드시 확인하고 입금하시기 바랍니다. 경우에 따라서는 데스티네이션 태그를 반드시 입력해야 하는 경우도 있으니 주의하시기 바랍니다.',
+    copyInfo: '주소가 성공적으로 복사되었습니다.',
   },
 
   withdrawal: {
@@ -283,7 +305,7 @@ export default {
     errMinium: '출금 금액이 너무 적습니다.',
     errMaximum: '출금 금액이 너무 큽니다.',
   },
-  
+
   myPage: {
     tab: {
       basic: '내 정보',
@@ -321,7 +343,7 @@ export default {
       initOtpVerification: 'OTP 인증 초기화',
       initOtpVerificationDesc: `복구 코드를 분실해서 OTP사용을 중단할 수 없을 경우 아래 내용과 같이 OTP 초기화 요청 이메일을 보내주시기 바랍니다.\n보낼 이메일 : help@bitkoex.com`,
       initOtpVerificationInstruction:
-      `1. 이메일 제목: otp 사용 중단 요청
+        `1. 이메일 제목: otp 사용 중단 요청
 2. 이메일 본문
 -실명
 -휴대전화 번호
@@ -357,7 +379,7 @@ export default {
       walletName: '지갑 이름',
       withdraw: '출금',
       remove: '삭제',
-      
+
       addNewWalletHeader: '출금 주소 등록',
       coinType: '코인 종류',
       walletAddress: '지갑 주소',

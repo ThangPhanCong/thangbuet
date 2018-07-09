@@ -1,26 +1,13 @@
 import React from 'react';
-import {
-  PixelRatio,
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
-  Image,
-  SafeAreaView,
-  ScrollView,
-  Modal,
-  Button
-} from 'react-native';
+import { Text, TextInput, View } from 'react-native'
 import BaseScreen from '../BaseScreen'
 import MasterdataUtils from '../../utils/MasterdataUtils'
 import ScaledSheet from '../../libs/reactSizeMatter/ScaledSheet'
 import { Icon } from 'react-native-elements'
 import rf from '../../libs/RequestFactory'
 import I18n from '../../i18n/i18n'
-import AppConfig from '../../utils/AppConfig';
-import AppPreferences from '../../utils/AppPreferences';
-import { formatCurrency, formatPercent, getCurrencyName } from '../../utils/Filters';
+import AppConfig from '../../utils/AppConfig'
+import { formatCurrency } from '../../utils/Filters'
 
 export default class HeaderBalance extends BaseScreen {
   constructor(props) {
@@ -137,7 +124,7 @@ export default class HeaderBalance extends BaseScreen {
 
   render() {
     return (
-      <View>
+      <View style={{ borderBottomWidth: 1, borderBottomColor: 'rgba(0, 0, 0, 0.1)' }}>
         <View style={styles.header}>
           <View style={styles.logo}>
             <Icon name="assessment" />
