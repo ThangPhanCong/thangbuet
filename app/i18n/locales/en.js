@@ -65,12 +65,19 @@ export default {
   },
 
   login: {
+    textLogo: 'BITKOEX',
+    titleLogo: '디테일이 다르다. 거래가 편한 최고의 암호화폐 거래소',
     email: 'Email',
     password: 'Password',
-    login: 'Login',
+    login: 'LOGIN',
     register: 'Register',
     forgotText: 'Forgot your password',
     questionRegister: "Don't have an account yet? ",
+    emailEmpty: 'Email not empty',
+    passwordEmpty: 'Password not empty',
+    emailValidation: 'Email is not in the correct format',
+    messageUnCorrect: 'Email or Password not correct',
+
     registerForm: {
       referralID: 'Referral ID (optional)',
       textAcceptterm: "I agree to VCC's",
