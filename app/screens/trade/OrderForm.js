@@ -1,6 +1,7 @@
 import React from 'react';
 import {
   Image,
+  Keyboard,
   NativeModules,
   Text,
   TextInput,
@@ -9,7 +10,7 @@ import {
   View
 } from 'react-native';
 import ModalDropdown from 'react-native-modal-dropdown';
-import Icon from 'react-native-vector-icons/FontAwesome';
+import { Icon } from 'react-native-elements';
 import BigNumber from 'bignumber.js';
 import CurrencyInput from '../common/CurrencyInput';
 import BaseScreen from '../BaseScreen'
@@ -58,16 +59,7 @@ export default class OrderForm extends BaseScreen {
       { type: Consts.ORDER_TYPE_STOP_LIMIT, label: I18n.t('orderForm.stopLimit') },
       { type: Consts.ORDER_TYPE_STOP_MARKET, label: I18n.t('orderForm.stopMarket') }
     ];
-    this.percents = [
-      { value: 10, label: '10%' }, { value: 20, label: '20%' }, { value: 30, label: '30%' }, { value: 40, label: '40%' },
-      { value: 50, label: '50%' }, { value: 60, label: '60%' }, { value: 70, label: '70%' }, { value: 80, label: '80%' },
-      { value: 90, label: '90%' }, { value: 100, label: '100%' }
-    ];
-    this.krws = [
-      { value: 50, label: '50K KRW' }, { value: 100, label: '100K KRW' }, { value: 300, label: '300K KRW' },
-      { value: 500, label: '500K KRW' }, { value: 1000, label: '1000K KRW' }, { value: 1500, label: '1500K KRW' },
-      { value: 2000, label: '2000K KRW' }, { value: 3000, label: '3000K KRW' }, { value: 5000, label: '5000K KRW' }
-    ];
+    this.prefillAmounts = [50000, 100000, 300000, 500000, 1000000, 1500000, 2000000, 3000000, 5000000];
   }
 
   componentDidMount() {
@@ -338,17 +330,22 @@ export default class OrderForm extends BaseScreen {
     return (
       <TouchableWithoutFeedback onPress={this._openTypeMenu.bind(this)}>
         <View style={styles.inputValue} ref={ref => this._typeRef = ref}>
-          <Image
-            resizeMode={'contain'}
-            style={styles.caretDown}
-            source={require('../../../assets/common/caretdown.png')}/>
-            <View style={styles.typeButton}>
-              <Text style={styles.typeLabel}>
-                {this._getOrderTypeText() + ' ' + I18n.t('orderForm.order')}
-              </Text>
-            </View>
+          <View style={styles.caretDown}>
+            {this._renderCaretDownIcon()}
+          </View>
+          <View style={styles.typeButton}>
+            <Text style={styles.typeLabel}>
+              {this._getOrderTypeText() + ' ' + I18n.t('orderForm.order')}
+            </Text>
+          </View>
         </View>
       </TouchableWithoutFeedback>
+    );
+  }
+
+  _renderCaretDownIcon() {
+    return (
+      <Icon name='triangle-down' type='entypo' size={scale(18)}/>
     );
   }
 
@@ -431,7 +428,8 @@ export default class OrderForm extends BaseScreen {
     return (
       <View style={styles.inputRow}>
         <Text style={styles.inputLabel}>{I18n.t('orderForm.quantity')}</Text>
-        <View style={[styles.inputValue, !enableQuantity ? styles.disabled : {}]}>
+        <View style={[styles.inputValue, {borderRightWidth: 0}, !enableQuantity ? styles.disabled : {}]}>
+          <View ref={ref => this._quantityRef = ref} style={styles.quantityDropdownAnchor}/>
           <CurrencyInput
             value={this.state.quantity}
             precision={4}
@@ -440,9 +438,48 @@ export default class OrderForm extends BaseScreen {
             keyboardType='numeric'
             style={styles.inputText}
             underlineColorAndroid='transparent'/>
+            <TouchableWithoutFeedback onPress={this._openQuantityDropdown.bind(this)}>
+              <View style={styles.caretButton}>
+                {this._renderCaretDownIcon()}
+              </View>
+            </TouchableWithoutFeedback>
         </View>
       </View>
     );
+  }
+
+  _openQuantityDropdown() {
+    Keyboard.dismiss();
+    let items = [];
+    for (let i = 100; i > 0; i-= 10) {
+      items.push(i + '%');
+    }
+    const options = {
+      sourceView: this._quantityRef,
+      onSelectItem: this._onQuantityItemSelected.bind(this),
+      dropdownStyle: styles.quantityDropdown,
+      itemButtonStyle: styles.quantityDropdownButton,
+      itemTextStyle: styles.quantityDropdownText
+    };
+    this.notify(Events.SHOW_TRADE_SCREEN_DROPDOWN, { items, options });
+  }
+
+  _onQuantityItemSelected(index) {
+    let { type, price, coinBalance, currencyBalance } = this.state;
+    const percent = 100 - index * 10;
+
+    let newState = { enableQuantity: true };
+    if (this._isBuyOrder()) {
+      if (price) {
+        newState.quantity = BigNumber(currencyBalance).div(price).times(percent).div(100).toString();
+      }
+    } else {
+      newState.quantity = BigNumber(coinBalance).times(percent).div(100).toString();
+    }
+    if (newState.quantity && type == Consts.ORDER_TYPE_LIMIT && price) {
+      newState.total = newState.quantity ? BigNumber(price).times(newState.quantity).toString() : '';
+    }
+    this.setState(newState);
   }
 
   _renderTotalInput() {
@@ -450,7 +487,11 @@ export default class OrderForm extends BaseScreen {
     return (
       <View style={styles.inputRow}>
         <Text style={styles.inputLabel}>{I18n.t('orderForm.total')}</Text>
-        <View style={[styles.inputValue, enableQuantity || this._isMarketOrder() ? styles.disabled : {}]}>
+        <View style={[
+          styles.inputValue,
+          {borderRightWidth: 0},
+          enableQuantity || this._isMarketOrder() ? styles.disabled : {}]}>
+          <View ref={ref => this._totalRef = ref} style={styles.quantityDropdownAnchor}/>
           <CurrencyInput
             value={this.state.total}
             precision={4}
@@ -460,9 +501,63 @@ export default class OrderForm extends BaseScreen {
             keyboardType='numeric'
             style={styles.inputText}
             underlineColorAndroid='transparent'/>
+            <TouchableWithoutFeedback onPress={this._openTotalDropdown.bind(this)}>
+              <View style={styles.caretButton}>
+                {this._renderCaretDownIcon()}
+              </View>
+            </TouchableWithoutFeedback>
         </View>
       </View>
     );
+  }
+
+  _openTotalDropdown() {
+    Keyboard.dismiss();
+    let items = [];
+    for (let item of this.prefillAmounts) {
+      items.push(item / 10000 + I18n.t('orderForm.tenThousand'));
+    }
+    for (let i = 100; i > 0; i-= 10) {
+      items.push(i + '%');
+    }
+    const options = {
+      sourceView: this._totalRef,
+      onSelectItem: this._onTotalItemSelected.bind(this),
+      dropdownStyle: styles.quantityDropdown,
+      itemButtonStyle: styles.quantityDropdownButton,
+      itemTextStyle: styles.quantityDropdownText
+    };
+    this.notify(Events.SHOW_TRADE_SCREEN_DROPDOWN, { items, options });
+  }
+
+  _onTotalItemSelected(index) {
+    const { type, price } = this.state;
+    let total = this._getSelectedTotal(index);
+
+    let newState = {
+      enableQuantity: false,
+      total: total
+    };
+    if (type == Consts.ORDER_TYPE_LIMIT && price) {
+      newState.quantity = total ? this.floor(BigNumber(total).div(price), 4) : '';
+    }
+    this.setState(newState);
+  }
+
+  _getSelectedTotal(index) {
+    if (index < this.prefillAmounts.length) {
+      return this.prefillAmounts[index];
+    } else {
+      let percent = 100 - (index - this.prefillAmounts.length) * 10;
+      if (this._isBuyOrder()) {
+        let { price, coinBalance, currencyBalance } = this.state;
+        if (price) {
+          return BigNumber(currencyBalance).times(percent).div(100).toString();
+        }
+      } else {
+        return BigNumber(coinBalance).times(price).times(percent).div(100).toString();
+      }
+    }
   }
 
   _renderEstimationBuyValues() {
@@ -614,6 +709,8 @@ export default class OrderForm extends BaseScreen {
 
 const margin = scale(10);
 const dropdownRowHeight = scale(35);
+const inputHeight = scale(38);
+const inputBotderRadius = scale(3);
 
 const styles = ScaledSheet.create({
   inputGroup: {
@@ -623,7 +720,7 @@ const styles = ScaledSheet.create({
     justifyContent: 'space-between'
   },
   inputRow: {
-    height: scale(38),
+    height: inputHeight,
     flexDirection: 'row',
     alignItems: 'center',
   },
@@ -637,10 +734,10 @@ const styles = ScaledSheet.create({
     height: '100%',
     borderWidth: 1,
     borderColor: '#D9D9D9',
-    borderRadius: scale(3)
+    borderRadius: inputBotderRadius
   },
   inputText: {
-    width: '100%',
+    flex: 1,
     height: '100%',
     padding: margin,
     textAlign: 'right'
@@ -657,9 +754,20 @@ const styles = ScaledSheet.create({
     textAlign: 'center'
   },
   caretDown: {
-    width: '10@s',
+    width: '18@s',
     position: 'absolute',
     right: '10@s'
+  },
+  caretButton: {
+    width: inputHeight,
+    height: inputHeight,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: '#D9D9D9',
+    borderTopRightRadius: inputBotderRadius,
+    borderBottomRightRadius: inputBotderRadius,
+    backgroundColor: '#FCFBFB'
   },
   typeDropdown: {
     height: dropdownRowHeight * 4,
@@ -673,6 +781,29 @@ const styles = ScaledSheet.create({
     backgroundColor: '#FFF'
   },
   typeDropdownText: {
+    color: '#000',
+    textAlign: 'center'
+  },
+
+  quantityDropdownAnchor: {
+    position: 'absolute',
+    right: 0,
+    width: '80@s',
+    height: '100%',
+    backgroundColor: '#0000'
+  },
+  quantityDropdown: {
+    backgroundColor: '#FFF',
+    borderRadius: '3@s'
+  },
+  quantityDropdownButton: {
+    width: '100%',
+    height: '30@s',
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#FFF'
+  },
+  quantityDropdownText: {
     color: '#000',
     textAlign: 'center'
   },
