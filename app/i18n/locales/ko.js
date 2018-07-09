@@ -68,12 +68,18 @@ export default {
     sentence: '디테일이 다르다. 거래가 편한 최고의 암호화폐 거래소'
   },
   login: {
+    textLogo: 'BITKOEX',
+    titleLogo: '디테일이 다르다. 거래가 편한 최고의 암호화폐 거래소',
     email: 'Email',
     password: 'Mật khẩu',
-    login: 'Đăng nhập',
+    login: 'LOGIN',
     register: 'Đăng ký',
     forgotText: 'Quên mật khẩu?',
     questionRegister: "Bạn không có tài khoản?",
+    emailEmpty: 'Email not empty',
+    passwordEmpty: 'Password not empty',
+    emailValidation: 'Email is not in the correct format',
+    messageUnCorrect: 'Email or Password not correct',
 
     registerForm: {
       referralID: "Mã giới thiệu( không bắt buộc)",
