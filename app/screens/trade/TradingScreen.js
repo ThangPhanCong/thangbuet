@@ -13,6 +13,7 @@ import Modal from "react-native-modal";
 import BaseScreen from '../BaseScreen';
 import { TabNavigator, TabBarBottom } from 'react-navigation';
 import rf from '../../libs/RequestFactory';
+import Events from '../../utils/Events';
 import Numeral from '../../libs/numeral';
 import MasterdataUtils from '../../utils/MasterdataUtils';
 import ScaledSheet from '../../libs/reactSizeMatter/ScaledSheet';
@@ -28,6 +29,7 @@ import Consts from '../../utils/Consts';
 import { ListItem, List, Icon } from 'react-native-elements';
 import { formatCurrency, formatPercent, getCurrencyName } from '../../utils/Filters';
 import { CommonColors, CommonStyles } from '../../utils/CommonStyles';
+import DropdownMenu from '../common/DropdownMenu';
 
 const TradeTabs = TabNavigator(
   {
@@ -111,6 +113,12 @@ export default class TradingScreen extends BaseScreen {
     };
   }
 
+  getDataEventHandlers() {
+    return {
+      [Events.SHOW_TRADE_SCREEN_DROPDOWN]: this._showDropdown.bind(this)
+    };
+  }
+
   _getCurrency() {
     return this.state.currency;
   }
@@ -179,6 +187,10 @@ export default class TradingScreen extends BaseScreen {
     return this.state.balances[this._getCoin()] || {};
   }
 
+  _showDropdown(data) {
+    this._typeDropdown.show(data.items, data.options);
+  }
+
   render() {
     return (
       <SafeAreaView style={{ flex: 1, backgroundColor: '#fff' }}>
@@ -191,6 +203,7 @@ export default class TradingScreen extends BaseScreen {
               currency: this._getCurrency()
             }}/>
           {this._renderSymbolSelector()}
+        {this._renderTypeDropdown()}
         </View>
       </SafeAreaView>
     );
@@ -290,6 +303,12 @@ export default class TradingScreen extends BaseScreen {
           </List>
         </View>
       </Modal>
+    );
+  }
+
+  _renderTypeDropdown() {
+    return (
+      <DropdownMenu ref={ref => this._typeDropdown = ref}/>
     );
   }
 }

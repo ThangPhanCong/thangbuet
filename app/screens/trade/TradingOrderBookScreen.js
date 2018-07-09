@@ -202,11 +202,19 @@ export default class TradingOrderBookScreen extends BaseScreen {
             placeholderTextColor='#4E545E'/>
 
         <Text>{I18n.t('orderBook.hand')}</Text>
-        <TextInput style={styles.input} value='-15'/>
+        <TextInput
+          style={[styles.input, {color: CommonColors.decreased}]}
+          value='-15'
+          editable={false}
+          underlineColorAndroid='transparent'/>
         <Text style={styles.percentText}>%</Text>
 
         <Text>{I18n.t('orderBook.fence')}</Text>
-        <TextInput style={styles.input} value='15'/>
+        <TextInput
+          style={[styles.input, {color: CommonColors.increased}]}
+          value='15'
+          editable={false}
+          underlineColorAndroid='transparent'/>
         <Text style={styles.percentText}>%</Text>
 
         <TouchableOpacity onPress={this._openOrderBookSettingModal.bind(this)}>
@@ -244,6 +252,8 @@ const styles = ScaledSheet.create({
     height: '25@s',
     paddingLeft: '5@s',
     paddingRight: '5@s',
+    paddingTop: 0,
+    paddingBottom: 0,
     marginLeft: '5@s',
     marginRight: '5@s',
     borderWidth: 1,
