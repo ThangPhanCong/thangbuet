@@ -63,7 +63,10 @@ export default {
       shortname: 'ESPO'
     },
   },
-
+  splash: {
+    title: 'BITKOEX',
+    sentence: '디테일이 다르다. 거래가 편한 최고의 암호화폐 거래소'
+  },
   login: {
     email: 'Email',
     password: 'Password',
