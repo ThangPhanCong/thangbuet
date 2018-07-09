@@ -1,26 +1,11 @@
 import React from 'react';
-import {
-  PixelRatio,
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
-  Image,
-  SafeAreaView,
-  ScrollView,
-  Modal,
-  Button
-} from 'react-native';
+import { Button, Image, SafeAreaView, ScrollView, Text, View } from 'react-native';
 import BaseScreen from '../BaseScreen'
 import MasterdataUtils from '../../utils/MasterdataUtils'
 import ScaledSheet from '../../libs/reactSizeMatter/ScaledSheet'
-import { Icon } from 'react-native-elements'
 import rf from '../../libs/RequestFactory'
 import I18n from '../../i18n/i18n'
 import AppConfig from '../../utils/AppConfig'
-import AppPreferences from '../../utils/AppPreferences'
-import { formatCurrency, formatPercent, getCurrencyName } from '../../utils/Filters'
 import HeaderBalance from './HeaderBalance'
 
 export default class BalanceScreen extends BaseScreen {

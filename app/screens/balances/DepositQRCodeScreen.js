@@ -1,30 +1,16 @@
 import React from 'react';
 import {
-  PixelRatio,
-  StyleSheet,
   Text,
-  TextInput,
+  Clipboard,
   TouchableOpacity,
   View,
-  Image,
   SafeAreaView,
-  ScrollView,
-  Modal,
-  Button,
-  Alert
+  ToastAndroid
 } from 'react-native';
 import BaseScreen from '../BaseScreen'
-import MasterdataUtils from '../../utils/MasterdataUtils'
 import ScaledSheet from '../../libs/reactSizeMatter/ScaledSheet'
-import { Icon } from 'react-native-elements'
-import rf from '../../libs/RequestFactory'
 import I18n from '../../i18n/i18n'
-import AppConfig from '../../utils/AppConfig'
-import AppPreferences from '../../utils/AppPreferences'
-import { formatCurrency, formatPercent, getCurrencyName } from '../../utils/Filters'
 import { withNavigationFocus } from 'react-navigation'
-import KRWScreen from './KRWScreen'
-import KRWPendingScreen from './KRWPendingScreen'
 import HeaderBalance from './HeaderBalance'
 import { scale } from "../../libs/reactSizeMatter/scalingUtils"
 import QRCode from 'react-native-qrcode-svg'
@@ -46,10 +32,24 @@ class DepositQRCodeScreen extends BaseScreen {
     this.setState({ isComplete: false })
   }
 
+  _doCopy(symbol, hasTag) {
+    if (hasTag) {
+      Clipboard.setString(symbol.blockchain_tag)
+    } else {
+      Clipboard.setString(symbol.blockchain_address)
+    }
+
+    ToastAndroid.showWithGravity(
+      I18n.t('deposit.copyInfo'),
+      ToastAndroid.SHORT,
+      ToastAndroid.CENTER
+    )
+  }
+
   render() {
     const { navigation } = this.props;
     const symbol = navigation.getParam('symbol', {})
-    console.log(symbol)
+
     return (
       <SafeAreaView style={styles.fullScreen}>
         <View style={styles.content}>
@@ -64,7 +64,7 @@ class DepositQRCodeScreen extends BaseScreen {
                   <View>
                     <QRCode
                       size={scale(150)}
-                      value={'symbol.blockchain_address'} />
+                      value={symbol.blockchain_address ? symbol.blockchain_address : 'No address'} />
 
                     <Text style={{ margin: 10, marginBottom: 5 }}>
                       {symbol.blockchain_address}
@@ -75,14 +75,26 @@ class DepositQRCodeScreen extends BaseScreen {
                       </Text>
                     }
                   </View>
-                  <TouchableOpacity
-                    onPress={() => { }}
-                    style={[styles.alignCenter, {
-                      marginTop: 10, width: '100%', height: 40,
-                      backgroundColor: 'blue', borderRadius: 4, borderColor: 'rgba(0, 0, 0, 0.1)'
-                    }]}>
-                    <Text style={{ color: 'white' }}>{I18n.t('deposit.copyAddress')}</Text>
-                  </TouchableOpacity>
+                  <View style={{ flexDirection: 'row', width: '100%', height: 45, justifyContent: 'center', alignItems: 'center' }}>
+                    <TouchableOpacity
+                      onPress={() => this._doCopy(symbol, false)}
+                      style={[styles.alignCenter, {
+                        marginTop: 10, flex: 1, height: 40,
+                        backgroundColor: 'blue', borderRadius: 4, borderColor: 'rgba(0, 0, 0, 0.1)'
+                      }]}>
+                      <Text style={{ color: 'white' }}>{I18n.t('deposit.copyAddress')}</Text>
+                    </TouchableOpacity>
+                    {symbol.blockchain_tag && symbol.blockchain_tag != null &&
+                      <TouchableOpacity
+                        onPress={() => this._doCopy(symbol, true)}
+                        style={[styles.alignCenter, {
+                          marginTop: 10, flex: 1, height: 40, marginLeft: 5,
+                          backgroundColor: 'blue', borderRadius: 4, borderColor: 'rgba(0, 0, 0, 0.1)'
+                        }]}>
+                        <Text style={{ color: 'white' }}>{I18n.t('deposit.copyTag')}</Text>
+                      </TouchableOpacity>
+                    }
+                  </View>
                 </View>
               }
             </View>
