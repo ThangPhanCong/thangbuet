@@ -1,14 +1,26 @@
 import BaseRequest from '../libs/BaseRequest';
 import MasterdataUtils from '../utils/MasterdataUtils';
+import fs from 'react-native-fs';
+import { reloadTranslations } from '../i18n/i18n';
 
 export default class MasterdataRequest extends BaseRequest {
+
   getAll() {
     let cacheMasterdata = MasterdataUtils.getCachedMasterdata();
+    let data;
     if (cacheMasterdata) {
-      return Promise.resolve(cacheMasterdata);
+      data = Promise.resolve(cacheMasterdata);
     } else {
-      return this._get();
+      data = this._get();
     }
+
+    let currencyTranslation = this.getCurrencyTranslation()
+      .catch(err => {})
+
+    return Promise.all([
+      data,
+      currencyTranslation
+    ]).then(res => res[0])
   }
 
   find(table, id) {
@@ -42,4 +54,35 @@ export default class MasterdataRequest extends BaseRequest {
       });
   }
 
+  getCurrencyTranslation(forceUpdate = false) {
+    let path = fs.DocumentDirectoryPath + '/currency.json';
+    return fs.exists(path)
+    .then((exists) => {
+      if (exists && !forceUpdate) {
+        return null;
+      }
+  
+      // let url = '';
+      // return this.get(url)
+      return fetch('http://192.168.1.97:3000/currency', {
+        method: 'GET',
+        headers: this._getHeader()
+      })
+      .then(res => res.text())
+      .then(res => JSON.parse(res));
+    })
+    .then(res => {
+      if (res) {
+        let data = res.data;
+        return fs.writeFile(path, JSON.stringify(data), 'utf8')
+          .then(() => true);
+      }
+
+      return false;
+    })
+    .then(success => {
+      if (success)
+        reloadTranslations()
+    })
+  }
 }
