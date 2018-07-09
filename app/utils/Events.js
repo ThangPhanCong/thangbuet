@@ -1,4 +1,7 @@
 export default class Events {
-  static ORDER_BOOK_SETTINGS_UPDATED = 'OrderBookSettingsUpdated';
-  static ORDER_BOOK_ROW_PRESSED = 'OrderBookRowPressed';
+  static ORDER_BOOK_SETTINGS_UPDATED = 'ORDER_BOOK_SETTINGS_UPDATED';
+  static ORDER_BOOK_ROW_PRESSED = 'ORDER_BOOK_ROW_PRESSED';
+
+  // Commands
+  static SHOW_TRADE_SCREEN_DROPDOWN = 'SHOW_TRADE_SCREEN_DROPDOWN';
 }

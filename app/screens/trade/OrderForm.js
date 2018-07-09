@@ -336,22 +336,32 @@ export default class OrderForm extends BaseScreen {
 
   _renderOrderType() {
     return (
-      <View style={styles.inputValue}>
-        <Image
-          resizeMode={'contain'}
-          style={styles.caretDown}
-          source={require('../../../assets/common/caretdown.png')}/>
-        <ModalDropdown
-          defaultValue={this._getOrderTypeText() + ' ' + I18n.t('orderForm.order')}
-          style={styles.typeButton}
-          textStyle={styles.typeLabel}
-          dropdownStyle={styles.typeDropdown}
-          dropdownTextStyle={styles.typeDropdownText}
-          renderSeparator={() => <View style={{height: 0}}/>}
-          options={this.types.map(item => item.label + ' ' + I18n.t('orderForm.order'))}
-          onSelect={this._onTypeSelected.bind(this)}/>
-      </View>
+      <TouchableWithoutFeedback onPress={this._openTypeMenu.bind(this)}>
+        <View style={styles.inputValue} ref={ref => this._typeRef = ref}>
+          <Image
+            resizeMode={'contain'}
+            style={styles.caretDown}
+            source={require('../../../assets/common/caretdown.png')}/>
+            <View style={styles.typeButton}>
+              <Text style={styles.typeLabel}>
+                {this._getOrderTypeText() + ' ' + I18n.t('orderForm.order')}
+              </Text>
+            </View>
+        </View>
+      </TouchableWithoutFeedback>
     );
+  }
+
+  _openTypeMenu() {
+    const items= this.types.map(item => item.label + ' ' + I18n.t('orderForm.order'));
+    const options = {
+      sourceView: this._typeRef,
+      onSelectItem: this._onTypeSelected.bind(this),
+      dropdownStyle: styles.typeDropdown,
+      itemButtonStyle: styles.typeDropdownButton,
+      itemTextStyle: styles.typeDropdownText
+    };
+    this.notify(Events.SHOW_TRADE_SCREEN_DROPDOWN, { items, options });
   }
 
   _onTypeSelected(index) {
@@ -652,15 +662,19 @@ const styles = ScaledSheet.create({
     right: '10@s'
   },
   typeDropdown: {
-    width: '150@s',
-    height: dropdownRowHeight * 4 + 4,
-    marginTop: '12@s'
+    height: dropdownRowHeight * 4,
+    backgroundColor: '#FF0',
+  },
+  typeDropdownButton: {
+    width: '100%',
+    height: dropdownRowHeight,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#FFF'
   },
   typeDropdownText: {
-    height: dropdownRowHeight,
     color: '#000',
-    textAlign: 'center',
-    borderColor: '#0000'
+    textAlign: 'center'
   },
 
   estimationValues: {

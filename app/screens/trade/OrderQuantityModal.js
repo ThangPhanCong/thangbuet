@@ -193,7 +193,10 @@ export default class OrderQuantityModal extends BaseScreen {
     for (let i = 100; i > 0; i-= 10) {
       items.push(i + '%');
     }
-    this._dropdownMenu.show(items, this._inputView);
+    const options = {
+      sourceView: this._inputView
+    };
+    this._dropdownMenu.show(items, options);
   }
 
   _renderDropdown() {
