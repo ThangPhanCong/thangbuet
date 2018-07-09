@@ -9,8 +9,7 @@ import {
   TextInput,
   SafeAreaView,
   View,
-  FlatList,
-  Dimensions
+  FlatList
 } from 'react-native';
 import BaseScreen from '../BaseScreen';
 import { TabNavigator, TabBarTop } from 'react-navigation';

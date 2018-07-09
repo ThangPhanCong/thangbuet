@@ -204,7 +204,7 @@ export default class WalletScreen extends BaseScreen {
               textStyle={{marginStart: 6.5}}
               dropdownTextStyle={{fontSize: 13}}
               renderSeparator={() => <View style={{height: 0}}/>}
-              options={_.map(this._coinTypes, e => Utils.getCurrencyName(e))}
+              options={_.map(this._coinTypes, e => I18n.t(`currency.${e}.fullname`) + ' - ' + Utils.getCurrencyName(e))}
               onSelect={this._onCoinPickerSelect.bind(this)}/>
           </View>
 
@@ -343,7 +343,7 @@ export default class WalletScreen extends BaseScreen {
   }
 
   _onWithdraw(wallet) {
-    this._withdraw(wallet);
+    // Navigate to withdraw screen
   }
 
   _onShowRemoveWalletConfirmation(wallet) {
@@ -400,15 +400,6 @@ export default class WalletScreen extends BaseScreen {
       this.setState({
         isLoading: false
       })
-    }
-  }
-
-  async _withdraw(wallet) {
-    try {
-      
-    }
-    catch(err) {
-      console.log('WalletScreen._loadWallets', err);
     }
   }
 
