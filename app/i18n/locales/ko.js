@@ -73,11 +73,13 @@ export default {
     email: 'Email',
     password: 'Mật khẩu',
     login: 'LOGIN',
+    otp: 'OTP CODE',
     register: 'Đăng ký',
     forgotText: 'Quên mật khẩu?',
     questionRegister: "Bạn không có tài khoản?",
     emailEmpty: 'Email not empty',
     passwordEmpty: 'Password not empty',
+    otpUncorrect: 'Otp code is not correct',
     emailValidation: 'Email is not in the correct format',
     messageUnCorrect: 'Email or Password not correct',
 
