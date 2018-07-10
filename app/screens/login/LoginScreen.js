@@ -24,8 +24,12 @@ export default class LoginScreen extends BaseScreen {
     emailValidation: null,
     passwordEmpty: null,
     messageUnCorrect: null,
-    password: ''
+    otpValidation: null,
+    password: '',
+    otp: '',
+    checkOtp: false,
   }
+
 
   checkValidationLogin() {
     const { email, password } = this.state;
@@ -44,13 +48,14 @@ export default class LoginScreen extends BaseScreen {
     return reg.test(email);
   }
 
+
   async _onPressLogin() {
     try {
-      const { email, password } = this.state;
+      const { email, password, otp } = this.state;
       const emailLogical = this._checkEmail(email);
 
       if (emailLogical && password.length) {
-        let responseUser = await rf.getRequest('UserRequest').login(email, password);
+        let responseUser = await rf.getRequest('UserRequest').login(email, password, otp);
 
         AppPreferences.saveAccessToken(responseUser.access_token);
         window.GlobalSocket.connect();
@@ -59,14 +64,27 @@ export default class LoginScreen extends BaseScreen {
         this.checkValidationLogin();
       }
     } catch (err) {
-      this.setState({
-        emailValidation: null,
-        passwordEmpty: null,
-        messageUnCorrect: I18n.t('login.messageUnCorrect')
-      });
+      if (err.error == 'invalid_otp'){
+        if (!this.state.checkOtp){
+          this.setState({ checkOtp: true, emailValidation: null, passwordEmpty: null})
+        } else {
+          this.setState({messageUnCorrect: I18n.t('login.otpUncorrect')})
+          setTimeout(() => this.setState({ messageUnCorrect: null }), 1000);
+        }
 
-      setTimeout(() => this.setState({ messageUnCorrect: null }), 1000);
-      console.log('err', err)
+      }
+      else {
+        this.setState({
+          emailValidation: null,
+          passwordEmpty: null,
+          messageUnCorrect: I18n.t('login.messageUnCorrect')
+        });
+
+        setTimeout(() => this.setState({ messageUnCorrect: null }), 1000);
+      }
+      console.log('err', err);
+
+
     }
 
   }
@@ -77,21 +95,29 @@ export default class LoginScreen extends BaseScreen {
       password,
       emailValidation,
       passwordEmpty,
-      messageUnCorrect
+      messageUnCorrect,
+      otp,
+      checkOtp,
+      otpValidation
     } = this.state;
-
-    return (
-      <View style={styles.screen}>
-        <Image
-          resizeMode="cover"
-          style={styles.backgroundLogin}
-          source={require('../../../assets/background/bitkoex.png')}/>
-        <View style={styles.viewLogo}>
-          <Text style={styles.textLogo}>{I18n.t('login.textLogo')}</Text>
-          <Text style={styles.titleLogo}>{I18n.t('login.titleLogo')}</Text>
+    let rawInput1;
+    if (this.state.checkOtp) {
+      rawInput1 =
+        <View style={[styles.viewInput, styles.inputRowMarginTop]}>
+          <TextInput
+            value={otp}
+            keyboardType= 'numeric'
+            placeholder={I18n.t('login.otp')}
+            // blurOnSubmit={false}
+            placeholderTextColor='#cfd0d1'
+            underlineColorAndroid='transparent'
+            autoCapitalize='none'
+            style={[styles.inputLogin, {flex: 1, textAlign: 'center'}]}
+            returnKeyType={"next"}
+            onChangeText={(text) => this.setState({ otp: text })}/>
         </View>
-
-        <View style={styles.rowFlexOne}/>
+    } else {
+      rawInput1 =
         <View style={styles.viewInput}>
           <Image
             resizeMode={'contain'}
@@ -111,6 +137,22 @@ export default class LoginScreen extends BaseScreen {
             onChangeText={(text) => this.setState({ email: text })}/>
         </View>
 
+
+    }
+    return (
+      <View style={styles.screen}>
+        <Image
+          resizeMode="cover"
+          style={styles.backgroundLogin}
+          source={require('../../../assets/background/bitkoex.png')}/>
+        <View style={styles.viewLogo}>
+          <Text style={styles.textLogo}>{I18n.t('login.textLogo')}</Text>
+          <Text style={styles.titleLogo}>{I18n.t('login.titleLogo')}</Text>
+        </View>
+
+        <View style={styles.rowFlexOne}/>
+
+        {rawInput1}
         <Text style={styles.emptyInforLogin}>{emailValidation}</Text>
 
         <View style={[styles.viewInput, styles.inputRowMarginTop]}>
@@ -138,7 +180,6 @@ export default class LoginScreen extends BaseScreen {
             size={17}
             onPress={() => this._toggleShowPassWord()}/>
         </View>
-
         <Text style={styles.emptyInforLogin}>{passwordEmpty}</Text>
 
         <TouchableWithoutFeedback onPress={this._onPressLogin.bind(this)}>
@@ -202,20 +243,25 @@ const styles = ScaledSheet.create({
   inputLogin: {
     height: '40@s',
     color: '#FFF',
-    flex: 0.8,
+    flex: 1,
+    textAlign: 'center'
   },
   iconLogin: {
+    position: 'absolute',
     width: '15@s',
     marginBottom: '3@s',
     flex: 0.2,
     height: '15@s',
+    left: '22@s'
   },
   viewInput: {
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
     borderBottomColor: '#FFF',
-    borderBottomWidth: '0.5@s'
+    borderBottomWidth: '0.5@s',
+    paddingLeft: '50@s',
+    paddingRight: '50@s'
   },
   viewButtonLogin: {
     // flex: 1,
