@@ -199,7 +199,7 @@ export default class WalletScreen extends BaseScreen {
                 marginTop: 20,
                 left: 0,
                 right: 65,
-                height: 200
+                height: this._calculateModalHeight()
               }}
               textStyle={{marginStart: 6.5}}
               dropdownTextStyle={{fontSize: 13}}
@@ -270,6 +270,15 @@ export default class WalletScreen extends BaseScreen {
         </Card>
       </Modal>
     )
+  }
+
+  _calculateModalHeight() {
+    if (this._coinTypes.length == 0)
+      return 39;
+    if (this._coinTypes.length > 5) 
+      return 200;
+    
+    return this._coinTypes.length * 39;
   }
 
   _renderRemoveConfirmationModal() {

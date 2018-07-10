@@ -1,20 +1,20 @@
 import React from 'react';
-import { Button, Image, SafeAreaView, ScrollView, Text, View } from 'react-native';
+import { Text, TextInput, View } from 'react-native'
 import BaseScreen from '../BaseScreen'
 import MasterdataUtils from '../../utils/MasterdataUtils'
 import ScaledSheet from '../../libs/reactSizeMatter/ScaledSheet'
+import { Icon } from 'react-native-elements'
 import rf from '../../libs/RequestFactory'
 import I18n from '../../i18n/i18n'
 import AppConfig from '../../utils/AppConfig'
-import HeaderBalance from './HeaderBalance'
+import { formatCurrency } from '../../utils/Filters'
 
-export default class BalanceScreen extends BaseScreen {
+export default class HeaderBalance extends BaseScreen {
   constructor(props) {
     super(props)
     this.state = {
-      symbolArr: [],
-      symbols: {},
-      assetsValuation: 0
+      assetsValuation: 0,
+      symbols: [],
     }
     this.currency = 'krw'
   }
@@ -116,61 +116,38 @@ export default class BalanceScreen extends BaseScreen {
     }, 0)
 
     if (prices) {
-      this.setState({ symbols, assetsValuation, symbolArr: Object.values(symbols), prices })
+      this.setState({ symbols, assetsValuation, prices })
     } else {
-      this.setState({ symbols, assetsValuation, symbolArr: Object.values(symbols) })
+      this.setState({ symbols, assetsValuation })
     }
   }
 
   render() {
     return (
-      <SafeAreaView style={styles.fullScreen}>
-        <View style={styles.content}>
-          <HeaderBalance />
-          <View style={{ flex: 1 }}>
-            <View style={styles.tableHeader}>
-              <Text style={{ flex: 1 }}>{I18n.t('balances.coin')}</Text>
-              <Text style={{ flex: 1 }}> {I18n.t('balances.quantity')}</Text>
-              <Text style={{ flex: 1 }}>{I18n.t('balances.action')}</Text>
+      <View style={{ borderBottomWidth: 1, borderBottomColor: 'rgba(0, 0, 0, 0.1)' }}>
+        <View style={styles.header}>
+          <View style={styles.logo}>
+            <Icon name="assessment" />
+            <Text>{I18n.t('balances.depositAndWithdrawal')}</Text>
+          </View>
+          <View style={styles.info}>
+            <View style={styles.infoRow}>
+              <Text style={styles.infoRowLeft}>{I18n.t('balances.totalAssets')}</Text>
+              <Text style={styles.infoRowRight}>
+                {formatCurrency(this.state.assetsValuation, this.currency)}
+                <Text style={{ fontSize: 11 }}>{I18n.t('balances.currency')}</Text>
+              </Text>
             </View>
-            <ScrollView>
-              {
-                this.state.symbolArr.map((symbol, index) => (
-                  <View
-                    key={symbol + "_" + index}
-                    style={styles.tableRow}>
-                    <View style={styles.tableRowDetail}>
-                      <Image
-                        style={styles.imageSize}
-                        source={{ uri: symbol.icon }} />
-                      <Text>{symbol.code.toUpperCase()}</Text>
-                    </View>
-                    <Text style={styles.balance}>
-                      {symbol.code.toUpperCase() !== 'KRW' && parseFloat(symbol.balance)}
-                    </Text>
-                    <View style={styles.action}>
-                      <Button title={I18n.t('balances.deposit')} onPress={() => {
-                        if (symbol.code == 'krw') {
-                          this.navigate('DepositKRW', { symbol })
-                        } else {
-                          this.navigate('Deposit', { symbol })
-                        }
-                      }} />
-                      <Button title={I18n.t('balances.withdrawal')} onPress={() => {
-                        if (symbol.code == 'krw') {
-                          this.navigate('WithdrawalKRW', { symbol })
-                        } else {
-                          this.navigate('WithdrawalKRW', { symbol })
-                        }
-                      }} />
-                    </View>
-                  </View>
-                ))
-              }
-            </ScrollView>
           </View>
         </View>
-      </SafeAreaView>
+        <View style={{
+          flexDirection: 'row', height: 25, marginLeft: 5, marginRight: 5, marginBottom: 10, marginTop: 5,
+          borderWidth: 1, borderRadius: 4, borderColor: "rgba(0, 0, 0, 0.3)"
+        }}>
+          <TextInput style={{ flex: 1, textAlign: 'center' }} placeholder='검색' underlineColorAndroid='rgba(0, 0, 0, 0)' autoCorrect={false} />
+          <Icon name="search" size={20} />
+        </View>
+      </View>
     )
   }
 }
@@ -192,8 +169,5 @@ const styles = ScaledSheet.create({
     flexDirection: "row", height: 40,
     alignItems: 'center', justifyContent: 'center', borderBottomWidth: 1
   },
-  tableRowDetail: { flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-start' },
-  imageSize: { width: 24, height: 24 },
-  balance: { flex: 1, fontSize: 12 },
-  action: { flex: 1, flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'flex-start' }
+  tableRowDetail: { flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-start' }
 });

@@ -1,12 +1,15 @@
 import React from 'react';
-import { View } from 'react-native';
+import { Image, Text, View } from 'react-native';
 import BaseScreen from '../BaseScreen'
 
 import ScaledSheet from '../../libs/reactSizeMatter/ScaledSheet';
 import { TabBarTop, TabNavigator } from "react-navigation";
 import TransactionContainerScreen from "./TransactionContainerScreen";
-import { CommonStyles } from "../../utils/CommonStyles";
+import { CommonColors, CommonStyles } from "../../utils/CommonStyles";
 import I18n from "../../i18n/i18n";
+import FundsHistoryScreen from "./FundsHistoryScreen";
+import ProfitAndLossScreen from "./ProfitAndLossScreen";
+import { scale } from "../../libs/reactSizeMatter/scalingUtils";
 
 let TabBarNavigatorTransaction;
 
@@ -33,13 +36,13 @@ export default class TransactionScreen extends BaseScreen {
           })
         },
         FundsHistory: {
-          screen: (props) => <TransactionContainerScreen {...props} title={I18n.t('transactions.fundsHistoryTab')}/>,
+          screen: (props) => <FundsHistoryScreen {...props} title={I18n.t('transactions.fundsHistoryTab')}/>,
           navigationOptions: () => ({
             tabBarLabel: I18n.t('transactions.fundsHistoryTab'),
           })
         },
         ProfitScreen: {
-          screen: (props) => <TransactionContainerScreen {...props} title={I18n.t('transactions.profitLostTab')}/>,
+          screen: (props) => <ProfitAndLossScreen {...props} title={I18n.t('transactions.profitLostTab')}/>,
           navigationOptions: () => ({
             tabBarLabel: I18n.t('transactions.profitLostTab'),
           })
@@ -62,7 +65,7 @@ export default class TransactionScreen extends BaseScreen {
             backgroundColor: '#FFC000'
           },
           labelStyle: {
-            fontSize: 16
+            fontSize: scale(12)
           }
         },
         animationEnabled: false,
@@ -74,6 +77,15 @@ export default class TransactionScreen extends BaseScreen {
   render() {
     return (
       <View style={styles.screen}>
+        <View style={styles.viewHeader}>
+          <Image
+            resizeMode={'contain'}
+            style={styles.imgBook}
+            source={require('../../../assets/common/book/imgBook.png')}
+          />
+          <Text style={styles.textHeader}>{I18n.t('transactions.title')}</Text>
+
+        </View>
         <TabBarNavigatorTransaction/>
       </View>
 
@@ -84,6 +96,20 @@ export default class TransactionScreen extends BaseScreen {
 const styles = ScaledSheet.create({
   screen: {
     ...CommonStyles.screen
+  },
+  viewHeader: {
+    height: '60@s',
+    alignItems: 'center',
+    backgroundColor: '#FFF',
+    flexDirection: 'row'
+  },
+  textHeader: {
+    fontSize: '14@s',
+    color: CommonColors.mainText
+  },
+  imgBook: {
+    marginLeft: '10@s',
+    marginRight: '10@s',
   }
 
 });

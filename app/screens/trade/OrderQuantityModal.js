@@ -3,11 +3,12 @@ import {
   Text,
   TextInput,
   TouchableOpacity,
+  TouchableWithoutFeedback,
   View,
-  Image
+  Image,
+  StyleSheet
 } from 'react-native';
 import Modal from "react-native-modal";
-import ModalDropdown from 'react-native-modal-dropdown';
 import { Icon } from 'react-native-elements';
 import BigNumber from 'bignumber.js';
 import _ from 'lodash';
@@ -22,6 +23,7 @@ import Events from '../../utils/Events';
 import Utils from '../../utils/Utils';
 import Consts from '../../utils/Consts'
 import OrderUtils from '../../utils/OrderUtils';
+import DropdownMenu from '../common/DropdownMenu';
 
 export default class OrderQuantityModal extends BaseScreen {
   state = {
@@ -31,6 +33,7 @@ export default class OrderQuantityModal extends BaseScreen {
     price: undefined
   };
   balances = {};
+  sourcePosition = {};
 
   componentDidMount() {
     super.componentDidMount();
@@ -43,17 +46,10 @@ export default class OrderQuantityModal extends BaseScreen {
     }
   }
 
-  getDataEventHandlers() {
-    return {
-      [Events.ORDER_BOOK_SETTINGS_UPDATED]: this._onOrderBookSettingsUpdated.bind(this)
-    };
-  }
-
   async _loadData() {
     await Promise.all([
       this._loadCoinSettings(),
-      this._loadBalances(),
-      this._getOrderBookSettings()
+      this._loadBalances()
     ]);
   }
 
@@ -76,21 +72,8 @@ export default class OrderQuantityModal extends BaseScreen {
     }
   }
 
-  async _getOrderBookSettings() {
-    const params = {
-      currency: this._getCurrency(),
-      coin: this._getCoin()
-    };
-    const response = await rf.getRequest('UserRequest').getOrderBookSettings(params);
-    this._onOrderBookSettingsUpdated(response.data);
-  }
-
   _onBalanceUpdated(balances) {
     this.balances = Object.assign({}, this.balances, balances);
-  }
-
-  _onOrderBookSettingsUpdated(settings) {
-    this.settingsOrderConfirmation = settings.order_confirmation;
   }
 
   _getCoin() {
@@ -101,12 +84,13 @@ export default class OrderQuantityModal extends BaseScreen {
     return this.props.currency;
   }
 
-  showModal(tradeType, price) {
+  showModal(tradeType, price, submitCallback) {
     this.setState({
       tradeType: tradeType,
       price: price,
       modalVisible: true
     });
+    this.submitCallback = submitCallback;
   }
 
   hideModal() {
@@ -140,46 +124,8 @@ export default class OrderQuantityModal extends BaseScreen {
   }
 
   _onPressSubmit() {
-    var data = {
-      trade_type: this.state.tradeType,
-      currency: this._getCurrency(),
-      coin: this._getCoin(),
-      type: Consts.ORDER_TYPE_LIMIT,
-      quantity: this.state.quantity,
-      price: this.state.price
-    };
-    var errors = OrderUtils.validateOrderInput(data);
-    if (errors.length > 0) {
-      this._showError(errors[0].message);
-      return;
-    }
-    if (this.settingsOrderConfirmation) {
-      this.confirmCreateOrder(data);
-    } else {
-      this._sendOrderRequest(data);
-    }
-  }
-
-  confirmCreateOrder(data) {
-    this._sendOrderRequest(data);
-  }
-
-  async _sendOrderRequest(data) {
+    this.submitCallback(this.state.quantity);
     this.hideModal();
-    try {
-      await rf.getRequest('OrderRequest').createANewOne(data);
-    } catch(error) {
-      if (!error.response) {
-        self._showError(window.i18n.t('common.message.network_error'));
-      } else {
-        self._showError(error.response.data.message);
-      }
-    };
-  }
-
-  _showError(message) {
-    //TODO show error
-    console.log(message);
   }
 
   render() {
@@ -189,10 +135,15 @@ export default class OrderQuantityModal extends BaseScreen {
           animationType="slide"
           isVisible={this.state.modalVisible}
           backdropColor={'black'}
-          backdropOpacity={0.3}>
-          <View style={styles.popup}>
-            {this._renderHeader()}
-            {this._renderContent()}
+          backdropOpacity={0.3}
+          onBackButtonPress={() => this.hideModal()}
+          onBackdropPress={() => this.hideModal()}>
+          <View style={styles.screen}>
+            <View style={styles.popup}>
+              {this._renderHeader()}
+              {this._renderContent()}
+            </View>
+            {this._renderDropdown()}
           </View>
         </Modal>
       </View>
@@ -212,13 +163,10 @@ export default class OrderQuantityModal extends BaseScreen {
   }
 
   _renderContent() {
-    let items = [];
-    for (let i = 100; i > 0; i-= 10) {
-      items.push(i + '%');
-    }
     return (
       <View style={styles.content}>
         <View style={styles.inputContainer}>
+          <View style={styles.dropdownSource} ref={ref => this._inputView = ref}/>
           <CurrencyInput
             value={this.state.quantity}
             precision={this.state.quantityPrecision}
@@ -226,18 +174,11 @@ export default class OrderQuantityModal extends BaseScreen {
             keyboardType='numeric'
             style={styles.inputText}
             underlineColorAndroid='transparent'/>
-          <View style={styles.caretContainer}>
-            <Icon name='triangle-down' type='entypo' size={scale(18)}/>
-          </View>
-        <ModalDropdown
-          defaultValue={''}
-          style={styles.percentButton}
-          textStyle={styles.percentButtonText}
-          dropdownStyle={styles.percentDropdown}
-          dropdownTextStyle={styles.percentDropdownText}
-          renderSeparator={() => <View style={styles.separator}/>}
-          options={items}
-          onSelect={this._onPressPercent.bind(this)}/>
+          <TouchableWithoutFeedback onPress={this._showPercentDropdown.bind(this)}>
+            <View style={styles.caretContainer}>
+              <Icon name='triangle-down' type='entypo' size={scale(18)}/>
+            </View>
+          </TouchableWithoutFeedback>
         </View>
 
         <TouchableOpacity style={styles.updateButton} onPress={this._onPressSubmit.bind(this)}>
@@ -246,12 +187,39 @@ export default class OrderQuantityModal extends BaseScreen {
       </View>
     );
   }
+
+  _showPercentDropdown() {
+    let items = [];
+    for (let i = 100; i > 0; i-= 10) {
+      items.push(i + '%');
+    }
+    const options = {
+      sourceView: this._inputView
+    };
+    this._dropdownMenu.show(items, options);
+  }
+
+  _renderDropdown() {
+    return (
+      <DropdownMenu
+        ref={ref => this._dropdownMenu = ref}
+        onSelectItem={this._onPressPercent.bind(this)}
+        dropdownStyle={styles.dropdown}
+        itemButtonStyle={styles.dropdownButton}
+        itemTextStyle={styles.dropdownText}
+        separatorStyle={styles.separator}/>
+    );
+  }
 }
 
 const margin = scale(30);
 const inputHeight = scale(30);
 
 const styles = ScaledSheet.create({
+  screen: {
+    height: '100%',
+    justifyContent: 'center'
+  },
   popup: {
     width: '200@s',
     alignSelf: 'center',
@@ -286,6 +254,8 @@ const styles = ScaledSheet.create({
     height: inputHeight,
     paddingLeft: '5@s',
     paddingRight: '5@s',
+    paddingTop: 0,
+    paddingBottom: 0,
     textAlign: 'right'
   },
   caretContainer: {
@@ -296,26 +266,30 @@ const styles = ScaledSheet.create({
     borderLeftWidth: 1,
     borderColor: '#D9D9D9'
   },
-
-  percentButton: {
-    width: inputHeight,
-    height: inputHeight,
+  dropdownSource: {
     position: 'absolute',
-    right: 0
-  },
-  percentButtonText: {
-    width: inputHeight,
+    top: 0,
+    right: 0,
+    width: '80@s',
     height: inputHeight,
-    color: '#0000'
+    backgroundColor: '#FFF',
+    opacity: 0
   },
-  percentDropdown: {
-    width: '100@s',
+
+  dropdown: {
+    backgroundColor: '#FFF',
+    borderRadius: '3@s'
   },
-  percentDropdownText: {
+  dropdownButton: {
+    width: '100%',
     height: '30@s',
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#FFF'
+  },
+  dropdownText: {
     color: '#000',
-    textAlign: 'center',
-    borderColor: '#0000'
+    textAlign: 'center'
   },
   separator: {
     height: 1,

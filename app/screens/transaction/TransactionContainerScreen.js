@@ -1,8 +1,6 @@
 import React, { Component } from 'react';
-import { FlatList, Text, View, TouchableWithoutFeedback } from "react-native";
+import { FlatList, Text, View, TouchableWithoutFeedback, ScrollView } from "react-native";
 import rf from "../../libs/RequestFactory";
-import TransactionRequest from "../../requests/TransactionRequest";
-import DatePicker from 'react-native-datepicker'
 import moment from "moment";
 import { scale } from "../../libs/reactSizeMatter/scalingUtils";
 import { getDayMonth, formatCurrency, getTime, getCurrencyName } from "../../utils/Filters";
@@ -11,6 +9,8 @@ import ScaledSheet from "../../libs/reactSizeMatter/ScaledSheet";
 import I18n from "../../i18n/i18n";
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { orderBy } from "lodash";
+import BitkoexDatePicker from "./common/BitkoexDatePicker";
+import HeaderTransaction from "./common/HeaderTransaction";
 
 class TransactionContainerScreen extends Component {
   static SORT_FIELDS = {
@@ -40,21 +40,35 @@ class TransactionContainerScreen extends Component {
   async _loadData() {
     try {
       const { page, start_date, end_date, transactions } = this.state;
-
+      const { title } = this.props;
       const parseStartDate = moment(start_date).format('x');
       const parseEndDate = moment(end_date).format('x');
+      let responseTransaction = {}, params = {};
 
-      const params = {
-        page,
-        limit: 20,
-        is_all_order: true,
-        start_date: parseStartDate,
-        end_date: parseEndDate,
-      };
 
-      const responseTransaction = await rf.getRequest('OrderRequest').getOrderHistory(params);
+      if (title === I18n.t('transactions.openOrderTab')) {
+        params = {
+          page,
+          limit: 20,
+          start_date: parseStartDate,
+          currency: 'krw',
+          end_date: parseEndDate,
+        };
+        responseTransaction = await rf.getRequest('OrderRequest').getOrdersPending(params);
+      } else {
+        params = {
+          page,
+          limit: 20,
+          is_all_order: true,
+          start_date: parseStartDate,
+          end_date: parseEndDate,
+        };
+        responseTransaction = await rf.getRequest('OrderRequest').getOrderHistory(params);
+      }
 
-      this.setState({ transactions: [...transactions, ...responseTransaction.data.data] })
+      this.setState({
+        transactions: [...transactions, ...responseTransaction.data.data],
+      })
     } catch (err) {
       console.log('OrderRequest._error:', err)
     }
@@ -76,33 +90,7 @@ class TransactionContainerScreen extends Component {
     const showIcon = titleDate === 'start_date';
 
     return (
-      <DatePicker
-        style={{ width: scale(120) }}
-        date={date}
-        mode="date"
-        showIcon={showIcon}
-        placeholder="select date"
-        format="YYYY-MM-DD"
-        confirmBtnText="Confirm"
-        cancelBtnText="Cancel"
-        customStyles={{
-          dateIcon: {
-            position: 'absolute',
-            left: scale(0),
-            top: scale(4),
-            marginLeft: scale(0)
-          },
-          dateInput: {
-            marginLeft: scale(30),
-            height: scale(25),
-            borderRadius: scale(4)
-          },
-          dateText: {
-            fontSize: scale(11)
-          }
-        }}
-        onDateChange={(date) => this._changeDate(titleDate, date)}
-      />
+      <BitkoexDatePicker date={date} showIcon={showIcon} changeDate={(date) => this._changeDate(titleDate, date)}/>
     )
   }
 
@@ -136,7 +124,6 @@ class TransactionContainerScreen extends Component {
     }
 
     this._changeSortField(sortField, sortDirection);
-
   }
 
   _onSortPair() {
@@ -192,56 +179,43 @@ class TransactionContainerScreen extends Component {
     )
   }
 
-  _renderHeader() {
+  async _cancelTransaction(item) {
+    await rf.getRequest('OrderRequest').cancel(item.id);
+    this.setState({ page: 1, transactions: [] }, () => {
+      this._loadData();
+    })
+  }
+
+  _renderStatusOrder(item) {
     return (
-      <View style={styles.headerContainer}>
-        <View style={{
-          flexDirection: 'row', flex: 1, marginLeft: scale(8),
-        }}>
-          <TouchableWithoutFeedback onPress={() => this._onSortDate()}>
-            <View style={{ flex: 1, flexDirection: 'row' }}>
-              <Text>{I18n.t('transactions.time')}</Text>
-              {this._renderArrow(TransactionContainerScreen.SORT_FIELDS.DATE)}
-            </View>
-          </TouchableWithoutFeedback>
-
-          <TouchableWithoutFeedback onPress={() => this._onSortPair()}>
-            <View style={{ flexDirection: 'row', flex: 1.5 }}>
-              <Text>{I18n.t('transactions.pair')}</Text>
-              {this._renderArrow(TransactionContainerScreen.SORT_FIELDS.PAIR)}
-            </View>
-          </TouchableWithoutFeedback>
+      <TouchableWithoutFeedback onPress={() => this._cancelTransaction(item)}>
+        <View style={styles.itemRight}>
+          <View style={styles.viewCancel}>
+            <Text style={styles.textCancel}>{I18n.t('transactions.cancel')}</Text>
+          </View>
         </View>
-
-        <View style={{ flex: 1, flexDirection: 'row' }}>
-          <Text style={{
-            flex: 1, alignItems: 'flex-end',
-          }}> {I18n.t('transactions.amount')}</Text>
-          <Text style={{ flex: 1 }}>{I18n.t('transactions.orderPrice')}</Text>
-          <Text style={{ flex: 1 }}>{I18n.t('transactions.excutedPrice')}</Text>
-          <Text style={{ flex: 1 }}>{I18n.t('transactions.fee')}</Text>
-        </View>
-      </View>
+      </TouchableWithoutFeedback>
     )
   }
 
   _renderItem({ item }) {
+    const { title } = this.props;
+
     return (
       <View style={styles.itemContainer}>
         <View style={styles.itemLeftContainer}>
-          <View style={{ flex: 1, alignItems: 'center' }}>
+          <View style={styles.timeContainer}>
             <Text style={styles.itemDayMonth}>{getDayMonth(item.created_at)}</Text>
             <Text style={styles.itemTime}>{getTime(item.created_at)}</Text>
           </View>
 
-          <View style={{ flex: 1.5, flexDirection: 'row', alignItems: 'center' }}>
+          <View style={styles.coinPairContainer}>
             <Text style={[styles.itemCoin, { fontWeight: 'bold' }]}>{getCurrencyName(item.coin)}</Text>
             <Text style={[styles.itemCurrency, { fontWeight: 'bold' }]}>{' / ' + getCurrencyName(item.currency)}</Text>
           </View>
         </View>
 
-        <View style={{ flex: 1.8, flexDirection: 'row' }}
-        >
+        <View style={{ flexDirection: 'row' }}>
           <View style={styles.itemRight}>
             <Text style={styles.itemQuantity}>
               {formatCurrency(item.quantity, item.coin)}
@@ -250,27 +224,23 @@ class TransactionContainerScreen extends Component {
             <Text style={[styles.itemCoin]}>{getCurrencyName(item.coin)}</Text>
           </View>
 
-          <View style={styles.columnPrice}>
+          <View style={styles.itemRight}>
             <Text style={styles.itemPrice}>{formatCurrency(item.price, item.currency)}</Text>
             <Text style={styles.itemCurrency}>{getCurrencyName(item.currency)}</Text>
           </View>
 
-          <View style={styles.columnPrice}>
+          <View style={styles.itemRight}>
             <Text style={styles.itemQuantityPrice}>{formatCurrency(item.price * item.quantity, item.currency)}</Text>
             <Text style={styles.itemCurrency}>{getCurrencyName(item.currency)}</Text>
           </View>
 
-          <View style={{
-            flexDirection: 'column',
-            flex: 1.8,
-            alignItems: 'flex-end',
-            justifyContent: 'center',
-          }}>
-            <Text style={styles.itemFee}>
-              {formatCurrency(item.fee, item.coin)}
-            </Text>
-            <Text style={styles.itemCoin}>{getCurrencyName(item.coin)}</Text>
-          </View>
+          {title === I18n.t('transactions.openOrderTab') ? this._renderStatusOrder(item) :
+            <View style={[styles.itemRight, {marginRight: scale(10)}]}>
+              <Text style={styles.itemCoin}>
+                {formatCurrency(item.fee, item.coin)}
+              </Text>
+              <Text style={styles.itemCoin}>{getCurrencyName(item.coin)}</Text>
+            </View>}
         </View>
       </View>
     )
@@ -278,12 +248,14 @@ class TransactionContainerScreen extends Component {
 
   render() {
     const { transactions } = this.state;
+    const titles = [I18n.t('transactions.amount'), I18n.t('transactions.orderPrice'),
+      I18n.t('transactions.excutedPrice'), I18n.t('transactions.fee')];
 
     return (
       <View style={styles.screen}>
-        <View style={{ flexDirection: 'row' }}>
+        <View style={styles.viewDatePicker}>
           {this._renderDatePicker('start_date')}
-          <View style={{ alignSelf: 'center', marginLeft: scale(20) }}>
+          <View style={styles.viewSymbol}>
             <Text>~</Text>
           </View>
           {this._renderDatePicker('end_date')}
@@ -291,13 +263,19 @@ class TransactionContainerScreen extends Component {
         </View>
 
         <View>
-          {this._renderHeader()}
-          <FlatList data={transactions}
-                    renderItem={this._renderItem.bind(this)}
-                    onEndReached={this._handleLoadMore.bind(this)}
-                    onEndThreshold={100}/>
+          <ScrollView horizontal={true} contentContainerStyle={{ flexDirection: 'column' }}>
+            <HeaderTransaction sortDate={() => this._onSortDate()}
+                               titles={titles}
+                               sortPair={() => this._onSortPair()}
+                               renderArrowDate={this._renderArrow(TransactionContainerScreen.SORT_FIELDS.DATE)}
+                               renderArrowPair={this._renderArrow(TransactionContainerScreen.SORT_FIELDS.PAIR)}
+            />
+            <FlatList data={transactions}
+                      renderItem={this._renderItem.bind(this)}
+                      onEndReached={this._handleLoadMore.bind(this)}
+                      onEndThreshold={100}/>
+          </ScrollView>
         </View>
-
       </View>
     )
   }
@@ -319,7 +297,6 @@ const styles = ScaledSheet.create({
     borderColor: CommonColors.separator
   },
   itemContainer: {
-    alignItems: 'center',
     flexDirection: 'row',
     height: '50@s',
     borderBottomColor: CommonColors.separator,
@@ -335,10 +312,12 @@ const styles = ScaledSheet.create({
     fontSize: '11@s'
   },
   itemCoin: {
-    color: CommonColors.mainText
+    color: CommonColors.mainText,
+    fontSize: '13@s'
   },
   itemCurrency: {
-    color: CommonColors.mainText
+    color: CommonColors.mainText,
+    fontSize: '13@s'
   },
   itemQuantity: {
     fontSize: '12@s',
@@ -357,9 +336,16 @@ const styles = ScaledSheet.create({
     borderRightColor: CommonColors.separator,
     borderRightWidth: '1@s',
   },
+  timeContainer: {
+    flex: 1,
+    marginLeft: '2@s',
+    justifyContent: 'center',
+    alignItems: 'center',
+    flexDirection: 'column'
+  },
   itemRight: {
     flexDirection: 'column',
-    flex: 1,
+    width: '100@s',
     alignItems: 'flex-end',
     justifyContent: 'center',
   },
@@ -382,5 +368,39 @@ const styles = ScaledSheet.create({
     flex: 2,
     alignItems: 'flex-end',
     justifyContent: 'center',
+  },
+  itemStatus: {
+    flexDirection: 'column',
+    flex: 1,
+    alignItems: 'flex-end',
+    justifyContent: 'center',
+  },
+  viewCancel: {
+    backgroundColor: '#ff5d5d',
+    width: '50@s',
+    height: '25@s',
+    marginRight: '5@s',
+    borderRadius: '5@s',
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
+  textCancel: {
+    fontSize: '12@s',
+    color: '#FFF'
+  },
+  coinPairContainer: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginLeft: '20@s',
+    marginRight: '20@s'
+  },
+  viewDatePicker: {
+    flexDirection: 'row',
+    alignItems: 'center'
+  },
+  viewSymbol: {
+    alignSelf: 'center',
+    marginLeft: scale(20)
   }
 });

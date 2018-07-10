@@ -212,7 +212,6 @@ export default class OrderBook extends BaseScreen {
 
   async _onOrderBookSettingsUpdated(data) {
     this.settings = data;
-    console.log(this.settings);
     await this._getPriceSetting();
     this._updateOrderBook();
   }

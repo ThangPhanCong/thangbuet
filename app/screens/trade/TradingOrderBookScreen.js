@@ -15,12 +15,16 @@ import {
 import ScaledSheet from '../../libs/reactSizeMatter/ScaledSheet';
 import { CommonColors, CommonSize, CommonStyles } from '../../utils/CommonStyles';
 import I18n from '../../i18n/i18n';
+import rf from '../../libs/RequestFactory';
 import BaseScreen from '../BaseScreen'
 import OrderBook from './OrderBook';
 import OrderBookSettingModal from './OrderBookSettingModal';
 import OrderQuantityModal from './OrderQuantityModal';
 import CurrencyInput from '../common/CurrencyInput';
+import Utils from '../../utils/Utils';
+import Consts from '../../utils/Consts'
 import Events from '../../utils/Events';
+import OrderUtils from '../../utils/OrderUtils';
 
 
 export default class TradingOrderBookScreen extends BaseScreen {
@@ -28,7 +32,10 @@ export default class TradingOrderBookScreen extends BaseScreen {
     super(props)
     this.state = {
       currency: props.screenProps.currency,
-      coin: props.screenProps.coin
+      coin: props.screenProps.coin,
+      quantity: '',
+      quantityPrecision: 4,
+      settingsOrderConfirmation: undefined
     }
   }
 
@@ -39,10 +46,46 @@ export default class TradingOrderBookScreen extends BaseScreen {
     }
   }
 
+  componentDidMount() {
+    super.componentDidMount();
+    this._loadData();
+  }
+
   getDataEventHandlers() {
     return {
+      [Events.ORDER_BOOK_SETTINGS_UPDATED]: this._onOrderBookSettingsUpdated.bind(this),
       [Events.ORDER_BOOK_ROW_PRESSED]: this._onOrderBookRowClicked.bind(this)
     };
+  }
+
+  async _loadData() {
+    await Promise.all([
+      this._loadCoinSettings(),
+      this._getOrderBookSettings()
+    ]);
+  }
+
+  async _loadCoinSettings() {
+    const masterdata = await rf.getRequest('MasterdataRequest').getAll();
+    const settings = masterdata.coin_settings.find(item => {
+      return item.currency == this._getCurrency() && item.coin == this._getCoin()
+    });
+    this.setState({
+      quantityPrecision: Utils.getPrecision(settings.minimum_quantity)
+    });
+  }
+
+  async _getOrderBookSettings() {
+    const params = {
+      currency: this._getCurrency(),
+      coin: this._getCoin()
+    };
+    const response = await rf.getRequest('UserRequest').getOrderBookSettings(params);
+    this._onOrderBookSettingsUpdated(response.data);
+  }
+
+  _onOrderBookSettingsUpdated(settings) {
+    this.settingsOrderConfirmation = settings.order_confirmation;
   }
 
   _getCurrency() {
@@ -54,7 +97,66 @@ export default class TradingOrderBookScreen extends BaseScreen {
   }
 
   _onOrderBookRowClicked(data) {
-    this._orderQuantityModal.showModal(data.tradeType, data.price);
+    if (data.orderBookType != OrderBook.TYPE_FULL) {
+      return;
+    }
+
+    if (this.state.quantity) {
+      this._submitOrder(data);
+    } else {
+      this._orderQuantityModal.showModal(data.tradeType, data.price, async quantity => {
+        await this.setState({ quantity });
+        this._submitOrder(data);
+      });
+    }
+  }
+
+  _submitOrder(data) {
+    let params = {
+      trade_type: data.tradeType,
+      currency: this._getCurrency(),
+      coin: this._getCoin(),
+      type: Consts.ORDER_TYPE_LIMIT,
+      quantity: this.state.quantity,
+      price: data.price
+    };
+
+    var errors = OrderUtils.validateOrderInput(params);
+    if (errors.length > 0) {
+      this._showError(errors[0].message);
+      return;
+    }
+    if (this.settingsOrderConfirmation) {
+      this._confirmCreateOrder(params);
+    } else {
+      this._sendOrderRequest(params);
+    }
+  }
+
+  _showError(message) {
+    //TODO show error
+    console.log(message);
+  }
+
+  _confirmCreateOrder(data) {
+    this._sendOrderRequest(data);
+  }
+
+  async _sendOrderRequest(data) {
+    try {
+      await rf.getRequest('OrderRequest').createANewOne(data);
+    } catch(error) {
+      if (!error.errors) {
+        this._showError(I18n.t('common.message.network_error'));
+      } else {
+        this._showError(error.message);
+      }
+    };
+  }
+
+  _onQuantityChanged(formatted, extracted) {
+    let quantity = OrderUtils.getMaskInputValue(formatted, extracted);
+    this.setState({ quantity });
   }
 
   render() {
@@ -91,18 +193,29 @@ export default class TradingOrderBookScreen extends BaseScreen {
       <View style={styles.quantityAndSettingGroup}>
         <Text style={styles.quantityLabel}>{I18n.t('orderBook.quantity')}</Text>
         <CurrencyInput
+            value={this.state.quantity}
+            precision={this.state.quantityPrecision}
+            onChangeText={this._onQuantityChanged.bind(this)}
             keyboardType='numeric'
-            style={styles.quantityInput}
+            style={[styles.input, styles.quantityInput]}
             underlineColorAndroid='transparent'
             placeholderTextColor='#4E545E'/>
 
         <Text>{I18n.t('orderBook.hand')}</Text>
-        <TextInput value='-15'/>
-        <Text>%</Text>
+        <TextInput
+          style={[styles.input, {color: CommonColors.decreased}]}
+          value='-15'
+          editable={false}
+          underlineColorAndroid='transparent'/>
+        <Text style={styles.percentText}>%</Text>
 
         <Text>{I18n.t('orderBook.fence')}</Text>
-        <TextInput value='15'/>
-        <Text>%</Text>
+        <TextInput
+          style={[styles.input, {color: CommonColors.increased}]}
+          value='15'
+          editable={false}
+          underlineColorAndroid='transparent'/>
+        <Text style={styles.percentText}>%</Text>
 
         <TouchableOpacity onPress={this._openOrderBookSettingModal.bind(this)}>
           <Image
@@ -133,5 +246,23 @@ const styles = ScaledSheet.create({
   },
   setting: {
     width: '20@s'
+  },
+
+  input: {
+    height: '25@s',
+    paddingLeft: '5@s',
+    paddingRight: '5@s',
+    paddingTop: 0,
+    paddingBottom: 0,
+    marginLeft: '5@s',
+    marginRight: '5@s',
+    borderWidth: 1,
+    borderColor: CommonColors.border,
+    borderRadius: '3@s',
+    textAlign: 'right'
+  },
+  percentText: {
+    fontSize: '12@s',
+    marginRight: '10@s'
   }
 });
