@@ -56,12 +56,18 @@ const TabBarNavigator = TabNavigator({
     inactiveTintColor: '#D9D9D9',
     style: {
       backgroundColor: '#3B3838',
+      height: 48
     },
     indicatorStyle: {
       backgroundColor: '#FFC000'
     },
     labelStyle: {
-      fontSize: 14
+      fontSize: 13
+    },
+    tabStyle: {
+      flex: 1,
+      alignItems: 'center',
+      justifyContent: 'center'
     }
   },
   animationEnabled: false,

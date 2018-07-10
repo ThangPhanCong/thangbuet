@@ -168,12 +168,13 @@ class MarketSearchScreen extends BaseScreen {
           inactiveTintColor: '#D9D9D9',
           style: {
             backgroundColor: '#3B3838',
+            height: 48
           },
           indicatorStyle: {
             backgroundColor: '#FFC000'
           },
           labelStyle: {
-            fontSize: 16
+            fontSize: 13
           }
         },
         animationEnabled: false,
