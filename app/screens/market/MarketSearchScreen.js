@@ -174,7 +174,7 @@ class MarketSearchScreen extends BaseScreen {
             backgroundColor: '#FFC000'
           },
           labelStyle: {
-            fontSize: 13
+            fontSize: 16
           }
         },
         animationEnabled: false,
@@ -268,7 +268,7 @@ const styles = StyleSheet.create({
   },
 
   header: {
-    height: 60,
+    height: 59,
     flexDirection: 'row'
   },
   favoriteButton: {

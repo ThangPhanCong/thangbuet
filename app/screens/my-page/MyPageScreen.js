@@ -62,7 +62,8 @@ const TabBarNavigator = TabNavigator({
       backgroundColor: '#FFC000'
     },
     labelStyle: {
-      fontSize: 13
+      fontSize: 13,
+      alignSelf: 'center'
     },
     tabStyle: {
       flex: 1,
@@ -118,7 +119,7 @@ const styles = StyleSheet.create({
     ...CommonStyles.screen
   },
   header: {
-    height: 60,
+    height: 59,
     flexDirection: 'row',
     alignItems: 'center',
     paddingStart: 16
