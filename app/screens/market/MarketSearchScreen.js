@@ -168,6 +168,7 @@ class MarketSearchScreen extends BaseScreen {
           inactiveTintColor: '#D9D9D9',
           style: {
             backgroundColor: '#3B3838',
+            height: 48
           },
           indicatorStyle: {
             backgroundColor: '#FFC000'
@@ -267,7 +268,7 @@ const styles = StyleSheet.create({
   },
 
   header: {
-    height: 60,
+    height: 59,
     flexDirection: 'row'
   },
   favoriteButton: {

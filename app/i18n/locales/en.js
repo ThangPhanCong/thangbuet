@@ -436,7 +436,8 @@ export default {
       addNewWalletSubmit: '입출금 계좌 등록',
       removeConfirmDesc: `'{0}' 을 삭제하시겠습니까`,
       removeConfirm: '확인'
-    }
+    },
+    logout: '로그아웃'
   },
   transactions: {
     title: '주문/체결 내역',
