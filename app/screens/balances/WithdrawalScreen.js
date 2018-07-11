@@ -219,12 +219,13 @@ class WithdrawalScreen extends BaseScreen {
                   <TextInput
                     keyboardType='numeric'
                     autoCorrect={false}
-                    underlineColorAndroid='rgba(0, 0, 0, 0)'
+                    // underlineColorAndroid='rgba(0, 0, 0, 0)'
+                    underlineColorAndroid='transparent'
                     value={formatCurrency(this.state.amount, this.currency)}
                     onChangeText={(text) => {
                       this.setState({ amount: parseFloat(text.split(',').join('')) })
                     }}
-                    style={{ flex: 1, height: 30, textAlign: 'right', paddingRight: 5 }} />
+                    style={{ flex: 1, height: 30, textAlign: 'right', paddingRight: 5, textAlignVertical: 'bottom', lineHeight: 0.1 }} />
                   <Text style={{ fontSize: 11 }}>{this.currency.toString().toUpperCase()}</Text>
                   <TouchableOpacity
                     style={{
@@ -247,15 +248,34 @@ class WithdrawalScreen extends BaseScreen {
                     editable={false}
                     value={symbol.blockchain_address ? symbol.blockchain_address : ''}
                     autoCorrect={false}
-                    underlineColorAndroid='rgba(0, 0, 0, 0)'
-                    style={{ flex: 1, height: 30, textAlign: 'right', opacity: 0.7 }} />
+                    // underlineColorAndroid='rgba(0, 0, 0, 0)'
+                    underlineColorAndroid='transparent'
+                    style={{ flex: 1, height: 30, textAlign: 'right', opacity: 0.7, textAlignVertical: 'bottom', lineHeight: 0.1 }} />
                 </View>
               </View>
+
+              {symbol.blockchain_tag && symbol.blockchain_tag != null &&
+                <View style={[styles.line, styles.amount]}>
+                  <Text>{I18n.t('withdrawal.tagAddress')}</Text>
+                  <View style={{
+                    flexDirection: 'row', alignItems: 'center', justifyContent: 'center',
+                    borderWidth: 1, borderRadius: 4, borderColor: "rgba(0, 0, 0, 0.3)"
+                  }}>
+                    <TextInput
+                      editable={false}
+                      value={symbol.blockchain_tag}
+                      autoCorrect={false}
+                      // underlineColorAndroid='rgba(0, 0, 0, 0)'
+                      underlineColorAndroid='transparent'
+                      style={{ flex: 1, height: 30, textAlign: 'right', opacity: 0.7, textAlignVertical: 'bottom', lineHeight: 0.1 }} />
+                  </View>
+                </View>
+              }
 
               <TouchableOpacity
                 onPress={this._validateAmount.bind(this)}
                 style={[styles.alignCenter, {
-                  marginTop: 10, width: '70%', height: 40,
+                  marginTop: 20, width: '79%', height: 35,
                   backgroundColor: 'blue', borderRadius: 4, borderColor: 'rgba(0, 0, 0, 0.1)'
                 }]}>
                 <Text style={{ color: 'white' }}>{I18n.t('withdrawal.coinBtn')}</Text>
