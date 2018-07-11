@@ -120,7 +120,7 @@ class WithdrawalKRWScreen extends BaseScreen {
   async _getWithdrawalKrw() {
     try {
       let { daily } = this.state;
-      const rpDailyKrw = await rf.getRequest('TransactionRequest').getWithdrawalDailyKrw({ 'currency': this.currency })
+      const rpDailyKrw = await rf.getRequest('TransactionRequest').getWithdrawalDaily({ 'currency': this.currency })
 
       daily.withdrawalKrw = rpDailyKrw.data;
       this.setState({ daily })
@@ -249,6 +249,8 @@ class WithdrawalKRWScreen extends BaseScreen {
                 }}>
                   <TextInput
                     keyboardType='numeric'
+                    autoCorrect={false}
+                    underlineColorAndroid='rgba(0, 0, 0, 0)'
                     value={formatCurrency(this.state.amount, this.currency)}
                     // value={this.state.amount + ''}
                     onChangeText={(text) => {
@@ -278,6 +280,8 @@ class WithdrawalKRWScreen extends BaseScreen {
                   <TextInput
                     editable={false}
                     value={this.state.currentUser.encodeAccount}
+                    autoCorrect={false}
+                    underlineColorAndroid='rgba(0, 0, 0, 0)'
                     style={{ flex: 1, height: 30, textAlign: 'right', opacity: 0.7 }} />
                 </View>
               </View>

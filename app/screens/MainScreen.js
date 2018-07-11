@@ -12,6 +12,7 @@ import DepositScreen from './balances/DepositScreen'
 import DepositQRCodeScreen from './balances/DepositQRCodeScreen'
 import DepositKRWScreen from './balances/DepositKRWScreen'
 import WithdrawalKRWScreen from './balances/WithdrawalKRWScreen'
+import WithdrawalScreen from './balances/WithdrawalScreen'
 
 export const BalanceStack = StackNavigator({
   Balance: {
@@ -28,6 +29,9 @@ export const BalanceStack = StackNavigator({
   },
   WithdrawalKRW: {
     screen: WithdrawalKRWScreen
+  },
+  Withdrawal: {
+    screen: WithdrawalScreen
   }
 });
 import MarketSearchScreen from './market/MarketSearchScreen';

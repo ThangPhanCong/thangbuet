@@ -160,7 +160,7 @@ export default class BalanceScreen extends BaseScreen {
                         if (symbol.code == 'krw') {
                           this.navigate('WithdrawalKRW', { symbol })
                         } else {
-                          this.navigate('WithdrawalKRW', { symbol })
+                          this.navigate('Withdrawal', { symbol })
                         }
                       }} />
                     </View>
