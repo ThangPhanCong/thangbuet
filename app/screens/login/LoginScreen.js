@@ -103,7 +103,7 @@ export default class LoginScreen extends BaseScreen {
     let rawInput1;
     if (this.state.checkOtp) {
       rawInput1 =
-        <View style={[styles.viewInput, styles.inputRowMarginTop]}>
+        <View style={[styles.viewInput]}>
           <TextInput
             value={otp}
             keyboardType= 'numeric'

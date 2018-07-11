@@ -84,6 +84,21 @@ export default class BaseScreen extends React.Component {
     window.EventBus.notify(event, data);
   }
 
+  alertExit(){
+    Alert.alert(
+      I18n.t('exit.title'),
+      I18n.t('exit.content'), [{
+        text: I18n.t('exit.cancel'),
+        onPress: () => { },
+        style: 'cancel'
+      }, {
+        text: I18n.t('exit.ok'),
+        onPress: () => BackHandler.exitApp()
+      },], {
+        cancelable: false
+      }
+    )
+  }
   onBackButtonPressAndroid = () => {
     // console.log('this.props.navigation.', this.props.navigation.isFocused())
     const mainScreens = ['HomeScreen', "favourite", "btc", "eth", "vnd", "TradesScreen", "BalanceScreen", 'AccountSettingScreen',
@@ -91,20 +106,17 @@ export default class BaseScreen extends React.Component {
     let index = mainScreens.indexOf(this.props.navigation.state.routeName)
     // console.log('index, ', index)
     if (this.props.navigation.isFocused && this.props.navigation.isFocused() && index != -1) {
-      Alert.alert(
-        I18n.t('exit.title'),
-        I18n.t('exit.content'), [{
-          text: I18n.t('exit.cancel'),
-          onPress: () => { },
-          style: 'cancel'
-        }, {
-          text: I18n.t('exit.ok'),
-          onPress: () => BackHandler.exitApp()
-        },], {
-          cancelable: false
+      if (this.props.navigation.state.routeName === "LoginScreen"){
+        if (this.state.checkOtp){
+          this.setState({checkOtp: false});
+        } else {
+          this.alertExit();
         }
-      )
-      return true
+        return true
+      } else {
+        this.alertExit();
+        return true
+      }
     } else {
       return false
     }
