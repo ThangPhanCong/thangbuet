@@ -77,7 +77,7 @@ class MarketSearchScreen extends BaseScreen {
             
             <View style={styles.iconContainer}>
               <Icon name="magnify"
-                size={PixelRatio.getPixelSizeForLayoutSize(12)}
+                size={24}
                 style={styles.searchIcon}
                 color="#000" />
             </View>

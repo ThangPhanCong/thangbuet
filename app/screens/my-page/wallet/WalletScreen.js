@@ -204,7 +204,7 @@ export default class WalletScreen extends BaseScreen {
               textStyle={{marginStart: 6.5}}
               dropdownTextStyle={{fontSize: 13}}
               renderSeparator={() => <View style={{height: 0}}/>}
-              options={_.map(this._coinTypes, e => Utils.getCurrencyName(e))}
+              options={this._generateOptionList()}
               onSelect={this._onCoinPickerSelect.bind(this)}/>
           </View>
 
@@ -271,6 +271,17 @@ export default class WalletScreen extends BaseScreen {
       </Modal>
     )
   }
+
+  _generateOptionList() {
+    return _.map(this._coinTypes, e => {
+      let t = I18n.t(`currency.${e}.fullname`)
+      if (t)
+        return t + ' - ' + Utils.getCurrencyName(e);
+      else
+        return Utils.getCurrencyName(e);
+    })
+  }
+
 
   _calculateModalHeight() {
     if (this._coinTypes.length == 0)
