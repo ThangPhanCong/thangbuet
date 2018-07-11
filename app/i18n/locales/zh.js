@@ -176,11 +176,6 @@ export default {
     notificationCanceled: '취소',
     update: '확인'
   },
-  fullScreenChart: {
-    change24h: '24h Change',
-    hour: 'Hour',
-    min: 'min'
-  },
   tabBar: {
     trading: '트레이딩',
     funds: '자산현황',
