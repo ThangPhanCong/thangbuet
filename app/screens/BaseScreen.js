@@ -25,7 +25,7 @@ export default class BaseScreen extends React.Component {
     if (Platform.OS === 'android' && this.props.navigation) {
       this._didFocusSubscription = this.props.navigation.addListener('didFocus', payload => {
         //console.log("payload", BackHandler)
-        return BackHandler.addEventListener('hardwareBackPress', this.onBackButtonPressAndroid)
+        return BackHandler.addEventListener('hardwareBackPress', this.onBackButtonPressAndroid.bind(this))
       }
       );
     }
@@ -47,7 +47,7 @@ export default class BaseScreen extends React.Component {
     if (Platform.OS === 'android' && this.props.navigation) {
       this._willBlurSubscription = this.props.navigation.addListener('willBlur', payload => {
         //console.log("payload willBlur", payload)
-        return BackHandler.removeEventListener('hardwareBackPress', this.onBackButtonPressAndroid)
+        return BackHandler.removeEventListener('hardwareBackPress', this.onBackButtonPressAndroid.bind(this))
       }
       );
     }
@@ -84,39 +84,27 @@ export default class BaseScreen extends React.Component {
     window.EventBus.notify(event, data);
   }
 
-  alertExit(){
-    Alert.alert(
-      I18n.t('exit.title'),
-      I18n.t('exit.content'), [{
-        text: I18n.t('exit.cancel'),
-        onPress: () => { },
-        style: 'cancel'
-      }, {
-        text: I18n.t('exit.ok'),
-        onPress: () => BackHandler.exitApp()
-      },], {
-        cancelable: false
-      }
-    )
-  }
-  onBackButtonPressAndroid = () => {
+  onBackButtonPressAndroid() {
     // console.log('this.props.navigation.', this.props.navigation.isFocused())
     const mainScreens = ['HomeScreen', "favourite", "btc", "eth", "vnd", "TradesScreen", "BalanceScreen", 'AccountSettingScreen',
       "LoginScreen"]
     let index = mainScreens.indexOf(this.props.navigation.state.routeName)
     // console.log('index, ', index)
     if (this.props.navigation.isFocused && this.props.navigation.isFocused() && index != -1) {
-      if (this.props.navigation.state.routeName === "LoginScreen"){
-        if (this.state.checkOtp){
-          this.setState({checkOtp: false});
-        } else {
-          this.alertExit();
+      Alert.alert(
+        I18n.t('exit.title'),
+        I18n.t('exit.content'), [{
+          text: I18n.t('exit.cancel'),
+          onPress: () => { },
+          style: 'cancel'
+        }, {
+          text: I18n.t('exit.ok'),
+          onPress: () => BackHandler.exitApp()
+        },], {
+          cancelable: false
         }
-        return true
-      } else {
-        this.alertExit();
-        return true
-      }
+      )
+      return true
     } else {
       return false
     }
