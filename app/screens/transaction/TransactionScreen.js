@@ -105,7 +105,8 @@ const styles = ScaledSheet.create({
   },
   textHeader: {
     fontSize: '14@s',
-    color: CommonColors.mainText
+    color: CommonColors.mainText,
+    fontFamily: 'NotoSans-Regular'
   },
   imgBook: {
     marginLeft: '10@s',

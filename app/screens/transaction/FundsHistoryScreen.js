@@ -13,6 +13,7 @@ import HeaderTransaction from "./common/HeaderTransaction";
 import TransactionContainerScreen from "./TransactionContainerScreen";
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { formatCurrency, getCurrencyName, getDayMonth, getTime } from "../../utils/Filters";
+import HeaderFunds from "./HeaderFunds";
 
 class FundsHistoryScreen extends Component {
   static SORT_FIELDS = {
@@ -218,7 +219,7 @@ class FundsHistoryScreen extends Component {
 
         <View>
           <ScrollView horizontal={true} contentContainerStyle={{ flexDirection: 'column' }}>
-            <HeaderTransaction sortDate={() => this._onSortDate()}
+            <HeaderFunds sortDate={() => this._onSortDate()}
                                sortPair={() => this._onSortPair()}
                                renderArrowDate={this._renderArrow(FundsHistoryScreen.SORT_FIELDS.DATE)}
                                renderArrowPair={this._renderArrow(FundsHistoryScreen.SORT_FIELDS.PAIR)}
@@ -264,7 +265,7 @@ const styles = ScaledSheet.create({
     borderBottomWidth: '1@s',
   },
   itemLeftContainer: {
-    flex: 1,
+    width: '120@s',
     flexDirection: 'row',
     borderRightColor: CommonColors.separator,
     borderRightWidth: '1@s',
@@ -292,7 +293,7 @@ const styles = ScaledSheet.create({
   },
   itemRight: {
     flexDirection: 'column',
-    width: '100@s',
+    width: '80@s',
     alignItems: 'flex-end',
     justifyContent: 'center',
   },
@@ -304,23 +305,23 @@ const styles = ScaledSheet.create({
   },
   viewAddressBlockChain: {
     flexWrap: 'wrap',
-    width: '100@s',
+    width: '80@s',
     alignItems: 'flex-end',
     justifyContent: 'center',
   },
   timeContainer: {
-    flex: 1,
+    width: '50@s',
     marginLeft: '2@s',
     justifyContent: 'center',
     alignItems: 'center',
     flexDirection: 'column'
   },
   coinPairContainer: {
-    flex: 1,
+    width: '70@s',
     flexDirection: 'row',
     alignItems: 'center',
     marginLeft: '20@s',
-    marginRight: '20@s'
+    marginRight: '40@s'
   },
   viewDatePicker: {
     flexDirection: 'row',

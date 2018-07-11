@@ -66,6 +66,7 @@ const styles = ScaledSheet.create({
     justifyContent: 'center',
   },
   headerTitle: {
+    fontFamily: 'NotoSans-Regular',
     fontSize: '12@s',
     color: CommonColors.mainText
   }

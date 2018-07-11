@@ -306,10 +306,12 @@ const styles = ScaledSheet.create({
     color: CommonColors.mainText,
     fontWeight: 'bold',
     fontSize: '12@s',
+    fontFamily: 'OpenSans-Regular'
   },
   itemTime: {
     color: CommonColors.mainText,
-    fontSize: '11@s'
+    fontSize: '11@s',
+    fontFamily: 'OpenSans-Regular'
   },
   itemCoin: {
     color: CommonColors.mainText,
@@ -318,27 +320,31 @@ const styles = ScaledSheet.create({
   },
   itemCurrency: {
     color: CommonColors.mainText,
-    fontSize: '13@s'
+    fontSize: '13@s',
+    fontFamily: 'OpenSans-Regular'
   },
   itemQuantity: {
-    fontSize: '12@s',
+    fontSize: '11@s',
+    fontFamily: 'OpenSans-Regular'
   },
   itemPrice: {
     color: CommonColors.mainText,
-    fontSize: '12@s',
+    fontSize: '11@s',
+    fontFamily: 'OpenSans-Regular'
   },
   itemQuantityPrice: {
     color: CommonColors.mainText,
-    fontSize: '12@s',
+    fontSize: '11@s',
+    fontFamily: 'OpenSans-Regular'
   },
   itemLeftContainer: {
-    flex: 1,
+    width: '150@s',
     flexDirection: 'row',
     borderRightColor: CommonColors.separator,
     borderRightWidth: '1@s',
   },
   timeContainer: {
-    flex: 1,
+    width: '50@s',
     marginLeft: '2@s',
     justifyContent: 'center',
     alignItems: 'center',
@@ -346,7 +352,7 @@ const styles = ScaledSheet.create({
   },
   itemRight: {
     flexDirection: 'column',
-    width: '100@s',
+    width: '80@s',
     alignItems: 'flex-end',
     justifyContent: 'center',
   },
@@ -387,14 +393,15 @@ const styles = ScaledSheet.create({
   },
   textCancel: {
     fontSize: '12@s',
-    color: '#FFF'
+    color: '#FFF',
+    fontFamily: 'OpenSans-Regular'
   },
   coinPairContainer: {
-    flex: 1,
+    width: '100@s',
     flexDirection: 'row',
     alignItems: 'center',
-    marginLeft: '20@s',
-    marginRight: '20@s'
+    marginLeft: '10@s',
+    marginRight: '10@s'
   },
   viewDatePicker: {
     flexDirection: 'row',
@@ -402,6 +409,6 @@ const styles = ScaledSheet.create({
   },
   viewSymbol: {
     alignSelf: 'center',
-    marginLeft: scale(20)
+    marginLeft: '20@s'
   }
 });

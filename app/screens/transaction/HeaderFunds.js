@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
-import { scale } from "../../../libs/reactSizeMatter/scalingUtils";
-import I18n from "../../../i18n/i18n";
-import ScaledSheet from "../../../libs/reactSizeMatter/ScaledSheet";
-import { CommonColors } from "../../../utils/CommonStyles";
+import { scale } from "../../libs/reactSizeMatter/scalingUtils";
+import I18n from "../../i18n/i18n";
+import ScaledSheet from "../../libs/reactSizeMatter/ScaledSheet";
+import { CommonColors } from "../../utils/CommonStyles";
 import { Text, TouchableWithoutFeedback, View } from "react-native";
 
-class HeaderTransaction extends Component {
+class HeaderFunds extends Component {
   render() {
     const { sortDate, sortPair, renderArrowDate, renderArrowPair, titles } = this.props;
 
@@ -51,7 +51,7 @@ class HeaderTransaction extends Component {
   }
 }
 
-export default HeaderTransaction;
+export default HeaderFunds;
 
 const styles = ScaledSheet.create({
   headerContainer: {
@@ -73,13 +73,14 @@ const styles = ScaledSheet.create({
     fontFamily: 'NotoSans-Regular'
   },
   headerCoinPair: {
-    flexDirection: 'row',
-    width: '100@s',
+    flexDirection: 'column',
+    width: '70@s',
+    marginLeft: '20@s',
     justifyContent: 'center',
   },
   viewHeaderLeft: {
     flexDirection: 'row',
-    width: '150@s',
+    width: '120@s',
     alignItems: 'center',
     borderRightColor: CommonColors.separator,
     borderRightWidth: '1@s',
