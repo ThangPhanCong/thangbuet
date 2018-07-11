@@ -13,9 +13,6 @@ export default class AppConfig {
 
   static CLIENT_SECRET = '';
   static ACCESS_TOKEN = '';
-  static SUPPORT_URL = 'https://support.vcc.exchange/hc/en-us';
-  static ABOUT_URL = 'https://vcc.exchange/about';
-  static TERM_URL = 'https://support.vcc.exchange/hc/en-us';
 
   static getApiServer() {
     return __DEV__ ? DEV_API_SERVER : AppConfig.API_SERVER;
@@ -35,14 +32,5 @@ export default class AppConfig {
 
   static getAssetServer() {
     return __DEV__ ? DEV_ASSET_SERVER : AppConfig.ASSET_SERVER;
-  }
-  static getSupportUrl() {
-    return AppConfig.SUPPORT_URL;
-  }
-  static getAboutUrl() {
-    return AppConfig.ABOUT_URL;
-  }
-  static getTermUrl() {
-    return AppConfig.TERM_URL;
   }
 }
