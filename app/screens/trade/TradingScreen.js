@@ -11,15 +11,16 @@ import {
 } from 'react-native';
 import Modal from "react-native-modal";
 import BaseScreen from '../BaseScreen';
-import { TabNavigator, TabBarBottom } from 'react-navigation';
+import { TabNavigator, TabBarTop } from 'react-navigation';
 import rf from '../../libs/RequestFactory';
 import Events from '../../utils/Events';
 import Numeral from '../../libs/numeral';
 import MasterdataUtils from '../../utils/MasterdataUtils';
 import ScaledSheet from '../../libs/reactSizeMatter/ScaledSheet';
 import { scale } from '../../libs/reactSizeMatter/scalingUtils';
-import { filter, pickBy, startsWith, orderBy } from 'lodash'
-import Utils from '../../utils/Utils'
+import { filter, pickBy, startsWith, orderBy } from 'lodash';
+import Utils from '../../utils/Utils';
+import UIUtils from '../../utils/UIUtils';
 import TradingGeneralScreen from './TradingGeneralScreen';
 import TradingOrderBookScreen from './TradingOrderBookScreen';
 import TradingChartScreen from './TradingChartScreen';
@@ -33,68 +34,50 @@ import DropdownMenu from '../common/DropdownMenu';
 
 const TradeTabs = TabNavigator(
   {
-    General: {
+    Order: {
       screen: props => <TradingGeneralScreen {...props}/>,
       navigationOptions: () => ({
-        tabBarLabel: 'General'
+        tabBarLabel: (options) => UIUtils.renderTabItem(I18n.t('tradeScreen.order'), options)
       })
     },
-    Order: {
+    OrderBook: {
       screen:  props => <TradingOrderBookScreen {...props}/>,
       navigationOptions: () => ({
-        tabBarLabel: 'Order'
+        tabBarLabel: (options) => UIUtils.renderTabItem(I18n.t('tradeScreen.order'), options)
       })
     },
     Chart: {
       screen: TradingChartScreen,
       navigationOptions: () => ({
-        tabBarLabel: 'Chart'
+        tabBarLabel: (options) => UIUtils.renderTabItem(I18n.t('tradeScreen.orderBook'), options)
       })
     },
-    Conclusion: {
+    Transaction: {
       screen: TradingConclusionScreen,
       navigationOptions: () => ({
-        tabBarLabel: 'Conclusion'
+        tabBarLabel: (options) => UIUtils.renderTabItem(I18n.t('tradeScreen.transaction'), options, false)
       })
     }
   },
   {
     navigationOptions: ({ navigation }) => ({
-      tabBarIcon: ({ focused, tintColor }) => {
-        const { routeName } = navigation.state;
-        let iconName;
-
-      },
-      header: null,
+      gesturesEnabled: false
     }),
-    tabBarComponent: TabBarBottom,
-    tabBarPosition: 'top',
-    tabBarOptions: {
-      style: {
-        backgroundColor: '#11151C',
-        height: PixelRatio.getPixelSizeForLayoutSize(15),
-        elevation: 0,
-        borderTopWidth: 0,
-      },
-      labelStyle: {
-        fontSize: 14 * PixelRatio.getFontScale(),
-      },
-      activeTintColor: 'tomato',
-      inactiveTintColor: 'gray',
-    },
-    animationEnabled: false,
-    swipeEnabled: true,
-  })
+    tabBarComponent: TabBarTop,
+    ...CommonStyles.tabOptions
+  });
 
 export default class TradingScreen extends BaseScreen {
 
   constructor(props) {
     super(props)
+
+    let params = this.props.navigation.state.params;
     this.state = {
       modalVisible: false,
       itemSelected: {},
-      currency: 'krw',
-      coin: 'btc',
+      currency: params.currency,
+      coin: params.coin,
       symbols: [],
       prices: {},
       balances: {}
