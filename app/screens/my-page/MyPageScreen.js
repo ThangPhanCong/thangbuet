@@ -89,7 +89,7 @@ export default class MyPageScreen extends BaseScreen {
     return (
       <View style={styles.header}>
         <Icon name="account"
-          size={PixelRatio.getPixelSizeForLayoutSize(14)}
+          size={28}
           color='#000' />
         <Text style={styles.headerTitle}>
           MY PAGE
