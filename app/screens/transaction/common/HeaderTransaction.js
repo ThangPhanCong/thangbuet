@@ -24,7 +24,10 @@ class HeaderTransaction extends Component {
           }}>
             <View style={styles.headerCoinPair}>
               <Text style={styles.headerTitle}>{I18n.t('transactions.pair')}</Text>
-              {renderArrowPair}
+              <View>
+                {renderArrowPair}
+
+              </View>
             </View>
           </TouchableWithoutFeedback>
         </View>

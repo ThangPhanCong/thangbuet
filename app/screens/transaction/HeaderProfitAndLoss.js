@@ -49,7 +49,6 @@ const styles = ScaledSheet.create({
     flexDirection: 'row',
     height: '50@s',
     backgroundColor: '#f8f9fb',
-    alignItems: 'center',
     borderWidth: '1@s',
     borderColor: CommonColors.separator
   },
@@ -61,9 +60,11 @@ const styles = ScaledSheet.create({
   },
   headerCurrency: {
     flexDirection: 'column',
-    width: '50@s',
+    width: '49@s',
     alignItems: 'center',
     justifyContent: 'center',
+    borderRightColor: CommonColors.separator,
+    borderRightWidth: '1@s',
   },
   headerTitle: {
     fontFamily: 'NotoSans-Regular',

@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { FlatList, Text, TouchableWithoutFeedback, View, ScrollView } from "react-native";
+import { FlatList, Text, TouchableWithoutFeedback, View, ScrollView, Image } from "react-native";
 import ScaledSheet from "../../libs/reactSizeMatter/ScaledSheet";
 import { CommonColors, CommonStyles } from "../../utils/CommonStyles";
 import { scale } from "../../libs/reactSizeMatter/scalingUtils";
@@ -144,14 +144,11 @@ class FundsHistoryScreen extends Component {
 
     return (
       sortField === field && sortDirection === TransactionContainerScreen.SORT_DIRECTION.ASC ?
-        <Icon
-          name='menu-up'
-          size={scale(20)}
-          color='#000'/> :
-        <Icon
-          name='menu-down'
-          size={scale(20)}
-          color='#000'/>
+        <Image
+          source={require('../../../assets/sortAsc/asc.png')}/> :
+        <Image
+          style={{position: 'relative', top: -3}}
+          source={require('../../../assets/sortDesc/desc.png')}/>
     )
   }
 
@@ -191,7 +188,7 @@ class FundsHistoryScreen extends Component {
             <Text style={styles.itemCurrency}>{getCurrencyName(item.currency)}</Text>
           </View>
 
-          <View style={[styles.itemRight, {marginRight: scale(10)}]}>
+          <View style={[styles.itemRight, { marginRight: scale(10) }]}>
             {item.status === 'pending' ? <Text style={styles.itemPending}> {I18n.t('transactions.pending')}</Text>
               : <Text style={styles.itemSuccess}>{I18n.t('transactions.success')}</Text>}
           </View>
@@ -225,10 +222,10 @@ class FundsHistoryScreen extends Component {
         <View>
           <ScrollView horizontal={true} contentContainerStyle={{ flexDirection: 'column' }}>
             <HeaderFunds sortDate={() => this._onSortDate()}
-                               sortPair={() => this._onSortPair()}
-                               renderArrowDate={this._renderArrow(FundsHistoryScreen.SORT_FIELDS.DATE)}
-                               renderArrowPair={this._renderArrow(FundsHistoryScreen.SORT_FIELDS.PAIR)}
-                               titles={titles}
+                         sortPair={() => this._onSortPair()}
+                         renderArrowDate={this._renderArrow(FundsHistoryScreen.SORT_FIELDS.DATE)}
+                         renderArrowPair={this._renderArrow(FundsHistoryScreen.SORT_FIELDS.PAIR)}
+                         titles={titles}
             />
             <FlatList data={transactions}
                       renderItem={this._renderItem.bind(this)}

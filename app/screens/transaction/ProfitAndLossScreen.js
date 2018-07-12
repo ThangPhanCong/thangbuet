@@ -183,7 +183,7 @@ class ProfitAndLossScreen extends BaseScreen {
           </View>
 
           <View style={styles.profitGroup}>
-            <Text style={[styles.itemCurrency]}>{sum.startingBalance}</Text>
+            <Text style={[styles.itemBalance]}>{sum.startingBalance}</Text>
             <Text style={[styles.itemCurrency]}>{Consts.CURRENCY_KRW.toUpperCase()}</Text>
 
           </View>
@@ -250,7 +250,7 @@ class ProfitAndLossScreen extends BaseScreen {
         </View>
 
         <View style={styles.profitGroup}>
-          <Text style={[styles.itemCurrency]}>{formatCurrency(item.ending_balance, item.currency)}</Text>
+          <Text style={[styles.itemBalance]}>{formatCurrency(item.ending_balance, item.currency)}</Text>
           <Text style={[styles.itemCurrency]}>{getCurrencyName(item.currency)}</Text>
         </View>
 
@@ -348,6 +348,11 @@ const styles = ScaledSheet.create({
   },
   itemWithDrawl: {
     color: CommonColors.decreased,
+    fontSize: '10@s',
+    fontFamily: 'OpenSans-Regular'
+  },
+  itemBalance: {
+    color: CommonColors.mainText,
     fontSize: '10@s',
     fontFamily: 'OpenSans-Regular'
   },

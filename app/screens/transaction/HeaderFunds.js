@@ -79,6 +79,7 @@ const styles = ScaledSheet.create({
     fontFamily: 'NotoSans-Regular'
   },
   headerCoinPair: {
+    marginTop:  '10@s',
     flexDirection: 'column',
     width: '70@s',
     marginLeft: '20@s',

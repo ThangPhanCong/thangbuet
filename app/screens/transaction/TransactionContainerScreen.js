@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { FlatList, Text, View, TouchableWithoutFeedback, ScrollView } from "react-native";
+import { FlatList, Text, View, TouchableWithoutFeedback, ScrollView, Image } from "react-native";
 import rf from "../../libs/RequestFactory";
 import moment from "moment";
 import { scale } from "../../libs/reactSizeMatter/scalingUtils";
@@ -168,14 +168,11 @@ class TransactionContainerScreen extends Component {
 
     return (
       sortField === field && sortDirection === TransactionContainerScreen.SORT_DIRECTION.ASC ?
-        <Icon
-          name='menu-up'
-          size={scale(20)}
-          color='#000'/> :
-        <Icon
-          name='menu-down'
-          size={scale(20)}
-          color='#000'/>
+        <Image
+          source={require('../../../assets/sortAsc/asc.png')}/>
+         :
+        <Image
+          source={require('../../../assets/sortDesc/desc.png')}/>
     )
   }
 
