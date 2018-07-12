@@ -88,7 +88,8 @@ export default class DropdownMenu extends React.Component {
               keyboardShouldPersistTaps='always'
               data={items}
               ItemSeparatorComponent={() => (<View style={separatorStyle}/>)}
-              renderItem={this._renderItem.bind(this)}/>}
+              renderItem={this._renderItem.bind(this)}
+              showsVerticalScrollIndicator={false}/>}
           </View>
         </TouchableWithoutFeedback>
       </View>
@@ -135,6 +136,7 @@ const styles = ScaledSheet.create({
     top: 0,
     left: 0,
     width: '100%',
-    height: '100%'
+    height: '100%',
+    elevation: 999
   }
 });

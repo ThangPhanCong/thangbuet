@@ -461,7 +461,7 @@ export default class OrderBook extends BaseScreen {
 
   _renderSellRow(item, index, isLastRow = false) {
     return (
-      <TouchableWithoutFeedback key={index} onPress={() => this._onPressSmallOrderBookRow(item, Consts.TRADE_TYPE_SELL)}>
+      <TouchableWithoutFeedback key={index} onPress={() => this._onPressOrderBookCell(item, Consts.TRADE_TYPE_SELL)}>
         <View style={[styles.orderBookRow, isLastRow && {borderBottomWidth: 0}]}>
           <View style={[styles.userSellQuantityCell, styles.topBorder]}>
             <Text style={styles.userSellQuantityText}>{this._formatQuantity(item.userQuantity)}</Text>
