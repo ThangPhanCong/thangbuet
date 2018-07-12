@@ -1,14 +1,15 @@
 import React from 'react';
-import { SafeAreaView, Text, TouchableOpacity, View, ScrollView, TextInput } from 'react-native';
+import { SafeAreaView, Text, TouchableOpacity, View, ScrollView, TextInput, Alert } from 'react-native';
 import BaseScreen from '../BaseScreen'
 import ScaledSheet from '../../libs/reactSizeMatter/ScaledSheet'
 import I18n from '../../i18n/i18n'
 import { withNavigationFocus } from 'react-navigation'
 import HeaderBalance from './HeaderBalance'
 import { Divider, Icon } from 'react-native-elements'
-import { formatCurrency, } from '../../utils/Filters'
+import { formatCurrency, getCurrencyName } from '../../utils/Filters'
 import rf from '../../libs/RequestFactory'
 import Modal from "react-native-modal"
+import Utils from '../../utils/Utils'
 
 class WithdrawalScreen extends BaseScreen {
   constructor(props) {
@@ -16,6 +17,8 @@ class WithdrawalScreen extends BaseScreen {
     this.state = {
       isComplete: false,
       amount: 0,
+      blockchainAddress: '',
+      blockchainTag: '',
       modalConfirm: false,
       daily: {},
       modalConfirm: false,
@@ -121,13 +124,17 @@ class WithdrawalScreen extends BaseScreen {
   }
 
   _validateAmount() {
-    const { amount, daily } = this.state
+    const { amount, daily, blockchainAddress, blockchainTag } = this.state
     let errMsg = ''
 
     if (daily.minium > amount) {
       errMsg = I18n.t('withdrawal.errMinium')
-    } else if (amount > (daily.withdrawalLimit - daily.withdrawalKrw)) {
+    } else if (amount > (daily.withdrawalLimit - daily.withdrawal)) {
       errMsg = I18n.t('withdrawal.errMaximum')
+    }
+
+    if (!Utils.isWalletAddress(this.currency, blockchainAddress, blockchainTag)) { //validate blockchain address
+      errMsg = I18n.t('withdrawal.errBlockchainAddress')
     }
 
     if (errMsg === '') {
@@ -209,8 +216,7 @@ class WithdrawalScreen extends BaseScreen {
 
               <View style={[styles.line, styles.amount]}>
                 <Text>
-                  {I18n.t('withdrawal.request')}
-                  <Text>({this.currency.toUpperCase()})</Text>
+                  {I18n.t('withdrawal.amountRequest', { "coinName": getCurrencyName(symbol.code) })}
                 </Text>
                 <View style={{
                   flexDirection: 'row', alignItems: 'center', justifyContent: 'center',
@@ -219,7 +225,6 @@ class WithdrawalScreen extends BaseScreen {
                   <TextInput
                     keyboardType='numeric'
                     autoCorrect={false}
-                    // underlineColorAndroid='rgba(0, 0, 0, 0)'
                     underlineColorAndroid='transparent'
                     value={formatCurrency(this.state.amount, this.currency)}
                     onChangeText={(text) => {
@@ -232,29 +237,30 @@ class WithdrawalScreen extends BaseScreen {
                       borderLeftWidth: 1, borderColor: "rgba(0, 0, 0, 0.3)",
                       height: 30, justifyContent: 'center', padding: 5
                     }}
-                    onPress={() => this.setState({ amount: this.state.daily.withdrawalLimit - this.state.daily.withdrawalKrw })}>
+                    onPress={() => this.setState({ amount: this.state.daily.withdrawalLimit - this.state.daily.withdrawal })}>
                     <Text>{I18n.t('withdrawal.maximum')}</Text>
                   </TouchableOpacity>
                 </View>
               </View>
 
               <View style={[styles.line, styles.amount]}>
-                <Text>{I18n.t('withdrawal.accountRegister')}</Text>
+                <Text>{I18n.t('withdrawal.addressRequest', { "coinName": getCurrencyName(symbol.code) })}</Text>
                 <View style={{
                   flexDirection: 'row', alignItems: 'center', justifyContent: 'center',
                   borderWidth: 1, borderRadius: 4, borderColor: "rgba(0, 0, 0, 0.3)"
                 }}>
                   <TextInput
-                    editable={false}
-                    value={symbol.blockchain_address ? symbol.blockchain_address : ''}
+                    value={this.state.blockchainAddress}
+                    onChangeText={(text) => {
+                      this.setState({ blockchainAddress: text })
+                    }}
                     autoCorrect={false}
-                    // underlineColorAndroid='rgba(0, 0, 0, 0)'
                     underlineColorAndroid='transparent'
                     style={{ flex: 1, height: 30, textAlign: 'right', opacity: 0.7, textAlignVertical: 'bottom', lineHeight: 0.1 }} />
                 </View>
               </View>
 
-              {symbol.blockchain_tag && symbol.blockchain_tag != null &&
+              {symbol.code === 'xrp' &&
                 <View style={[styles.line, styles.amount]}>
                   <Text>{I18n.t('withdrawal.tagAddress')}</Text>
                   <View style={{
@@ -262,10 +268,11 @@ class WithdrawalScreen extends BaseScreen {
                     borderWidth: 1, borderRadius: 4, borderColor: "rgba(0, 0, 0, 0.3)"
                   }}>
                     <TextInput
-                      editable={false}
-                      value={symbol.blockchain_tag}
+                      value={this.state.blockchainTag}
+                      onChangeText={(text) => {
+                        this.setState({ blockchainTag: text })
+                      }}
                       autoCorrect={false}
-                      // underlineColorAndroid='rgba(0, 0, 0, 0)'
                       underlineColorAndroid='transparent'
                       style={{ flex: 1, height: 30, textAlign: 'right', opacity: 0.7, textAlignVertical: 'bottom', lineHeight: 0.1 }} />
                   </View>

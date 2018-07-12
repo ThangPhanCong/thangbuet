@@ -345,6 +345,10 @@ export default {
     coinNote11: '제한 사항은 첫 KRW 입금 후 암호화폐를 구입해서 다른 외부의 지갑으로 송금할 경우에만 해당됩니다. 이 경우 72시간 동안 출금이 제한 됩니다. KRW입금 없이 암호화폐만 입금했을 경우는 제한 없이 바로 출금할 수 있습니다.',
     coinNote12: '암호 화폐 출금(송금) 제한',
     tagAddress: 'Destination Tag:',
+
+    amountRequest: '출금(송금)할 {{coinName}} 금액',
+    addressRequest: '출금(송금) 받을 {{coinName}} 지갑 주소',
+    errBlockchainAddress: '잘못된 주소',
     
   },
 
