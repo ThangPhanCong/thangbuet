@@ -47,7 +47,7 @@ export default HeaderProfitAndLoss;
 const styles = ScaledSheet.create({
   headerContainer: {
     flexDirection: 'row',
-    height: '50@s',
+    height: '40@s',
     backgroundColor: '#f8f9fb',
     borderWidth: '1@s',
     borderColor: CommonColors.separator

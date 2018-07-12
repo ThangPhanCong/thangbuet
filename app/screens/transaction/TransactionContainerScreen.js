@@ -299,7 +299,7 @@ const styles = ScaledSheet.create({
   },
   itemContainer: {
     flexDirection: 'row',
-    height: '50@s',
+    height: '40@s',
     borderBottomColor: CommonColors.separator,
     borderBottomWidth: '1@s',
   },
