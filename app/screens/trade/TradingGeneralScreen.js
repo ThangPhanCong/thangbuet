@@ -9,6 +9,7 @@ import {
 import BaseScreen from '../BaseScreen'
 import I18n from '../../i18n/i18n';
 import ScaledSheet from '../../libs/reactSizeMatter/ScaledSheet'
+import { scale } from '../../libs/reactSizeMatter/scalingUtils';
 import Utils from '../../utils/Utils';
 import Consts from '../../utils/Consts'
 import { CommonColors, CommonSize, CommonStyles, Fonts } from '../../utils/CommonStyles';
@@ -215,8 +216,7 @@ const styles = ScaledSheet.create({
     alignItems: 'center',
     borderBottomWidth: 1,
     borderColor: '#EEF1F5',
-    marginBottom: 1,
-    paddingBottom: 1
+    marginBottom: -1
   },
   tabLabel: {
     fontSize: '14@s',
@@ -232,14 +232,12 @@ const styles = ScaledSheet.create({
   selectedBuy: {
     borderBottomWidth: '2@s',
     borderColor: '#FF2C0D',
-    marginBottom: 0,
-    paddingBottom: 0,
+    marginBottom: 0
   },
   selectedSell: {
     borderBottomWidth: '2@s',
     borderColor: '#007AC5',
-    marginBottom: 0,
-    paddingBottom: 0
+    marginBottom: 0
   },
   selectedLabel: {
     ...Fonts.NotoSans_Bold

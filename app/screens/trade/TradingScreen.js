@@ -274,13 +274,14 @@ export default class TradingScreen extends BaseScreen {
         animationType="slide"
         transparent={true}
         visible={this.state.modalVisible}
-        onRequestClose={() => { }}>
+        onBackButtonPress={this._closeSymbolSelector.bind(this)}
+        onBackdropPress={this._closeSymbolSelector.bind(this)}>
         <View style={styles.popup}>
           <List containerStyle={styles.coinList} >
             <FlatList
               data={this.state.symbols}
               keyExtractor={item => item.key + "_" + item.id}
-              ItemSeparatorComponent={() => <View style={styles.separator} />}
+              ItemSeparatorComponent={() => <View style={styles.separator}/>}
               renderItem={({ item }) => (
                 <ListItem
                   onPress={() => this.setState({ currency: item.currency, coin: item.coin, modalVisible: false })}
@@ -294,6 +295,10 @@ export default class TradingScreen extends BaseScreen {
         </View>
       </Modal>
     );
+  }
+
+  _closeSymbolSelector() {
+    this.setState({ modalVisible: false });
   }
 
   _renderTypeDropdown() {
@@ -393,25 +398,29 @@ const styles = ScaledSheet.create({
 
   popup: {
     justifyContent: "center",
-    alignItems: "center"
+    alignItems: "center",
+    marginTop: '0@s',
+    marginBottom: '20@s'
   },
   coinList: {
-    width: '270@s',
-    backgroundColor: '#515151'
+    width: '245@s',
+    backgroundColor: '#515151',
+    elevation: 8
   },
   item: {
-    height: '50@s',
+    height: '55@s',
     alignItems: 'center',
     justifyContent: 'center'
   },
   itemText: {
     color: '#D9D9D9',
     textAlign: 'center',
-    fontWeight: 'bold'
+    paddingRight: '8@s',
+    fontSize: '16@s',
+    ...Fonts.OpenSan_Bold
   },
   separator: {
-    height: 0.5,
     width: '100%',
-    backgroundColor: "#5F5F5F"
+    backgroundColor: "#606060"
   }
 });

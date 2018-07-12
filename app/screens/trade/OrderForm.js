@@ -746,6 +746,8 @@ const styles = ScaledSheet.create({
     flex: 1,
     height: '100%',
     padding: margin,
+    paddingTop: 0,
+    paddingBottom: 0,
     textAlign: 'right',
     fontSize: '13@s',
     ...Fonts.OpenSans
@@ -834,8 +836,8 @@ const styles = ScaledSheet.create({
     marginRight: margin,
     marginTop: '2@s',
     marginBottom: '2@s',
-    borderRightWidth: 1,
-    borderBottomWidth: 1,
+    borderTopWidth: 1,
+    borderLeftWidth: 1,
     borderColor: '#E7E5E5'
   },
   estimationRow: {
@@ -846,9 +848,11 @@ const styles = ScaledSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    borderTopWidth: 1,
-    borderLeftWidth: 1,
-    borderColor: '#E7E5E5'
+    borderWidth: 1,
+    borderTopColor: '#F6F5F5',
+    borderLeftColor: '#F6F5F5',
+    borderBottomColor: '#E7E5E5',
+    borderRightColor: '#E7E5E5'
   },
   estimationBuyCell: {
     backgroundColor: '#FFF0F0'
@@ -862,9 +866,11 @@ const styles = ScaledSheet.create({
     justifyContent: 'flex-end',
     alignItems: 'center',
     backgroundColor: '#F3F3F3',
-    borderTopWidth: 1,
-    borderLeftWidth: 1,
-    borderColor: '#E7E5E5'
+    borderWidth: 1,
+    borderTopColor: '#F6F5F5',
+    borderLeftColor: '#F6F5F5',
+    borderBottomColor: '#E7E5E5',
+    borderRightColor: '#E7E5E5'
   },
   estimateLabel: {
     fontSize: '11@s',
