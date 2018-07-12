@@ -4,6 +4,7 @@ import {
   Keyboard,
   Text,
   TextInput,
+  TouchableHighlight,
   TouchableWithoutFeedback,
   View,
   Image,
@@ -107,11 +108,11 @@ export default class DropdownMenu extends React.Component {
     let itemButtonStyle = options.itemButtonStyle || this._getStyleProps(this.props.itemButtonStyle) || {};
     let itemTextStyle = options.itemTextStyle || this._getStyleProps(this.props.itemTextStyle) || {};
     return (
-      <TouchableWithoutFeedback onPress={() => {this._onSelectItem(index)}}>
+      <TouchableHighlight onPress={() => {this._onSelectItem(index)}} underlayColor='#C5C5C5'>
         <View style={itemButtonStyle}>
           <Text style={itemTextStyle}>{item.label}</Text>
         </View>
-      </TouchableWithoutFeedback>
+      </TouchableHighlight>
     );
   }
 

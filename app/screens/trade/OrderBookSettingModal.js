@@ -225,7 +225,7 @@ export default class OrderBookSettingModal extends BaseScreen {
               onClick={() => this.setState({notificationCreated: !this.state.notificationCreated})}
               rightText={I18n.t('orderBookSettings.notificationCreated')}
               style={styles.checkBox}
-              rightTextStyle={styles.checkBoxLabel}
+              rightTextStyle={checkBoxLabel}
               {...CommonStyles.checkBox}/>
 
             <CheckBox
@@ -233,7 +233,7 @@ export default class OrderBookSettingModal extends BaseScreen {
               onClick={() => this.setState({notificationMatched: !this.state.notificationMatched})}
               rightText={I18n.t('orderBookSettings.notificationMatched')}
               style={styles.checkBox}
-              rightTextStyle={styles.checkBoxLabel}
+              rightTextStyle={checkBoxLabel}
               {...CommonStyles.checkBox}/>
 
             <CheckBox
@@ -241,7 +241,7 @@ export default class OrderBookSettingModal extends BaseScreen {
               onClick={() => this.setState({notificationCanceled: !this.state.notificationCanceled})}
               rightText={I18n.t('orderBookSettings.notificationCanceled')}
               style={styles.checkBox}
-              rightTextStyle={styles.checkBoxLabel}
+              rightTextStyle={checkBoxLabel}
               {...CommonStyles.checkBox}/>
           </View>
         </View>
@@ -295,6 +295,11 @@ export default class OrderBookSettingModal extends BaseScreen {
 }
 
 const margin = scale(30);
+const checkBoxLabel = {
+  marginLeft: scale(3),
+  fontSize: scale(12),
+  ...Fonts.OpenSans
+};
 
 const styles = ScaledSheet.create({
   popup: {
@@ -366,11 +371,6 @@ const styles = ScaledSheet.create({
   },
   checkBox: {
     width: '42@s'
-  },
-  checkBoxLabel: {
-    marginLeft: '3@s',
-    fontSize: '12@s',
-    ...Fonts.OpenSans
   },
 
   footer: {

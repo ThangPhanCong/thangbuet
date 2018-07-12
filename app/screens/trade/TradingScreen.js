@@ -289,7 +289,8 @@ export default class TradingScreen extends BaseScreen {
                   key={item.key + "_" + item.id}
                   title={this._getCurrencyName(item.coin) + ' ' + getCurrencyName(item.coin) + '/' + getCurrencyName(item.currency)}
                   titleStyle={styles.itemText}
-                  containerStyle={styles.item} />
+                  containerStyle={styles.item}
+                  underlayColor='#6C6C6C'/>
               )} />
           </List>
         </View>

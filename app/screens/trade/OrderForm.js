@@ -783,7 +783,7 @@ const styles = ScaledSheet.create({
   },
   typeDropdown: {
     height: dropdownRowHeight * 4,
-    backgroundColor: '#FF0',
+    backgroundColor: '#FFF'
   },
   typeDropdownButton: {
     width: '100%',
