@@ -11,10 +11,11 @@ import I18n from '../../i18n/i18n';
 import ScaledSheet from '../../libs/reactSizeMatter/ScaledSheet'
 import Utils from '../../utils/Utils';
 import Consts from '../../utils/Consts'
-import { CommonColors, CommonSize, CommonStyles } from '../../utils/CommonStyles';
+import { CommonColors, CommonSize, CommonStyles, Fonts } from '../../utils/CommonStyles';
 import OrderBook from './OrderBook';
 import OrderBookSettingModal from './OrderBookSettingModal';
 import OrderForm from './OrderForm';
+import CurrencyInput from '../common/CurrencyInput';
 
 export default class TradingGeneralScreen extends BaseScreen {
 
@@ -62,13 +63,21 @@ export default class TradingGeneralScreen extends BaseScreen {
       <View style={styles.quantityAndSettingGroup}>
         <View style={CommonStyles.matchParent}/>
 
-        <Text>{I18n.t('orderBook.hand')}</Text>
-        <TextInput value='-15'/>
-        <Text>%</Text>
+        <Text style={styles.headerLabel}>{I18n.t('orderBook.hand')}</Text>
+        <TextInput
+          style={[styles.input, {color: CommonColors.decreased}]}
+          value='-15'
+          editable={false}
+          underlineColorAndroid='transparent'/>
+        <Text style={styles.percentText}>%</Text>
 
-        <Text>{I18n.t('orderBook.fence')}</Text>
-        <TextInput value='15'/>
-        <Text>%</Text>
+        <Text style={styles.headerLabel}>{I18n.t('orderBook.fence')}</Text>
+        <TextInput
+          style={[styles.input, {color: CommonColors.increased}]}
+          value=' 15'
+          editable={false}
+          underlineColorAndroid='transparent'/>
+        <Text style={styles.percentText}>%</Text>
 
         <TouchableOpacity onPress={this._openOrderBookSettingModal.bind(this)}>
           <Image
@@ -117,7 +126,9 @@ export default class TradingGeneralScreen extends BaseScreen {
           activeOpacity={1}
           style={[styles.tab, isSelectedBuy ? styles.selectedBuy : {}]}
           onPress={() => this.setState({selectedTab: Consts.TRADE_TYPE_BUY})}>
-          <Text style={[CommonStyles.priceIncreased]}>{I18n.t('orderForm.buy')}</Text>
+          <Text style={[styles.tabLabel, CommonStyles.priceIncreased, isSelectedBuy ? styles.selectedLabel : {}]}>
+            {I18n.t('orderForm.buy')}
+          </Text>
         </TouchableOpacity>
 
         <View style={styles.tabSeparator}/>
@@ -126,7 +137,9 @@ export default class TradingGeneralScreen extends BaseScreen {
           activeOpacity={1}
           style={[styles.tab, isSelectedSell ? styles.selectedSell : {}]}
           onPress={() => this.setState({selectedTab: Consts.TRADE_TYPE_SELL})}>
-          <Text style={[CommonStyles.priceDecreased]}>{I18n.t('orderForm.sell')}</Text>
+          <Text style={[styles.tabLabel, CommonStyles.priceDecreased, isSelectedSell ? styles.selectedLabel : {}]}>
+            {I18n.t('orderForm.sell')}
+          </Text>
         </TouchableOpacity>
 
         <View style={styles.tabSeparator}/>
@@ -134,7 +147,7 @@ export default class TradingGeneralScreen extends BaseScreen {
         <TouchableOpacity
           activeOpacity={1}
           style={styles.tab}>
-          <Text>{I18n.t('orderForm.pendingOrder')}</Text>
+          <Text style={styles.tabLabel}>{I18n.t('orderForm.pendingOrder')}</Text>
         </TouchableOpacity>
       </View>
     );
@@ -145,24 +158,54 @@ const styles = ScaledSheet.create({
   quantityAndSettingGroup: {
     flexDirection: 'row',
     alignItems: 'center',
-    height: '30@s'
+    height: '38@vs',
+    paddingTop: '1@s',
+    paddingLeft: '10@s',
+    paddingRight: '10@s',
+    borderBottomColor: '#DAE0E9',
+    borderBottomWidth: '1@s',
+    backgroundColor: '#F7F8FA'
+  },
+  headerLabel: {
+    fontSize: '10@s',
+    ...Fonts.NotoSans
+  },
+  input: {
+    height: '25@s',
+    paddingLeft: '5@s',
+    paddingRight: '5@s',
+    paddingTop: 0,
+    paddingBottom: 0,
+    marginLeft: '5@s',
+    marginRight: '5@s',
+    borderWidth: 1,
+    borderColor: CommonColors.border,
+    borderRadius: '3@s',
+    textAlign: 'right',
+    fontSize: '11@s',
+    ...Fonts.OpenSans
+  },
+  percentText: {
+    fontSize: '8@s',
+    marginRight: '10@s',
+    ...Fonts.OpenSans
   },
   setting: {
-    width: '20@s'
+    width: '18@s'
   },
   content: {
     flex: 1,
     flexDirection: 'row',
   },
   orderBook: {
-    flex: 2
+    flex: 0.735
   },
   trades: {
-    flex: 3
+    flex: 1
   },
   tabs: {
     flexDirection: 'row',
-    height: '35@s',
+    height: '37@vs',
     alignItems: 'stretch'
   },
   tab: {
@@ -174,23 +217,30 @@ const styles = ScaledSheet.create({
     marginBottom: 1,
     paddingBottom: 1
   },
+  tabLabel: {
+    fontSize: '14@s',
+    ...Fonts.NotoSans
+  },
   tabSeparator: {
     width: 1,
-    height: '15@s',
+    height: '16@s',
     marginBottom: 3,
     alignSelf: 'center',
     backgroundColor: '#515151'
   },
   selectedBuy: {
-    borderBottomWidth: 3,
+    borderBottomWidth: '2@s',
     borderColor: '#FF2C0D',
     marginBottom: 0,
-    paddingBottom: 0
+    paddingBottom: 0,
   },
   selectedSell: {
-    borderBottomWidth: 3,
+    borderBottomWidth: '2@s',
     borderColor: '#007AC5',
     marginBottom: 0,
     paddingBottom: 0
+  },
+  selectedLabel: {
+    ...Fonts.NotoSans_Bold
   }
 });
