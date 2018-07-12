@@ -15,7 +15,9 @@ import {
 import BaseScreen from '../BaseScreen';
 import { TabNavigator, TabBarTop } from 'react-navigation';
 import Consts from '../../utils/Consts';
-import { CommonStyles } from '../../utils/CommonStyles';
+import UIUtils from '../../utils/UIUtils';
+import { getCurrencyName } from '../../utils/Filters';
+import { CommonColors, CommonStyles } from '../../utils/CommonStyles';
 import I18n from '../../i18n/i18n';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import MarketScreen from './MarketScreen';
@@ -77,7 +79,7 @@ class MarketSearchScreen extends BaseScreen {
             
             <View style={styles.iconContainer}>
               <Icon name="magnify"
-                size={PixelRatio.getPixelSizeForLayoutSize(12)}
+                size={24}
                 style={styles.searchIcon}
                 color="#000" />
             </View>
@@ -140,19 +142,19 @@ class MarketSearchScreen extends BaseScreen {
         MarketScreenKRW: {
           screen: (props) => <MarketScreen {...props} currency = {Consts.CURRENCY_KRW} showMarketScreenDetail={this._onPressItem.bind(this)} ref = {ref => this._refs.marketKRW = ref}/>,
           navigationOptions: () => ({
-            tabBarLabel: Consts.CURRENCY_KRW,
+            tabBarLabel: (options) => UIUtils.renderTabItem(getCurrencyName(Consts.CURRENCY_KRW), options)
           })
         },
         MarketScreenBTC: {
           screen: (props) => <MarketScreen {...props} currency = {Consts.CURRENCY_BTC} showMarketScreenDetail={this._onPressItem.bind(this)} ref = {ref => this._refs.marketBTC = ref}/>,
           navigationOptions: () => ({
-            tabBarLabel: Consts.CURRENCY_BTC,
+            tabBarLabel: (options) =>UIUtils.renderTabItem(getCurrencyName(Consts.CURRENCY_BTC), options)
           })
         },
         MarketScreenETH: {
           screen: (props) => <MarketScreen {...props} currency = {Consts.CURRENCY_ETH} showMarketScreenDetail={this._onPressItem.bind(this)} ref = {ref => this._refs.marketETH = ref}/>,
           navigationOptions: () => ({
-            tabBarLabel: Consts.CURRENCY_ETH,
+            tabBarLabel: (options) =>UIUtils.renderTabItem(getCurrencyName(Consts.CURRENCY_ETH), options)
           })
         }
       },
@@ -161,30 +163,13 @@ class MarketSearchScreen extends BaseScreen {
           gesturesEnabled: false
         }),
         tabBarComponent: TabBarTop,
-        tabBarPosition: 'top',
-        tabBarOptions: {
-          upperCaseLabel: true,
-          activeTintColor: '#FFC000',
-          inactiveTintColor: '#D9D9D9',
-          style: {
-            backgroundColor: '#3B3838',
-          },
-          indicatorStyle: {
-            backgroundColor: '#FFC000'
-          },
-          labelStyle: {
-            fontSize: 16
-          }
-        },
-        animationEnabled: false,
-        swipeEnabled: false
+        ...CommonStyles.tabOptions
       }
     );
   }
 
   _onPressItem(item) {
-    console.log('Navigate to trading screen', item);
-    // this.navigate('MarketDetailScreen', item);
+    this.navigate('TradingScreen', item);
   }
 
   _onFavoriteFilter() {
@@ -267,7 +252,7 @@ const styles = StyleSheet.create({
   },
 
   header: {
-    height: 60,
+    height: 59,
     flexDirection: 'row'
   },
   favoriteButton: {

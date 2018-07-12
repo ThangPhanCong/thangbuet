@@ -20,8 +20,32 @@ import rf from '../../../libs/RequestFactory';
 import I18n from '../../../i18n/i18n';
 import _ from 'lodash';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import AppConfig from '../../../utils/AppConfig';
 
 // const DownArrowIcon = require('../../../../assets/common/caretdown.png');
+
+const submitPhoneHtmlString =
+  `<!DOCTYPE html>
+  <html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+  </head>
+  <body>
+    <form method="post" id="infoForm" action="https://dev.mobile-ok.com/popup/common/hscert.jsp">
+      <input type="hidden" name="req_info" value="{0}">
+      <input type="hidden" name="rtn_url" value="{1}">
+      <input type="hidden" name="cpid" value="{2}"> 
+    </form>
+  </body>
+  
+  <script type="text/javascript">
+    window.onload = function () {
+      document.getElementById('infoForm').submit();
+    }
+  </script>
+  </html>`;
 
 export default class SecurityOverviewScreen extends BaseScreen {
   _infoProps = [{
@@ -49,6 +73,8 @@ export default class SecurityOverviewScreen extends BaseScreen {
   
   _banks = [{id: 1, name: 'ABC'}, {id: 2, name: 'DEF'}];
   _passwordParams = {}
+
+  _verifyPhoneResult = {}
 
   constructor(props) {
     super(props);
@@ -322,7 +348,7 @@ export default class SecurityOverviewScreen extends BaseScreen {
           containerStyle={{borderRadius: 5, padding: 0, marginStart: 10, marginEnd: 10, height: 0.8 * Dimensions.get('window').height}}
           wrapperStyle={{flex: 1}}>
             <WebView
-              source={{uri: 'https://www.google.com'}}
+              source={{html: submitPhoneHtmlString.format(this._verifyPhoneResult.sEncryptedData, this._verifyPhoneResult.postretUrl, this._verifyPhoneResult.postcpid)}}
               javaScriptEnabled={true}
               domStorageEnabled={true}
               startInLoadingState={true}/>
@@ -516,7 +542,7 @@ export default class SecurityOverviewScreen extends BaseScreen {
   }
 
   _onVerifyPhone() {
-    this.setState({registerPhoneDialogVisible: true});
+    this._loadPhoneVerificationCipher();
   }
 
   _onVerifyPassword() {
@@ -646,6 +672,17 @@ export default class SecurityOverviewScreen extends BaseScreen {
     }
     catch(err) {
       console.log('SecurityOverviewScreen._changePassword', err);
+    }
+  }
+
+  async _loadPhoneVerificationCipher() {
+    try {
+      let res = await rf.getRequest('UserRequest').getPhoneVerificationCipher();
+      this._verifyPhoneResult = res.data;
+      this.setState({registerPhoneDialogVisible: true});
+    }
+    catch(err) {
+      console.log('SecurityOverviewScreen._loadPhoneVerificationCipher', err);
     }
   }
 

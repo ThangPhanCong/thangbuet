@@ -4,7 +4,7 @@ import BaseScreen from '../BaseScreen'
 import ScaledSheet from '../../libs/reactSizeMatter/ScaledSheet'
 import rf from '../../libs/RequestFactory'
 import I18n from '../../i18n/i18n'
-import { formatCurrency, } from '../../utils/Filters'
+import { formatCurrency, getCurrencyName } from '../../utils/Filters'
 import { withNavigationFocus } from 'react-navigation'
 import HeaderBalance from './HeaderBalance'
 import { Icon, Divider } from 'react-native-elements'
@@ -216,7 +216,7 @@ class WithdrawalKRWScreen extends BaseScreen {
             <HeaderBalance />
             <ScrollView>
               <View style={styles.alignCenter}>
-                <Text style={{ fontWeight: 'bold' }}>{symbol.code.toUpperCase() + " " + I18n.t('deposit.title')}</Text>
+                <Text style={{ fontWeight: 'bold' }}>{getCurrencyName(symbol.code) + " " + I18n.t('deposit.title')}</Text>
               </View>
               <View style={[styles.header, styles.line]}>
                 <View style={styles.row}>
@@ -259,7 +259,7 @@ class WithdrawalKRWScreen extends BaseScreen {
                     }}
                     // onChangeText={(text) => this.setState({ amount: parseFloat(text) })}
                     style={{ flex: 1, height: 30, textAlign: 'right', paddingRight: 5 }} />
-                  <Text style={{ fontSize: 11 }}>{this.currency.toString().toUpperCase()}</Text>
+                  <Text style={{ fontSize: 11 }}>{getCurrencyName(this.currency)}</Text>
                   <TouchableOpacity
                     style={{
                       borderLeftWidth: 1, borderColor: "rgba(0, 0, 0, 0.3)",
@@ -464,7 +464,7 @@ class WithdrawalKRWScreen extends BaseScreen {
           </Text>
           <Text style={{ marginBottom: 10 }}>
             {formatCurrency(this.state.amount, this.currency)}
-            <Text style={{ fontSize: 11 }}>{this.currency.toString().toUpperCase()}</Text>
+            <Text style={{ fontSize: 11 }}>{getCurrencyName(this.currency)}</Text>
           </Text>
           <Text style={{ marginTop: 10, marginBottom: 3 }}>
             {'\u2022' + I18n.t('withdrawal.amountAccount')}

@@ -6,7 +6,7 @@ import ScaledSheet from '../../libs/reactSizeMatter/ScaledSheet'
 import { CheckBox } from 'react-native-elements'
 import rf from '../../libs/RequestFactory'
 import I18n from '../../i18n/i18n'
-import { formatCurrency, } from '../../utils/Filters'
+import { formatCurrency, getCurrencyName } from '../../utils/Filters'
 import Modal from "react-native-modal"
 
 export default class KRWPendingScreen extends BaseScreen {
@@ -76,7 +76,7 @@ export default class KRWPendingScreen extends BaseScreen {
         {isPending &&
           <ScrollView >
             <View style={styles.alignCenter}>
-              <Text style={{ fontWeight: 'bold' }}>{symbol.code.toUpperCase() + " " + I18n.t('deposit.title')}</Text>
+              <Text style={{ fontWeight: 'bold' }}>{getCurrencyName(symbol.code) + " " + I18n.t('deposit.title')}</Text>
             </View>
 
             <View style={[styles.alignCenter, styles.directionColumn, styles.containerMargin]}>

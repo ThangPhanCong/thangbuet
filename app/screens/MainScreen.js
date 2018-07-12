@@ -9,7 +9,6 @@ import TransactionScreen from './transaction/TransactionScreen'
 import BalanceScreen from './balances/BalanceScreen'
 import MyPageScreen from './my-page/MyPageScreen'
 import DepositScreen from './balances/DepositScreen'
-import DepositQRCodeScreen from './balances/DepositQRCodeScreen'
 import DepositKRWScreen from './balances/DepositKRWScreen'
 import WithdrawalKRWScreen from './balances/WithdrawalKRWScreen'
 import WithdrawalScreen from './balances/WithdrawalScreen'
@@ -21,9 +20,6 @@ export const BalanceStack = StackNavigator({
   Deposit: {
     screen: DepositScreen,
   },
-  DepositQRCode: {
-    screen: DepositQRCodeScreen,
-  },
   DepositKRW: {
     screen: DepositKRWScreen,
   },
@@ -34,12 +30,22 @@ export const BalanceStack = StackNavigator({
     screen: WithdrawalScreen
   }
 });
+
+export const MarketStack = StackNavigator({
+  MarketSearchScreen: {
+    screen: MarketSearchScreen
+  },
+  TradingScreen: {
+    screen: TradingScreen
+  }
+});
+
 import MarketSearchScreen from './market/MarketSearchScreen';
 
 export default TabNavigator(
   {
     MarketSearchScreen: {
-      screen: MarketSearchScreen,
+      screen: MarketStack,
       navigationOptions: () => ({
         tabBarLabel: I18n.t('tabBar.trading'),
       })
@@ -89,7 +95,6 @@ export default TabNavigator(
       },
     },
     animationEnabled: false,
-    swipeEnabled: false,
-    initialRouteName: 'BalanceScreen',
+    swipeEnabled: false
   }
 );

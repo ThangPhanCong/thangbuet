@@ -63,14 +63,25 @@ export default {
       shortname: 'ESPO'
     },
   },
-
+  splash: {
+    title: 'BITKOEX',
+    sentence: '디테일이 다르다. 거래가 편한 최고의 암호화폐 거래소'
+  },
   login: {
+    textLogo: 'BITKOEX',
+    titleLogo: '디테일이 다르다. 거래가 편한 최고의 암호화폐 거래소',
     email: 'Email',
+    otp: 'OTP CODE',
     password: 'Password',
-    login: 'Login',
+    login: 'LOGIN',
     register: 'Register',
     forgotText: 'Forgot your password',
     questionRegister: "Don't have an account yet? ",
+    emailEmpty: 'Email not empty',
+    passwordEmpty: 'Password not empty',
+    otpUncorrect: 'Otp code is not correct',
+    emailValidation: 'Email is not in the correct format',
+    messageUnCorrect: 'Email or Password not correct',
     registerForm: {
       referralID: 'Referral ID (optional)',
       textAcceptterm: "I agree to VCC's",
@@ -129,7 +140,11 @@ export default {
   },
   tradeScreen: {
     balance: '보유 잔고',
-    profit: '수익률'
+    profit: '수익률',
+    order: '일반주문',
+    orderBook: '호가주문',
+    chart: '챠트',
+    transaction: '체결'
   },
   orderForm: {
     buy: '매수',
@@ -148,7 +163,8 @@ export default {
     balance: '주문가능금액',
     estimateTotal: '매수대금',
     fee: '수수료',
-    estimateQuantity: '총매수량'
+    estimateQuantity: '총매수량',
+    tenThousand: '만'
   },
   orderBook: {
     sell: '매도',
@@ -171,11 +187,6 @@ export default {
     notificationMatched: '체결',
     notificationCanceled: '취소',
     update: '확인'
-  },
-  fullScreenChart: {
-    change24h: '24h Change',
-    hour: 'Hour',
-    min: 'min'
   },
 
   tabBar: {
@@ -275,6 +286,65 @@ export default {
     coinTagNote2: '외부로 부터의 {{coinName}}입금시 1번의 confirmatnion 발생 후 회원님의 계좌에 반영됩니다. 이 과정은 평균적으로 약 1분의 시간이 소요되지만, 블럭체인 네트워크 상황에 따라 지연될 수 도 있습니다.',
     coinTagNote3: '리플 입금시에는 입금 주소를 다시 한 번 반드시 확인하고 입금하시기 바랍니다. 경우에 따라서는 데스티네이션 태그를 반드시 입력해야 하는 경우도 있으니 주의하시기 바랍니다.',
     copyInfo: '주소가 성공적으로 복사되었습니다.',
+
+    btc: {
+      coinNote1: '외부의 다른 지갑에서 BITKOEX의 거래용 지갑으로 비트코인을 입금 받을 때 필요한 주소를 생성합니다',
+      coinNote2: '외부로 부터의 BTC입금시 1번의 confirmatnion 발생 후 회원님의 계좌에 반영됩니다. 이 과정은 평균적으로 약 10분의 시간이 소요되지만, 블럭체인 네트워크 상황에 따라 지연될 수 도 있습니다.',
+      coinNote3: '비트코인 입금시에는 입금 주소를 다시 한 번 반드시 확인하고 입금하시기 바랍니다. BTC주소와 BCH주소를 혼동하여 잘못 송금할 경우 발생하는 손실에 대해 BITKOEX는 책임지지 않습니다.',
+    },
+    eth: {
+      coinNote1: '외부의 다른 지갑에서 BITKOEX의 거래용 지갑으로 비트코인을 입금 받을 때 필요한 주소를 생성합니다',
+      coinNote2: '외부로 부터의 ETH입금시 1번의 confirmatnion 발생 후 회원님의 계좌에 반영됩니다. 이 과정은 평균적으로 약 10분의 시간이 소요되지만, 블럭체인 네트워크 상황에 따라 지연될 수 도 있습니다.',
+      coinNote3: '비트코인 입금시에는 입금 주소를 다시 한 번 반드시 확인하고 입금하시기 바랍니다. ETH주소와 BCH주소를 혼동하여 잘못 송금할 경우 발생하는 손실에 대해 BITKOEX는 책임지지 않습니다.',
+
+    },
+    bch: {
+      coinNote1: '외부의 다른 지갑에서 BITKOEX의 거래용 지갑으로 비트코인을 입금 받을 때 필요한 주소를 생성합니다',
+      coinNote2: '외부로 부터의 BCH입금시 1번의 confirmatnion 발생 후 회원님의 계좌에 반영됩니다. 이 과정은 평균적으로 약 10분의 시간이 소요되지만, 블럭체인 네트워크 상황에 따라 지연될 수 도 있습니다.',
+      coinNote3: '비트코인 입금시에는 입금 주소를 다시 한 번 반드시 확인하고 입금하시기 바랍니다. BCH주소와 BCH주소를 혼동하여 잘못 송금할 경우 발생하는 손실에 대해 BITKOEX는 책임지지 않습니다.',
+
+    },
+    xrp: {
+      coinNote1: '외부의 다른 지갑에서 BITKOEX의 거래용 지갑으로 리플을 입금 받을 때 필요한 주소를 생성합니다.',
+      coinNote2: '외부로 부터의 XRP입금시 1번의 confirmatnion 발생 후 회원님의 계좌에 반영됩니다. 이 과정은 평균적으로 약 1분의 시간이 소요되지만, 블럭체인 네트워크 상황에 따라 지연될 수 도 있습니다.',
+      coinNote3: '리플 입금시에는 입금 주소를 다시 한 번 반드시 확인하고 입금하시기 바랍니다. 경우에 따라서는 데스티네이션 태그를 반드시 입력해야 하는 경우도 있으니 주의하시기 바랍니다.',
+
+    },
+    ltc: {
+      fcoinNote1: '외부의 다른 지갑에서 BITKOEX의 거래용 지갑으로 비트코인을 입금 받을 때 필요한 주소를 생성합니다',
+      coinNote2: '외부로 부터의 LTC입금시 1번의 confirmatnion 발생 후 회원님의 계좌에 반영됩니다. 이 과정은 평균적으로 약 10분의 시간이 소요되지만, 블럭체인 네트워크 상황에 따라 지연될 수 도 있습니다.',
+      coinNote3: '비트코인 입금시에는 입금 주소를 다시 한 번 반드시 확인하고 입금하시기 바랍니다. LTC주소와 BCH주소를 혼동하여 잘못 송금할 경우 발생하는 손실에 대해 BITKOEX는 책임지지 않습니다.',
+
+    },
+    etc: {
+      coinNote1: '외부의 다른 지갑에서 BITKOEX의 거래용 지갑으로 비트코인을 입금 받을 때 필요한 주소를 생성합니다',
+      coinNote2: '외부로 부터의 ETC입금시 1번의 confirmatnion 발생 후 회원님의 계좌에 반영됩니다. 이 과정은 평균적으로 약 10분의 시간이 소요되지만, 블럭체인 네트워크 상황에 따라 지연될 수 도 있습니다.',
+      coinNote3: '비트코인 입금시에는 입금 주소를 다시 한 번 반드시 확인하고 입금하시기 바랍니다. ETC주소와 BCH주소를 혼동하여 잘못 송금할 경우 발생하는 손실에 대해 BITKOEX는 책임지지 않습니다.',
+
+    },
+    dash: {
+      coinNote1: '외부의 다른 지갑에서 BITKOEX의 거래용 지갑으로 비트코인을 입금 받을 때 필요한 주소를 생성합니다',
+      coinNote2: '외부로 부터의 DASH입금시 1번의 confirmatnion 발생 후 회원님의 계좌에 반영됩니다. 이 과정은 평균적으로 약 10분의 시간이 소요되지만, 블럭체인 네트워크 상황에 따라 지연될 수 도 있습니다.',
+      coinNote3: '비트코인 입금시에는 입금 주소를 다시 한 번 반드시 확인하고 입금하시기 바랍니다. DASH주소와 BCH주소를 혼동하여 잘못 송금할 경우 발생하는 손실에 대해 BITKOEX는 책임지지 않습니다.',
+
+    },
+    wbc: {
+      coinNote1: '외부의 다른 지갑에서 BITKOEX의 거래용 지갑으로 비트코인을 입금 받을 때 필요한 주소를 생성합니다',
+      coinNote2: '외부로 부터의 WBC입금시 1번의 confirmatnion 발생 후 회원님의 계좌에 반영됩니다. 이 과정은 평균적으로 약 10분의 시간이 소요되지만, 블럭체인 네트워크 상황에 따라 지연될 수 도 있습니다.',
+      coinNote3: '비트코인 입금시에는 입금 주소를 다시 한 번 반드시 확인하고 입금하시기 바랍니다. WBC주소와 BCH주소를 혼동하여 잘못 송금할 경우 발생하는 손실에 대해 BITKOEX는 책임지지 않습니다.',
+
+    },
+    krm: {
+      coinNote1: '외부의 다른 지갑에서 BITKOEX의 거래용 지갑으로 비트코인을 입금 받을 때 필요한 주소를 생성합니다',
+      coinNote2: '외부로 부터의 KRM입금시 1번의 confirmatnion 발생 후 회원님의 계좌에 반영됩니다. 이 과정은 평균적으로 약 10분의 시간이 소요되지만, 블럭체인 네트워크 상황에 따라 지연될 수 도 있습니다.',
+      coinNote3: '비트코인 입금시에는 입금 주소를 다시 한 번 반드시 확인하고 입금하시기 바랍니다. KRM주소와 BCH주소를 혼동하여 잘못 송금할 경우 발생하는 손실에 대해 BITKOEX는 책임지지 않습니다.',
+
+    },
+    espo: {
+      coinNote1: '외부의 다른 지갑에서 BITKOEX의 거래용 지갑으로 비트코인을 입금 받을 때 필요한 주소를 생성합니다',
+      coinNote2: '외부로 부터의 ESPO입금시 1번의 confirmatnion 발생 후 회원님의 계좌에 반영됩니다. 이 과정은 평균적으로 약 10분의 시간이 소요되지만, 블럭체인 네트워크 상황에 따라 지연될 수 도 있습니다.',
+      coinNote3: '비트코인 입금시에는 입금 주소를 다시 한 번 반드시 확인하고 입금하시기 바랍니다. ESPO주소와 BCH주소를 혼동하여 잘못 송금할 경우 발생하는 손실에 대해 BITKOEX는 책임지지 않습니다.',
+    },
   },
 
   withdrawal: {
@@ -444,7 +514,8 @@ export default {
       addNewWalletSubmit: '입출금 계좌 등록',
       removeConfirmDesc: `'{0}' 을 삭제하시겠습니까`,
       removeConfirm: '확인'
-    }
+    },
+    logout: '로그아웃'
   },
   transactions: {
     title: '주문/체결 내역',

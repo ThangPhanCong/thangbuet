@@ -305,7 +305,7 @@ const styles = ScaledSheet.create({
   itemDayMonth: {
     color: CommonColors.mainText,
     fontWeight: 'bold',
-    fontSize: '12@s'
+    fontSize: '12@s',
   },
   itemTime: {
     color: CommonColors.mainText,
@@ -313,7 +313,8 @@ const styles = ScaledSheet.create({
   },
   itemCoin: {
     color: CommonColors.mainText,
-    fontSize: '13@s'
+    fontSize: '13@s',
+    fontFamily: 'OpenSans-Regular'
   },
   itemCurrency: {
     color: CommonColors.mainText,

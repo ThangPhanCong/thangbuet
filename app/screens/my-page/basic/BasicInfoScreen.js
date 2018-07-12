@@ -80,7 +80,7 @@ export default class BasicInfoScreen extends BaseScreen {
           <View style={styles.iconGroup}>
             <Icon name="chevron-right"
               style={{alignSelf: 'flex-end'}}
-              size={PixelRatio.getPixelSizeForLayoutSize(14)}
+              size={28}
               color='#000' />
           </View>
         </View>

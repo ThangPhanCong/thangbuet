@@ -46,5 +46,10 @@
   "devDependencies": {
     "react-test-renderer": "16.3.1",
     "react-native-dotenv": "^0.1.1"
+  },
+  "rnpm": {
+    "assets": [
+      "./assets/fonts/"
+    ]
   }
 }

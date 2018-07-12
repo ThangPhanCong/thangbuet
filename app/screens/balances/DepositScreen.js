@@ -1,5 +1,5 @@
 import React from 'react';
-import { SafeAreaView, Text, TouchableOpacity, View } from 'react-native';
+import { SafeAreaView, Text, TouchableOpacity, View, Clipboard, ToastAndroid } from 'react-native';
 import BaseScreen from '../BaseScreen'
 import ScaledSheet from '../../libs/reactSizeMatter/ScaledSheet'
 import I18n from '../../i18n/i18n'
@@ -8,6 +8,7 @@ import HeaderBalance from './HeaderBalance'
 import rf from '../../libs/RequestFactory'
 import QRCode from 'react-native-qrcode-svg'
 import { scale } from "../../libs/reactSizeMatter/scalingUtils"
+import { getCurrencyName } from '../../utils/Filters'
 
 class DepositScreen extends BaseScreen {
   constructor(props) {
@@ -16,7 +17,6 @@ class DepositScreen extends BaseScreen {
       isComplete: false,
       symbol: {}
     }
-    this.currency = 'krw'
   }
 
   async componentDidMount() {
@@ -54,6 +54,20 @@ class DepositScreen extends BaseScreen {
     }
   }
 
+  _doCopy(hasTag) {
+    if (hasTag) {
+      Clipboard.setString(this.state.symbol.blockchain_tag)
+    } else {
+      Clipboard.setString(this.state.symbol.blockchain_address)
+    }
+
+    ToastAndroid.showWithGravity(
+      I18n.t('deposit.copyInfo'),
+      ToastAndroid.SHORT,
+      ToastAndroid.CENTER
+    )
+  }
+
   render() {
 
     return (
@@ -63,25 +77,25 @@ class DepositScreen extends BaseScreen {
           {this.state.isComplete &&
             <View style={[styles.alignCenter, { marginTop: 20 }]}>
               <View style={styles.alignCenter}>
-                <Text style={{ fontWeight: 'bold' }}>{this.state.symbol.code.toUpperCase() + " " + I18n.t('deposit.title')}</Text>
+                <Text style={{ fontWeight: 'bold' }}>{getCurrencyName(this.state.symbol.code) + " " + I18n.t('deposit.title')}</Text>
               </View>
 
               {this.state.isComplete && (!this.state.symbol.blockchain_address || this.state.symbol.blockchain_address == null) &&
-                <View>
-                  <View style={[styles.alignCenter, { width: '80%', marginTop: 20 }]}>
+                <View style={[styles.alignCenter, { width: '90%', marginTop: 20 }]}>
+                  <View style={[styles.alignCenter, { width: '100%' }]}>
                     <View style={styles.noteContainer}>
                       <Text style={styles.noteTitle}>
-                        {'\u2022' + I18n.t('deposit.coinNote1')}
+                        {'\u2022' + I18n.t('deposit.' + this.state.symbol.code + '.coinNote1')}
                       </Text>
                     </View>
                     <View style={styles.noteContainer}>
                       <Text style={styles.noteTitle}>
-                        {'\u2022' + I18n.t('deposit.coinNote2', { "coinName": this.state.symbol.code.toUpperCase() })}
+                        {'\u2022' + I18n.t('deposit.' + this.state.symbol.code + '.coinNote2')}
                       </Text>
                     </View>
                     <View style={styles.noteContainer}>
                       <Text style={styles.noteTitle}>
-                        {'\u2022' + I18n.t('deposit.coinNote3', { "coinName": this.state.symbol.code.toUpperCase() })}
+                        {'\u2022' + I18n.t('deposit.' + this.state.symbol.code + '.coinNote3')}
                       </Text>
                     </View>
                   </View>
@@ -96,24 +110,22 @@ class DepositScreen extends BaseScreen {
                 </View>
               }
               {this.state.isComplete && this.state.symbol.blockchain_address && this.state.symbol.blockchain_address != null &&
-                <View style={[styles.alignCenter, { width: '70%', marginTop: 20 }]}>
-                  <View>
-                    <QRCode
-                      size={scale(150)}
-                      value={this.state.symbol.blockchain_address ? this.state.symbol.blockchain_address : 'No address'} />
+                <View style={[styles.alignCenter, { width: '90%', marginTop: 20 }]}>
+                  <QRCode
+                    size={scale(150)}
+                    value={this.state.symbol.blockchain_address ? this.state.symbol.blockchain_address : 'No address'} />
 
-                    <Text style={{ margin: 10, marginBottom: 5 }}>
-                      {this.state.symbol.blockchain_address}
+                  <Text style={{ margin: 10, marginBottom: 5 }}>
+                    {this.state.symbol.blockchain_address}
+                  </Text>
+                  {this.state.symbol.blockchain_tag && this.state.symbol.blockchain_tag != null &&
+                    <Text style={{ margin: 5, marginBottom: 20 }}>
+                      {I18n.t('deposit.tagAddress') + " " + this.state.symbol.blockchain_tag}
                     </Text>
-                    {this.state.symbol.blockchain_tag && this.state.symbol.blockchain_tag != null &&
-                      <Text style={{ margin: 5, marginBottom: 20 }}>
-                        {I18n.t('deposit.tagAddress') + " " + this.state.symbol.blockchain_tag}
-                      </Text>
-                    }
-                  </View>
-                  <View style={{ flexDirection: 'row', width: '100%', height: 45, justifyContent: 'center', alignItems: 'center' }}>
+                  }
+                  <View style={{ flexDirection: 'row', width: '70%', height: 45, justifyContent: 'center', alignItems: 'center' }}>
                     <TouchableOpacity
-                      onPress={() => this._doCopy(symbol, false)}
+                      onPress={() => this._doCopy(false)}
                       style={[styles.alignCenter, {
                         marginTop: 10, flex: 1, height: 40,
                         backgroundColor: 'blue', borderRadius: 4, borderColor: 'rgba(0, 0, 0, 0.1)'
@@ -122,7 +134,7 @@ class DepositScreen extends BaseScreen {
                     </TouchableOpacity>
                     {this.state.symbol.blockchain_tag && this.state.symbol.blockchain_tag != null &&
                       <TouchableOpacity
-                        onPress={() => this._doCopy(symbol, true)}
+                        onPress={() => this._doCopy(true)}
                         style={[styles.alignCenter, {
                           marginTop: 10, flex: 1, height: 40, marginLeft: 5,
                           backgroundColor: 'blue', borderRadius: 4, borderColor: 'rgba(0, 0, 0, 0.1)'

@@ -11,14 +11,16 @@ import {
 } from 'react-native';
 import Modal from "react-native-modal";
 import BaseScreen from '../BaseScreen';
-import { TabNavigator, TabBarBottom } from 'react-navigation';
+import { TabNavigator, TabBarTop } from 'react-navigation';
 import rf from '../../libs/RequestFactory';
+import Events from '../../utils/Events';
 import Numeral from '../../libs/numeral';
 import MasterdataUtils from '../../utils/MasterdataUtils';
 import ScaledSheet from '../../libs/reactSizeMatter/ScaledSheet';
 import { scale } from '../../libs/reactSizeMatter/scalingUtils';
-import { filter, pickBy, startsWith, orderBy } from 'lodash'
-import Utils from '../../utils/Utils'
+import { filter, pickBy, startsWith, orderBy } from 'lodash';
+import Utils from '../../utils/Utils';
+import UIUtils from '../../utils/UIUtils';
 import TradingGeneralScreen from './TradingGeneralScreen';
 import TradingOrderBookScreen from './TradingOrderBookScreen';
 import TradingChartScreen from './TradingChartScreen';
@@ -27,72 +29,55 @@ import I18n from '../../i18n/i18n';
 import Consts from '../../utils/Consts';
 import { ListItem, List, Icon } from 'react-native-elements';
 import { formatCurrency, formatPercent, getCurrencyName } from '../../utils/Filters';
-import { CommonColors, CommonStyles } from '../../utils/CommonStyles';
+import { CommonColors, CommonStyles, Fonts } from '../../utils/CommonStyles';
+import DropdownMenu from '../common/DropdownMenu';
 
 const TradeTabs = TabNavigator(
   {
-    General: {
+    Order: {
       screen: props => <TradingGeneralScreen {...props}/>,
       navigationOptions: () => ({
-        tabBarLabel: 'General'
+        tabBarLabel: (options) => UIUtils.renderTabItem(I18n.t('tradeScreen.order'), options)
       })
     },
-    Order: {
+    OrderBook: {
       screen:  props => <TradingOrderBookScreen {...props}/>,
       navigationOptions: () => ({
-        tabBarLabel: 'Order'
+        tabBarLabel: (options) => UIUtils.renderTabItem(I18n.t('tradeScreen.order'), options)
       })
     },
     Chart: {
       screen: TradingChartScreen,
       navigationOptions: () => ({
-        tabBarLabel: 'Chart'
+        tabBarLabel: (options) => UIUtils.renderTabItem(I18n.t('tradeScreen.orderBook'), options)
       })
     },
-    Conclusion: {
+    Transaction: {
       screen: TradingConclusionScreen,
       navigationOptions: () => ({
-        tabBarLabel: 'Conclusion'
+        tabBarLabel: (options) => UIUtils.renderTabItem(I18n.t('tradeScreen.transaction'), options, false)
       })
     }
   },
   {
     navigationOptions: ({ navigation }) => ({
-      tabBarIcon: ({ focused, tintColor }) => {
-        const { routeName } = navigation.state;
-        let iconName;
-
-      },
-      header: null,
+      gesturesEnabled: false
     }),
-    tabBarComponent: TabBarBottom,
-    tabBarPosition: 'top',
-    tabBarOptions: {
-      style: {
-        backgroundColor: '#11151C',
-        height: PixelRatio.getPixelSizeForLayoutSize(15),
-        elevation: 0,
-        borderTopWidth: 0,
-      },
-      labelStyle: {
-        fontSize: 14 * PixelRatio.getFontScale(),
-      },
-      activeTintColor: 'tomato',
-      inactiveTintColor: 'gray',
-    },
-    animationEnabled: false,
-    swipeEnabled: true,
-  })
+    tabBarComponent: TabBarTop,
+    ...CommonStyles.tabOptions
+  });
 
 export default class TradingScreen extends BaseScreen {
 
   constructor(props) {
     super(props)
+
+    let params = {currency: 'krw', coin: 'btc'};//this.props.navigation.state.params;
     this.state = {
       modalVisible: false,
       itemSelected: {},
-      currency: 'krw',
-      coin: 'btc',
+      currency: params.currency,
+      coin: params.coin,
       symbols: [],
       prices: {},
       balances: {}
@@ -108,6 +93,12 @@ export default class TradingScreen extends BaseScreen {
     return {
       PricesUpdated: this._onPriceUpdated.bind(this),
       BalanceUpdated: this._onBalanceUpdated.bind(this)
+    };
+  }
+
+  getDataEventHandlers() {
+    return {
+      [Events.SHOW_TRADE_SCREEN_DROPDOWN]: this._showDropdown.bind(this)
     };
   }
 
@@ -179,6 +170,10 @@ export default class TradingScreen extends BaseScreen {
     return this.state.balances[this._getCoin()] || {};
   }
 
+  _showDropdown(data) {
+    this._typeDropdown.show(data.items, data.options);
+  }
+
   render() {
     return (
       <SafeAreaView style={{ flex: 1, backgroundColor: '#fff' }}>
@@ -191,6 +186,7 @@ export default class TradingScreen extends BaseScreen {
               currency: this._getCurrency()
             }}/>
           {this._renderSymbolSelector()}
+        {this._renderTypeDropdown()}
         </View>
       </SafeAreaView>
     );
@@ -212,8 +208,8 @@ export default class TradingScreen extends BaseScreen {
             <View style={styles.caretContainer}>
               <Icon name='triangle-down' type='entypo' size={scale(18)}/>
             </View>
-            <Text>{this._getCurrencyName(this._getCoin())}</Text>
-            <Text style={CommonStyles.bold}>{' / ' + getCurrencyName(this._getCurrency())}</Text>
+            <Text style={styles.coin}>{this._getCurrencyName(this._getCoin())}</Text>
+            <Text style={CommonStyles.currency}>{' / ' + getCurrencyName(this._getCurrency())}</Text>
           </TouchableOpacity>
           <View style={[styles.headerContent, priceData.price ? {} : {opacity: 0}]}>
             <Text style={[styles.price, {color: priceColor}]}>{formatCurrency(priceData.price, this._getCurrency)}</Text>
@@ -292,6 +288,12 @@ export default class TradingScreen extends BaseScreen {
       </Modal>
     );
   }
+
+  _renderTypeDropdown() {
+    return (
+      <DropdownMenu ref={ref => this._typeDropdown = ref}/>
+    );
+  }
 }
 
 const styles = ScaledSheet.create({
@@ -326,6 +328,12 @@ const styles = ScaledSheet.create({
     borderColor: '#CBCBCB',
     borderRadius: '3@s',
     marginRight: '10@s'
+  },
+  coin: {
+    ...Fonts.NanumSquareOTF_ExtraBold
+  },
+  currency: {
+    ...Fonts.OpenSan_Bold
   },
   price: {
     fontSize: '16@s'

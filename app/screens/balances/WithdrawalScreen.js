@@ -190,7 +190,7 @@ class WithdrawalScreen extends BaseScreen {
 
             <View style={[styles.alignCenter, { marginTop: 20 }]}>
               <View style={styles.alignCenter}>
-                <Text style={{ fontWeight: 'bold' }}>{symbol.code.toUpperCase() + " " + I18n.t('withdrawal.title')}</Text>
+                <Text style={{ fontWeight: 'bold' }}>{getCurrencyName(symbol.code) + " " + I18n.t('withdrawal.title')}</Text>
               </View>
 
               <View style={[styles.header, styles.line]}>
@@ -199,7 +199,7 @@ class WithdrawalScreen extends BaseScreen {
                   <View style={styles.rightView}>
                     <Text style={styles.rightContent}>
                       {formatCurrency(symbol.balance, this.currency)}
-                      <Text style={styles.symbol}>{this.currency.toUpperCase()}</Text>
+                      <Text style={styles.symbol}>{getCurrencyName(this.currency)}</Text>
                     </Text>
                   </View>
                 </View>
@@ -208,7 +208,7 @@ class WithdrawalScreen extends BaseScreen {
                   <View style={styles.rightView}>
                     <Text style={styles.rightContent}>
                       {formatCurrency(this.state.daily.withdrawalLimit - this.state.daily.withdrawal, this.currency)}
-                      <Text style={styles.symbol}>{this.currency.toUpperCase()}</Text>
+                      <Text style={styles.symbol}>{getCurrencyName(this.currency)}</Text>
                     </Text>
                   </View>
                 </View>
@@ -231,7 +231,7 @@ class WithdrawalScreen extends BaseScreen {
                       this.setState({ amount: parseFloat(text.split(',').join('')) })
                     }}
                     style={{ flex: 1, height: 30, textAlign: 'right', paddingRight: 5, textAlignVertical: 'bottom', lineHeight: 0.1 }} />
-                  <Text style={{ fontSize: 11 }}>{this.currency.toString().toUpperCase()}</Text>
+                  <Text style={{ fontSize: 11 }}>{getCurrencyName(this.currency)}</Text>
                   <TouchableOpacity
                     style={{
                       borderLeftWidth: 1, borderColor: "rgba(0, 0, 0, 0.3)",
@@ -407,7 +407,7 @@ class WithdrawalScreen extends BaseScreen {
           </Text>
           <Text style={{ marginBottom: 10 }}>
             {formatCurrency(this.state.amount, this.currency)}
-            <Text style={{ fontSize: 11 }}>{this.currency.toString().toUpperCase()}</Text>
+            <Text style={{ fontSize: 11 }}>{getCurrencyName(this.currency)}</Text>
           </Text>
           <Text style={{ marginTop: 10, marginBottom: 3 }}>
             {'\u2022' + I18n.t('withdrawal.amountAccount')}
