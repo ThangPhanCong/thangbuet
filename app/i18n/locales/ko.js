@@ -63,14 +63,25 @@ export default {
       shortname: 'ESPO'
     },
   },
-
+  splash: {
+    title: 'BITKOEX',
+    sentence: '디테일이 다르다. 거래가 편한 최고의 암호화폐 거래소'
+  },
   login: {
+    textLogo: 'BITKOEX',
+    titleLogo: '디테일이 다르다. 거래가 편한 최고의 암호화폐 거래소',
     email: 'Email',
     password: 'Mật khẩu',
-    login: 'Đăng nhập',
+    login: 'LOGIN',
+    otp: 'OTP CODE',
     register: 'Đăng ký',
     forgotText: 'Quên mật khẩu?',
     questionRegister: "Bạn không có tài khoản?",
+    emailEmpty: 'Email not empty',
+    passwordEmpty: 'Password not empty',
+    otpUncorrect: 'Otp code is not correct',
+    emailValidation: 'Email is not in the correct format',
+    messageUnCorrect: 'Email or Password not correct',
 
     registerForm: {
       referralID: "Mã giới thiệu( không bắt buộc)",
@@ -152,7 +163,8 @@ export default {
     balance: '주문가능금액',
     estimateTotal: '매수대금',
     fee: '수수료',
-    estimateQuantity: '총매수량'
+    estimateQuantity: '총매수량',
+    tenThousand: '만'
   },
   orderBook: {
     sell: '매도',
@@ -175,11 +187,6 @@ export default {
     notificationMatched: '체결',
     notificationCanceled: '취소',
     update: '확인'
-  },
-  fullScreenChart: {
-    change24h: '24h Change',
-    hour: 'Hour',
-    min: 'min'
   },
 
   tabBar: {
@@ -504,7 +511,8 @@ export default {
       addNewWalletSubmit: '입출금 계좌 등록',
       removeConfirmDesc: `'{0}' 을 삭제하시겠습니까`,
       removeConfirm: '확인'
-    }
+    },
+    logout: '로그아웃'
   },
   transactions: {
     title: '주문/체결 내역',

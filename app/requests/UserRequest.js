@@ -208,4 +208,9 @@ export default class UserRequest extends BaseModelRequest {
     let url = '/google-auth';
     return this.del(url, params)
   }
+
+  getPhoneVerificationCipher() {
+    let url = '/phone_verification_data';
+    return this.get(url);
+  }
 }

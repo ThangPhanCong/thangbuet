@@ -62,6 +62,10 @@
 		F8A10C9BD4494A4A8E3A18F6 /* libRNSVG.a in Frameworks */ = {isa = PBXBuildFile; fileRef = DDAFDB96543347FBB933C690 /* libRNSVG.a */; };
 		FBDFB8BC261D4E23B6210F9C /* libRCTRestart.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 244128BC90A74C6AB9748EC4 /* libRCTRestart.a */; };
 		FF30C7E4F4A542C3970FB74B /* SimpleLineIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 26C07C0E65D1464CA7DFDD4B /* SimpleLineIcons.ttf */; };
+		94E107A54B184B1D8D5E0F84 /* NotoSans-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 644D551A8DD24B91908367F5 /* NotoSans-Regular.ttf */; };
+		B7604361D2194190819D735E /* Calligraffitti-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 866E02EB3EA54EB79362DCAB /* Calligraffitti-Regular.ttf */; };
+		463C621728DE4D61A9BC6E5F /* OpenSans-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 5BBB7E104F5B4E05BE13D029 /* OpenSans-Regular.ttf */; };
+		383E8EE08757472088E66828 /* Knewave-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = B656E785077B4C73BBAEBE96 /* Knewave-Regular.ttf */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -519,6 +523,10 @@
 		E33A624AD3404D798AB6793A /* MaterialCommunityIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = MaterialCommunityIcons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/MaterialCommunityIcons.ttf"; sourceTree = "<group>"; };
 		E491377B6D7048E59866B610 /* libRNTextInputMask.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libRNTextInputMask.a; sourceTree = "<group>"; };
 		EE6F31E358914ED6A9F017E2 /* libRNI18n.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libRNI18n.a; sourceTree = "<group>"; };
+		644D551A8DD24B91908367F5 /* NotoSans-Regular.ttf */ = {isa = PBXFileReference; name = "NotoSans-Regular.ttf"; path = "../assets/fonts/NotoSans-Regular.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		866E02EB3EA54EB79362DCAB /* Calligraffitti-Regular.ttf */ = {isa = PBXFileReference; name = "Calligraffitti-Regular.ttf"; path = "../assets/fonts/Calligraffitti-Regular.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		5BBB7E104F5B4E05BE13D029 /* OpenSans-Regular.ttf */ = {isa = PBXFileReference; name = "OpenSans-Regular.ttf"; path = "../assets/fonts/OpenSans-Regular.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		B656E785077B4C73BBAEBE96 /* Knewave-Regular.ttf */ = {isa = PBXFileReference; name = "Knewave-Regular.ttf"; path = "../assets/fonts/Knewave-Regular.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -662,6 +670,10 @@
 				B4B1E6310694404FA59C1F92 /* Octicons.ttf */,
 				26C07C0E65D1464CA7DFDD4B /* SimpleLineIcons.ttf */,
 				306523C02436434E91E7F651 /* Zocial.ttf */,
+				644D551A8DD24B91908367F5 /* NotoSans-Regular.ttf */,
+				866E02EB3EA54EB79362DCAB /* Calligraffitti-Regular.ttf */,
+				5BBB7E104F5B4E05BE13D029 /* OpenSans-Regular.ttf */,
+				B656E785077B4C73BBAEBE96 /* Knewave-Regular.ttf */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -1618,6 +1630,10 @@
 				A09C4D131EB241458CE3B0CC /* Octicons.ttf in Resources */,
 				FF30C7E4F4A542C3970FB74B /* SimpleLineIcons.ttf in Resources */,
 				EA02B0EFAFE5435DAE353BAB /* Zocial.ttf in Resources */,
+				94E107A54B184B1D8D5E0F84 /* NotoSans-Regular.ttf in Resources */,
+				B7604361D2194190819D735E /* Calligraffitti-Regular.ttf in Resources */,
+				463C621728DE4D61A9BC6E5F /* OpenSans-Regular.ttf in Resources */,
+				383E8EE08757472088E66828 /* Knewave-Regular.ttf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -1,10 +1,11 @@
 import React from 'react';
-import { Image, View } from 'react-native';
+import { Image, View, Text } from 'react-native';
 import { initApp } from '../../App';
 import AppConfig from '../utils/AppConfig';
 import BaseScreen from './BaseScreen';
 import { CommonColors, CommonStyles } from "../utils/CommonStyles";
 import ScaledSheet from '../libs/reactSizeMatter/ScaledSheet';
+import I18n from '../i18n/i18n';
 
 export default class SplashScreen extends BaseScreen {
   static navigationOptions = {
@@ -40,11 +41,12 @@ export default class SplashScreen extends BaseScreen {
     return (
       <View
         style={styles.screen}>
-        <Image
-          resizeMode={'contain'}
-          style={styles.logoStyle}
-          source={require('../../assets/common/logoLogin.png')}
-        />
+        <Text style={styles.title}>
+           {I18n.t('splash.title')}
+        </Text>
+        <Text style={styles.sentence}>
+           {I18n.t('splash.sentence')}
+        </Text>
       </View>
     )
   }
@@ -53,11 +55,15 @@ export default class SplashScreen extends BaseScreen {
 const styles = ScaledSheet.create({
   screen: {
     ...CommonStyles.screen,
-    justifyContent: 'center',
-    alignItems: 'center'
+    // justifyContent: 'center',
+    alignItems: 'center',
+    paddingTop: '140@s'
   },
-  logoStyle: {
-    width: "180@s",
-    height: "60@s"
+  title: {
+    fontSize: "35@s",
+    marginTop: "0@s"
+  },
+  sentence: {
+    fontSize: '10@s'
   }
 });
