@@ -81,18 +81,18 @@ const CommonStyles = {
     fontWeight: 'bold'
   },
   tabOptions: {
-    tabBarPosition: 'top',
     tabBarOptions: {
       style: {
         backgroundColor: CommonColors.tabBg,
-        height: 48,
+        height: scale(37),
+        elevation: 0
       },
       indicatorStyle: {
         backgroundColor: CommonColors.tabActive
       },
       tabStyle: {
         padding: 0,
-        paddingTop: 8
+        paddingTop: scale(3)
       }
     },
     animationEnabled: false,

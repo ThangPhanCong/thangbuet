@@ -15,6 +15,7 @@ import { CommonColors, CommonSize, CommonStyles } from '../../utils/CommonStyles
 import OrderBook from './OrderBook';
 import OrderBookSettingModal from './OrderBookSettingModal';
 import OrderForm from './OrderForm';
+import CurrencyInput from '../common/CurrencyInput';
 
 export default class TradingGeneralScreen extends BaseScreen {
 
@@ -63,12 +64,20 @@ export default class TradingGeneralScreen extends BaseScreen {
         <View style={CommonStyles.matchParent}/>
 
         <Text>{I18n.t('orderBook.hand')}</Text>
-        <TextInput value='-15'/>
-        <Text>%</Text>
+        <TextInput
+          style={[styles.input, {color: CommonColors.decreased}]}
+          value='-15'
+          editable={false}
+          underlineColorAndroid='transparent'/>
+        <Text style={styles.percentText}>%</Text>
 
         <Text>{I18n.t('orderBook.fence')}</Text>
-        <TextInput value='15'/>
-        <Text>%</Text>
+        <TextInput
+          style={[styles.input, {color: CommonColors.increased}]}
+          value='15'
+          editable={false}
+          underlineColorAndroid='transparent'/>
+        <Text style={styles.percentText}>%</Text>
 
         <TouchableOpacity onPress={this._openOrderBookSettingModal.bind(this)}>
           <Image
@@ -146,6 +155,23 @@ const styles = ScaledSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     height: '30@s'
+  },
+  input: {
+    height: '25@s',
+    paddingLeft: '5@s',
+    paddingRight: '5@s',
+    paddingTop: 0,
+    paddingBottom: 0,
+    marginLeft: '5@s',
+    marginRight: '5@s',
+    borderWidth: 1,
+    borderColor: CommonColors.border,
+    borderRadius: '3@s',
+    textAlign: 'right'
+  },
+  percentText: {
+    fontSize: '12@s',
+    marginRight: '10@s'
   },
   setting: {
     width: '20@s'

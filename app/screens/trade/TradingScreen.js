@@ -64,6 +64,7 @@ const TradeTabs = TabNavigator(
       gesturesEnabled: false
     }),
     tabBarComponent: TabBarTop,
+    tabBarPosition: 'top',
     ...CommonStyles.tabOptions
   });
 
@@ -206,7 +207,7 @@ export default class TradingScreen extends BaseScreen {
             style={styles.headerContent}
             onPress={() => this.setState({ modalVisible: true })}>
             <View style={styles.caretContainer}>
-              <Icon name='triangle-down' type='entypo' size={scale(18)}/>
+              <Icon name='triangle-down' type='entypo' size={scale(15)}/>
             </View>
             <Text style={styles.coin}>{this._getCurrencyName(this._getCoin())}</Text>
             <Text style={CommonStyles.currency}>{' / ' + getCurrencyName(this._getCurrency())}</Text>
@@ -217,7 +218,7 @@ export default class TradingScreen extends BaseScreen {
               name={priceData.change >= 0 ? 'triangle-up' : 'triangle-down'}
               type='entypo'
               color={priceColor}
-              size={scale(15)}
+              size={scale(16)}
               containerStyle={styles.changeIndicator}/>
             <Text style={[styles.pricePercent, {color: priceColor}]}>{formatPercent(priceData.change)}</Text>
           </View>
@@ -230,6 +231,12 @@ export default class TradingScreen extends BaseScreen {
           </View>
           <View style={styles.headerContent}>
             <Text style={styles.balanceLabel}>{I18n.t('tradeScreen.profit')}</Text>
+            <Icon
+              name='help'
+              type='ionicons'
+              color='#000'
+              size={scale(13)}
+              containerStyle={styles.helpIcon}/>
             <Text style={[styles.profit, {color: profitColor}]}>{Numeral(profit).format("0.00")}</Text>
             <Text style={[styles.balanceCurrency, {color: profitColor}]}>%</Text>
           </View>
@@ -296,22 +303,29 @@ export default class TradingScreen extends BaseScreen {
   }
 }
 
+const margin = scale(10);
+
 const styles = ScaledSheet.create({
   main: {
     flex: 1,
     flexDirection: 'column'
   },
   header: {
-    height: 60,
+    height: '90@vs',
     flexDirection: 'row',
     justifyContent: 'space-between'
   },
   headerLeft: {
-    flex: 0.8,
-    marginLeft: '10@s'
+    flex: 1,
+    marginLeft: margin,
+    marginTop: margin * 1.2,
+    marginBottom: margin * 1.2
   },
   headerRight: {
-    flex: 1
+    flex: 1,
+    marginLeft: margin / 2,
+    marginTop: margin * 1.2,
+    marginBottom: margin * 1.2
   },
   headerContent: {
     flex: 1,
@@ -320,47 +334,62 @@ const styles = ScaledSheet.create({
     alignItems: 'center'
   },
   caretContainer: {
-    width: '20@s',
-    height: '20@s',
+    width: '21@s',
+    height: '21@s',
     justifyContent: 'center',
     alignItems: 'center',
     borderWidth: 1,
     borderColor: '#CBCBCB',
-    borderRadius: '3@s',
+    borderRadius: '2@s',
     marginRight: '10@s'
   },
   coin: {
+    fontSize: '16@s',
     ...Fonts.NanumSquareOTF_ExtraBold
   },
   currency: {
-    ...Fonts.OpenSan_Bold
+    fontSize: '16@s',
+    ...Fonts.OpenSan_Bold,
+    fontWeight: 'bold'
   },
   price: {
-    fontSize: '16@s'
+    fontSize: '20@s',
+    ...Fonts.OpenSan
   },
   pricePercent: {
-    fontSize: '10@s',
+    fontSize: '11@s',
     marginTop: '5@s'
   },
   changeIndicator: {
-    marginTop: '5@s'
+    marginTop: '7@s',
+    marginLeft: '7@s'
+  },
+  helpIcon: {
+    marginLeft: '5@s',
+    marginBottom: '1@s'
   },
   balanceLabel: {
     color: '#595959',
-    fontSize: '12@s'
+    fontSize: '10.5@s',
+    ...Fonts.NotoSans
   },
   balance: {
     flex: 1,
-    textAlign: 'right'
+    textAlign: 'right',
+    fontSize: '16@s',
+    ...Fonts.OpenSan
   },
   profit: {
     flex: 1,
-    textAlign: 'right'
+    textAlign: 'right',
+    fontSize: '20@s',
+    ...Fonts.OpenSan
   },
   balanceCurrency: {
     width: '30@s',
-    fontSize: '10@s',
-    marginLeft: '5@s'
+    fontSize: '8@s',
+    marginLeft: '5@s',
+    ...Fonts.OpenSan
   },
 
   popup: {
