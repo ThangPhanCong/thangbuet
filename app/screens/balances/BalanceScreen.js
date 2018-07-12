@@ -7,6 +7,7 @@ import rf from '../../libs/RequestFactory'
 import I18n from '../../i18n/i18n'
 import AppConfig from '../../utils/AppConfig'
 import HeaderBalance from './HeaderBalance'
+import { getCurrencyName } from '../../utils/Filters'
 
 export default class BalanceScreen extends BaseScreen {
   constructor(props) {
@@ -143,10 +144,10 @@ export default class BalanceScreen extends BaseScreen {
                       <Image
                         style={styles.imageSize}
                         source={{ uri: symbol.icon }} />
-                      <Text>{symbol.code.toUpperCase()}</Text>
+                      <Text>{getCurrencyName(symbol.code)}</Text>
                     </View>
                     <Text style={styles.balance}>
-                      {symbol.code.toUpperCase() !== 'KRW' && parseFloat(symbol.balance)}
+                      {symbol.code !== 'krw' && parseFloat(symbol.balance)}
                     </Text>
                     <View style={styles.action}>
                       <Button title={I18n.t('balances.deposit')} onPress={() => {
@@ -160,7 +161,7 @@ export default class BalanceScreen extends BaseScreen {
                         if (symbol.code == 'krw') {
                           this.navigate('WithdrawalKRW', { symbol })
                         } else {
-                          this.navigate('WithdrawalKRW', { symbol })
+                          this.navigate('Withdrawal', { symbol })
                         }
                       }} />
                     </View>
