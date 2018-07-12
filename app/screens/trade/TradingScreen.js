@@ -349,12 +349,11 @@ const styles = ScaledSheet.create({
   },
   currency: {
     fontSize: '16@s',
-    ...Fonts.OpenSan_Bold,
-    fontWeight: 'bold'
+    ...Fonts.OpenSan_Bold
   },
   price: {
     fontSize: '20@s',
-    ...Fonts.OpenSan
+    ...Fonts.OpenSans
   },
   pricePercent: {
     fontSize: '11@s',
@@ -377,19 +376,19 @@ const styles = ScaledSheet.create({
     flex: 1,
     textAlign: 'right',
     fontSize: '16@s',
-    ...Fonts.OpenSan
+    ...Fonts.OpenSans
   },
   profit: {
     flex: 1,
     textAlign: 'right',
     fontSize: '20@s',
-    ...Fonts.OpenSan
+    ...Fonts.OpenSans
   },
   balanceCurrency: {
     width: '30@s',
     fontSize: '8@s',
     marginLeft: '5@s',
-    ...Fonts.OpenSan
+    ...Fonts.OpenSans
   },
 
   popup: {
