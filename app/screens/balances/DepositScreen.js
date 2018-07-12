@@ -8,6 +8,7 @@ import HeaderBalance from './HeaderBalance'
 import rf from '../../libs/RequestFactory'
 import QRCode from 'react-native-qrcode-svg'
 import { scale } from "../../libs/reactSizeMatter/scalingUtils"
+import { getCurrencyName } from '../../utils/Filters'
 
 class DepositScreen extends BaseScreen {
   constructor(props) {
@@ -76,7 +77,7 @@ class DepositScreen extends BaseScreen {
           {this.state.isComplete &&
             <View style={[styles.alignCenter, { marginTop: 20 }]}>
               <View style={styles.alignCenter}>
-                <Text style={{ fontWeight: 'bold' }}>{this.state.symbol.code.toUpperCase() + " " + I18n.t('deposit.title')}</Text>
+                <Text style={{ fontWeight: 'bold' }}>{getCurrencyName(this.state.symbol.code) + " " + I18n.t('deposit.title')}</Text>
               </View>
 
               {this.state.isComplete && (!this.state.symbol.blockchain_address || this.state.symbol.blockchain_address == null) &&
