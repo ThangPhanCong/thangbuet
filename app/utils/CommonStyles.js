@@ -1,5 +1,5 @@
 import React from 'react';
-import { Image, StyleSheet } from 'react-native';
+import { Image, Platform, StyleSheet } from 'react-native';
 import { scale } from '../libs/reactSizeMatter/scalingUtils';
 
 class CommonColors {
@@ -81,18 +81,18 @@ const CommonStyles = {
     fontWeight: 'bold'
   },
   tabOptions: {
-    tabBarPosition: 'top',
     tabBarOptions: {
       style: {
         backgroundColor: CommonColors.tabBg,
-        height: 48,
+        height: scale(37),
+        elevation: 0
       },
       indicatorStyle: {
         backgroundColor: CommonColors.tabActive
       },
       tabStyle: {
         padding: 0,
-        paddingTop: 8
+        paddingTop: scale(3)
       }
     },
     animationEnabled: false,
@@ -100,20 +100,45 @@ const CommonStyles = {
   }
 };
 
-const Fonts = {
+const iOSFonts = {
   NanumSquareOTF_ExtraBold: {
     fontFamily: 'NanumSquareOTF',
     fontWeight: '800'
   },
-  OpenSan: {
+  OpenSans: {
     fontFamily: 'OpenSans-Regular',
   },
-  OpenSan_Bold: {
+  OpenSans_Bold: {
+    fontFamily: 'OpenSans-Bold',
+    fontWeight: '700'
+  },
+  NotoSans: {
+    fontFamily: 'NotoSans'
+  },
+  NotoSans_Bold: {
+    fontFamily: 'NotoSans',
+    fontWeight: '700'
+  }
+};
+
+const androidFonts = {
+  NanumSquareOTF_ExtraBold: {
+    fontFamily: 'NanumSquareOTFBold',
+  },
+  OpenSans: {
+    fontFamily: 'OpenSans-Regular',
+  },
+  OpenSans_Bold: {
     fontFamily: 'OpenSans-Semibold'
   },
   NotoSans: {
     fontFamily: 'NotoSans-Regular'
+  },
+  NotoSans_Bold: {
+    fontFamily: 'NotoSans-Bold'
   }
 };
+
+const Fonts = Platform.OS === 'ios' ? iOSFonts : androidFonts;
 
 export { CommonStyles, CommonColors, CommonSize, Fonts };

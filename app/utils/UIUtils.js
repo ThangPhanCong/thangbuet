@@ -1,7 +1,7 @@
 import React from 'react';
 import { Text, View } from 'react-native';
 import { scale } from '../libs/reactSizeMatter/scalingUtils';
-import { CommonColors, CommonStyles } from './CommonStyles';
+import { CommonColors, CommonStyles, Fonts } from './CommonStyles';
 
 export default class OrderUtils {
 
@@ -17,7 +17,9 @@ export default class OrderUtils {
     const labelStyle = {
       flex: 1,
       color: textColor,
-      textAlign: 'center'
+      textAlign: 'center',
+      fontSize: scale(16),
+      ...Fonts.NotoSans
     };
     const separatorStyle = {
       width: 1,

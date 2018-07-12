@@ -683,14 +683,16 @@ export default class OrderForm extends BaseScreen {
 
   _renderSubmitButton() {
     return (
-      <TouchableOpacity
-        style={[styles.submitButton, this._isBuyOrder() ? styles.submitBuy : styles.submitSell]}
-        onPress={this._onPressSubmit.bind(this)}>
-        <Text style={styles.submitText}>
-          {getCurrencyName(this._getCoin()) + ' / ' + getCurrencyName(this._getCurrency())
-            + ' ' + this._getOrderTypeText() + ' ' + this._getTradeTypeText()}
-        </Text>
-      </TouchableOpacity>
+      <View style={styles.submitGroup}>
+        <TouchableOpacity
+          style={[styles.submitButton, this._isBuyOrder() ? styles.submitBuy : styles.submitSell]}
+          onPress={this._onPressSubmit.bind(this)}>
+          <Text style={styles.submitText}>
+            {getCurrencyName(this._getCoin()) + ' / ' + getCurrencyName(this._getCurrency())
+              + ' ' + this._getOrderTypeText() + ' ' + this._getTradeTypeText()}
+          </Text>
+        </TouchableOpacity>
+      </View>
     );
   }
 
@@ -809,8 +811,11 @@ const styles = ScaledSheet.create({
   },
 
   estimationValues: {
-    flex: 0.75,
-    margin: margin,
+    flex: 0.61,
+    marginLeft: margin,
+    marginRight: margin,
+    marginTop: '2@s',
+    marginBottom: '2@s',
     borderRightWidth: 1,
     borderBottomWidth: 1,
     borderColor: '#E7E5E5'
@@ -856,9 +861,14 @@ const styles = ScaledSheet.create({
     marginLeft: '5@s'
   },
 
+  submitGroup: {
+    flex: 0.307,
+    justifyContent: 'center'
+  },
   submitButton: {
-    flex: 0.18,
-    margin: margin,
+    height: '30.5@s',
+    marginLeft: margin,
+    marginRight: margin,
     borderRadius: scale(3),
     justifyContent: 'center',
     alignItems: 'center'
