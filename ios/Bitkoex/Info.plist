@@ -45,9 +45,9 @@
 		<string>SimpleLineIcons.ttf</string>
 		<string>Zocial.ttf</string>
 		<string>NotoSans-Regular.ttf</string>
-		<string>Calligraffitti-Regular.ttf</string>
 		<string>OpenSans-Regular.ttf</string>
-		<string>Knewave-Regular.ttf</string>
+		<string>NanumSquareOTFBold.otf</string>
+		<string>OpenSans-Semibold.ttf</string>
 	</array>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
