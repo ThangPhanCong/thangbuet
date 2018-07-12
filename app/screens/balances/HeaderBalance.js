@@ -141,10 +141,14 @@ export default class HeaderBalance extends BaseScreen {
           </View>
         </View>
         <View style={{
-          flexDirection: 'row', height: 25, marginLeft: 5, marginRight: 5, marginBottom: 10, marginTop: 5,
+          flexDirection: 'row', height: 30, marginLeft: 5, marginRight: 5, marginBottom: 10, marginTop: 5,
           borderWidth: 1, borderRadius: 4, borderColor: "rgba(0, 0, 0, 0.3)"
         }}>
-          <TextInput style={{ flex: 1, textAlign: 'center' }} placeholder='검색' underlineColorAndroid='rgba(0, 0, 0, 0)' autoCorrect={false} />
+          <TextInput
+            style={{ flex: 1, textAlign: 'center', textAlignVertical: 'bottom', lineHeight: 0.1, paddingTop: 5, height: 30 }}
+            placeholder='검색'
+            underlineColorAndroid='transparent'
+            autoCorrect={false} />
           <Icon name="search" size={20} />
         </View>
       </View>

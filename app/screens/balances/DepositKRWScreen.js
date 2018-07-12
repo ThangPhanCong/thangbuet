@@ -9,7 +9,6 @@ import KRWScreen from './KRWScreen'
 import KRWPendingScreen from './KRWPendingScreen'
 import HeaderBalance from './HeaderBalance'
 
-
 class DepositKRWScreen extends BaseScreen {
   constructor(props) {
     super(props)
