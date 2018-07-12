@@ -27,7 +27,7 @@ class BitkoexDatePicker extends Component {
           dateInput: {
             marginLeft: showIcon ? scale(20): scale(10),
             // marginTop: scale(10),
-            // height: '60%',
+            height: '60%',
             borderRadius: scale(2),
           },
           dateText: {
@@ -48,6 +48,6 @@ const styles = ScaledSheet.create({
     position: 'absolute',
     left: 0,
     marginLeft: 0,
-    top: scale(10),
+    top: '10@s',
   }
 })

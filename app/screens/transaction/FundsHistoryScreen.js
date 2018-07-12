@@ -340,6 +340,7 @@ const styles = ScaledSheet.create({
     marginRight: '40@s'
   },
   viewDatePicker: {
+    height: '40@s',
     flexDirection: 'row',
     alignItems: 'center'
   },
