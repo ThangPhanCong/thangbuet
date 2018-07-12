@@ -10,6 +10,9 @@ import I18n from "../../i18n/i18n";
 import FundsHistoryScreen from "./FundsHistoryScreen";
 import ProfitAndLossScreen from "./ProfitAndLossScreen";
 import { scale } from "../../libs/reactSizeMatter/scalingUtils";
+import Consts from "../../utils/Consts";
+import { getCurrencyName } from "../../utils/Filters";
+import UIUtils from "../../utils/UIUtils";
 
 let TabBarNavigatorTransaction;
 
@@ -26,25 +29,25 @@ export default class TransactionScreen extends BaseScreen {
         OrderHistoryScreen: {
           screen: (props) => <TransactionContainerScreen {...props} title={I18n.t('transactions.orderHistoryTab')}/>,
           navigationOptions: () => ({
-            tabBarLabel: I18n.t('transactions.orderHistoryTab'),
+            tabBarLabel: (options) => UIUtils.renderTabItem(I18n.t('transactions.orderHistoryTab'), options)
           })
         },
         OpenOrderScreen: {
           screen: (props) => <TransactionContainerScreen {...props} title={I18n.t('transactions.openOrderTab')}/>,
           navigationOptions: () => ({
-            tabBarLabel: I18n.t('transactions.openOrderTab'),
+            tabBarLabel: (options) => UIUtils.renderTabItem(I18n.t('transactions.openOrderTab'), options)
           })
         },
         FundsHistory: {
           screen: (props) => <FundsHistoryScreen {...props} title={I18n.t('transactions.fundsHistoryTab')}/>,
           navigationOptions: () => ({
-            tabBarLabel: I18n.t('transactions.fundsHistoryTab'),
+            tabBarLabel: (options) => UIUtils.renderTabItem(I18n.t('transactions.fundsHistoryTab'), options)
           })
         },
         ProfitScreen: {
           screen: (props) => <ProfitAndLossScreen {...props} title={I18n.t('transactions.profitLostTab')}/>,
           navigationOptions: () => ({
-            tabBarLabel: I18n.t('transactions.profitLostTab'),
+            tabBarLabel: (options) => UIUtils.renderTabItem(I18n.t('transactions.profitLostTab'), options)
           })
         }
       },
