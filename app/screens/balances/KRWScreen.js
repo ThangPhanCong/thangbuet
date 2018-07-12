@@ -5,7 +5,7 @@ import ScaledSheet from '../../libs/reactSizeMatter/ScaledSheet'
 import { CheckBox, Divider } from 'react-native-elements'
 import rf from '../../libs/RequestFactory'
 import I18n from '../../i18n/i18n'
-import { formatCurrency } from '../../utils/Filters'
+import { formatCurrency, getCurrencyName } from '../../utils/Filters'
 import Modal from "react-native-modal"
 
 export default class KRWScreen extends BaseScreen {
@@ -89,7 +89,7 @@ export default class KRWScreen extends BaseScreen {
         {!isPending &&
           <ScrollView>
             <View style={styles.alignCenter}>
-              <Text>{symbol.code.toUpperCase() + " " + I18n.t('deposit.title')}</Text>
+              <Text>{getCurrencyName(symbol.code) + " " + I18n.t('deposit.title')}</Text>
             </View>
             <View style={styles.mainContent}>
               <View style={{ flexDirection: 'row' }}>
