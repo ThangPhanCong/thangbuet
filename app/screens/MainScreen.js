@@ -9,7 +9,6 @@ import TransactionScreen from './transaction/TransactionScreen'
 import BalanceScreen from './balances/BalanceScreen'
 import MyPageScreen from './my-page/MyPageScreen'
 import DepositScreen from './balances/DepositScreen'
-import DepositQRCodeScreen from './balances/DepositQRCodeScreen'
 import DepositKRWScreen from './balances/DepositKRWScreen'
 import WithdrawalKRWScreen from './balances/WithdrawalKRWScreen'
 import WithdrawalScreen from './balances/WithdrawalScreen'
@@ -20,9 +19,6 @@ export const BalanceStack = StackNavigator({
   },
   Deposit: {
     screen: DepositScreen,
-  },
-  DepositQRCode: {
-    screen: DepositQRCodeScreen,
   },
   DepositKRW: {
     screen: DepositKRWScreen,
