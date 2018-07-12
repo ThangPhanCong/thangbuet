@@ -144,7 +144,11 @@ export default {
   },
   tradeScreen: {
     balance: '보유 잔고',
-    profit: '수익률'
+    profit: '수익률',
+    order: '일반주문',
+    orderBook: '호가주문',
+    chart: '챠트',
+    transaction: '체결'
   },
   orderForm: {
     buy: '매수',

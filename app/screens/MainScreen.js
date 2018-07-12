@@ -30,12 +30,22 @@ export const BalanceStack = StackNavigator({
     screen: WithdrawalScreen
   }
 });
+
+export const MarketStack = StackNavigator({
+  MarketSearchScreen: {
+    screen: MarketSearchScreen
+  },
+  TradingScreen: {
+    screen: TradingScreen
+  }
+});
+
 import MarketSearchScreen from './market/MarketSearchScreen';
 
 export default TabNavigator(
   {
     MarketSearchScreen: {
-      screen: MarketSearchScreen,
+      screen: MarketStack,
       navigationOptions: () => ({
         tabBarLabel: I18n.t('tabBar.trading'),
       })
@@ -85,7 +95,6 @@ export default TabNavigator(
       },
     },
     animationEnabled: false,
-    swipeEnabled: false,
-    initialRouteName: 'BalanceScreen',
+    swipeEnabled: false
   }
 );
