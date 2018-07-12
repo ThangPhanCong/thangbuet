@@ -100,4 +100,20 @@ const CommonStyles = {
   }
 };
 
-export { CommonStyles, CommonColors, CommonSize };
+const Fonts = {
+  NanumSquareOTF_ExtraBold: {
+    fontFamily: 'NanumSquareOTF',
+    fontWeight: '800'
+  },
+  OpenSan: {
+    fontFamily: 'OpenSans-Regular',
+  },
+  OpenSan_Bold: {
+    fontFamily: 'OpenSans-Semibold'
+  },
+  NotoSans: {
+    fontFamily: 'NotoSans-Regular'
+  }
+};
+
+export { CommonStyles, CommonColors, CommonSize, Fonts };

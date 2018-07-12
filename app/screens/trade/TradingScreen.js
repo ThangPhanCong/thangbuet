@@ -29,7 +29,7 @@ import I18n from '../../i18n/i18n';
 import Consts from '../../utils/Consts';
 import { ListItem, List, Icon } from 'react-native-elements';
 import { formatCurrency, formatPercent, getCurrencyName } from '../../utils/Filters';
-import { CommonColors, CommonStyles } from '../../utils/CommonStyles';
+import { CommonColors, CommonStyles, Fonts } from '../../utils/CommonStyles';
 import DropdownMenu from '../common/DropdownMenu';
 
 const TradeTabs = TabNavigator(
@@ -72,7 +72,7 @@ export default class TradingScreen extends BaseScreen {
   constructor(props) {
     super(props)
 
-    let params = this.props.navigation.state.params;
+    let params = {currency: 'krw', coin: 'btc'};//this.props.navigation.state.params;
     this.state = {
       modalVisible: false,
       itemSelected: {},
@@ -208,8 +208,8 @@ export default class TradingScreen extends BaseScreen {
             <View style={styles.caretContainer}>
               <Icon name='triangle-down' type='entypo' size={scale(18)}/>
             </View>
-            <Text>{this._getCurrencyName(this._getCoin())}</Text>
-            <Text style={CommonStyles.bold}>{' / ' + getCurrencyName(this._getCurrency())}</Text>
+            <Text style={styles.coin}>{this._getCurrencyName(this._getCoin())}</Text>
+            <Text style={CommonStyles.currency}>{' / ' + getCurrencyName(this._getCurrency())}</Text>
           </TouchableOpacity>
           <View style={[styles.headerContent, priceData.price ? {} : {opacity: 0}]}>
             <Text style={[styles.price, {color: priceColor}]}>{formatCurrency(priceData.price, this._getCurrency)}</Text>
@@ -328,6 +328,12 @@ const styles = ScaledSheet.create({
     borderColor: '#CBCBCB',
     borderRadius: '3@s',
     marginRight: '10@s'
+  },
+  coin: {
+    ...Fonts.NanumSquareOTF_ExtraBold
+  },
+  currency: {
+    ...Fonts.OpenSan_Bold
   },
   price: {
     fontSize: '16@s'
