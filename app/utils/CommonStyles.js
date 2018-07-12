@@ -4,12 +4,10 @@ import { scale } from '../libs/reactSizeMatter/scalingUtils';
 
 class CommonColors {
   static screenBgColor = '#FFF';
-  static toolbarBgColor = '#202732';
   static increased = '#FD0001';
   static decreased = '#0065BF';
   static mainText = '#000000';
   static secondaryText = '#898B8E';
-  static highlightText = '#F0B353';
   static sencondaryTextColor = '#AAAAAA';
   static border = '#CFCFCF';
   static popupBg = '#202732';
@@ -20,6 +18,9 @@ class CommonColors {
   static headerTintColor = '#ffffff';
   static listItemBgColor = '#1a2030';
   static separator = '#DEE3EB';
+  static tabBg = '#3B3838';
+  static tabActive = '#FFC000';
+  static tabInactive = '#D9D9D9';
 };
 
 class CommonSize {
@@ -78,7 +79,41 @@ const CommonStyles = {
   },
   bold: {
     fontWeight: 'bold'
+  },
+  tabOptions: {
+    tabBarPosition: 'top',
+    tabBarOptions: {
+      style: {
+        backgroundColor: CommonColors.tabBg,
+        height: 48,
+      },
+      indicatorStyle: {
+        backgroundColor: CommonColors.tabActive
+      },
+      tabStyle: {
+        padding: 0,
+        paddingTop: 8
+      }
+    },
+    animationEnabled: false,
+    swipeEnabled: false
   }
 };
 
-export { CommonStyles, CommonColors, CommonSize };
+const Fonts = {
+  NanumSquareOTF_ExtraBold: {
+    fontFamily: 'NanumSquareOTF',
+    fontWeight: '800'
+  },
+  OpenSan: {
+    fontFamily: 'OpenSans-Regular',
+  },
+  OpenSan_Bold: {
+    fontFamily: 'OpenSans-Semibold'
+  },
+  NotoSans: {
+    fontFamily: 'NotoSans-Regular'
+  }
+};
+
+export { CommonStyles, CommonColors, CommonSize, Fonts };

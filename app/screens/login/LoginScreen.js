@@ -68,7 +68,7 @@ export default class LoginScreen extends BaseScreen {
         if (!this.state.checkOtp){
           this.setState({ checkOtp: true, emailValidation: null, passwordEmpty: null})
         } else {
-          this.setState({messageUnCorrect: I18n.t('login.otpUncorrect')})
+          this.setState({ messageUnCorrect: I18n.t('login.otpUncorrect')})
           setTimeout(() => this.setState({ messageUnCorrect: null }), 1000);
         }
 
@@ -89,6 +89,17 @@ export default class LoginScreen extends BaseScreen {
 
   }
 
+  onBackButtonPressAndroid() {
+    if (this.state.checkOtp) {
+      this.setState({ checkOtp: false });
+      return true
+    }
+    else {
+      return super.onBackButtonPressAndroid()
+    }
+
+  }
+
   render() {
     const {
       email,
@@ -103,7 +114,7 @@ export default class LoginScreen extends BaseScreen {
     let rawInput1;
     if (this.state.checkOtp) {
       rawInput1 =
-        <View style={[styles.viewInput, styles.inputRowMarginTop]}>
+        <View style={[styles.viewInput]}>
           <TextInput
             value={otp}
             keyboardType= 'numeric'
@@ -112,7 +123,7 @@ export default class LoginScreen extends BaseScreen {
             placeholderTextColor='#cfd0d1'
             underlineColorAndroid='transparent'
             autoCapitalize='none'
-            style={[styles.inputLogin, {flex: 1, textAlign: 'center'}]}
+            style={[styles.inputLogin, {flex: 1, textAlign: 'center' }]}
             returnKeyType={"next"}
             onChangeText={(text) => this.setState({ otp: text })}/>
         </View>

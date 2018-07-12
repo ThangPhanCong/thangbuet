@@ -120,9 +120,6 @@ const styles = ScaledSheet.create({
     color: CommonColors.mainText,
     textAlign: 'center',
   },
-  chartButtonSelectedStyle: {
-    borderBottomColor: CommonColors.highlightText,
-  },
   fullGroupContainer: {
     flex: 1,
     flexDirection: 'row',
