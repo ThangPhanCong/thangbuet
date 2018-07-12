@@ -206,7 +206,8 @@ const styles = ScaledSheet.create({
   tabs: {
     flexDirection: 'row',
     height: '37@vs',
-    alignItems: 'stretch'
+    alignItems: 'stretch',
+    paddingTop: '2@s'
   },
   tab: {
     flex: 1,
