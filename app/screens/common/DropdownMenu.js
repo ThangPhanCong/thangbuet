@@ -12,6 +12,7 @@ import {
 import ScaledSheet from '../../libs/reactSizeMatter/ScaledSheet';
 import { scale } from '../../libs/reactSizeMatter/scalingUtils';
 import { CommonColors, CommonSize, CommonStyles } from '../../utils/CommonStyles';
+import UIUtils from '../../utils/UIUtils';
 
 export default class DropdownMenu extends React.Component {
 
@@ -61,18 +62,19 @@ export default class DropdownMenu extends React.Component {
       let sourceBottom = sourcePosition.py + sourcePosition.height;
       let width = sourcePosition.width;
       let top = sourceBottom - containerPosition.py;
-      height = containerPosition.height - top;
+      height = containerPosition.height - top - 5;
 
       dropdownStyle = {
         position: 'absolute',
         left: sourceLeft - containerPosition.px,
         top: top,
         width: width,
-        height: height
+        height: height,
+        ...UIUtils.generateShadowStyle()
       };
     }
 
-    let separatorStyle = this._getStyleProps(this.props.separatorStyle) || {};
+    let separatorStyle = options.separatorStyle || this._getStyleProps(this.props.separatorStyle) || {};
     let dropdownPropsStyle = options.dropdownStyle || this._getStyleProps(this.props.dropdownStyle) || {};
     return (
       <View style={isVisible ? styles.container : {}}

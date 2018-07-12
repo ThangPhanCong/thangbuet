@@ -459,7 +459,8 @@ export default class OrderForm extends BaseScreen {
       onSelectItem: this._onQuantityItemSelected.bind(this),
       dropdownStyle: styles.quantityDropdown,
       itemButtonStyle: styles.quantityDropdownButton,
-      itemTextStyle: styles.quantityDropdownText
+      itemTextStyle: styles.quantityDropdownText,
+      separatorStyle: styles.quantityDropdownSeparator
     };
     this.notify(Events.SHOW_TRADE_SCREEN_DROPDOWN, { items, options });
   }
@@ -525,7 +526,8 @@ export default class OrderForm extends BaseScreen {
       onSelectItem: this._onTotalItemSelected.bind(this),
       dropdownStyle: styles.quantityDropdown,
       itemButtonStyle: styles.quantityDropdownButton,
-      itemTextStyle: styles.quantityDropdownText
+      itemTextStyle: styles.quantityDropdownText,
+      separatorStyle: styles.quantityDropdownSeparator
     };
     this.notify(Events.SHOW_TRADE_SCREEN_DROPDOWN, { items, options });
   }
@@ -710,7 +712,7 @@ export default class OrderForm extends BaseScreen {
 }
 
 const margin = scale(10);
-const dropdownRowHeight = scale(35);
+const dropdownRowHeight = scale(33);
 const inputHeight = scale(33);
 const inputBotderRadius = scale(3);
 
@@ -790,7 +792,9 @@ const styles = ScaledSheet.create({
   },
   typeDropdownText: {
     color: '#000',
-    textAlign: 'center'
+    textAlign: 'center',
+    fontSize: '12@s',
+    ...Fonts.NotoSans
   },
 
   quantityDropdownAnchor: {
@@ -801,6 +805,7 @@ const styles = ScaledSheet.create({
     backgroundColor: '#0000'
   },
   quantityDropdown: {
+    marginTop: 1,
     backgroundColor: '#FFF',
     borderRadius: '3@s'
   },
@@ -813,7 +818,14 @@ const styles = ScaledSheet.create({
   },
   quantityDropdownText: {
     color: '#000',
-    textAlign: 'center'
+    textAlign: 'center',
+    fontSize: '12@s',
+    ...Fonts.OpenSans
+  },
+  quantityDropdownSeparator: {
+    height: 1,
+    width: '100%',
+    backgroundColor: '#F0F0F0'
   },
 
   estimationValues: {
