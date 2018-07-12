@@ -189,7 +189,7 @@ class TransactionContainerScreen extends Component {
   _renderStatusOrder(item) {
     return (
       <TouchableWithoutFeedback onPress={() => this._cancelTransaction(item)}>
-        <View style={styles.itemRight}>
+        <View style={styles.lastItemRight}>
           <View style={styles.viewCancel}>
             <Text style={styles.textCancel}>{I18n.t('transactions.cancel')}</Text>
           </View>
@@ -235,8 +235,8 @@ class TransactionContainerScreen extends Component {
           </View>
 
           {title === I18n.t('transactions.openOrderTab') ? this._renderStatusOrder(item) :
-            <View style={[styles.itemRight, {marginRight: scale(10)}]}>
-              <Text style={styles.itemCoin}>
+            <View style={[styles.lastItemRight]}>
+              <Text style={styles.itemFee}>
                 {formatCurrency(item.fee, item.coin)}
               </Text>
               <Text style={styles.itemCoin}>{getCurrencyName(item.coin)}</Text>
@@ -248,17 +248,26 @@ class TransactionContainerScreen extends Component {
 
   render() {
     const { transactions } = this.state;
+    const { title } = this.props;
+    const titleLast = title === I18n.t('transactions.openOrderTab') ? I18n.t('transactions.cancel') : I18n.t('transactions.fee');
+
     const titles = [I18n.t('transactions.amount'), I18n.t('transactions.orderPrice'),
-      I18n.t('transactions.excutedPrice'), I18n.t('transactions.fee')];
+      I18n.t('transactions.excutedPrice'), titleLast];
 
     return (
       <View style={styles.screen}>
         <View style={styles.viewDatePicker}>
-          {this._renderDatePicker('start_date')}
+          <View style={styles.viewDateItem}>
+            {this._renderDatePicker('start_date')}
+          </View>
+
           <View style={styles.viewSymbol}>
             <Text>~</Text>
           </View>
-          {this._renderDatePicker('end_date')}
+
+          <View style={styles.viewDateItem}>
+            {this._renderDatePicker('end_date')}
+          </View>
           {this._renderButtonSeach()}
         </View>
 
@@ -290,7 +299,7 @@ const styles = ScaledSheet.create({
   },
   headerContainer: {
     flexDirection: 'row',
-    height: '50@s',
+    height: '40@s',
     backgroundColor: '#f8f9fb',
     alignItems: 'center',
     borderWidth: '1@s',
@@ -315,26 +324,31 @@ const styles = ScaledSheet.create({
   },
   itemCoin: {
     color: CommonColors.mainText,
-    fontSize: '13@s',
+    fontSize: '12@s',
     fontFamily: 'OpenSans-Regular'
   },
   itemCurrency: {
     color: CommonColors.mainText,
-    fontSize: '13@s',
+    fontSize: '12@s',
     fontFamily: 'OpenSans-Regular'
   },
   itemQuantity: {
-    fontSize: '11@s',
+    fontSize: '10@s',
     fontFamily: 'OpenSans-Regular'
   },
   itemPrice: {
     color: CommonColors.mainText,
-    fontSize: '11@s',
+    fontSize: '10@s',
     fontFamily: 'OpenSans-Regular'
   },
   itemQuantityPrice: {
     color: CommonColors.mainText,
-    fontSize: '11@s',
+    fontSize: '10@s',
+    fontFamily: 'OpenSans-Regular'
+  },
+  itemFee: {
+    color: CommonColors.mainText,
+    fontSize: '10@s',
     fontFamily: 'OpenSans-Regular'
   },
   itemLeftContainer: {
@@ -352,8 +366,15 @@ const styles = ScaledSheet.create({
   },
   itemRight: {
     flexDirection: 'column',
-    width: '80@s',
+    width: '75@s',
     alignItems: 'flex-end',
+    justifyContent: 'center',
+  },
+  lastItemRight: {
+    flexDirection: 'column',
+    width: '70@s',
+    marginLeft: '10@s',
+    alignItems: 'center',
     justifyContent: 'center',
   },
   searchContainer: {
@@ -405,10 +426,15 @@ const styles = ScaledSheet.create({
   },
   viewDatePicker: {
     flexDirection: 'row',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   viewSymbol: {
     alignSelf: 'center',
-    marginLeft: '20@s'
+    marginLeft: '10@s'
+  },
+  viewDateItem: {
+    marginLeft: '10@s',
+    marginTop: '10@s',
+    marginBottom: '10@s'
   }
 });

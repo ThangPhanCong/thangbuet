@@ -34,7 +34,7 @@ class HeaderFunds extends Component {
             <Text style={styles.headerTitle}>{titles[0]}</Text>
           </View>
 
-          <View style={styles.headerItem}>
+          <View style={styles.headerBlockChainItem}>
             <Text style={styles.headerTitle}>{titles[1]}</Text>
           </View>
 
@@ -56,7 +56,7 @@ export default HeaderFunds;
 const styles = ScaledSheet.create({
   headerContainer: {
     flexDirection: 'row',
-    height: '50@s',
+    height: '40@s',
     backgroundColor: '#f8f9fb',
     borderWidth: '1@s',
     borderColor: CommonColors.separator
@@ -64,6 +64,12 @@ const styles = ScaledSheet.create({
   headerItem: {
     flexDirection: 'column',
     width: '80@s',
+    alignItems: 'flex-end',
+    justifyContent: 'center',
+  },
+  headerBlockChainItem: {
+    flexDirection: 'column',
+    width: '90@s',
     alignItems: 'flex-end',
     justifyContent: 'center',
   },
@@ -80,7 +86,7 @@ const styles = ScaledSheet.create({
   },
   viewHeaderLeft: {
     flexDirection: 'row',
-    width: '120@s',
+    width: '119@s',
     alignItems: 'center',
     borderRightColor: CommonColors.separator,
     borderRightWidth: '1@s',

@@ -212,7 +212,7 @@ class ProfitAndLossScreen extends BaseScreen {
               style={this._checkDecrease(sum.increaseBalance) ? styles.decreaseChange : styles.increaseChange}>{Consts.CURRENCY_KRW.toUpperCase()}</Text>
           </View>
 
-          <View style={[styles.profitGroup, {marginRight: scale(10)}]}>
+          <View style={[styles.profitGroup, { marginRight: scale(10) }]}>
             <Text
               style={this._checkDecrease(sum.percentIncrease) ? styles.decreaseChange : styles.increaseChange}>{sum.percentIncrease}</Text>
           </View>
@@ -234,7 +234,7 @@ class ProfitAndLossScreen extends BaseScreen {
         </View>
 
         <View style={styles.profitGroup}>
-          <Text style={[styles.itemCurrency]}>{startBalance}</Text>
+          <Text style={[styles.itemDeposit]}>{startBalance}</Text>
           <Text style={[styles.itemCurrency]}>{getCurrencyName(item.currency)}</Text>
 
         </View>
@@ -263,7 +263,7 @@ class ProfitAndLossScreen extends BaseScreen {
             style={this._checkDecrease(increase) ? styles.decreaseChange : styles.increaseChange}>{getCurrencyName(item.currency)}</Text>
         </View>
 
-        <View style={[styles.profitGroup, {marginRight: scale(10)}]}>
+        <View style={[styles.profitGroup, { marginRight: scale(10) }]}>
           <Text style={this._checkDecrease(percent) ? styles.decreaseChange : styles.increaseChange}>{percent}</Text>
         </View>
       </View>
@@ -279,11 +279,17 @@ class ProfitAndLossScreen extends BaseScreen {
     return (
       <View style={styles.screen}>
         <View style={styles.viewDatePicker}>
-          {this._renderDatePicker('start_date')}
+          <View style={styles.viewDateItem}>
+            {this._renderDatePicker('start_date')}
+          </View>
+
           <View style={styles.viewSymbol}>
             <Text>~</Text>
           </View>
-          {this._renderDatePicker('end_date')}
+
+          <View style={styles.viewDateItem}>
+            {this._renderDatePicker('end_date')}
+          </View>
           {this._renderButtonSeach()}
         </View>
 
@@ -332,23 +338,28 @@ const styles = ScaledSheet.create({
   },
   itemCurrency: {
     color: CommonColors.mainText,
-    fontSize: '12@s'
+    fontSize: '12@s',
+    fontFamily: 'OpenSans-Regular'
   },
   itemDeposit: {
     color: CommonColors.increased,
-    fontSize: '12@s'
+    fontSize: '10@s',
+    fontFamily: 'OpenSans-Regular'
   },
   itemWithDrawl: {
     color: CommonColors.decreased,
-    fontSize: '12@s'
+    fontSize: '10@s',
+    fontFamily: 'OpenSans-Regular'
   },
   increaseChange: {
     color: CommonColors.increased,
-    fontSize: '12@s'
+    fontSize: '10@s',
+    fontFamily: 'OpenSans-Regular'
   },
   decreaseChange: {
     color: CommonColors.decreased,
-    fontSize: '12@s'
+    fontSize: '10@s',
+    fontFamily: 'OpenSans-Regular'
   },
   profitGroup: {
     width: '100@s',
@@ -369,6 +380,11 @@ const styles = ScaledSheet.create({
   },
   viewSymbol: {
     alignSelf: 'center',
-    marginLeft: scale(20)
+    marginLeft: '10@s'
+  },
+  viewDateItem: {
+    marginLeft: '10@s',
+    marginTop: '10@s',
+    marginBottom: '10@s'
   }
 });

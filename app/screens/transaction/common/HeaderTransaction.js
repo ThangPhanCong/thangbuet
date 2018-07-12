@@ -42,7 +42,7 @@ class HeaderTransaction extends Component {
             <Text style={styles.headerTitle}>{titles[2]}</Text>
           </View>
 
-          <View style={[styles.headerItem, { marginRight: scale(10) }]}>
+          <View style={styles.headerLastItem}>
             <Text style={styles.headerTitle}>{titles[3]}</Text>
           </View>
         </View>
@@ -56,15 +56,22 @@ export default HeaderTransaction;
 const styles = ScaledSheet.create({
   headerContainer: {
     flexDirection: 'row',
-    height: '50@s',
+    height: '40@s',
     backgroundColor: '#f8f9fb',
     borderWidth: '1@s',
     borderColor: CommonColors.separator
   },
   headerItem: {
     flexDirection: 'column',
-    width: '80@s',
+    width: '75@s',
     alignItems: 'flex-end',
+    justifyContent: 'center',
+  },
+  headerLastItem: {
+    flexDirection: 'column',
+    width: '70@s',
+    marginLeft: '10@s',
+    alignItems: 'center',
     justifyContent: 'center',
   },
   headerTitle: {
@@ -79,7 +86,7 @@ const styles = ScaledSheet.create({
   },
   viewHeaderLeft: {
     flexDirection: 'row',
-    width: '150@s',
+    width: '149@s',
     alignItems: 'center',
     borderRightColor: CommonColors.separator,
     borderRightWidth: '1@s',
@@ -88,5 +95,5 @@ const styles = ScaledSheet.create({
     width: '50@s',
     flexDirection: 'row',
     marginLeft: '2@s'
-  }
+  },
 })

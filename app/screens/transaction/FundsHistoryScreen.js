@@ -85,7 +85,7 @@ class FundsHistoryScreen extends Component {
       return orderBy(transactions, (item) => item.created_at, sortDirection)
     } else {
       const revertedDirection = this._revertSortDirection(sortDirection);
-      return orderBy(transactions, ['coin', 'currency'], revertedDirection);
+      return orderBy(transactions, 'currency', revertedDirection);
     }
   }
 
@@ -156,7 +156,6 @@ class FundsHistoryScreen extends Component {
   }
 
   _renderItem({ item }) {
-    const { title } = this.props;
     const pardeDayMonth = moment(item.transaction_date).format('MM-DD');
     const truntCateAddress = item.foreign_blockchain_address.substr(0, 11) + "...";
 
@@ -209,11 +208,17 @@ class FundsHistoryScreen extends Component {
     return (
       <View style={styles.screen}>
         <View style={styles.viewDatePicker}>
-          {this._renderDatePicker('start_date')}
+          <View style={styles.viewDateItem}>
+            {this._renderDatePicker('start_date')}
+          </View>
+
           <View style={styles.viewSymbol}>
             <Text>~</Text>
           </View>
-          {this._renderDatePicker('end_date')}
+
+          <View style={styles.viewDateItem}>
+            {this._renderDatePicker('end_date')}
+          </View>
           {this._renderButtonSeach()}
         </View>
 
@@ -260,7 +265,7 @@ const styles = ScaledSheet.create({
   },
   itemContainer: {
     flexDirection: 'row',
-    height: '50@s',
+    height: '40@s',
     borderBottomColor: CommonColors.separator,
     borderBottomWidth: '1@s',
   },
@@ -273,23 +278,37 @@ const styles = ScaledSheet.create({
   itemDayMonth: {
     color: CommonColors.mainText,
     fontWeight: 'bold',
-    fontSize: '12@s'
+    fontSize: '12@s',
+    fontFamily: 'OpenSans-Regular'
   },
   itemTime: {
     color: CommonColors.mainText,
-    fontSize: '11@s'
+    fontSize: '11@s',
+    fontFamily: 'OpenSans-Regular'
   },
   itemCurrency: {
     color: CommonColors.mainText,
-    fontSize: '13@s'
+    fontSize: '12@s',
+    fontFamily: 'OpenSans-Regular'
+  },
+  itemQuantity: {
+    fontSize: '10@s',
+    fontFamily: 'OpenSans-Regular'
+  },
+  itemQuantityPrice: {
+    color: CommonColors.mainText,
+    fontSize: '10@s',
+    fontFamily: 'OpenSans-Regular'
   },
   itemPending: {
     color: 'red',
-    fontSize: '13@s'
+    fontSize: '10@s',
+    fontFamily: 'OpenSans-Regular'
   },
   itemSuccess: {
     color: CommonColors.mainText,
-    fontSize: '13@s'
+    fontSize: '10@s',
+    fontFamily: 'OpenSans-Regular'
   },
   itemRight: {
     flexDirection: 'column',
@@ -299,13 +318,13 @@ const styles = ScaledSheet.create({
   },
   itemBlockchain: {
     color: CommonColors.decreased,
-    fontSize: '11@s',
+    fontSize: '10@s',
     borderBottomColor: CommonColors.decreased,
     borderBottomWidth: '0.5@s'
   },
   viewAddressBlockChain: {
     flexWrap: 'wrap',
-    width: '80@s',
+    width: '90@s',
     alignItems: 'flex-end',
     justifyContent: 'center',
   },
@@ -329,6 +348,11 @@ const styles = ScaledSheet.create({
   },
   viewSymbol: {
     alignSelf: 'center',
-    marginLeft: scale(20)
+    marginLeft: '10@s'
+  },
+  viewDateItem: {
+    marginLeft: '10@s',
+    marginTop: '10@s',
+    marginBottom: '10@s'
   }
 })
