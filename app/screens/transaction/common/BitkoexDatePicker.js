@@ -27,7 +27,7 @@ class BitkoexDatePicker extends Component {
           dateInput: {
             marginLeft: showIcon ? scale(20): scale(10),
             // marginTop: scale(10),
-            height: '60%',
+            height: '100%',
             borderRadius: scale(2),
           },
           dateText: {

@@ -207,7 +207,7 @@ class TransactionContainerScreen extends Component {
           </View>
 
           <View style={styles.coinPairContainer}>
-            <Text style={[styles.itemCoin, { fontWeight: 'bold' }]}>{getCurrencyName(item.coin)}</Text>
+            <Text style={[styles.itemCoin, { fontFamily: 'bold' }]}>{getCurrencyName(item.coin)}</Text>
             <Text style={[styles.itemCurrency, { fontWeight: 'bold' }]}>{' / ' + getCurrencyName(item.currency)}</Text>
           </View>
         </View>
