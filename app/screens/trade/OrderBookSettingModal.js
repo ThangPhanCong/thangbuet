@@ -17,7 +17,8 @@ import rf from '../../libs/RequestFactory';
 import ScaledSheet from '../../libs/reactSizeMatter/ScaledSheet';
 import { scale } from '../../libs/reactSizeMatter/scalingUtils';
 import { formatCurrency, getCurrencyName } from '../../utils/Filters';
-import { CommonColors, CommonSize, CommonStyles } from '../../utils/CommonStyles';
+import { CommonColors, CommonSize, CommonStyles, Fonts } from '../../utils/CommonStyles';
+import UIUtils from '../../utils/UIUtils';
 import Events from '../../utils/Events';
 
 export default class OrderBookSettingModal extends BaseScreen {
@@ -143,9 +144,11 @@ export default class OrderBookSettingModal extends BaseScreen {
           animationType="slide"
           isVisible={this.state.modalVisible}
           backdropColor={'black'}
-          backdropOpacity={0.3}>
+          backdropOpacity={0}
+          onBackButtonPress={() => this.setModalVisible(false)}
+          onBackdropPress={() => this.setModalVisible(false)}>
           <View style={styles.popup}>
-            <View>
+            <View style={CommonStyles.matchParent}>
               {this._renderHeader()}
               {this._renderSettings()}
               {this._renderFooter()}
@@ -159,15 +162,8 @@ export default class OrderBookSettingModal extends BaseScreen {
   _renderHeader() {
     return (
       <View style={styles.popupHeader}>
-        <Text>{I18n.t('orderBookSettings.title')}</Text>
-        <Text> - {getCurrencyName(this._getCoin())} / {getCurrencyName(this._getCurrency())}</Text>
-
-        <TouchableOpacity style={styles.popupCloseButton} onPress={() => this.setModalVisible(false)}>
-          <Image
-            resizeMode={'contain'}
-            style={styles.popupCloseIcon}
-            source={require('../../../assets/common/close.png')}/>
-        </TouchableOpacity>
+        <Text style={styles.popupHeaderText}>{I18n.t('orderBookSettings.title')}</Text>
+        <Text style={styles.popupHeaderText}> - {getCurrencyName(this._getCoin())} / {getCurrencyName(this._getCurrency())}</Text>
       </View>
     );
   }
@@ -228,24 +224,24 @@ export default class OrderBookSettingModal extends BaseScreen {
               isChecked={this.state.notificationCreated}
               onClick={() => this.setState({notificationCreated: !this.state.notificationCreated})}
               rightText={I18n.t('orderBookSettings.notificationCreated')}
-              style={{width: scale(55)}}
-              rightTextStyle={{marginLeft: scale(5)}}
+              style={styles.checkBox}
+              rightTextStyle={styles.checkBoxLabel}
               {...CommonStyles.checkBox}/>
 
             <CheckBox
               isChecked={this.state.notificationMatched}
               onClick={() => this.setState({notificationMatched: !this.state.notificationMatched})}
               rightText={I18n.t('orderBookSettings.notificationMatched')}
-              style={{width: scale(55)}}
-              rightTextStyle={{marginLeft: scale(5)}}
+              style={styles.checkBox}
+              rightTextStyle={styles.checkBoxLabel}
               {...CommonStyles.checkBox}/>
 
             <CheckBox
               isChecked={this.state.notificationCanceled}
               onClick={() => this.setState({notificationCanceled: !this.state.notificationCanceled})}
               rightText={I18n.t('orderBookSettings.notificationCanceled')}
-              style={{width: scale(48)}}
-              rightTextStyle={{marginLeft: scale(5)}}
+              style={styles.checkBox}
+              rightTextStyle={styles.checkBoxLabel}
               {...CommonStyles.checkBox}/>
           </View>
         </View>
@@ -268,10 +264,11 @@ export default class OrderBookSettingModal extends BaseScreen {
             value={this.state.priceGroup}
             onValueChange={(value) => this.setState({priceGroup: value})}
             circleSize={scale(14)}
+            containerStyle={{ marginTop: scale(2), marginBottom: scale(2) }}
             barHeight={scale(10)}
             switchLeftPx={3}
             switchRightPx={3}
-            switchWidthMultiplier={1.5}
+            switchWidthMultiplier={1.65}
             circleBorderWidth={scale(1)}
             circleBorderActiveColor='#0000'
             circleBorderInactiveColor='#0000'
@@ -288,9 +285,11 @@ export default class OrderBookSettingModal extends BaseScreen {
 
   _renderFooter() {
     return (
-      <TouchableOpacity style={styles.updateButton} onPress={this._saveOrderBookSettings.bind(this)}>
-        <Text style={styles.updateButtonText}>{I18n.t('orderBookSettings.update')}</Text>
-      </TouchableOpacity>
+      <View style={styles.footer}>
+        <TouchableOpacity style={styles.updateButton} onPress={this._saveOrderBookSettings.bind(this)}>
+          <Text style={styles.updateButtonText}>{I18n.t('orderBookSettings.update')}</Text>
+        </TouchableOpacity>
+      </View>
     );
   }
 }
@@ -299,16 +298,25 @@ const margin = scale(30);
 
 const styles = ScaledSheet.create({
   popup: {
+    width: '284@s',
+    height: '404@s',
     backgroundColor: '#FFF',
-    borderRadius: '5@s'
+    borderRadius: '3@s',
+    margin: '10@s',
+    alignSelf: 'center',
+    ...UIUtils.generatePopupShadow()
   },
   popupHeader: {
     flexDirection: 'row',
     alignItems: 'center',
-    height: scale(60),
+    height: scale(56),
     paddingLeft: margin,
     borderBottomWidth: 1,
     borderColor: '#EFEEEF'
+  },
+  popupHeaderText: {
+    fontSize: '12@s',
+    ...Fonts.NotoSans
   },
   popupCloseButton: {
     position: 'absolute',
@@ -321,16 +329,19 @@ const styles = ScaledSheet.create({
   },
 
   content: {
+    flex: 1,
     marginLeft: margin,
-    marginRight: margin
+    marginRight: margin,
+    marginTop: '10@s',
   },
   settingRow: {
+    flex: 1,
     flexDirection: 'row',
-    marginTop: scale(15),
-    marginBottom: scale(15)
+    alignItems: 'center'
   },
   settingLabel: {
-
+    fontSize: '12@s',
+    ...Fonts.NotoSans
   },
   settingContent: {
     flex: 1,
@@ -340,21 +351,42 @@ const styles = ScaledSheet.create({
   },
   priceGroup0: {
     marginRight: scale(5),
-    color: '#747474'
+    color: '#747474',
+    fontSize: '12@s',
+    ...Fonts.OpenSans
   },
   priceGroup1: {
     marginLeft: scale(5),
-    color: '#747474'
+    color: '#747474',
+    fontSize: '12@s',
+    ...Fonts.OpenSans
   },
   selectedPriceGroup: {
     color: '#000'
   },
+  checkBox: {
+    width: '42@s'
+  },
+  checkBoxLabel: {
+    marginLeft: '3@s',
+    fontSize: '12@s',
+    ...Fonts.OpenSans
+  },
 
+  footer: {
+    flex: 0.3,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'flex-end'
+  },
   updateButton: {
+    flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
     height: '30@s',
-    margin: margin,
+    marginLeft: margin,
+    marginRight: margin,
+    marginBottom: margin,
     borderRadius: scale(3),
     backgroundColor: '#007AC5'
   },

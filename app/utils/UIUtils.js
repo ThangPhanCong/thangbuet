@@ -52,4 +52,8 @@ export default class UIUtils {
       };
     }
   }
+
+  static generatePopupShadow() {
+    return UIUtils.generateShadowStyle(8);
+  }
 };

@@ -405,7 +405,7 @@ const styles = ScaledSheet.create({
   coinList: {
     width: '245@s',
     backgroundColor: '#515151',
-    elevation: 8
+    ...UIUtils.generatePopupShadow()
   },
   item: {
     height: '55@s',
