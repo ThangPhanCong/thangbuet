@@ -186,7 +186,7 @@ class TransactionContainerScreen extends Component {
   _renderStatusOrder(item) {
     return (
       <TouchableWithoutFeedback onPress={() => this._cancelTransaction(item)}>
-        <View style={styles.lastItemRight}>
+        <View style={styles.lastItemRightOrder}>
           <View style={styles.viewCancel}>
             <Text style={styles.textCancel}>{I18n.t('transactions.cancel')}</Text>
           </View>
@@ -378,6 +378,14 @@ const styles = ScaledSheet.create({
     justifyContent: 'center',
   },
   lastItemRight: {
+    flexDirection: 'column',
+    width: '50@s',
+    marginLeft: '10@s',
+    marginRight: '20@s',
+    alignItems: 'flex-end',
+    justifyContent: 'center',
+  },
+  lastItemRightOrder: {
     flexDirection: 'column',
     width: '70@s',
     marginLeft: '10@s',
