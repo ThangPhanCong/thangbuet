@@ -5,7 +5,8 @@ import {
   Text,
   TouchableHighlight,
   View,
-  FlatList
+  FlatList,
+  Image
 } from 'react-native';
 
 import BaseScreen from '../../BaseScreen';
@@ -78,10 +79,10 @@ export default class BasicInfoScreen extends BaseScreen {
           </View>
 
           <View style={styles.iconGroup}>
-            <Icon name="chevron-right"
-              style={{alignSelf: 'flex-end'}}
-              size={28}
-              color='#000' />
+            <Image
+              style={styles.iconArrow}
+              source={require('../../../../assets/myPage/basic/arrow.png')}
+            />
           </View>
         </View>
       </TouchableHighlight>
@@ -127,7 +128,9 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     paddingLeft: 20,
-    paddingRight: 20
+    paddingRight: 20,
+    borderBottomWidth: 0.2,
+    borderBottomColor: '#C9C7C5'
   },
   separator: {
     flex: 1,
@@ -140,14 +143,18 @@ const styles = StyleSheet.create({
     justifyContent: 'center'
   },
   valueGroup: {
-    flex: 3,
+    flex: 4,
     justifyContent: 'center'
   },
   iconGroup: {
-    flex: 1,
+    flex: 0.4,
     justifyContent: 'center'
   },
   text: {
     fontSize: 14,
+  },
+  iconArrow: {
+    width: 12,
+    height: 18
   }
 });

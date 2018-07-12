@@ -21,7 +21,7 @@ import I18n from '../../../i18n/i18n';
 import _ from 'lodash';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import AppConfig from '../../../utils/AppConfig';
-
+import { CommonStyles } from '../../../utils/CommonStyles'
 // const DownArrowIcon = require('../../../../assets/common/caretdown.png');
 
 const submitPhoneHtmlString =
@@ -70,8 +70,8 @@ export default class SecurityOverviewScreen extends BaseScreen {
 
   _otpParams = {};
   _bankParams = {};
-  
-  _banks = [{id: 1, name: 'ABC'}, {id: 2, name: 'DEF'}];
+
+  _banks = [{ id: 1, name: 'ABC' }, { id: 2, name: 'DEF' }];
   _passwordParams = {}
 
   _verifyPhoneResult = {}
@@ -81,7 +81,7 @@ export default class SecurityOverviewScreen extends BaseScreen {
 
     this.state = {
       selectedBank: {},
-    
+
       info: {},
       cancelOtpDialogVisible: false,
       initVerificationDialogVisible: false,
@@ -92,16 +92,16 @@ export default class SecurityOverviewScreen extends BaseScreen {
     }
   }
 
-  componentDidMount(){
+  componentDidMount() {
     super.componentDidMount()
     this._getCurrentUser();
   }
 
   render() {
-    return(
+    return (
       <View style={styles.listView}>
         <ScrollView
-          style={{flex: 1}}
+          style={{ flex: 1 }}
           ItemSeparatorComponent={this._renderSeparator}>
           {this._renderVerifyEmail()}
           <View style={styles.separator}/>
@@ -150,19 +150,19 @@ export default class SecurityOverviewScreen extends BaseScreen {
 
         <View style={styles.valueGroup}>
           {
-            this.state.info[item.propVerify] ? 
-            <TouchableTextHighlight style={styles.cancelOtpButton}
-              onPress={this._onCancelGoogleAuth.bind(this)}
-              underlayColor='#FF3300'
-              underlayTextColor='#FFF'
-              normalTextColor='#FF3300'
-              text={I18n.t('myPage.security.cancelOTP')}
-              textStyle={styles.text}/> :
-            <Text style={styles.text}>
-              {I18n.t('myPage.security.notAllowed')}
-            </Text>
+            this.state.info[item.propVerify] ?
+              <TouchableTextHighlight style={styles.cancelOtpButton}
+                                      onPress={this._onCancelGoogleAuth.bind(this)}
+                                      underlayColor='#FF3300'
+                                      underlayTextColor='#FFF'
+                                      normalTextColor='#FF3300'
+                                      text={I18n.t('myPage.security.cancelOTP')}
+                                      textStyle={styles.text}/> :
+              <Text style={styles.text}>
+                {I18n.t('myPage.security.notAllowed')}
+              </Text>
           }
-          
+
         </View>
 
         {this._renderVerifyButtonView(item, this._onVerifyGoogle.bind(this))}
@@ -224,8 +224,8 @@ export default class SecurityOverviewScreen extends BaseScreen {
     return (
       <View style={styles.iconGroup}>
         <View style={styles.iconContainer}>
-          <Image 
-            resizeMode = 'contain'
+          <Image
+            resizeMode='contain'
             source={item.image}/>
         </View>
       </View>
@@ -235,13 +235,13 @@ export default class SecurityOverviewScreen extends BaseScreen {
   _renderVerifyButtonView(item, onPressHandler) {
     return (
       <View style={styles.buttonGroup}>
-        <TouchableHighlight 
+        <TouchableHighlight
           style={this.state.info[item.propVerify] ? styles.activeButton : styles.inactiveButton}
           onPress={onPressHandler}
           disabled={this.state.info[item.propVerify] > 0}
           underlayColor='#595959'>
-          <Text style = {{ alignSelf: 'center', color: '#FFF' }}>
-            {this.state.info[item.propVerify] ? I18n.t('myPage.security.verified') : I18n.t('myPage.security.unverified') }
+          <Text style={{ alignSelf: 'center', color: '#FFF' }}>
+            {this.state.info[item.propVerify] ? I18n.t('myPage.security.verified') : I18n.t('myPage.security.unverified')}
           </Text>
         </TouchableHighlight>
       </View>
@@ -258,42 +258,53 @@ export default class SecurityOverviewScreen extends BaseScreen {
         onBackdropPress={this._dismissSubmitModal.bind(this)}>
         <Card
           style={styles.dialog}
-          containerStyle={{borderRadius: 5, padding: 0, marginStart: 30, marginEnd: 30}}>
-          <Text style={{fontSize: 13, marginTop: 16, marginBottom: 16, marginStart: 16, marginEnd: 16}}>
+          containerStyle={{
+            borderRadius: 5, padding: 0, marginStart: 30, marginEnd: 30, elevation: 3, shadowOpacity: 0.3,
+            shadowRadius: 6
+          }}>
+          <Text style={{ fontSize: 13, marginTop: 16, marginBottom: 16, marginStart: 16, marginEnd: 16 }}>
             {I18n.t('myPage.security.cancelOtpHeader')}
           </Text>
-          <View style={{height: 1, backgroundColor: '#EBEBEB'}}/>
-          <Text style={{fontSize: 13, marginTop: 16, marginBottom: 3, marginStart: 16, marginEnd: 16}}>
+          <View style={{ height: 1, backgroundColor: '#EBEBEB' }}/>
+          <Text
+            style={{ fontSize: 13, marginTop: 16, marginBottom: 3, marginStart: 16, marginEnd: 16, lineHeight: 20 }}>
             {I18n.t('myPage.security.cancelOtpDesc')}
           </Text>
-          <Text style={{fontSize: 13, marginBottom: 3, marginStart: 16, marginEnd: 16}}>
+          <Text style={{ fontSize: 13, marginBottom: 3, marginStart: 16, marginEnd: 16 }}>
             {I18n.t('myPage.security.otpVerificationNumber')}
           </Text>
           <TextInput
             style={styles.textInput}
             onChangeText={text => this._otpParams.otp = text}
-            underlineColorAndroid='transparent' />
-          <Text style={{fontSize: 13, marginTop: 10, marginBottom: 3, marginStart: 16, marginEnd: 16}}>
+            underlineColorAndroid='transparent'/>
+          <Text style={{ fontSize: 13, marginTop: 10, marginBottom: 3, marginStart: 16, marginEnd: 16 }}>
             {I18n.t('myPage.security.dialogRecoveryCode')}
           </Text>
           <TextInput
             style={styles.textInput}
             onChangeText={text => this._otpParams.authentication_code = text}
-            underlineColorAndroid='transparent' />
+            underlineColorAndroid='transparent'/>
           <TouchableOpacity
             style={styles.submitCancelOtpButton}
             onPress={this._onRemoveGoogleAuth.bind(this)}>
-            <Text style={{fontSize: 13, color: '#FFF'}}>
+            <Text style={{ fontSize: 13, color: '#FFF' }}>
               {I18n.t('myPage.security.cancelOtpSubmit')}
             </Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.initVerificationButton}
-            onPress={this._onShowInitVerificationDialog.bind(this)}>
-            <Text style={{fontSize: 13, color: '#0070C0', textDecorationStyle: 'solid', textDecorationLine: 'underline', textDecorationColor: '#0070C0'}}>
+                            onPress={this._onShowInitVerificationDialog.bind(this)}>
+            <Text style={{
+              fontSize: 13,
+              color: '#0070C0',
+              textDecorationStyle: 'solid',
+              textDecorationLine: 'underline',
+              textDecorationColor: '#0070C0'
+            }}>
               {I18n.t('myPage.security.initOtpVerification')}
             </Text>
           </TouchableOpacity>
         </Card>
+
       </Modal>
     )
   }
@@ -308,25 +319,67 @@ export default class SecurityOverviewScreen extends BaseScreen {
         onBackdropPress={this._dismissInitVerificationModal.bind(this)}>
         <Card
           style={styles.dialog}
-          containerStyle={{borderRadius: 5, padding: 0, marginStart: 30, marginEnd: 30}}>
-          <Text style={{fontSize: 13, marginTop: 16, marginBottom: 16, marginStart: 16, marginEnd: 16}}>
+          containerStyle={{ borderRadius: 5, padding: 0, marginStart: 30, marginEnd: 30 }}>
+          <Text style={{ fontSize: 13, marginTop: 16, marginBottom: 16, marginStart: 16, marginEnd: 16 }}>
             {I18n.t('myPage.security.initOtpVerification')}
           </Text>
-          <View style={{height: 1, backgroundColor: '#EBEBEB'}}/>
-          <Text style={{fontSize: 13, marginTop: 16, marginStart: 16, marginEnd: 16}}>
-            {I18n.t('myPage.security.initOtpVerificationDesc')}
-          </Text>
-          <ScrollView
-            style={{marginTop: 8, marginStart: 16, marginEnd: 16, height: 200, borderRadius: 5, borderWidth: 1, borderColor: '#D9D9D9'}}
-            contentContainerStyle={{padding: 10}}>
-            <Text style={{fontSize: 13}}>
-              {I18n.t('myPage.security.initOtpVerificationInstruction')}
+          <View style={{ height: 1, backgroundColor: '#EBEBEB' }}/>
+          <View style={{ flexDirection: 'column', marginTop: 16, marginStart: 16, marginEnd: 16 }}>
+            <Text style={{ fontSize: 14, lineHeight: 22, color: 'blue', alignSelf: 'flex-start' }}>
+              {I18n.t('myPage.security.initOtpVerificationDesc.recoveryCode')}
+              <Text style={{ fontSize: 14, lineHeight: 22, color: 'black', }}>
+                {I18n.t('myPage.security.initOtpVerificationDesc.body')}
+              </Text>
             </Text>
+            <View style={{ flexDirection: 'row' }}>
+              <Text style={{ fontSize: 14, lineHeight: 22 }}>
+                {I18n.t('myPage.security.initOtpVerificationDesc.email')}
+              </Text>
+              <Text style={{ fontSize: 14, fontWeight: 'bold', lineHeight: 22 }}>
+                {I18n.t('myPage.security.initOtpVerificationDesc.emailAdress')}
+              </Text>
+            </View>
+          </View>
+          <ScrollView
+            style={{
+              marginTop: 8,
+              marginStart: 16,
+              marginEnd: 16,
+              height: 200,
+              borderRadius: 5,
+              borderWidth: 1,
+              borderColor: '#D9D9D9'
+            }}
+            contentContainerStyle={{ padding: 10 }}>
+            <View style={{ flexDirection: 'row' }}>
+              <Text style={{ fontSize: 13, fontWeight: 'bold', lineHeight: 20 }}>
+                {I18n.t('myPage.security.initOtpVerificationInstruction.emailSuject')}
+              </Text>
+              <Text style={{ fontSize: 13, lineHeight: 20 }}>
+                {I18n.t('myPage.security.initOtpVerificationInstruction.contentEmailSuject')}
+              </Text>
+            </View>
+            <View style={{ flexDirection: 'column' }}>
+              <Text style={{ fontSize: 13, fontWeight: 'bold', lineHeight: 20 }}>
+                {I18n.t('myPage.security.initOtpVerificationInstruction.emailBody')}
+              </Text>
+              <Text style={{ fontSize: 13, lineHeight: 20 }}>
+                {I18n.t('myPage.security.initOtpVerificationInstruction.contentEmailBody')}
+              </Text>
+            </View>
+            <View style={{ flexDirection: 'column' }}>
+              <Text style={{ fontSize: 13, fontWeight: 'bold', lineHeight: 20 }}>
+                {I18n.t('myPage.security.initOtpVerificationInstruction.attachment')}
+              </Text>
+              <Text style={{ fontSize: 13, lineHeight: 20 }}>
+                {I18n.t('myPage.security.initOtpVerificationInstruction.contentAttachment')}
+              </Text>
+            </View>
           </ScrollView>
           <TouchableOpacity
             style={[styles.submitCancelOtpButton, { marginTop: 20, marginBottom: 30 }]}
             onPress={this._dismissInitVerificationModal.bind(this)}>
-            <Text style={{fontSize: 13, color: '#FFF'}}>
+            <Text style={{ fontSize: 13, color: '#FFF' }}>
               {I18n.t('myPage.security.cancelOtpSubmit')}
             </Text>
           </TouchableOpacity>
@@ -345,13 +398,19 @@ export default class SecurityOverviewScreen extends BaseScreen {
         onBackdropPress={this._dismissRegisterPhoneModal.bind(this)}>
         <Card
           style={styles.dialog}
-          containerStyle={{borderRadius: 5, padding: 0, marginStart: 10, marginEnd: 10, height: 0.8 * Dimensions.get('window').height}}
-          wrapperStyle={{flex: 1}}>
-            <WebView
-              source={{html: submitPhoneHtmlString.format(this._verifyPhoneResult.sEncryptedData, this._verifyPhoneResult.postretUrl, this._verifyPhoneResult.postcpid)}}
-              javaScriptEnabled={true}
-              domStorageEnabled={true}
-              startInLoadingState={true}/>
+          containerStyle={{
+            borderRadius: 5,
+            padding: 0,
+            marginStart: 10,
+            marginEnd: 10,
+            height: 0.8 * Dimensions.get('window').height
+          }}
+          wrapperStyle={{ flex: 1 }}>
+          <WebView
+            source={{ html: submitPhoneHtmlString.format(this._verifyPhoneResult.sEncryptedData, this._verifyPhoneResult.postretUrl, this._verifyPhoneResult.postcpid) }}
+            javaScriptEnabled={true}
+            domStorageEnabled={true}
+            startInLoadingState={true}/>
         </Card>
       </Modal>
     )
@@ -367,14 +426,14 @@ export default class SecurityOverviewScreen extends BaseScreen {
         onBackdropPress={this._dismissExistedPhoneModal.bind(this)}>
         <Card
           style={styles.dialog}
-          containerStyle={{borderRadius: 5, padding: 0, marginStart: 30, marginEnd: 30}}>
-          <Text style={{fontSize: 13, marginTop: 16, marginBottom: 16, marginStart: 16, marginEnd: 16}}>
+          containerStyle={{ borderRadius: 5, padding: 0, marginStart: 30, marginEnd: 30 }}>
+          <Text style={{ fontSize: 13, marginTop: 16, marginBottom: 16, marginStart: 16, marginEnd: 16 }}>
             {I18n.t('myPage.security.existedPhoneHeader')}
           </Text>
           <TouchableOpacity
             style={[styles.submitCancelOtpButton, { marginTop: 20, marginBottom: 30 }]}
             onPress={this._dismissExistedPhoneModal.bind(this)}>
-            <Text style={{fontSize: 13, color: '#FFF', marginStart: 20, marginEnd: 20}}>
+            <Text style={{ fontSize: 13, color: '#FFF', marginStart: 20, marginEnd: 20 }}>
               {I18n.t('myPage.security.existedPhoneButtonText')}
             </Text>
           </TouchableOpacity>
@@ -393,38 +452,38 @@ export default class SecurityOverviewScreen extends BaseScreen {
         onBackdropPress={this._dismissBankAccountModal.bind(this)}>
         <Card
           style={styles.dialog}
-          containerStyle={{borderRadius: 5, padding: 0, marginStart: 30, marginEnd: 30}}>
-          <Text style={{fontSize: 13, marginTop: 16, marginBottom: 16, marginStart: 16, marginEnd: 16}}>
+          containerStyle={{ borderRadius: 5, padding: 0, marginStart: 30, marginEnd: 30 }}>
+          <Text style={{ fontSize: 13, marginTop: 16, marginBottom: 16, marginStart: 16, marginEnd: 16 }}>
             {I18n.t('myPage.security.bankAccountHeader')}
           </Text>
-          <View style={{height: 1, backgroundColor: '#EBEBEB'}}/>
+          <View style={{ height: 1, backgroundColor: '#EBEBEB' }}/>
           <Text style={styles.bankAccountTitle}>
             {I18n.t('myPage.security.bankAccountOwner')}
           </Text>
           <TextInput style={styles.bankAccountTextInput}
-            underlineColorAndroid='transparent'
-            onChangeText={text => this._bankParams.account_name = text}/>
-          
+                     underlineColorAndroid='transparent'
+                     onChangeText={text => this._bankParams.account_name = text}/>
+
           <Text style={styles.bankAccountTitle}>
             {I18n.t('myPage.security.dateOfBirth')}
           </Text>
           <TextInput style={styles.bankAccountTextInput}
-            underlineColorAndroid='transparent'
-            onChangeText={text => this._bankParams.date_of_birth = text}/>
+                     underlineColorAndroid='transparent'
+                     onChangeText={text => this._bankParams.date_of_birth = text}/>
 
           <Text style={styles.bankAccountTitle}>
             {I18n.t('myPage.security.bank')}
           </Text>
 
           <View style={styles.bankAccountTextInput}>
-            <View style={{ position: 'absolute', right: 0, justifyContent: 'center', flex: 1, height: '100%'}}>
+            <View style={{ position: 'absolute', right: 0, justifyContent: 'center', flex: 1, height: '100%' }}>
               <Icon
                 name='menu-down'
                 size={22}
-                color= '#000'/>
+                color='#000'/>
             </View>
             <ModalDropdown
-              style={{flex: 1, justifyContent: 'center'}}
+              style={{ flex: 1, justifyContent: 'center' }}
               defaultValue=''
               dropdownStyle={{
                 position: 'absolute',
@@ -433,9 +492,9 @@ export default class SecurityOverviewScreen extends BaseScreen {
                 right: 65,
                 height: this._calculateModalHeight()
               }}
-              textStyle={{marginStart: 6.5}}
-              dropdownTextStyle={{fontSize: 13}}
-              renderSeparator={() => <View style={{height: 0}}/>}
+              textStyle={{ marginStart: 6.5 }}
+              dropdownTextStyle={{ fontSize: 13 }}
+              renderSeparator={() => <View style={{ height: 0 }}/>}
               options={_.map(this._banks, 'name')}
               onSelect={this._onBankPickerSelect.bind(this)}/>
           </View>
@@ -444,13 +503,13 @@ export default class SecurityOverviewScreen extends BaseScreen {
             {I18n.t('myPage.security.bankAccountNumber')}
           </Text>
           <TextInput style={styles.bankAccountTextInput}
-            underlineColorAndroid='transparent'
-            onChangeText={text => this._bankParams.account_number = text}/>
-          
+                     underlineColorAndroid='transparent'
+                     onChangeText={text => this._bankParams.account_number = text}/>
+
           <TouchableOpacity
             style={[styles.submitCancelOtpButton, { marginTop: 20, marginBottom: 30 }]}
             onPress={this._onSubmitBankAccount.bind(this)}>
-            <Text style={{fontSize: 13, color: '#FFF'}}>
+            <Text style={{ fontSize: 13, color: '#FFF' }}>
               {I18n.t('myPage.security.bankAccountSubmitText')}
             </Text>
           </TouchableOpacity>
@@ -462,9 +521,9 @@ export default class SecurityOverviewScreen extends BaseScreen {
   _calculateModalHeight() {
     if (this._banks.length == 0)
       return 39;
-    if (this._banks.length > 3) 
+    if (this._banks.length > 3)
       return 120;
-    
+
     return this._banks.length * 39;
   }
 
@@ -486,43 +545,43 @@ export default class SecurityOverviewScreen extends BaseScreen {
         onBackdropPress={this._dismissChangePasswordModal.bind(this)}>
         <Card
           style={styles.dialog}
-          containerStyle={{borderRadius: 5, padding: 0, marginStart: 30, marginEnd: 30}}>
-          <Text style={{fontSize: 13, marginTop: 16, marginBottom: 16, marginStart: 16, marginEnd: 16}}>
+          containerStyle={{ borderRadius: 5, padding: 0, marginStart: 30, marginEnd: 30 }}>
+          <Text style={{ fontSize: 13, marginTop: 16, marginBottom: 16, marginStart: 16, marginEnd: 16 }}>
             {I18n.t('myPage.security.changePasswordHeader')}
           </Text>
-          <View style={{height: 1, backgroundColor: '#EBEBEB'}}/>
+          <View style={{ height: 1, backgroundColor: '#EBEBEB' }}/>
           <Text style={styles.bankAccountTitle}>
             {I18n.t('myPage.security.bankAccountOwner')}
           </Text>
           <TextInput style={styles.bankAccountTextInput}
-            underlineColorAndroid='transparent'
-            onChangeText={text => this._passwordParams.password = text}/>
-          
+                     underlineColorAndroid='transparent'
+                     onChangeText={text => this._passwordParams.password = text}/>
+
           <Text style={styles.bankAccountTitle}>
             {I18n.t('myPage.security.newPassword')}
           </Text>
           <TextInput style={styles.bankAccountTextInput}
-            underlineColorAndroid='transparent'
-            onChangeText={text => this._passwordParams.new_password = text}/>
+                     underlineColorAndroid='transparent'
+                     onChangeText={text => this._passwordParams.new_password = text}/>
 
           <Text style={styles.bankAccountTitle}>
             {I18n.t('myPage.security.repeatPassword')}
           </Text>
           <TextInput style={styles.bankAccountTextInput}
-            underlineColorAndroid='transparent'
-            onChangeText={text => this._passwordParams.new_password_confirm = text}/>
+                     underlineColorAndroid='transparent'
+                     onChangeText={text => this._passwordParams.new_password_confirm = text}/>
 
           <Text style={styles.bankAccountTitle}>
             {I18n.t('myPage.security.otpCode').toLocaleUpperCase()}
           </Text>
           <TextInput style={styles.bankAccountTextInput}
-            underlineColorAndroid='transparent'
-            onChangeText={text => this._passwordParams.otp = text}/>
-          
+                     underlineColorAndroid='transparent'
+                     onChangeText={text => this._passwordParams.otp = text}/>
+
           <TouchableOpacity
             style={[styles.submitCancelOtpButton, { marginTop: 20, marginBottom: 30 }]}
             onPress={this._onSubmitChangePassword.bind(this)}>
-            <Text style={{fontSize: 13, color: '#FFF'}}>
+            <Text style={{ fontSize: 13, color: '#FFF' }}>
               {I18n.t('myPage.security.changePasswordSubmit')}
             </Text>
           </TouchableOpacity>
@@ -538,7 +597,7 @@ export default class SecurityOverviewScreen extends BaseScreen {
   }
 
   _onVerifyBankAccount() {
-    this.setState({bankAccountDialogVisible: true});
+    this.setState({ bankAccountDialogVisible: true });
   }
 
   _onVerifyPhone() {
@@ -546,11 +605,11 @@ export default class SecurityOverviewScreen extends BaseScreen {
   }
 
   _onVerifyPassword() {
-    this.setState({changePasswordDialogVisible: true});
+    this.setState({ changePasswordDialogVisible: true });
   }
 
   _onCancelGoogleAuth() {
-    this.setState({cancelOtpDialogVisible: true});
+    this.setState({ cancelOtpDialogVisible: true });
   }
 
   _onRemoveGoogleAuth() {
@@ -570,7 +629,7 @@ export default class SecurityOverviewScreen extends BaseScreen {
   _onBankPickerSelect(index) {
     let selectedBank = this._banks[index];
 
-    this.setState({selectedBank});
+    this.setState({ selectedBank });
     this._bankParams.bank_id = selectedBank.id;
     this._bankParams.bank_name = selectedBank.name;
   }
@@ -581,31 +640,31 @@ export default class SecurityOverviewScreen extends BaseScreen {
 
   _dismissSubmitModal() {
     this._otpParams = {};
-    this.setState({cancelOtpDialogVisible: false})
+    this.setState({ cancelOtpDialogVisible: false })
   }
 
   _dismissInitVerificationModal() {
-    this.setState({initVerificationDialogVisible: false})
+    this.setState({ initVerificationDialogVisible: false })
   }
 
   _dismissRegisterPhoneModal() {
-    this.setState({registerPhoneDialogVisible: false})
+    this.setState({ registerPhoneDialogVisible: false })
     this._getCurrentUser(false);
   }
 
   _dismissExistedPhoneModal() {
-    this.setState({existedPhoneDialogVisible: false})
+    this.setState({ existedPhoneDialogVisible: false })
   }
 
   _dismissBankAccountModal() {
     this.state.selectedBank = {}
     this._bankParams = {}
-    this.setState({bankAccountDialogVisible: false})
+    this.setState({ bankAccountDialogVisible: false })
   }
 
   _dismissChangePasswordModal() {
     this._passwordParams = {};
-    this.setState({changePasswordDialogVisible: false})
+    this.setState({ changePasswordDialogVisible: false })
   }
 
   async _getCurrentUser(useCache = true) {
@@ -619,10 +678,10 @@ export default class SecurityOverviewScreen extends BaseScreen {
         info[el.propValue] = user[el.propValue];
         info[el.propVerify] = settings[el.propVerify];
       }
-      
+
       this.setState({ info })
     }
-    catch(err) {
+    catch (err) {
       console.log('SecurityOverviewScreen._getCurrentUser', err);
     }
   }
@@ -641,7 +700,7 @@ export default class SecurityOverviewScreen extends BaseScreen {
         }
       })
     }
-    catch(err) {
+    catch (err) {
       console.log('SecurityOverviewScreen._removeGoogleAuth', err);
     }
   }
@@ -660,7 +719,7 @@ export default class SecurityOverviewScreen extends BaseScreen {
         }
       })
     }
-    catch(err) {
+    catch (err) {
       console.log('SecurityOverviewScreen._updateBankAccount', err);
     }
   }
@@ -670,7 +729,7 @@ export default class SecurityOverviewScreen extends BaseScreen {
       await rf.getRequest('UserRequest').changePassword(this._passwordParams);
       this._dismissChangePasswordModal();
     }
-    catch(err) {
+    catch (err) {
       console.log('SecurityOverviewScreen._changePassword', err);
     }
   }
@@ -679,9 +738,9 @@ export default class SecurityOverviewScreen extends BaseScreen {
     try {
       let res = await rf.getRequest('UserRequest').getPhoneVerificationCipher();
       this._verifyPhoneResult = res.data;
-      this.setState({registerPhoneDialogVisible: true});
+      this.setState({ registerPhoneDialogVisible: true });
     }
-    catch(err) {
+    catch (err) {
       console.log('SecurityOverviewScreen._loadPhoneVerificationCipher', err);
     }
   }

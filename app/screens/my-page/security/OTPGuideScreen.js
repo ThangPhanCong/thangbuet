@@ -6,6 +6,7 @@ import {
   View,
   Image
 } from 'react-native';
+import ScaledSheet from '../../../libs/reactSizeMatter/ScaledSheet';
 import LinearGradient from 'react-native-linear-gradient';
 import BaseScreen from '../../BaseScreen';
 import { CommonStyles } from '../../../utils/CommonStyles';
@@ -25,7 +26,7 @@ export default class OTPGuideScreen extends BaseScreen {
           {I18n.t('myPage.security.otpGuide')}
         </Text>
         <View style={styles.googleAuthContainer}>
-          <View style={{alignItems: 'center', justifyContent: 'center'}}>
+          <View style={{alignItems: 'flex-end', justifyContent: 'center', flex: 1.5}}>
             <Image
               source={GoogleAuthIcon}/>
           </View>
@@ -36,44 +37,48 @@ export default class OTPGuideScreen extends BaseScreen {
             <View style={styles.googleAuthInfoSpace}/>
             <View style={styles.storeContainer}>
               <View style={{flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
-                <View style={{flex: 3, flexDirection: 'row', justifyContent: 'center'}}>
+                <View style={{flex: 2, flexDirection: 'row', justifyContent: 'flex-start'}}>
                   <Image
+                    style={{flex: 1}}
                     source={SmallAppleIcon}
                     resizeMode='contain'/>
                   <View style = {styles.storeInfoHorizontalSpace}/>
-                  <Text style={[styles.storeInfoText, {flex: 3}]}>
+                  <Text style={[styles.storeInfoText, {flex: 4}]}>
                     {I18n.t('common.iPhone')}
                   </Text>
                 </View>
                 <View style = {styles.storeInfoHorizontalSpace}/>
-                <View style={{flex: 5, flexDirection: 'row', justifyContent: 'center'}}>
-                  <Image style={{flex: 1}}
+                <View style={{flex: 5, flexDirection: 'row', justifyContent: 'flex-start'}}>
+                  <Image
+                    style={{flex: 1}}
                     source={SmallAppStoreIcon}
                     resizeMode='contain'/>
                   <View style = {styles.storeInfoHorizontalSpace}/>
-                  <Text style={[styles.storeInfoText, {flex: 4}]}>
+                  <Text style={[styles.storeInfoText, {flex: 9}]}>
                     {I18n.t('common.appStore')}
                   </Text>
                 </View>
               </View>
-              <View style = {styles.storeInfoVerticalSpace}/>
+              <View style={styles.storeInfoVerticalSpace} />
               <View style={{flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
-                <View style={{flex: 3, flexDirection: 'row', justifyContent: 'center'}}>
+                <View style={{flex: 2, flexDirection: 'row', justifyContent: 'flex-start'}}>
                   <Image
+                    style={{flex: 1}}
                     source={SmallAndroidIcon}
                     resizeMode='contain'/>
                   <View style = {styles.storeInfoHorizontalSpace}/>
-                  <Text style={[styles.storeInfoText, {flex: 3}]}>
+                  <Text style={[styles.storeInfoText, {flex: 4}]}>
                     {I18n.t('common.android')}
                   </Text>
                 </View>
                 <View style = {styles.storeInfoHorizontalSpace}/>
-                <View style={{flex: 5, flexDirection: 'row', justifyContent: 'center'}}>
-                  <Image style={{flex: 1}}
+                <View style={{flex: 5, flexDirection: 'row', justifyContent: 'flex-start'}}>
+                  <Image
+                    style={{flex: 1}}
                     source={SmallPlayStoreIcon}
                     resizeMode='contain'/>
                   <View style = {styles.storeInfoHorizontalSpace}/>
-                  <Text style={[styles.storeInfoText, {flex: 4}]}>
+                  <Text style={[styles.storeInfoText, {flex: 9}]}>
                     {I18n.t('common.playStore')}
                   </Text>
                 </View>
@@ -103,27 +108,28 @@ export default class OTPGuideScreen extends BaseScreen {
   }
 }
 
-const styles = StyleSheet.create({
+const styles = ScaledSheet.create({
   screen: {
     ...CommonStyles.screen
   },
   textHeader: {
-    marginTop: 30,
+    marginTop: '30@s',
     textAlign: 'center',
     fontSize: 13
   },
   googleAuthText: {
     fontSize: 18,
-    flex: 1
+    flex: 1,
+    fontWeight: 'bold'
   },
   googleAuthContainer: {
     flexDirection: 'row',
-    marginTop: 30,
-    marginBottom: 20,
-    marginStart: 40,
-    marginEnd: 40,
-    height: 150,
-    alignSelf: 'center'
+    marginTop: '50@s',
+    marginBottom: '20@s',
+    marginStart: '20@s',
+    marginEnd: '20@s',
+    height: '100@s',
+    // alignSelf: 'center'
   },
   text: {
     fontSize: 14,
@@ -132,29 +138,30 @@ const styles = StyleSheet.create({
     fontSize: 12
   },
   nextButton: {
-    height: 40,
-    width: 300,
+    height: '40@s',
+    width: '300@s',
     alignSelf: 'center',
-    marginTop: 30,
+    marginTop: '30@s',
     borderRadius: 5,
     overflow: 'hidden'
   },
   storeContainer: {
     flex: 1,
-    marginStart: 10,
-    justifyContent: 'space-between'
+    justifyContent: 'center',
+    flexDirection: 'column'
   },
   googleAuthInfo: {
-    marginStart: 10,
-    justifyContent: 'space-between'
+    marginStart: '5@s',
+    justifyContent: 'center',
+    flex: 3
   },
   storeInfoHorizontalSpace: {
-    width: 5
+    width: '5@s'
   },
   googleAuthInfoSpace: {
-    height: 9
+    height: '9@s'
   },
   storeInfoVerticalSpace: {
-    height: 8
+    height: '8@s'
   }
 });
