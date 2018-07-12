@@ -170,7 +170,7 @@ class TransactionContainerScreen extends Component {
       sortField === field && sortDirection === TransactionContainerScreen.SORT_DIRECTION.ASC ?
         <Image
           source={require('../../../assets/sortAsc/asc.png')}/>
-         :
+        :
         <Image
           source={require('../../../assets/sortDesc/desc.png')}/>
     )
@@ -197,6 +197,7 @@ class TransactionContainerScreen extends Component {
 
   _renderItem({ item }) {
     const { title } = this.props;
+    const stylesQuantity = item.quantity.includes('-') ? styles.itemDecreaseQuantity : styles.itemIncreaseQuantity;
 
     return (
       <View style={styles.itemContainer}>
@@ -207,28 +208,28 @@ class TransactionContainerScreen extends Component {
           </View>
 
           <View style={styles.coinPairContainer}>
-            <Text style={[styles.itemCoin, { fontFamily: 'bold' }]}>{getCurrencyName(item.coin)}</Text>
+            <Text style={[styles.itemCoin, { fontWeight: 'bold' }]}>{getCurrencyName(item.coin)}</Text>
             <Text style={[styles.itemCurrency, { fontWeight: 'bold' }]}>{' / ' + getCurrencyName(item.currency)}</Text>
           </View>
         </View>
 
         <View style={{ flexDirection: 'row' }}>
           <View style={styles.itemRight}>
-            <Text style={styles.itemQuantity}>
+            <Text style={stylesQuantity}>
               {formatCurrency(item.quantity, item.coin)}
             </Text>
 
-            <Text style={[styles.itemCoin]}>{getCurrencyName(item.coin)}</Text>
+            <Text style={[styles.itemTransaction]}>{getCurrencyName(item.coin)}</Text>
           </View>
 
           <View style={styles.itemRight}>
             <Text style={styles.itemPrice}>{formatCurrency(item.price, item.currency)}</Text>
-            <Text style={styles.itemCurrency}>{getCurrencyName(item.currency)}</Text>
+            <Text style={styles.itemTransaction}>{getCurrencyName(item.currency)}</Text>
           </View>
 
           <View style={styles.itemRight}>
             <Text style={styles.itemQuantityPrice}>{formatCurrency(item.price * item.quantity, item.currency)}</Text>
-            <Text style={styles.itemCurrency}>{getCurrencyName(item.currency)}</Text>
+            <Text style={styles.itemTransaction}>{getCurrencyName(item.currency)}</Text>
           </View>
 
           {title === I18n.t('transactions.openOrderTab') ? this._renderStatusOrder(item) :
@@ -236,7 +237,7 @@ class TransactionContainerScreen extends Component {
               <Text style={styles.itemFee}>
                 {formatCurrency(item.fee, item.coin)}
               </Text>
-              <Text style={styles.itemCoin}>{getCurrencyName(item.coin)}</Text>
+              <Text style={styles.itemTransaction}>{getCurrencyName(item.coin)}</Text>
             </View>}
         </View>
       </View>
@@ -254,17 +255,11 @@ class TransactionContainerScreen extends Component {
     return (
       <View style={styles.screen}>
         <View style={styles.viewDatePicker}>
-          <View style={styles.viewDateItem}>
-            {this._renderDatePicker('start_date')}
-          </View>
-
+          {this._renderDatePicker('start_date')}
           <View style={styles.viewSymbol}>
             <Text>~</Text>
           </View>
-
-          <View style={styles.viewDateItem}>
-            {this._renderDatePicker('end_date')}
-          </View>
+          {this._renderDatePicker('end_date')}
           {this._renderButtonSeach()}
         </View>
 
@@ -329,8 +324,23 @@ const styles = ScaledSheet.create({
     fontSize: '12@s',
     fontFamily: 'OpenSans-Regular'
   },
+  itemTransaction: {
+    color: CommonColors.mainText,
+    fontSize: '10@s',
+    fontFamily: 'OpenSans-Regular'
+  },
   itemQuantity: {
     fontSize: '10@s',
+    fontFamily: 'OpenSans-Regular'
+  },
+  itemDecreaseQuantity: {
+    fontSize: '10@s',
+    color: CommonColors.decreased,
+    fontFamily: 'OpenSans-Regular'
+  },
+  itemIncreaseQuantity: {
+    fontSize: '10@s',
+    color: CommonColors.increased,
     fontFamily: 'OpenSans-Regular'
   },
   itemPrice: {
@@ -379,10 +389,12 @@ const styles = ScaledSheet.create({
     flexDirection: 'column',
     justifyContent: 'center',
     alignItems: 'center',
-    height: '25@s',
+    height: '22@s',
     margin: '6@s',
-    width: '35@s',
-    borderRadius: '4@s'
+    width: '40@s',
+    borderRadius: '2@s',
+    borderBottomColor: '#000',
+    borderBottomWidth: '0.6@s'
   },
   textSearch: {
     fontSize: '12@s',
@@ -430,9 +442,4 @@ const styles = ScaledSheet.create({
     alignSelf: 'center',
     marginLeft: '10@s'
   },
-  viewDateItem: {
-    marginLeft: '10@s',
-    marginTop: '10@s',
-    marginBottom: '10@s'
-  }
 });

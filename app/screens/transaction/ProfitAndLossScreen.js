@@ -179,42 +179,42 @@ class ProfitAndLossScreen extends BaseScreen {
       return (
         <View style={styles.itemContainer}>
           <View style={styles.currencyGroup}>
-            <Text style={[styles.itemCurrency, { fontWeight: 'bold' }]}>합계</Text>
+            <Text style={[styles.itemCurrency, { fontWeight: 'bold' }]}>{I18n.t('transactions.profit.titleSum')}</Text>
           </View>
 
           <View style={styles.profitGroup}>
-            <Text style={[styles.itemBalance]}>{sum.startingBalance}</Text>
-            <Text style={[styles.itemCurrency]}>{Consts.CURRENCY_KRW.toUpperCase()}</Text>
+            <Text style={[styles.itemBalance, { fontWeight: 'bold' }]}>{sum.startingBalance}</Text>
+            <Text style={[styles.itemBalance, { fontWeight: 'bold' }]}>{Consts.CURRENCY_KRW.toUpperCase()}</Text>
 
           </View>
 
           <View style={styles.profitGroup}>
-            <Text style={styles.itemDeposit}>{sum.deposit}</Text>
-            <Text style={styles.itemDeposit}>{Consts.CURRENCY_KRW.toUpperCase()}</Text>
+            <Text style={[styles.itemDeposit, { fontWeight: 'bold' }]}>{sum.deposit}</Text>
+            <Text style={[styles.itemDeposit, { fontWeight: 'bold' }]}>{Consts.CURRENCY_KRW.toUpperCase()}</Text>
           </View>
 
           <View style={styles.profitGroup}>
-            <Text style={styles.itemWithDrawl}>{sum.withdraw}</Text>
-            <Text style={styles.itemWithDrawl}>{Consts.CURRENCY_KRW.toUpperCase()}</Text>
+            <Text style={[styles.itemWithDrawl, { fontWeight: 'bold' }]}>{sum.withdraw}</Text>
+            <Text style={[styles.itemWithDrawl, { fontWeight: 'bold' }]}>{Consts.CURRENCY_KRW.toUpperCase()}</Text>
           </View>
 
           <View style={styles.profitGroup}>
-            <Text style={[styles.itemCurrency]}>{sum.endingBalance}</Text>
-            <Text style={[styles.itemCurrency]}>{Consts.CURRENCY_KRW.toUpperCase()}</Text>
+            <Text style={[styles.itemBalance, { fontWeight: 'bold' }]}>{sum.endingBalance}</Text>
+            <Text style={[styles.itemBalance, { fontWeight: 'bold' }]}>{Consts.CURRENCY_KRW.toUpperCase()}</Text>
           </View>
 
           <View style={styles.profitGroup}>
             <Text
-              style={this._checkDecrease(sum.increaseBalance) ? styles.decreaseChange : styles.increaseChange}>
+              style={this._checkDecrease(sum.increaseBalance) ? styles.decreaseSumChange : styles.increaseSumChange}>
               {sum.increaseBalance}
             </Text>
             <Text
-              style={this._checkDecrease(sum.increaseBalance) ? styles.decreaseChange : styles.increaseChange}>{Consts.CURRENCY_KRW.toUpperCase()}</Text>
+              style={this._checkDecrease(sum.increaseBalance) ? styles.decreaseSumChange : styles.increaseSumChange}>{Consts.CURRENCY_KRW.toUpperCase()}</Text>
           </View>
 
           <View style={[styles.profitGroup, { marginRight: scale(10) }]}>
             <Text
-              style={this._checkDecrease(sum.percentIncrease) ? styles.decreaseChange : styles.increaseChange}>{sum.percentIncrease}</Text>
+              style={this._checkDecrease(sum.percentIncrease) ? styles.decreaseSumChange : styles.increaseSumChange}>{sum.percentIncrease}</Text>
           </View>
         </View>
       )
@@ -235,7 +235,7 @@ class ProfitAndLossScreen extends BaseScreen {
 
         <View style={styles.profitGroup}>
           <Text style={[styles.itemDeposit]}>{startBalance}</Text>
-          <Text style={[styles.itemCurrency]}>{getCurrencyName(item.currency)}</Text>
+          <Text style={[styles.itemBalance]}>{getCurrencyName(item.currency)}</Text>
 
         </View>
 
@@ -251,7 +251,7 @@ class ProfitAndLossScreen extends BaseScreen {
 
         <View style={styles.profitGroup}>
           <Text style={[styles.itemBalance]}>{formatCurrency(item.ending_balance, item.currency)}</Text>
-          <Text style={[styles.itemCurrency]}>{getCurrencyName(item.currency)}</Text>
+          <Text style={[styles.itemBalance]}>{getCurrencyName(item.currency)}</Text>
         </View>
 
         <View style={styles.profitGroup}>
@@ -279,17 +279,11 @@ class ProfitAndLossScreen extends BaseScreen {
     return (
       <View style={styles.screen}>
         <View style={styles.viewDatePicker}>
-          <View style={styles.viewDateItem}>
-            {this._renderDatePicker('start_date')}
-          </View>
-
+          {this._renderDatePicker('start_date')}
           <View style={styles.viewSymbol}>
             <Text>~</Text>
           </View>
-
-          <View style={styles.viewDateItem}>
-            {this._renderDatePicker('end_date')}
-          </View>
+          {this._renderDatePicker('end_date')}
           {this._renderButtonSeach()}
         </View>
 
@@ -321,10 +315,12 @@ const styles = ScaledSheet.create({
     flexDirection: 'column',
     justifyContent: 'center',
     alignItems: 'center',
-    height: '25@s',
+    height: '22@s',
     margin: '6@s',
-    width: '35@s',
-    borderRadius: '4@s'
+    width: '40@s',
+    borderRadius: '2@s',
+    borderBottomColor: '#000',
+    borderBottomWidth: '0.6@s'
   },
   textSearch: {
     fontSize: '12@s',
@@ -359,12 +355,24 @@ const styles = ScaledSheet.create({
   increaseChange: {
     color: CommonColors.increased,
     fontSize: '10@s',
-    fontFamily: 'OpenSans-Regular'
+    fontFamily: 'OpenSans-Regular',
   },
   decreaseChange: {
     color: CommonColors.decreased,
     fontSize: '10@s',
-    fontFamily: 'OpenSans-Regular'
+    fontFamily: 'OpenSans-Regular',
+  },
+  decreaseSumChange: {
+    color: CommonColors.decreased,
+    fontSize: '10@s',
+    fontFamily: 'OpenSans-Regular',
+    fontWeight: 'bold'
+  },
+  increaseSumChange: {
+    color: CommonColors.increased,
+    fontSize: '10@s',
+    fontFamily: 'OpenSans-Regular',
+    fontWeight: 'bold'
   },
   profitGroup: {
     width: '100@s',
@@ -387,10 +395,5 @@ const styles = ScaledSheet.create({
   viewSymbol: {
     alignSelf: 'center',
     marginLeft: '10@s'
-  },
-  viewDateItem: {
-    marginLeft: '10@s',
-    marginTop: '10@s',
-    marginBottom: '10@s'
   }
 });

@@ -9,34 +9,36 @@ class BitkoexDatePicker extends Component {
     const { date, showIcon, changeDate } = this.props;
 
     return (
-      <DatePicker
-        style={{ width: scale(80)}}
-        date={date}
-        mode="date"
-        showIcon={showIcon}
-        placeholder="select date"
-        format="YYYY-MM-DD"
-        confirmBtnText="Confirm"
-        cancelBtnText="Cancel"
-        iconComponent={
-          <View style={styles.imgDate}>
-            <Image source={require('../../../../assets/dateIcon/date.png')}/>
-          </View>
+      <View style={styles.pickerContainer}>
+        {
+          showIcon ?
+            <View style={styles.imgDate}>
+              <Image source={require('../../../../assets/dateIcon/date.png')}/>
+            </View> : null
         }
-        customStyles={{
-          dateInput: {
-            marginLeft: showIcon ? scale(20): scale(10),
-            // marginTop: scale(10),
-            height: '100%',
-            borderRadius: scale(2),
-          },
-          dateText: {
-            fontSize: scale(9),
-          }
-        }}
-        onDateChange={(date) => changeDate(date)}
-      />
 
+        <View style={styles.datePicker}>
+          <DatePicker
+            style={{ width: scale(80) }}
+            date={date}
+            mode="date"
+            showIcon={false}
+            placeholder="select date"
+            format="YYYY-MM-DD"
+            confirmBtnText="Confirm"
+            cancelBtnText="Cancel"
+            customStyles={{
+              dateInput: {
+                borderWidth: 0,
+              },
+              dateText: {
+                fontSize: scale(9),
+              }
+            }}
+            onDateChange={(date) => changeDate(date)}
+          />
+        </View>
+      </View>
     )
   }
 }
@@ -44,10 +46,22 @@ class BitkoexDatePicker extends Component {
 export default BitkoexDatePicker;
 
 const styles = ScaledSheet.create({
+  pickerContainer: {
+    flexDirection: 'row'
+  },
+  datePicker: {
+    height: '22@s',
+    width: '60@s',
+    borderWidth: '0.5@s',
+    borderColor: '#000',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginLeft: '10@s',
+    borderRadius: '2@s',
+  },
   imgDate: {
-    position: 'absolute',
-    left: 0,
-    marginLeft: 0,
-    top: '10@s',
+    marginTop: '2@s',
+    marginLeft: '10@s'
   }
 })

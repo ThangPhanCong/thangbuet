@@ -147,7 +147,7 @@ class FundsHistoryScreen extends Component {
         <Image
           source={require('../../../assets/sortAsc/asc.png')}/> :
         <Image
-          style={{position: 'relative', top: -3}}
+          style={{ position: 'relative', top: -3 }}
           source={require('../../../assets/sortDesc/desc.png')}/>
     )
   }
@@ -155,6 +155,7 @@ class FundsHistoryScreen extends Component {
   _renderItem({ item }) {
     const pardeDayMonth = moment(item.transaction_date).format('MM-DD');
     const truntCateAddress = item.foreign_blockchain_address.substr(0, 11) + "...";
+    const stylesQuantity = item.amount.includes('-') ? styles.itemDecreaseQuantity : styles.itemIncreaseQuantity;
 
     return (
       <View style={styles.itemContainer}>
@@ -172,11 +173,11 @@ class FundsHistoryScreen extends Component {
         <View style={{ flexDirection: 'row' }}
         >
           <View style={styles.itemRight}>
-            <Text style={styles.itemQuantity}>
+            <Text style={stylesQuantity}>
               {formatCurrency(item.amount, item.currency)}
             </Text>
 
-            <Text style={[styles.itemCurrency]}>{getCurrencyName(item.currency)}</Text>
+            <Text style={[styles.itemFunds]}>{getCurrencyName(item.currency)}</Text>
           </View>
 
           <View style={styles.viewAddressBlockChain}>
@@ -185,7 +186,7 @@ class FundsHistoryScreen extends Component {
 
           <View style={styles.itemRight}>
             <Text style={styles.itemQuantityPrice}>{formatCurrency(item.fee, item.currency)}</Text>
-            <Text style={styles.itemCurrency}>{getCurrencyName(item.currency)}</Text>
+            <Text style={styles.itemFunds}>{getCurrencyName(item.currency)}</Text>
           </View>
 
           <View style={[styles.itemRight, { marginRight: scale(10) }]}>
@@ -205,17 +206,11 @@ class FundsHistoryScreen extends Component {
     return (
       <View style={styles.screen}>
         <View style={styles.viewDatePicker}>
-          <View style={styles.viewDateItem}>
-            {this._renderDatePicker('start_date')}
-          </View>
-
+          {this._renderDatePicker('start_date')}
           <View style={styles.viewSymbol}>
             <Text>~</Text>
           </View>
-
-          <View style={styles.viewDateItem}>
-            {this._renderDatePicker('end_date')}
-          </View>
+          {this._renderDatePicker('end_date')}
           {this._renderButtonSeach()}
         </View>
 
@@ -251,10 +246,12 @@ const styles = ScaledSheet.create({
     flexDirection: 'column',
     justifyContent: 'center',
     alignItems: 'center',
-    height: '25@s',
+    height: '22@s',
     margin: '6@s',
-    width: '35@s',
-    borderRadius: '4@s'
+    width: '40@s',
+    borderRadius: '2@s',
+    borderBottomColor: '#000',
+    borderBottomWidth: '0.6@s'
   },
   textSearch: {
     fontSize: '12@s',
@@ -288,8 +285,23 @@ const styles = ScaledSheet.create({
     fontSize: '12@s',
     fontFamily: 'OpenSans-Regular'
   },
+  itemFunds: {
+    color: CommonColors.mainText,
+    fontSize: '10@s',
+    fontFamily: 'OpenSans-Regular'
+  },
   itemQuantity: {
     fontSize: '10@s',
+    fontFamily: 'OpenSans-Regular'
+  },
+  itemDecreaseQuantity: {
+    fontSize: '10@s',
+    color: CommonColors.decreased,
+    fontFamily: 'OpenSans-Regular'
+  },
+  itemIncreaseQuantity: {
+    fontSize: '10@s',
+    color: CommonColors.increased,
     fontFamily: 'OpenSans-Regular'
   },
   itemQuantityPrice: {
@@ -348,9 +360,4 @@ const styles = ScaledSheet.create({
     alignSelf: 'center',
     marginLeft: '10@s'
   },
-  viewDateItem: {
-    marginLeft: '10@s',
-    marginTop: '10@s',
-    marginBottom: '10@s'
-  }
 })
