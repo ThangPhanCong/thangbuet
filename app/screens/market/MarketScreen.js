@@ -10,12 +10,14 @@ import {
 } from 'react-native';
 import BaseScreen from '../BaseScreen';
 import Consts from '../../utils/Consts';
-import { CommonColors, CommonStyles } from '../../utils/CommonStyles';
+import { CommonColors, CommonStyles, Fonts } from '../../utils/CommonStyles';
 import { getCurrencyName, formatCurrency, formatPercent } from "../../utils/Filters";
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import rf from '../../libs/RequestFactory';
 import _ from 'lodash';
 import I18n from '../../i18n/i18n';
+import ScaledSheet from "../../libs/reactSizeMatter/ScaledSheet";
+import {scale} from "../../libs/reactSizeMatter/scalingUtils";
 
 class MarketScreen extends BaseScreen {
   static SORT_FIELDS = {
@@ -102,7 +104,7 @@ class MarketScreen extends BaseScreen {
               </TouchableOpacity>
               <View style={styles.spacePairName} />
               <View style={{ alignSelf: 'center' }}>
-                <Text style={styles.itemCoin}>
+                <Text style={styles.itemFirstCoin}>
                   {I18n.t(`currency.${item.coin}.fullname`) || getCurrencyName(item.coin)}
                 </Text>
                 <Text style={styles.itemCoin}>
@@ -125,8 +127,9 @@ class MarketScreen extends BaseScreen {
           </View>
 
           <View style={styles.volumeGroup}>
-            <Text style={{ color: '#000' }}>
-              {formatCurrency(item.volume, Consts.CURRENCY_KRW, 0) + I18n.t('marketList.unit')}
+            <Text style={styles.itemVolume}>
+              {formatCurrency(item.volume, Consts.CURRENCY_KRW, 0) }
+              <Text style={styles.itemUnit}>{I18n.t('marketList.unit')}</Text>
             </Text>
           </View>
         </View>
@@ -162,11 +165,11 @@ class MarketScreen extends BaseScreen {
         </TouchableWithoutFeedback>
 
         <TouchableWithoutFeedback onPress={() => this._onSortField(MarketScreen.SORT_FIELDS.CHANGE)}>
-          <View style={{ flex: 2, alignItems: 'flex-end' }}>
-            <Text style={styles.normalHeader}>
+          <View style={styles.changeTab}>
+            <Text style={[styles.normalHeader, {paddingTop: scale(15)}]}>
               {I18n.t('marketList.change')}
-              {this._renderArrow(MarketScreen.SORT_FIELDS.CHANGE)}
             </Text>
+            {this._renderArrow(MarketScreen.SORT_FIELDS.CHANGE)}
           </View>
         </TouchableWithoutFeedback>
 
@@ -408,7 +411,7 @@ class MarketScreen extends BaseScreen {
 
 export default MarketScreen;
 
-const styles = StyleSheet.create({
+const styles = ScaledSheet.create({
   screen: {
     ...CommonStyles.screen
   },
@@ -416,20 +419,19 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   listItem: {
-    height: 64
+    height: '50@s'
   },
   listItemContainer: {
     flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
-    paddingLeft: 10,
-    paddingRight: 10
+    paddingLeft: '10@s',
+    paddingRight: '10@s'
   },
   separator: {
     flex: 1,
-    height: 1,
-    backgroundColor: '#DEE3EB',
-    opacity: 0.3
+    height: '0.5@s',
+    backgroundColor: CommonColors.separator,
   },
   nameGroup: {
     flex: 3
@@ -437,8 +439,14 @@ const styles = StyleSheet.create({
   spacePairName: {
     width: 3
   },
+  itemFirstCoin: {
+    fontSize: '14@s',
+    ...Fonts.NotoSans,
+    color: '#000'
+  },
   itemCoin: {
-    fontSize: 13,
+    fontSize: '12@s',
+    ...Fonts.NotoSans,
     color: '#000'
   },
   priceGroup: {
@@ -450,7 +458,7 @@ const styles = StyleSheet.create({
     alignItems: 'flex-end',
   },
   volumeGroup: {
-    flex: 3,
+    flex: 3.4,
     alignItems: 'flex-end'
   },
   increasedChange: {
@@ -460,31 +468,51 @@ const styles = StyleSheet.create({
     backgroundColor: '#e0533c',
   },
   normalHeader: {
-    fontSize: 13,
+    fontSize: '12@s',
+    ...Fonts.NotoSans,
     color: '#000'
   },
   tabBar: {
     flexDirection: 'row',
     alignItems: 'center',
-    height: 36,
+    height: '40@s',
     backgroundColor: '#F8F9FB',
-    paddingLeft: 10,
-    paddingRight: 10,
+    paddingLeft: '10@s',
+    paddingRight: '10@s',
   },
   iconSort: {
     height: 25,
     width: 14,
   },
   negativeText: {
-    fontSize: 13,
+    fontSize: '14@s',
+    ...Fonts.OpenSans,
     color: '#0070C0'
   },
   positiveText: {
-    fontSize: 13,
+    fontSize: '14@s',
+    ...Fonts.OpenSans,
     color: '#FF0000'
   },
   normalText: {
-    fontSize: 13,
+    fontSize: '14@s',
+    ...Fonts.OpenSans,
     color: '#000'
+  },
+  itemVolume: {
+    color: '#000',
+    fontSize: '14@s',
+    ...Fonts.OpenSans,
+  },
+  itemUnit: {
+    color: '#000',
+    fontSize: '14@s',
+    ...Fonts.NotoSans,
+  },
+  changeTab: {
+    flex: 2,
+    alignItems: 'flex-end',
+    justifyContent: 'center',
+    flexDirection: 'column'
   }
 });

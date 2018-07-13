@@ -123,7 +123,8 @@ export default {
     change: '전일대비',
     volume: '거래대금',
     unit: '백만',
-    favorite: '즐겨찾기'
+    favorite: '즐겨찾기',
+    search: '검색'
   },
   marketDetail: {
     time: '시간',
