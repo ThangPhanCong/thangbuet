@@ -558,6 +558,7 @@ export default {
       endingBalance: '기말 보유 잔고',
       inscreaseAssets: '자산 증감',
       rateChange: '증감률',
+      titleSum: '합계'
     }
   }
 }
