@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { scale } from "../../libs/reactSizeMatter/scalingUtils";
 import I18n from "../../i18n/i18n";
 import ScaledSheet from "../../libs/reactSizeMatter/ScaledSheet";
-import { CommonColors } from "../../utils/CommonStyles";
+import { CommonColors, Fonts } from "../../utils/CommonStyles";
 import { Text, TouchableWithoutFeedback, View } from "react-native";
 
 class HeaderFunds extends Component {
@@ -76,7 +76,7 @@ const styles = ScaledSheet.create({
   headerTitle: {
     fontSize: '12@s',
     color: CommonColors.mainText,
-    fontFamily: 'NotoSans-Regular'
+    ...Fonts.NotoSans,
   },
   headerCoinPair: {
     marginTop:  '10@s',

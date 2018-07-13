@@ -1,12 +1,11 @@
-import React, { Component } from 'react';
+import React from 'react';
 import { FlatList, Text, TouchableWithoutFeedback, View, ScrollView } from "react-native";
-import { CommonColors, CommonStyles } from "../../utils/CommonStyles";
+import { CommonColors, CommonStyles, Fonts } from "../../utils/CommonStyles";
 import ScaledSheet from "../../libs/reactSizeMatter/ScaledSheet";
 import { scale } from "../../libs/reactSizeMatter/scalingUtils";
 import I18n from "../../i18n/i18n";
 import moment from "moment/moment";
 import BitkoexDatePicker from "./common/BitkoexDatePicker";
-import HeaderTransaction from "./common/HeaderTransaction";
 import rf from "../../libs/RequestFactory";
 import BigNumber from 'bignumber.js';
 import { formatCurrency, getCurrencyName } from "../../utils/Filters";
@@ -179,28 +178,28 @@ class ProfitAndLossScreen extends BaseScreen {
       return (
         <View style={styles.itemContainer}>
           <View style={styles.currencyGroup}>
-            <Text style={[styles.itemCurrency, { fontWeight: 'bold' }]}>{I18n.t('transactions.profit.titleSum')}</Text>
+            <Text style={styles.itemCurrency}>{I18n.t('transactions.profit.titleSum')}</Text>
           </View>
 
           <View style={styles.profitGroup}>
-            <Text style={[styles.itemBalance, { fontWeight: 'bold' }]}>{sum.startingBalance}</Text>
-            <Text style={[styles.itemBalance, { fontWeight: 'bold' }]}>{Consts.CURRENCY_KRW.toUpperCase()}</Text>
+            <Text style={styles.itemBalanceSum}>{sum.startingBalance}</Text>
+            <Text style={styles.itemBalanceSum}>{Consts.CURRENCY_KRW.toUpperCase()}</Text>
 
           </View>
 
           <View style={styles.profitGroup}>
-            <Text style={[styles.itemDeposit, { fontWeight: 'bold' }]}>{sum.deposit}</Text>
-            <Text style={[styles.itemDeposit, { fontWeight: 'bold' }]}>{Consts.CURRENCY_KRW.toUpperCase()}</Text>
+            <Text style={styles.itemDepositSum}>{sum.deposit}</Text>
+            <Text style={styles.itemDepositSum}>{Consts.CURRENCY_KRW.toUpperCase()}</Text>
           </View>
 
           <View style={styles.profitGroup}>
-            <Text style={[styles.itemWithDrawl, { fontWeight: 'bold' }]}>{sum.withdraw}</Text>
-            <Text style={[styles.itemWithDrawl, { fontWeight: 'bold' }]}>{Consts.CURRENCY_KRW.toUpperCase()}</Text>
+            <Text style={styles.itemWithDrawlSum}>{sum.withdraw}</Text>
+            <Text style={styles.itemWithDrawlSum}>{Consts.CURRENCY_KRW.toUpperCase()}</Text>
           </View>
 
           <View style={styles.profitGroup}>
-            <Text style={[styles.itemBalance, { fontWeight: 'bold' }]}>{sum.endingBalance}</Text>
-            <Text style={[styles.itemBalance, { fontWeight: 'bold' }]}>{Consts.CURRENCY_KRW.toUpperCase()}</Text>
+            <Text style={styles.itemBalanceSum}>{sum.endingBalance}</Text>
+            <Text style={styles.itemBalanceSum}>{Consts.CURRENCY_KRW.toUpperCase()}</Text>
           </View>
 
           <View style={styles.profitGroup}>
@@ -230,7 +229,7 @@ class ProfitAndLossScreen extends BaseScreen {
     return (
       <View style={styles.itemContainer}>
         <View style={styles.currencyGroup}>
-          <Text style={[styles.itemCurrency, { fontWeight: 'bold' }]}>{getCurrencyName(item.currency)}</Text>
+          <Text style={styles.itemCurrency}>{getCurrencyName(item.currency)}</Text>
         </View>
 
         <View style={styles.profitGroup}>
@@ -335,44 +334,57 @@ const styles = ScaledSheet.create({
   itemCurrency: {
     color: CommonColors.mainText,
     fontSize: '12@s',
-    fontFamily: 'OpenSans-Regular'
+    ...Fonts.OpenSans_Bold
   },
   itemDeposit: {
     color: CommonColors.increased,
     fontSize: '10@s',
-    fontFamily: 'OpenSans-Regular'
+    ...Fonts.OpenSans
+  },
+  itemDepositSum: {
+    color: CommonColors.increased,
+    fontSize: '10@s',
+    ...Fonts.OpenSans_Bold
   },
   itemWithDrawl: {
     color: CommonColors.decreased,
     fontSize: '10@s',
-    fontFamily: 'OpenSans-Regular'
+    ...Fonts.OpenSans
+  },
+  itemWithDrawlSum: {
+    color: CommonColors.decreased,
+    fontSize: '10@s',
+    ...Fonts.OpenSans_Bold
   },
   itemBalance: {
     color: CommonColors.mainText,
     fontSize: '10@s',
-    fontFamily: 'OpenSans-Regular'
+    ...Fonts.OpenSans
+  },
+  itemBalanceSum: {
+    color: CommonColors.mainText,
+    fontSize: '10@s',
+    ...Fonts.OpenSans_Bold
   },
   increaseChange: {
     color: CommonColors.increased,
     fontSize: '10@s',
-    fontFamily: 'OpenSans-Regular',
+    ...Fonts.OpenSans,
   },
   decreaseChange: {
     color: CommonColors.decreased,
     fontSize: '10@s',
-    fontFamily: 'OpenSans-Regular',
+    ...Fonts.OpenSans,
   },
   decreaseSumChange: {
     color: CommonColors.decreased,
     fontSize: '10@s',
-    fontFamily: 'OpenSans-Regular',
-    fontWeight: 'bold'
+    ...Fonts.OpenSans_Bold,
   },
   increaseSumChange: {
     color: CommonColors.increased,
     fontSize: '10@s',
-    fontFamily: 'OpenSans-Regular',
-    fontWeight: 'bold'
+    ...Fonts.OpenSans_Bold,
   },
   profitGroup: {
     width: '100@s',

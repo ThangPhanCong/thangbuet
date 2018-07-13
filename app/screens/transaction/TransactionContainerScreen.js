@@ -11,6 +11,7 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { orderBy } from "lodash";
 import BitkoexDatePicker from "./common/BitkoexDatePicker";
 import HeaderTransaction from "./common/HeaderTransaction";
+import { Fonts } from "../../../app/utils/CommonStyles";
 
 class TransactionContainerScreen extends Component {
   static SORT_FIELDS = {
@@ -208,8 +209,8 @@ class TransactionContainerScreen extends Component {
           </View>
 
           <View style={styles.coinPairContainer}>
-            <Text style={[styles.itemCoin, { fontWeight: 'bold' }]}>{getCurrencyName(item.coin)}</Text>
-            <Text style={[styles.itemCurrency, { fontWeight: 'bold' }]}>{' / ' + getCurrencyName(item.currency)}</Text>
+            <Text style={styles.itemCoin}>{getCurrencyName(item.coin)}</Text>
+            <Text style={styles.itemCurrency}>{' / ' + getCurrencyName(item.currency)}</Text>
           </View>
         </View>
 
@@ -305,58 +306,57 @@ const styles = ScaledSheet.create({
   },
   itemDayMonth: {
     color: CommonColors.mainText,
-    fontWeight: 'bold',
     fontSize: '12@s',
-    fontFamily: 'OpenSans-Regular'
+    ...Fonts.OpenSans_Bold
   },
   itemTime: {
     color: CommonColors.mainText,
     fontSize: '11@s',
-    fontFamily: 'OpenSans-Regular'
+    ...Fonts.OpenSans
   },
   itemCoin: {
     color: CommonColors.mainText,
     fontSize: '12@s',
-    fontFamily: 'OpenSans-Regular'
+    ...Fonts.OpenSans_Bold
   },
   itemCurrency: {
     color: CommonColors.mainText,
     fontSize: '12@s',
-    fontFamily: 'OpenSans-Regular'
+    ...Fonts.OpenSans_Bold
   },
   itemTransaction: {
     color: CommonColors.mainText,
     fontSize: '10@s',
-    fontFamily: 'OpenSans-Regular'
+    ...Fonts.OpenSans
   },
   itemQuantity: {
     fontSize: '10@s',
-    fontFamily: 'OpenSans-Regular'
+    ...Fonts.OpenSans
   },
   itemDecreaseQuantity: {
     fontSize: '10@s',
     color: CommonColors.decreased,
-    fontFamily: 'OpenSans-Regular'
+    ...Fonts.OpenSans
   },
   itemIncreaseQuantity: {
     fontSize: '10@s',
     color: CommonColors.increased,
-    fontFamily: 'OpenSans-Regular'
+    ...Fonts.OpenSans
   },
   itemPrice: {
     color: CommonColors.mainText,
     fontSize: '10@s',
-    fontFamily: 'OpenSans-Regular'
+    ...Fonts.OpenSans
   },
   itemQuantityPrice: {
     color: CommonColors.mainText,
     fontSize: '10@s',
-    fontFamily: 'OpenSans-Regular'
+    ...Fonts.OpenSans
   },
   itemFee: {
     color: CommonColors.mainText,
     fontSize: '10@s',
-    fontFamily: 'OpenSans-Regular'
+    ...Fonts.OpenSans
   },
   itemLeftContainer: {
     width: '150@s',
@@ -432,7 +432,7 @@ const styles = ScaledSheet.create({
   textCancel: {
     fontSize: '12@s',
     color: '#FFF',
-    fontFamily: 'OpenSans-Regular'
+    ...Fonts.OpenSans
   },
   coinPairContainer: {
     width: '100@s',

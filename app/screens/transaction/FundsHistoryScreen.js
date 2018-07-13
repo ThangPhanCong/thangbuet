@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { FlatList, Text, TouchableWithoutFeedback, View, ScrollView, Image } from "react-native";
 import ScaledSheet from "../../libs/reactSizeMatter/ScaledSheet";
-import { CommonColors, CommonStyles } from "../../utils/CommonStyles";
+import { CommonColors, CommonStyles, Fonts } from "../../utils/CommonStyles";
 import { scale } from "../../libs/reactSizeMatter/scalingUtils";
 import I18n from "../../i18n/i18n";
 import moment from "moment/moment";
@@ -9,9 +9,6 @@ import BitkoexDatePicker from "./common/BitkoexDatePicker";
 import rf from "../../libs/RequestFactory";
 import TransactionRequest from "../../requests/TransactionRequest";
 import { orderBy } from "lodash";
-import HeaderTransaction from "./common/HeaderTransaction";
-import TransactionContainerScreen from "./TransactionContainerScreen";
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { formatCurrency, getCurrencyName, getDayMonth, getTime } from "../../utils/Filters";
 import HeaderFunds from "./HeaderFunds";
 
@@ -141,9 +138,8 @@ class FundsHistoryScreen extends Component {
 
   _renderArrow(field) {
     const { sortField, sortDirection } = this.state;
-
     return (
-      sortField === field && sortDirection === TransactionContainerScreen.SORT_DIRECTION.ASC ?
+      sortField === field && sortDirection === FundsHistoryScreen.SORT_DIRECTION.ASC ?
         <Image
           source={require('../../../assets/sortAsc/asc.png')}/> :
         <Image
@@ -166,7 +162,7 @@ class FundsHistoryScreen extends Component {
           </View>
 
           <View style={styles.coinPairContainer}>
-            <Text style={[styles.itemCurrency, { fontWeight: 'bold' }]}>{getCurrencyName(item.currency)}</Text>
+            <Text style={styles.itemCurrency}>{getCurrencyName(item.currency)}</Text>
           </View>
         </View>
 
@@ -255,6 +251,7 @@ const styles = ScaledSheet.create({
   },
   textSearch: {
     fontSize: '12@s',
+    ...Fonts.NotoSans,
     color: CommonColors.mainText
   },
   itemContainer: {
@@ -273,51 +270,51 @@ const styles = ScaledSheet.create({
     color: CommonColors.mainText,
     fontWeight: 'bold',
     fontSize: '12@s',
-    fontFamily: 'OpenSans-Regular'
+    ...Fonts.OpenSans
   },
   itemTime: {
     color: CommonColors.mainText,
     fontSize: '11@s',
-    fontFamily: 'OpenSans-Regular'
+    ...Fonts.OpenSans
   },
   itemCurrency: {
     color: CommonColors.mainText,
     fontSize: '12@s',
-    fontFamily: 'OpenSans-Regular'
+    ...Fonts.OpenSans_Bold
   },
   itemFunds: {
     color: CommonColors.mainText,
     fontSize: '10@s',
-    fontFamily: 'OpenSans-Regular'
+    ...Fonts.OpenSans
   },
   itemQuantity: {
     fontSize: '10@s',
-    fontFamily: 'OpenSans-Regular'
+    ...Fonts.OpenSans
   },
   itemDecreaseQuantity: {
     fontSize: '10@s',
     color: CommonColors.decreased,
-    fontFamily: 'OpenSans-Regular'
+    ...Fonts.OpenSans
   },
   itemIncreaseQuantity: {
     fontSize: '10@s',
     color: CommonColors.increased,
-    fontFamily: 'OpenSans-Regular'
+    ...Fonts.OpenSans
   },
   itemQuantityPrice: {
     color: CommonColors.mainText,
     fontSize: '10@s',
-    fontFamily: 'OpenSans-Regular'
+    ...Fonts.OpenSans
   },
   itemPending: {
     color: 'red',
     fontSize: '10@s',
-    fontFamily: 'OpenSans-Regular'
+    ...Fonts.OpenSans
   },
   itemSuccess: {
     color: CommonColors.mainText,
     fontSize: '10@s',
-    fontFamily: 'OpenSans-Regular'
+    ...Fonts.OpenSans
   },
   itemRight: {
     flexDirection: 'column',

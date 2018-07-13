@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { scale } from "../../libs/reactSizeMatter/scalingUtils";
 import ScaledSheet from "../../libs/reactSizeMatter/ScaledSheet";
-import { CommonColors } from "../../utils/CommonStyles";
+import { CommonColors, Fonts } from "../../utils/CommonStyles";
 import { Text, View } from "react-native";
 
 class HeaderProfitAndLoss extends Component {
@@ -67,7 +67,7 @@ const styles = ScaledSheet.create({
     borderRightWidth: '1@s',
   },
   headerTitle: {
-    fontFamily: 'NotoSans-Regular',
+    ...Fonts.NotoSans,
     fontSize: '12@s',
     color: CommonColors.mainText
   }
