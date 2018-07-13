@@ -431,6 +431,10 @@ export default {
     coinNote12: '암호 화폐 출금(송금) 제한',
     tagAddress: 'Destination Tag:',
 
+    amountRequest: '출금(송금)할 {{coinName}} 금액',
+    addressRequest: '출금(송금) 받을 {{coinName}} 지갑 주소',
+    errBlockchainAddress: '잘못된 주소',
+    
   },
 
   myPage: {

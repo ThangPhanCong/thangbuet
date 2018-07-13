@@ -1,5 +1,5 @@
 import React from 'react';
-import { SafeAreaView, Text, TouchableOpacity, View, ScrollView, TextInput } from 'react-native';
+import { SafeAreaView, Text, TouchableOpacity, View, ScrollView, TextInput, Alert } from 'react-native';
 import BaseScreen from '../BaseScreen'
 import ScaledSheet from '../../libs/reactSizeMatter/ScaledSheet'
 import I18n from '../../i18n/i18n'
@@ -9,6 +9,7 @@ import { Divider, Icon } from 'react-native-elements'
 import { formatCurrency, getCurrencyName } from '../../utils/Filters'
 import rf from '../../libs/RequestFactory'
 import Modal from "react-native-modal"
+import Utils from '../../utils/Utils'
 
 class WithdrawalScreen extends BaseScreen {
   constructor(props) {
@@ -16,6 +17,8 @@ class WithdrawalScreen extends BaseScreen {
     this.state = {
       isComplete: false,
       amount: 0,
+      blockchainAddress: '',
+      blockchainTag: '',
       modalConfirm: false,
       daily: {},
       modalConfirm: false,
@@ -29,11 +32,9 @@ class WithdrawalScreen extends BaseScreen {
     this.currency = ''
   }
 
-  componentDidMount() {
-    const { navigation } = this.props;
-    const symbol = navigation.getParam('symbol', {})
-    this.currency = symbol.code
-    this._loadData()
+  async componentDidMount() {
+    await this._getBalaceDetail()
+    await this._loadData()
   }
 
   async _loadData() {
@@ -41,6 +42,17 @@ class WithdrawalScreen extends BaseScreen {
     await this._getWithdrawal()
     await this._getAuth()
     this.setState({ isComplete: true, modalConfirm: false, amount: 0 })
+  }
+
+  async _getBalaceDetail() {
+    const { navigation } = this.props;
+    let symbol = navigation.getParam('symbol', {})
+    console.log('symbol', symbol)
+    const res = await rf.getRequest('UserRequest').getDetailsBalance(symbol.code)
+    console.log('res.data', res.data)
+    symbol = Object.assign({}, symbol, res.data)
+    this.currency = symbol.code
+    this.setState({ symbol })
   }
 
   componentWillUnmount() {
@@ -121,13 +133,18 @@ class WithdrawalScreen extends BaseScreen {
   }
 
   _validateAmount() {
-    const { amount, daily } = this.state
+    const { amount, daily, blockchainAddress, blockchainTag } = this.state
     let errMsg = ''
 
     if (daily.minium > amount) {
       errMsg = I18n.t('withdrawal.errMinium')
-    } else if (amount > (daily.withdrawalLimit - daily.withdrawalKrw)) {
+    } else if (amount > (daily.withdrawalLimit - daily.withdrawal)) {
       errMsg = I18n.t('withdrawal.errMaximum')
+    }
+
+    //validate blockchain address
+    if (!Utils.isWalletAddress(this.currency, blockchainAddress, blockchainTag)) {
+      errMsg = I18n.t('withdrawal.errBlockchainAddress')
     }
 
     if (errMsg === '') {
@@ -152,9 +169,11 @@ class WithdrawalScreen extends BaseScreen {
       let params = {
         amount: this.state.amount * -1 + '',
         currency: this.currency,
+        destination_tag: this.state.blockchainTag,
+        foreign_blockchain_address: this.state.blockchainAddress,
         otp: this.state.otpConfirm ? this.state.otp + '|' : '|' + this.state.otp
       }
-      const withdrawalRes = await rf.getRequest('TransactionRequest').withdrawKrw(params)
+      const withdrawalRes = await rf.getRequest('TransactionRequest').withdraw(params)
       this.setState({ optErr: false })
       this._loadData()
     } catch (err) {
@@ -172,9 +191,7 @@ class WithdrawalScreen extends BaseScreen {
   }
 
   render() {
-    const { navigation } = this.props;
-    const symbol = navigation.getParam('symbol', {})
-
+    const { symbol } = this.state
     return (
       <SafeAreaView style={styles.fullScreen}>
         {this.state.isComplete &&
@@ -209,8 +226,7 @@ class WithdrawalScreen extends BaseScreen {
 
               <View style={[styles.line, styles.amount]}>
                 <Text>
-                  {I18n.t('withdrawal.request')}
-                  <Text>({getCurrencyName(this.currency)})</Text>
+                  {I18n.t('withdrawal.amountRequest', { "coinName": getCurrencyName(symbol.code) })}
                 </Text>
                 <View style={{
                   flexDirection: 'row', alignItems: 'center', justifyContent: 'center',
@@ -219,7 +235,6 @@ class WithdrawalScreen extends BaseScreen {
                   <TextInput
                     keyboardType='numeric'
                     autoCorrect={false}
-                    // underlineColorAndroid='rgba(0, 0, 0, 0)'
                     underlineColorAndroid='transparent'
                     value={formatCurrency(this.state.amount, this.currency)}
                     onChangeText={(text) => {
@@ -232,29 +247,30 @@ class WithdrawalScreen extends BaseScreen {
                       borderLeftWidth: 1, borderColor: "rgba(0, 0, 0, 0.3)",
                       height: 30, justifyContent: 'center', padding: 5
                     }}
-                    onPress={() => this.setState({ amount: this.state.daily.withdrawalLimit - this.state.daily.withdrawalKrw })}>
+                    onPress={() => this.setState({ amount: this.state.daily.withdrawalLimit - this.state.daily.withdrawal })}>
                     <Text>{I18n.t('withdrawal.maximum')}</Text>
                   </TouchableOpacity>
                 </View>
               </View>
 
               <View style={[styles.line, styles.amount]}>
-                <Text>{I18n.t('withdrawal.accountRegister')}</Text>
+                <Text>{I18n.t('withdrawal.addressRequest', { "coinName": getCurrencyName(symbol.code) })}</Text>
                 <View style={{
                   flexDirection: 'row', alignItems: 'center', justifyContent: 'center',
                   borderWidth: 1, borderRadius: 4, borderColor: "rgba(0, 0, 0, 0.3)"
                 }}>
                   <TextInput
-                    editable={false}
-                    value={symbol.blockchain_address ? symbol.blockchain_address : ''}
+                    value={this.state.blockchainAddress}
+                    onChangeText={(text) => {
+                      this.setState({ blockchainAddress: text })
+                    }}
                     autoCorrect={false}
-                    // underlineColorAndroid='rgba(0, 0, 0, 0)'
                     underlineColorAndroid='transparent'
                     style={{ flex: 1, height: 30, textAlign: 'right', opacity: 0.7, textAlignVertical: 'bottom', lineHeight: 0.1 }} />
                 </View>
               </View>
 
-              {symbol.blockchain_tag && symbol.blockchain_tag != null &&
+              {symbol.code === 'xrp' &&
                 <View style={[styles.line, styles.amount]}>
                   <Text>{I18n.t('withdrawal.tagAddress')}</Text>
                   <View style={{
@@ -262,10 +278,11 @@ class WithdrawalScreen extends BaseScreen {
                     borderWidth: 1, borderRadius: 4, borderColor: "rgba(0, 0, 0, 0.3)"
                   }}>
                     <TextInput
-                      editable={false}
-                      value={symbol.blockchain_tag}
+                      value={this.state.blockchainTag}
+                      onChangeText={(text) => {
+                        this.setState({ blockchainTag: text })
+                      }}
                       autoCorrect={false}
-                      // underlineColorAndroid='rgba(0, 0, 0, 0)'
                       underlineColorAndroid='transparent'
                       style={{ flex: 1, height: 30, textAlign: 'right', opacity: 0.7, textAlignVertical: 'bottom', lineHeight: 0.1 }} />
                   </View>
@@ -364,7 +381,7 @@ class WithdrawalScreen extends BaseScreen {
                 }
               }}
               onBackdropPress={() => this.setState({ amountConfirm: false, agree: false })}>
-              {this._renderAmountContent(symbol)}
+              {this._renderAmountContent()}
             </Modal>
 
             <Modal
@@ -388,40 +405,33 @@ class WithdrawalScreen extends BaseScreen {
     )
   }
 
-  _renderAmountContent(symbol) {
+  _renderAmountContent() {
+    const { symbol } = this.state
     return (
       <View style={styles.modalStyle}>
         <View style={styles.headerModalStyle}>
           <Text>{I18n.t('withdrawal.amountConfirmTitle')}</Text>
         </View>
-        <View>
-          <Text style={{ marginTop: 10, marginBottom: 3 }}>
-            {'\u2022' + I18n.t('withdrawal.amountNumber')}
-          </Text>
-          <Text style={{ marginBottom: 10 }}>
-            {formatCurrency(this.state.amount, this.currency)}
-            <Text style={{ fontSize: 11 }}>{getCurrencyName(this.currency)}</Text>
-          </Text>
-          <Text style={{ marginTop: 10, marginBottom: 3 }}>
-            {'\u2022' + I18n.t('withdrawal.amountAccount')}
-          </Text>
-          <Text style={{ marginBottom: 10 }}>
-            {symbol.blockchain_address}
-          </Text>
-          <Text style={{ marginBottom: 10, marginTop: 10 }}>{I18n.t('withdrawal.amountMessage')}</Text>
+        <Text style={{ marginBottom: 10 }}>
+          {formatCurrency(this.state.amount, this.currency)}
+          <Text style={{ fontSize: 11 }}>{getCurrencyName(this.currency)}</Text>
+        </Text>
+        <Text style={{ marginBottom: 10 }}>
+          {symbol.blockchain_address}
+        </Text>
+        <Text style={{ marginBottom: 10, marginTop: 10 }}>{I18n.t('withdrawal.amountMessage')}</Text>
 
-          <View style={styles.modalActionStyle}>
-            <TouchableOpacity
-              onPress={() => this.setState({ amountConfirm: false, agree: false })}
-              style={{ width: '45%', justifyContent: 'center', backgroundColor: '#aaa', height: 30, borderRadius: 4, }}>
-              <Text style={{ color: 'white', textAlign: 'center' }}>{I18n.t('withdrawal.amountCancel')}</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              onPress={this._doConfirm.bind(this)}
-              style={{ width: '45%', justifyContent: 'center', backgroundColor: 'blue', height: 30, borderRadius: 4, }}>
-              <Text style={{ color: 'white', textAlign: 'center' }}>{I18n.t('withdrawal.amountAccept')}</Text>
-            </TouchableOpacity>
-          </View>
+        <View style={styles.modalActionStyle}>
+          <TouchableOpacity
+            onPress={() => this.setState({ amountConfirm: false, agree: false })}
+            style={{ width: '45%', justifyContent: 'center', backgroundColor: '#aaa', height: 30, borderRadius: 4, }}>
+            <Text style={{ color: 'white', textAlign: 'center' }}>{I18n.t('withdrawal.amountCancel')}</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={this._doConfirm.bind(this)}
+            style={{ width: '45%', justifyContent: 'center', backgroundColor: 'blue', height: 30, borderRadius: 4, }}>
+            <Text style={{ color: 'white', textAlign: 'center' }}>{I18n.t('withdrawal.amountAccept')}</Text>
+          </TouchableOpacity>
         </View>
       </View>
     )
