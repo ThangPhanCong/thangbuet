@@ -167,7 +167,7 @@ export default class FundsScreen extends BaseScreen {
                 resizeMode="contain"
                 style={styles.iconLogo}
                 source={require('../../../assets/funds/fundLogo.png')} />
-              <Text style={[styles.fontNotoSansRegular, { fontSize: 14 }]}>{I18n.t('funds.assetStatus')}</Text>
+              <Text style={[styles.fontNotoSansRegular, styles.headerSize14]}>{I18n.t('funds.assetStatus')}</Text>
             </View>
             <View style={styles.info}>
               <View style={styles.infoRow}>
@@ -315,5 +315,6 @@ const styles = ScaledSheet.create({
   },
   footerTotalField: { fontWeight: 'bold', textAlign: 'left', marginLeft: '30@s', fontSize: '14@s' },
   footerNumer: { fontWeight: 'bold', color: 'red', textAlign: 'right', fontSize: '14@s' },
-  footerYield: { marginRight: '8@s' }
+  footerYield: { marginRight: '8@s' },
+  headerSize14: { fontSize: '14@s' }
 })
