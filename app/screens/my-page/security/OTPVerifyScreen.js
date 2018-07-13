@@ -206,8 +206,8 @@ const styles = ScaledSheet.create({
   },
   textHeader: {
     marginTop: '30@s',
-    // marginStart: '20@s',
-    // marginEnd: '20@s',
+    marginStart: '20@s',
+    marginEnd: '20@s',
     textAlign: 'center',
     fontSize: '13@s',
     ...Fonts.NanumGothic_Regular

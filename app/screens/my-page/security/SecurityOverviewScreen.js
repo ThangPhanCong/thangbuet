@@ -22,7 +22,7 @@ import _ from 'lodash';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import AppConfig from '../../../utils/AppConfig';
 import ScaledSheet from '../../../libs/reactSizeMatter/ScaledSheet';
-import { CommonColors, CommonStyles, Fonts } from '../../../utils/CommonStyles';
+import { Fonts } from '../../../utils/CommonStyles';
 // const DownArrowIcon = require('../../../../assets/common/caretdown.png');
 
 const submitPhoneHtmlString =
@@ -72,7 +72,10 @@ export default class SecurityOverviewScreen extends BaseScreen {
   _otpParams = {};
   _bankParams = {};
 
-  _banks = [{ id: 1, name: 'ABC' }, { id: 2, name: 'DEF' }];
+  _banks = [{ id: 1, name: 'ABC' }, { id: 2, name: 'DEF' }, { id: 3, name: 'GHI' }, { id: 4, name: 'JKL' }, {
+    id: 5,
+    name: 'MNO'
+  }];
   _passwordParams = {}
 
   _verifyPhoneResult = {}
@@ -442,11 +445,11 @@ export default class SecurityOverviewScreen extends BaseScreen {
         onBackdropPress={this._dismissBankAccountModal.bind(this)}>
         <Card
           style={styles.dialog}
-          containerStyle={{ borderRadius: 5, padding: 0, marginStart: 30, marginEnd: 30 }}>
-          <Text style={{ fontSize: 13, marginTop: 16, marginBottom: 16, marginStart: 16, marginEnd: 16 }}>
+          containerStyle={styles.containerCard}>
+          <Text style={styles.initOtpVerification}>
             {I18n.t('myPage.security.bankAccountHeader')}
           </Text>
-          <View style={{ height: 1, backgroundColor: '#EBEBEB' }}/>
+          <View style={styles.crossBar}/>
           <Text style={styles.bankAccountTitle}>
             {I18n.t('myPage.security.bankAccountOwner')}
           </Text>
@@ -465,25 +468,22 @@ export default class SecurityOverviewScreen extends BaseScreen {
             {I18n.t('myPage.security.bank')}
           </Text>
 
-          <View style={styles.bankAccountTextInput}>
+          <View style={styles.viewModalDropDown}>
             <View style={{ position: 'absolute', right: 0, justifyContent: 'center', flex: 1, height: '100%' }}>
               <Icon
                 name='menu-down'
-                size={22}
-                color='#000'/>
+                color='#000'
+                style={styles.iconMenuDown}
+              />
             </View>
             <ModalDropdown
-              style={{ flex: 1, justifyContent: 'center' }}
+              style={{ flex: 1.3, justifyContent: 'center' }}
               defaultValue=''
-              dropdownStyle={{
-                position: 'absolute',
-                marginTop: 20,
-                left: 0,
-                right: 65,
+              dropdownStyle={[styles.modalBankDropDown, {
                 height: this._calculateModalHeight()
-              }}
-              textStyle={{ marginStart: 6.5 }}
-              dropdownTextStyle={{ fontSize: 13 }}
+              }]}
+              textStyle={styles.textModal}
+              dropdownTextStyle={styles.textModalDropDown}
               renderSeparator={() => <View style={{ height: 0 }}/>}
               options={_.map(this._banks, 'name')}
               onSelect={this._onBankPickerSelect.bind(this)}/>
@@ -497,9 +497,9 @@ export default class SecurityOverviewScreen extends BaseScreen {
                      onChangeText={text => this._bankParams.account_number = text}/>
 
           <TouchableOpacity
-            style={[styles.submitCancelOtpButton, { marginTop: 20, marginBottom: 30 }]}
+            style={styles.bankAccountSubmitButton}
             onPress={this._onSubmitBankAccount.bind(this)}>
-            <Text style={{ fontSize: 13, color: '#FFF' }}>
+            <Text style={styles.cancelOtpSubmit}>
               {I18n.t('myPage.security.bankAccountSubmitText')}
             </Text>
           </TouchableOpacity>
@@ -535,11 +535,11 @@ export default class SecurityOverviewScreen extends BaseScreen {
         onBackdropPress={this._dismissChangePasswordModal.bind(this)}>
         <Card
           style={styles.dialog}
-          containerStyle={{ borderRadius: 5, padding: 0, marginStart: 30, marginEnd: 30 }}>
-          <Text style={{ fontSize: 13, marginTop: 16, marginBottom: 16, marginStart: 16, marginEnd: 16 }}>
+          containerStyle={styles.containerCard}>
+          <Text style={styles.initOtpVerification}>
             {I18n.t('myPage.security.changePasswordHeader')}
           </Text>
-          <View style={{ height: 1, backgroundColor: '#EBEBEB' }}/>
+          <View style={styles.crossBar}/>
           <Text style={styles.bankAccountTitle}>
             {I18n.t('myPage.security.bankAccountOwner')}
           </Text>
@@ -569,9 +569,9 @@ export default class SecurityOverviewScreen extends BaseScreen {
                      onChangeText={text => this._passwordParams.otp = text}/>
 
           <TouchableOpacity
-            style={[styles.submitCancelOtpButton, { marginTop: 20, marginBottom: 30 }]}
+            style={styles.bankAccountSubmitButton}
             onPress={this._onSubmitChangePassword.bind(this)}>
-            <Text style={{ fontSize: 13, color: '#FFF' }}>
+            <Text style={styles.cancelOtpSubmit}>
               {I18n.t('myPage.security.changePasswordSubmit')}
             </Text>
           </TouchableOpacity>
@@ -843,16 +843,20 @@ const styles = ScaledSheet.create({
     fontSize: '13@s',
     marginTop: '16@s',
     marginStart: '16@s',
-    marginEnd: '16@s'
+    marginEnd: '16@s',
+    ...Fonts.NanumGothic_Regular
   },
   bankAccountTextInput: {
-    marginTop: '2@s',
+    marginTop: '4@s',
     marginStart: '16@s',
     marginEnd: '16@s',
     height: '40@s',
     borderColor: '#D9D9D9',
     borderRadius: '5@s',
-    borderWidth: '1@s'
+    borderWidth: '1@s',
+    paddingLeft: '16@s',
+    paddingRight: '16@s',
+    ...Fonts.NanumGothic_Regular
   },
   bankAccountPicker: {
     marginTop: '2@s',
@@ -935,12 +939,56 @@ const styles = ScaledSheet.create({
   cancelOtpSubmit: {
     fontSize: '13@s', color: '#FFF', ...Fonts.NanumGothic_Regular
   },
-  initOtpVerification2:{
+  initOtpVerification2: {
     fontSize: '13@s',
     color: '#0070C0',
     textDecorationStyle: 'solid',
     textDecorationLine: 'underline',
     textDecorationColor: '#0070C0',
     ...Fonts.NanumGothic_Bold
+  },
+  iconMenuDown: {
+    paddingRight: '10@s',
+    fontSize: '28@s'
+  },
+  bankAccountSubmitButton: {
+    marginTop: '20@s',
+    marginStart: '16@s',
+    marginEnd: '16@s',
+    height: '40@s',
+    backgroundColor: '#0070C0',
+    borderRadius: '5@s',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: '30@s'
+  },
+  modalBankDropDown: {
+    position: 'absolute',
+    right: '65@s',
+    marginTop: '19@s',
+    borderColor: '#D9D9D9',
+    borderRadius: '3@s',
+    borderWidth: '1@s',
+  },
+  viewModalDropDown: {
+    marginTop: '5@s',
+    marginStart: '15@s',
+    marginEnd: '16@s',
+    height: '40@s',
+    borderColor: '#D9D9D9',
+    borderRadius: '5@s',
+    borderWidth: '1@s'
+  },
+  textModalDropDown: {
+    fontSize: '13@s',
+    color: '#000',
+    textAlign: 'center',
+    borderBottomColor: '#D9D9D9',
+    borderBottomWidth: '1@s',
+    ...Fonts.NanumGothic_Regular,
+  },
+  textModal: {
+    marginStart: '16@s',
+    ...Fonts.NanumGothic_Regular,
   }
 });
