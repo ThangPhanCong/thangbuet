@@ -78,7 +78,7 @@ export default class HeaderBalance extends BaseScreen {
   }
 
   _onPricesUpdated(prices) {
-    const symbols = this.state.symbols
+    let symbols = this.state.symbols
 
     for (symbol in symbols) {
       if (symbol.toLowerCase() === this.currency) {

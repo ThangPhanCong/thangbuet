@@ -50,8 +50,8 @@ const CommonStyles = {
     flex: 1,
   },
   checkBox: {
-    checkedImage: (<Image source={require('../../assets/common/checkbox/checked.png')}/>),
-    unCheckedImage: (<Image source={require('../../assets/common/checkbox/unchecked.png')}/>)
+    checkedImage: (<Image source={require('../../assets/common/checkbox/checked.png')} />),
+    unCheckedImage: (<Image source={require('../../assets/common/checkbox/unchecked.png')} />)
   },
   switch: {
     activeText: 'ON',
@@ -118,6 +118,9 @@ const iOSFonts = {
   NotoSans_Bold: {
     fontFamily: 'NotoSans',
     fontWeight: '700'
+  },
+  NotoSansCJKkr_Regular: {
+    fontFamily: 'NotoSansCJKkr-Regular'
   }
 };
 
@@ -136,6 +139,9 @@ const androidFonts = {
   },
   NotoSans_Bold: {
     fontFamily: 'NotoSans-Bold'
+  },
+  NotoSansCJKkr_Regular: {
+    fontFamily: 'NotoSansCJKkr-Regular'
   }
 };
 

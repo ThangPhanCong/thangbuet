@@ -67,6 +67,7 @@
 		FF30C7E4F4A542C3970FB74B /* SimpleLineIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 26C07C0E65D1464CA7DFDD4B /* SimpleLineIcons.ttf */; };
 		4CB4640280AF4A8CAC3E3DA4 /* OpenSans-Semibold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 33DBA13F59204150A0B5CD50 /* OpenSans-Semibold.ttf */; };
 		3ABE680C130C49F1BCFA17AB /* NotoSans-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 93E0603003A6462DB19B8192 /* NotoSans-Bold.ttf */; };
+		BAC45702B9B841AFB4432264 /* NotoSansCJKkr-Regular.otf in Resources */ = {isa = PBXBuildFile; fileRef = 581DB52FD269494B9170D86F /* NotoSansCJKkr-Regular.otf */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -529,6 +530,7 @@
 		EE6F31E358914ED6A9F017E2 /* libRNI18n.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libRNI18n.a; sourceTree = "<group>"; };
 		33DBA13F59204150A0B5CD50 /* OpenSans-Semibold.ttf */ = {isa = PBXFileReference; name = "OpenSans-Semibold.ttf"; path = "../assets/fonts/OpenSans-Semibold.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
 		93E0603003A6462DB19B8192 /* NotoSans-Bold.ttf */ = {isa = PBXFileReference; name = "NotoSans-Bold.ttf"; path = "../assets/fonts/NotoSans-Bold.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		581DB52FD269494B9170D86F /* NotoSansCJKkr-Regular.otf */ = {isa = PBXFileReference; name = "NotoSansCJKkr-Regular.otf"; path = "../assets/fonts/NotoSansCJKkr-Regular.otf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -677,6 +679,7 @@
 				3645FDC933DA40DEB978F70A /* NanumSquareOTFBold.otf */,
 				33DBA13F59204150A0B5CD50 /* OpenSans-Semibold.ttf */,
 				93E0603003A6462DB19B8192 /* NotoSans-Bold.ttf */,
+				581DB52FD269494B9170D86F /* NotoSansCJKkr-Regular.otf */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -1553,6 +1556,7 @@
 				BF74D433CFCE41A9A2002A7B /* NanumSquareOTFBold.otf in Resources */,
 				4CB4640280AF4A8CAC3E3DA4 /* OpenSans-Semibold.ttf in Resources */,
 				3ABE680C130C49F1BCFA17AB /* NotoSans-Bold.ttf in Resources */,
+				BAC45702B9B841AFB4432264 /* NotoSansCJKkr-Regular.otf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

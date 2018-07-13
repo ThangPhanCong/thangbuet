@@ -49,6 +49,7 @@
 		<string>NanumSquareOTFBold.otf</string>
 		<string>OpenSans-Semibold.ttf</string>
 		<string>NotoSans-Bold.ttf</string>
+		<string>NotoSansCJKkr-Regular.otf</string>
 	</array>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>

@@ -208,7 +208,8 @@ export default {
     quantity: '보유수량',
     profitAndLoss: '손익',
     valuation: '평가',
-    total: 'TOTAL'
+    total: 'TOTAL',
+    percent: '%',
   },
 
   balances: {
