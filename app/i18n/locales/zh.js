@@ -457,19 +457,26 @@ export default {
       dialogRecoveryCode: '복구 코드',
       cancelOtpSubmit: 'OTP사용 중단하기',
       initOtpVerification: 'OTP 인증 초기화',
-      initOtpVerificationDesc: `복구 코드를 분실해서 OTP사용을 중단할 수 없을 경우 아래 내용과 같이 OTP 초기화 요청 이메일을 보내주시기 바랍니다.\n보낼 이메일 : help@bitkoex.com`,
-      initOtpVerificationInstruction:
-        `1. 이메일 제목: otp 사용 중단 요청
-2. 이메일 본문
--실명
+      initOtpVerificationDesc: {
+        recoveryCode: '복구 코드 ',
+        body: `를 분실해서 OTP사용을 중단할 수 없을 경우 아래 내용과 같이 OTP 초기화 요청 이메일을 보내주시기 바랍니다.`,
+        email: `보낼 이메일 : `,
+        emailAdress: `help@bitkoex.com`,
+      },
+      initOtpVerificationInstruction: {
+        emailSuject: '1. 이메일 제목',
+        contentEmailSuject: ': otp 사용 중단 요청',
+        emailBody: '2. 이메일 본문',
+        contentEmailBody: `-실명
 -휴대전화 번호
--빗코엑스 가입시 이메일
-3. 첨부파일
-“신분증+메모”사진
+-빗코엑스 가입시 이메일`,
+        attachment: '3. 첨부파일',
+        contentAttachment: `“신분증+메모”사진
 “신분증+메모”를 들고 있는 본인 사진
 ★ 신분증은 반드시 주민번호 뒷자리는 가려주세요
 ★ 메모 입력 사항:otp 사용 중단 요청, 빗코엑스 가입한 이메일, 요청 날짜
 ★ 피싱 등 금융사고 예방을 위한 것으로 조금 불편하시더라도 양해 부탁드립니다`,
+      },
       existedPhoneHeader: '이미 등록된 전화번호입니다.',
       existedPhoneButtonText: '확인',
       bankAccountHeader: '입출금 계좌 등록',
