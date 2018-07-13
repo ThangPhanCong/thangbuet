@@ -136,6 +136,12 @@ const androidFonts = {
   },
   NotoSans_Bold: {
     fontFamily: 'NotoSans-Bold'
+  },
+  NanumGothic_Regular: {
+    fontFamily: 'NanumGothic-Regular'
+  },
+  NanumGothic_Bold: {
+    fontFamily: 'NanumGothic-ExtraBold'
   }
 };
 

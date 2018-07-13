@@ -14,7 +14,7 @@ import {
 import ScaledSheet from '../../../libs/reactSizeMatter/ScaledSheet';
 import { BoxShadow } from 'react-native-shadow';
 import BaseScreen from '../../BaseScreen'
-import { CommonStyles } from '../../../utils/CommonStyles';
+import { CommonStyles, Fonts } from '../../../utils/CommonStyles';
 import rf from '../../../libs/RequestFactory';
 import I18n from '../../../i18n/i18n';
 import _ from 'lodash';
@@ -206,20 +206,21 @@ const styles = ScaledSheet.create({
   },
   textHeader: {
     marginTop: '30@s',
-    marginStart: '30@s',
-    marginEnd: '20@s',
+    // marginStart: '20@s',
+    // marginEnd: '20@s',
     textAlign: 'center',
-    fontSize: 13
+    fontSize: '13@s',
+    ...Fonts.NanumGothic_Regular
   },
   qrcodeContainer: {
-    marginTop: '40@s',
+    marginTop: '10@s',
     marginBottom: '20@s',
     aspectRatio: 1,
     width: '160@s',
     alignSelf: 'center',
     shadowColor: '#000',
     shadowOpacity: 0.3,
-    shadowRadius: 5
+    shadowRadius: '5@s'
   },
   functionContainer: {
     marginStart: '40@s',
@@ -235,29 +236,31 @@ const styles = ScaledSheet.create({
   },
   button: {
     height: '40@s',
-    borderRadius: 5,
+    borderRadius: '5@s',
     alignItems: 'center',
     justifyContent: 'center'
   },
   buttonSpace: {
-    width: 5
+    width: '5@s'
   },
   buttonAreaSpace: {
     height: '10@s'
   },
   title: {
-    marginBottom: 5,
-    fontSize: 12
+    marginBottom: '5@s',
+    fontSize: '12@s',
+    ...Fonts.OpenSans
   },
   buttonText: {
     color: '#FFF',
-    fontSize: 12
+    fontSize: '12@s',
+    ...Fonts.OpenSans
   },
   otpInput: {
     flex: 2,
     height: '40@s',
-    borderRadius: 5,
-    borderWidth: 1,
+    borderRadius: '5@s',
+    borderWidth: '1@s',
     borderColor: '#BFBFBF'
   }
 });

@@ -458,7 +458,7 @@ export default {
       otpCode: 'otp code',
       activate: 'activate',
 
-      cancelOtpHeader: 'OTP 사용 중단하',
+      cancelOtpHeader: 'OTP 사용 중단하기',
       cancelOtpDesc: `OTP 인증번호/복구 코드를 사용하여 OTP사용을 중단합니다. 복구 코드로 사용을 중단할 경우 자동으로 암호화폐 자산의 출금이 제한됩니다.`,
       otpVerificationNumber: 'OTP 인증 번호',
       dialogRecoveryCode: '복구 코드',

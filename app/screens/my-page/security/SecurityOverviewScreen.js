@@ -21,7 +21,8 @@ import I18n from '../../../i18n/i18n';
 import _ from 'lodash';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import AppConfig from '../../../utils/AppConfig';
-import { CommonStyles } from '../../../utils/CommonStyles'
+import ScaledSheet from '../../../libs/reactSizeMatter/ScaledSheet';
+import { CommonColors, CommonStyles, Fonts } from '../../../utils/CommonStyles';
 // const DownArrowIcon = require('../../../../assets/common/caretdown.png');
 
 const submitPhoneHtmlString =
@@ -258,26 +259,23 @@ export default class SecurityOverviewScreen extends BaseScreen {
         onBackdropPress={this._dismissSubmitModal.bind(this)}>
         <Card
           style={styles.dialog}
-          containerStyle={{
-            borderRadius: 5, padding: 0, marginStart: 30, marginEnd: 30, elevation: 3, shadowOpacity: 0.3,
-            shadowRadius: 6
-          }}>
-          <Text style={{ fontSize: 13, marginTop: 16, marginBottom: 16, marginStart: 16, marginEnd: 16 }}>
+          containerStyle={styles.containerCard}>
+          <Text style={styles.cancelOtpHeader}>
             {I18n.t('myPage.security.cancelOtpHeader')}
           </Text>
-          <View style={{ height: 1, backgroundColor: '#EBEBEB' }}/>
+          <View style={styles.crossBar}/>
           <Text
-            style={{ fontSize: 13, marginTop: 16, marginBottom: 3, marginStart: 16, marginEnd: 16, lineHeight: 20 }}>
+            style={styles.cancelOtpDesc}>
             {I18n.t('myPage.security.cancelOtpDesc')}
           </Text>
-          <Text style={{ fontSize: 13, marginBottom: 3, marginStart: 16, marginEnd: 16 }}>
+          <Text style={styles.otpVerificationNumber}>
             {I18n.t('myPage.security.otpVerificationNumber')}
           </Text>
           <TextInput
             style={styles.textInput}
             onChangeText={text => this._otpParams.otp = text}
             underlineColorAndroid='transparent'/>
-          <Text style={{ fontSize: 13, marginTop: 10, marginBottom: 3, marginStart: 16, marginEnd: 16 }}>
+          <Text style={styles.dialogRecoveryCode}>
             {I18n.t('myPage.security.dialogRecoveryCode')}
           </Text>
           <TextInput
@@ -287,19 +285,13 @@ export default class SecurityOverviewScreen extends BaseScreen {
           <TouchableOpacity
             style={styles.submitCancelOtpButton}
             onPress={this._onRemoveGoogleAuth.bind(this)}>
-            <Text style={{ fontSize: 13, color: '#FFF' }}>
+            <Text style={styles.cancelOtpSubmit}>
               {I18n.t('myPage.security.cancelOtpSubmit')}
             </Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.initVerificationButton}
                             onPress={this._onShowInitVerificationDialog.bind(this)}>
-            <Text style={{
-              fontSize: 13,
-              color: '#0070C0',
-              textDecorationStyle: 'solid',
-              textDecorationLine: 'underline',
-              textDecorationColor: '#0070C0'
-            }}>
+            <Text style={styles.initOtpVerification2}>
               {I18n.t('myPage.security.initOtpVerification')}
             </Text>
           </TouchableOpacity>
@@ -319,26 +311,24 @@ export default class SecurityOverviewScreen extends BaseScreen {
         onBackdropPress={this._dismissInitVerificationModal.bind(this)}>
         <Card
           style={styles.dialog}
-          containerStyle={{ borderRadius: 5, padding: 0, marginStart: 30, marginEnd: 30 }}>
-          <Text style={{ fontSize: 13, marginTop: 16, marginBottom: 16, marginStart: 16, marginEnd: 16 }}>
+          containerStyle={[styles.containerCard, styles.modalOtpVerification]}>
+          <Text style={styles.initOtpVerification}>
             {I18n.t('myPage.security.initOtpVerification')}
           </Text>
           <View style={{ height: 1, backgroundColor: '#EBEBEB' }}/>
-          <View style={{ flexDirection: 'column', marginTop: 16, marginStart: 16, marginEnd: 16 }}>
-            <Text style={{ fontSize: 14, lineHeight: 22, color: 'blue', alignSelf: 'flex-start' }}>
+          <View style={{ marginTop: 16, marginStart: 16, marginEnd: 16 }}>
+            <Text style={styles.initOtpVerificationDescRecoveryCode}>
               {I18n.t('myPage.security.initOtpVerificationDesc.recoveryCode')}
-              <Text style={{ fontSize: 14, lineHeight: 22, color: 'black', }}>
+              <Text style={{ color: 'black', }}>
                 {I18n.t('myPage.security.initOtpVerificationDesc.body')}
               </Text>
             </Text>
-            <View style={{ flexDirection: 'row' }}>
-              <Text style={{ fontSize: 14, lineHeight: 22 }}>
-                {I18n.t('myPage.security.initOtpVerificationDesc.email')}
-              </Text>
-              <Text style={{ fontSize: 14, fontWeight: 'bold', lineHeight: 22 }}>
+            <Text style={styles.initOtpVerificationDescEmail}>
+              {I18n.t('myPage.security.initOtpVerificationDesc.email')}
+              <Text style={{ ...Fonts.NanumGothic_Bold }}>
                 {I18n.t('myPage.security.initOtpVerificationDesc.emailAdress')}
               </Text>
-            </View>
+            </Text>
           </View>
           <ScrollView
             style={{
@@ -351,27 +341,27 @@ export default class SecurityOverviewScreen extends BaseScreen {
               borderColor: '#D9D9D9'
             }}
             contentContainerStyle={{ padding: 10 }}>
-            <View style={{ flexDirection: 'row' }}>
-              <Text style={{ fontSize: 13, fontWeight: 'bold', lineHeight: 20 }}>
+            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+              <Text style={styles.initOtpVerificationInstructionBold}>
                 {I18n.t('myPage.security.initOtpVerificationInstruction.emailSuject')}
               </Text>
-              <Text style={{ fontSize: 13, lineHeight: 20 }}>
+              <Text style={styles.initOtpVerificationInstructionRegular}>
                 {I18n.t('myPage.security.initOtpVerificationInstruction.contentEmailSuject')}
               </Text>
             </View>
             <View style={{ flexDirection: 'column' }}>
-              <Text style={{ fontSize: 13, fontWeight: 'bold', lineHeight: 20 }}>
+              <Text style={styles.initOtpVerificationInstructionBold}>
                 {I18n.t('myPage.security.initOtpVerificationInstruction.emailBody')}
               </Text>
-              <Text style={{ fontSize: 13, lineHeight: 20 }}>
+              <Text style={styles.initOtpVerificationInstructionRegular}>
                 {I18n.t('myPage.security.initOtpVerificationInstruction.contentEmailBody')}
               </Text>
             </View>
             <View style={{ flexDirection: 'column' }}>
-              <Text style={{ fontSize: 13, fontWeight: 'bold', lineHeight: 20 }}>
+              <Text style={styles.initOtpVerificationInstructionBold}>
                 {I18n.t('myPage.security.initOtpVerificationInstruction.attachment')}
               </Text>
-              <Text style={{ fontSize: 13, lineHeight: 20 }}>
+              <Text style={styles.initOtpVerificationInstructionRegular}>
                 {I18n.t('myPage.security.initOtpVerificationInstruction.contentAttachment')}
               </Text>
             </View>
@@ -379,7 +369,7 @@ export default class SecurityOverviewScreen extends BaseScreen {
           <TouchableOpacity
             style={[styles.submitCancelOtpButton, { marginTop: 20, marginBottom: 30 }]}
             onPress={this._dismissInitVerificationModal.bind(this)}>
-            <Text style={{ fontSize: 13, color: '#FFF' }}>
+            <Text style={{ fontSize: 13, color: '#FFF', ...Fonts.NanumGothic_Regular }}>
               {I18n.t('myPage.security.cancelOtpSubmit')}
             </Text>
           </TouchableOpacity>
@@ -755,20 +745,20 @@ export default class SecurityOverviewScreen extends BaseScreen {
   }
 }
 
-const styles = StyleSheet.create({
+const styles = ScaledSheet.create({
   listView: {
     flex: 1,
   },
   listItem: {
-    height: 64,
+    height: '64@s',
     flexDirection: 'row',
     alignItems: 'center',
-    paddingLeft: 20,
-    paddingRight: 20
+    paddingLeft: '20@s',
+    paddingRight: '20@s'
   },
   separator: {
     flex: 1,
-    height: 1,
+    height: '1@s',
     backgroundColor: '#DEE3EB',
     opacity: 0.3
   },
@@ -778,7 +768,7 @@ const styles = StyleSheet.create({
   },
   iconContainer: {
     flex: 1,
-    marginEnd: 30,
+    marginEnd: '30@s',
     justifyContent: 'center',
     alignItems: 'center'
   },
@@ -791,83 +781,166 @@ const styles = StyleSheet.create({
     justifyContent: 'center'
   },
   text: {
-    fontSize: 14,
+    fontSize: '14@s',
+    ...Fonts.NanumGothic_Regular
   },
   activeButton: {
-    borderRadius: 5,
-    height: 40,
+    borderRadius: '5@s',
+    height: '40@s',
     backgroundColor: '#0070C0',
     justifyContent: 'center'
   },
   inactiveButton: {
-    borderRadius: 5,
-    height: 40,
+    borderRadius: '5@s',
+    height: '40@s',
     backgroundColor: '#BFBFBF',
     justifyContent: 'center'
   },
   cancelOtpButton: {
-    borderRadius: 5,
-    height: 40,
+    borderRadius: '5@s',
+    height: '40@s',
     justifyContent: 'center',
     alignItems: 'center',
-    borderWidth: 1,
+    borderWidth: '1@s',
     borderColor: '#FF3300',
-    marginEnd: 30
+    marginEnd: '30@s'
   },
   dialog: {
-    marginStart: 40,
-    marginEnd: 40,
+    marginStart: '40@s',
+    marginEnd: '40@s',
     backgroundColor: '#FFF'
   },
   textInput: {
-    height: 40,
-    borderRadius: 5,
-    borderWidth: 1,
+    height: '40@s',
+    borderRadius: '5@s',
+    borderWidth: '1@s',
     borderColor: '#BFBFBF',
-    marginStart: 16,
-    marginEnd: 16
+    marginStart: '16@s',
+    marginEnd: '16@s',
+    paddingLeft: '16@s',
+    paddingRight: '16@s'
   },
   submitCancelOtpButton: {
-    marginTop: 30,
-    marginStart: 16,
-    marginEnd: 16,
-    height: 40,
+    marginTop: '30@s',
+    marginStart: '16@s',
+    marginEnd: '16@s',
+    height: '40@s',
     backgroundColor: '#0070C0',
-    borderRadius: 5,
+    borderRadius: '5@s',
     alignItems: 'center',
     justifyContent: 'center'
   },
   initVerificationButton: {
-    marginTop: 20,
-    marginBottom: 30,
-    marginStart: 16,
-    marginEnd: 16,
-    height: 40,
+    marginTop: '20@s',
+    marginBottom: '30@s',
+    marginStart: '16@s',
+    marginEnd: '16@s',
+    height: '40@s',
     alignItems: 'center',
     justifyContent: 'center'
   },
   bankAccountTitle: {
-    fontSize: 13,
-    marginTop: 16,
-    marginStart: 16,
-    marginEnd: 16
+    fontSize: '13@s',
+    marginTop: '16@s',
+    marginStart: '16@s',
+    marginEnd: '16@s'
   },
   bankAccountTextInput: {
-    marginTop: 2,
-    marginStart: 16,
-    marginEnd: 16,
-    height: 40,
+    marginTop: '2@s',
+    marginStart: '16@s',
+    marginEnd: '16@s',
+    height: '40@s',
     borderColor: '#D9D9D9',
-    borderRadius: 5,
-    borderWidth: 1
+    borderRadius: '5@s',
+    borderWidth: '1@s'
   },
   bankAccountPicker: {
-    marginTop: 2,
-    marginStart: 16,
-    marginEnd: 16,
-    height: 40,
+    marginTop: '2@s',
+    marginStart: '16@s',
+    marginEnd: '16@s',
+    height: '40@s',
     borderColor: '#D9D9D9',
-    borderRadius: 5,
-    borderWidth: 1,
+    borderRadius: '5@s',
+    borderWidth: '1@s',
+  },
+  containerCard: {
+    borderRadius: '5@s',
+    marginStart: '30@s',
+    marginEnd: '30@s',
+    elevation: 3,
+    shadowOpacity: 0.3,
+    shadowRadius: '6@s',
+    padding: 0
+  },
+  modalOtpVerification: {
+    marginStart: '3@s',
+    marginEnd: '3@s',
+  },
+  cancelOtpHeader: {
+    fontSize: '13@s',
+    marginTop: '16@s',
+    marginBottom: '16@s',
+    marginStart: '16@s',
+    marginEnd: '16@s',
+    lineHeight: '22@s',
+    ...Fonts.NanumGothic_Regular
+  },
+  otpVerificationNumber: {
+    fontSize: '13@s',
+    marginBottom: '3@s',
+    marginStart: '16@s',
+    marginEnd: '16@s',
+    ...Fonts.NanumGothic_Regular
+  },
+  initOtpVerification: {
+    fontSize: '13@s',
+    marginTop: '16@s',
+    marginBottom: '16@s',
+    marginStart: '16@s',
+    marginEnd: '16@s',
+    ...Fonts.NanumGothic_Regular
+  },
+  initOtpVerificationDescRecoveryCode: {
+    fontSize: '14@s', lineHeight: '22@s', color: 'blue', ...Fonts.NanumGothic_Regular
+  },
+  initOtpVerificationInstructionBold: {
+    fontSize: '13@s', lineHeight: '22@s', ...Fonts.NanumGothic_Bold
+  },
+  initOtpVerificationDescEmail: {
+    fontSize: '14@s', lineHeight: '22@s', ...Fonts.NanumGothic_Regular
+  },
+  initOtpVerificationInstructionRegular: {
+    fontSize: '13@s', lineHeight: '22@s', ...Fonts.NanumGothic_Regular
+  },
+  crossBar: {
+    height: '1@s', backgroundColor: '#EBEBEB'
+  },
+  cancelOtpDesc: {
+    fontSize: '13@s',
+    marginTop: '16@s',
+    marginBottom: '3@s',
+    marginStart: '16@s',
+    marginEnd: '16@s',
+    lineHeight: '22@s',
+    ...Fonts.NanumGothic_Regular
+  },
+  dialogRecoveryCode: {
+    fontSize: '13@s',
+    marginBottom: '3@s',
+    marginStart: '16@s',
+    marginEnd: '16@s',
+    ...Fonts.NanumGothic_Regular,
+    marginTop: '16@s'
+  },
+  cancelOtpSubmit: {
+    fontSize: '13@s', color: '#FFF', ...Fonts.NanumGothic_Regular
+  },
+  initOtpVerification2:{
+    fontSize: '13@s',
+    color: '#0070C0',
+    textDecorationStyle: 'solid',
+    textDecorationLine: 'underline',
+    textDecorationColor: '#0070C0',
+    ...Fonts.NanumGothic_Bold
   }
 });

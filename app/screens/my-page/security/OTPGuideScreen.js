@@ -9,10 +9,9 @@ import {
 import ScaledSheet from '../../../libs/reactSizeMatter/ScaledSheet';
 import LinearGradient from 'react-native-linear-gradient';
 import BaseScreen from '../../BaseScreen';
-import { CommonStyles } from '../../../utils/CommonStyles';
+import { CommonStyles, Fonts } from '../../../utils/CommonStyles';
 import I18n from '../../../i18n/i18n';
-
-const GoogleAuthIcon = require('../../../../assets/common/googleAuthBig.png')
+const GoogleAuthIcon = require('../../../../assets/common/googleAuthBig.png');
 const SmallAppleIcon = require('../../../../assets/common/appleSmall.png');
 const SmallAndroidIcon = require('../../../../assets/common/androidSmall.png');
 const SmallAppStoreIcon = require('../../../../assets/common/appStoreSmall.png');
@@ -115,12 +114,14 @@ const styles = ScaledSheet.create({
   textHeader: {
     marginTop: '30@s',
     textAlign: 'center',
-    fontSize: 13
+    fontSize: '13@s',
+    ...Fonts.NanumGothic_Regular
   },
   googleAuthText: {
-    fontSize: 18,
+    fontSize: '18@s',
     flex: 1,
-    fontWeight: 'bold'
+    fontWeight: 'bold',
+    ...Fonts.OpenSans
   },
   googleAuthContainer: {
     flexDirection: 'row',
@@ -128,21 +129,22 @@ const styles = ScaledSheet.create({
     marginBottom: '20@s',
     marginStart: '20@s',
     marginEnd: '20@s',
-    height: '100@s',
-    // alignSelf: 'center'
+    height: '100@s'
   },
   text: {
-    fontSize: 14,
+    fontSize: '14@s',
+    ...Fonts.OpenSans
   },
   storeInfoText: {
-    fontSize: 12
+    fontSize: '12@s',
+    ...Fonts.OpenSans
   },
   nextButton: {
     height: '40@s',
     width: '300@s',
     alignSelf: 'center',
     marginTop: '30@s',
-    borderRadius: 5,
+    borderRadius: '5@s',
     overflow: 'hidden'
   },
   storeContainer: {

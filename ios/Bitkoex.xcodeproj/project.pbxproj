@@ -67,6 +67,9 @@
 		FF30C7E4F4A542C3970FB74B /* SimpleLineIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 26C07C0E65D1464CA7DFDD4B /* SimpleLineIcons.ttf */; };
 		4CB4640280AF4A8CAC3E3DA4 /* OpenSans-Semibold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 33DBA13F59204150A0B5CD50 /* OpenSans-Semibold.ttf */; };
 		3ABE680C130C49F1BCFA17AB /* NotoSans-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 93E0603003A6462DB19B8192 /* NotoSans-Bold.ttf */; };
+		BE99D7F734454DB797E98CDA /* NanumGothic-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = B47CE6BD35124674B27A6D6F /* NanumGothic-Regular.ttf */; };
+		5EA3F76CA5C14C8DB5A5B776 /* NanumGothic-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 01F6427A3CF74A2A9F70746F /* NanumGothic-Bold.ttf */; };
+		8093A770FE0C4303BC4FC71D /* NanumGothic-ExtraBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = FA3CAB84CE1F4C3199DA2ADA /* NanumGothic-ExtraBold.ttf */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -529,6 +532,9 @@
 		EE6F31E358914ED6A9F017E2 /* libRNI18n.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libRNI18n.a; sourceTree = "<group>"; };
 		33DBA13F59204150A0B5CD50 /* OpenSans-Semibold.ttf */ = {isa = PBXFileReference; name = "OpenSans-Semibold.ttf"; path = "../assets/fonts/OpenSans-Semibold.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
 		93E0603003A6462DB19B8192 /* NotoSans-Bold.ttf */ = {isa = PBXFileReference; name = "NotoSans-Bold.ttf"; path = "../assets/fonts/NotoSans-Bold.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		B47CE6BD35124674B27A6D6F /* NanumGothic-Regular.ttf */ = {isa = PBXFileReference; name = "NanumGothic-Regular.ttf"; path = "../assets/fonts/NanumGothic-Regular.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		01F6427A3CF74A2A9F70746F /* NanumGothic-Bold.ttf */ = {isa = PBXFileReference; name = "NanumGothic-Bold.ttf"; path = "../assets/fonts/NanumGothic-Bold.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		FA3CAB84CE1F4C3199DA2ADA /* NanumGothic-ExtraBold.ttf */ = {isa = PBXFileReference; name = "NanumGothic-ExtraBold.ttf"; path = "../assets/fonts/NanumGothic-ExtraBold.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -677,6 +683,9 @@
 				3645FDC933DA40DEB978F70A /* NanumSquareOTFBold.otf */,
 				33DBA13F59204150A0B5CD50 /* OpenSans-Semibold.ttf */,
 				93E0603003A6462DB19B8192 /* NotoSans-Bold.ttf */,
+				B47CE6BD35124674B27A6D6F /* NanumGothic-Regular.ttf */,
+				01F6427A3CF74A2A9F70746F /* NanumGothic-Bold.ttf */,
+				FA3CAB84CE1F4C3199DA2ADA /* NanumGothic-ExtraBold.ttf */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -1553,6 +1562,9 @@
 				BF74D433CFCE41A9A2002A7B /* NanumSquareOTFBold.otf in Resources */,
 				4CB4640280AF4A8CAC3E3DA4 /* OpenSans-Semibold.ttf in Resources */,
 				3ABE680C130C49F1BCFA17AB /* NotoSans-Bold.ttf in Resources */,
+				BE99D7F734454DB797E98CDA /* NanumGothic-Regular.ttf in Resources */,
+				5EA3F76CA5C14C8DB5A5B776 /* NanumGothic-Bold.ttf in Resources */,
+				8093A770FE0C4303BC4FC71D /* NanumGothic-ExtraBold.ttf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
