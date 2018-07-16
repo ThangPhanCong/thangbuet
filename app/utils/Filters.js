@@ -14,8 +14,12 @@ function formatCurrency(amount, currency, zeroValue) {
   return amount ? Numeral(amount).format(format) : zeroValue;
 }
 
-function formatPercent(value) {
-  return Numeral(value).format("0.00") + "%";
+function formatPercent(value, onlyFormat) {
+  if (onlyFormat) {
+    return Numeral(value).format("0.00")
+  } else {
+    return Numeral(value).format("0.00") + "%";
+  }
 };
 
 function getCurrencyName(value) {
