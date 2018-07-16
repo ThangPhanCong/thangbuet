@@ -23,11 +23,11 @@ import MarketScreen from './MarketScreen';
 import rf from '../../libs/RequestFactory';
 import _ from 'lodash';
 import ScaledSheet from "../../libs/reactSizeMatter/ScaledSheet";
+import { scale } from "../../libs/reactSizeMatter/scalingUtils";
 
 let TabBarNavigator;
 
 class MarketSearchScreen extends BaseScreen {
-  heightListSearch = 0;
   _refs = {};
 
   _searchInputWidth = 0;
@@ -93,16 +93,12 @@ class MarketSearchScreen extends BaseScreen {
       <View
         style={{
           position: 'absolute',
-          top: 50,
-          left: 0,
+          top: scale(50),
+          left: scale(97),
           right: 0,
           bottom: 0,
-          zIndex: 99,
-          backgroundColor: 'transparent'
         }}>
-        <TouchableWithoutFeedback
-          // style={{flex: 1}}
-          onPress={this._dismissSearchList.bind(this)}>
+        <TouchableWithoutFeedback onPress={this._dismissSearchList.bind(this)}>
           <View
             style={[styles.searchResult, { width: this._searchInputWidth }]}>
             <FlatList
@@ -328,10 +324,6 @@ const styles = ScaledSheet.create({
     borderRadius: '2@s',
     borderWidth: '1@s',
     backgroundColor: '#FFF',
-    position: 'absolute',
-    right: '16@s',
-    top: 0,
-    bottom: 0
   }
 });
 
