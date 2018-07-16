@@ -124,7 +124,6 @@ const styles = ScaledSheet.create({
   googleAuthText: {
     fontSize: '18@s',
     flex: 1,
-    fontWeight: 'bold',
     ...Fonts.OpenSans
   },
   googleAuthContainer: {
@@ -139,7 +138,7 @@ const styles = ScaledSheet.create({
   },
   storeInfoText: {
     fontSize: '12@s',
-    ...Fonts.OpenSans
+    ...Fonts.OpenSans_Light
   },
   nextButton: {
     height: '40@s',

@@ -249,11 +249,12 @@ const styles = ScaledSheet.create({
   title: {
     marginBottom: '5@s',
     fontSize: '12@s',
-    ...Fonts.OpenSans
+    ...Fonts.OpenSans_Light
   },
   buttonText: {
     color: '#FFF',
     fontSize: '12@s',
+    fontWeight: 'bold',
     ...Fonts.OpenSans
   },
   otpInput: {

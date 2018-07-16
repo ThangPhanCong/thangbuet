@@ -1,6 +1,5 @@
 import React from 'react';
 import {
-  StyleSheet,
   Text,
   View,
   Image,
@@ -20,8 +19,8 @@ import rf from '../../../libs/RequestFactory';
 import I18n from '../../../i18n/i18n';
 import _ from 'lodash';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import AppConfig from '../../../utils/AppConfig';
 import ScaledSheet from '../../../libs/reactSizeMatter/ScaledSheet';
+import { scale } from '../../../libs/reactSizeMatter/scalingUtils';
 import { Fonts } from '../../../utils/CommonStyles';
 // const DownArrowIcon = require('../../../../assets/common/caretdown.png');
 
@@ -120,7 +119,6 @@ export default class SecurityOverviewScreen extends BaseScreen {
         {this._renderSubmitModal()}
         {this._renderInitVerificationModal()}
         {this._renderRegisterPhoneModal()}
-        {this._renderExistedPhoneModal()}
         {this._renderBankAccountModal()}
         {this._renderChangePasswordModal()}
       </View>
@@ -304,6 +302,7 @@ export default class SecurityOverviewScreen extends BaseScreen {
     )
   }
 
+  // TODO: Refactor string localization
   _renderInitVerificationModal() {
     return (
       <Modal
@@ -318,8 +317,8 @@ export default class SecurityOverviewScreen extends BaseScreen {
           <Text style={styles.initOtpVerification}>
             {I18n.t('myPage.security.initOtpVerification')}
           </Text>
-          <View style={{ height: 1, backgroundColor: '#EBEBEB' }}/>
-          <View style={{ marginTop: 16, marginStart: 16, marginEnd: 16 }}>
+          <View style={styles.crossBar}/>
+          <View style={{ marginTop: scale(16), marginStart: scale(16), marginEnd: scale(16) }}>
             <Text style={styles.initOtpVerificationDescRecoveryCode}>
               {I18n.t('myPage.security.initOtpVerificationDesc.recoveryCode')}
               <Text style={{ color: 'black', }}>
@@ -334,16 +333,8 @@ export default class SecurityOverviewScreen extends BaseScreen {
             </Text>
           </View>
           <ScrollView
-            style={{
-              marginTop: 8,
-              marginStart: 16,
-              marginEnd: 16,
-              height: 200,
-              borderRadius: 5,
-              borderWidth: 1,
-              borderColor: '#D9D9D9'
-            }}
-            contentContainerStyle={{ padding: 10 }}>
+            style={styles.initVerificationScrollView}
+            contentContainerStyle={{ padding: scale(10) }}>
             <View style={{ flexDirection: 'row', alignItems: 'center' }}>
               <Text style={styles.initOtpVerificationInstructionBold}>
                 {I18n.t('myPage.security.initOtpVerificationInstruction.emailSuject')}
@@ -370,7 +361,7 @@ export default class SecurityOverviewScreen extends BaseScreen {
             </View>
           </ScrollView>
           <TouchableOpacity
-            style={[styles.submitCancelOtpButton, { marginTop: 20, marginBottom: 30 }]}
+            style={[styles.submitCancelOtpButton, { marginTop: scale(20), marginBottom: scale(30) }]}
             onPress={this._dismissInitVerificationModal.bind(this)}>
             <Text style={{ fontSize: 13, color: '#FFF', ...Fonts.NanumGothic_Regular }}>
               {I18n.t('myPage.security.cancelOtpSubmit')}
@@ -391,13 +382,7 @@ export default class SecurityOverviewScreen extends BaseScreen {
         onBackdropPress={this._dismissRegisterPhoneModal.bind(this)}>
         <Card
           style={styles.dialog}
-          containerStyle={{
-            borderRadius: 5,
-            padding: 0,
-            marginStart: 10,
-            marginEnd: 10,
-            height: 0.8 * Dimensions.get('window').height
-          }}
+          containerStyle={styles.registerPhoneContainer}
           wrapperStyle={{ flex: 1 }}>
           <WebView
             source={{ html: submitPhoneHtmlString.format(this._verifyPhoneResult.sEncryptedData, this._verifyPhoneResult.postretUrl, this._verifyPhoneResult.postcpid) }}
@@ -409,31 +394,31 @@ export default class SecurityOverviewScreen extends BaseScreen {
     )
   }
 
-  _renderExistedPhoneModal() {
-    return (
-      <Modal
-        isVisible={this.state.existedPhoneDialogVisible}
-        avoidKeyboard={true}
-        useNativeDriver={true}
-        backdropColor='transparent'
-        onBackdropPress={this._dismissExistedPhoneModal.bind(this)}>
-        <Card
-          style={styles.dialog}
-          containerStyle={{ borderRadius: 5, padding: 0, marginStart: 30, marginEnd: 30 }}>
-          <Text style={{ fontSize: 13, marginTop: 16, marginBottom: 16, marginStart: 16, marginEnd: 16 }}>
-            {I18n.t('myPage.security.existedPhoneHeader')}
-          </Text>
-          <TouchableOpacity
-            style={[styles.submitCancelOtpButton, { marginTop: 20, marginBottom: 30 }]}
-            onPress={this._dismissExistedPhoneModal.bind(this)}>
-            <Text style={{ fontSize: 13, color: '#FFF', marginStart: 20, marginEnd: 20 }}>
-              {I18n.t('myPage.security.existedPhoneButtonText')}
-            </Text>
-          </TouchableOpacity>
-        </Card>
-      </Modal>
-    )
-  }
+  // _renderExistedPhoneModal() {
+  //   return (
+  //     <Modal
+  //       isVisible={this.state.existedPhoneDialogVisible}
+  //       avoidKeyboard={true}
+  //       useNativeDriver={true}
+  //       backdropColor='transparent'
+  //       onBackdropPress={this._dismissExistedPhoneModal.bind(this)}>
+  //       <Card
+  //         style={styles.dialog}
+  //         containerStyle={{ borderRadius: 5, padding: 0, marginStart: 30, marginEnd: 30 }}>
+  //         <Text style={{ fontSize: 13, marginTop: 16, marginBottom: 16, marginStart: 16, marginEnd: 16 }}>
+  //           {I18n.t('myPage.security.existedPhoneHeader')}
+  //         </Text>
+  //         <TouchableOpacity
+  //           style={[styles.submitCancelOtpButton, { marginTop: 20, marginBottom: 30 }]}
+  //           onPress={this._dismissExistedPhoneModal.bind(this)}>
+  //           <Text style={{ fontSize: 13, color: '#FFF', marginStart: 20, marginEnd: 20 }}>
+  //             {I18n.t('myPage.security.existedPhoneButtonText')}
+  //           </Text>
+  //         </TouchableOpacity>
+  //       </Card>
+  //     </Modal>
+  //   )
+  // }
 
   _renderBankAccountModal() {
     return (
@@ -510,11 +495,11 @@ export default class SecurityOverviewScreen extends BaseScreen {
 
   _calculateModalHeight() {
     if (this._banks.length == 0)
-      return 39;
+      return scale(39);
     if (this._banks.length > 3)
-      return 120;
+      return scale(120);
 
-    return this._banks.length * 39;
+    return this._banks.length * scale(39);
   }
 
   _renderBankItems() {
@@ -839,6 +824,15 @@ const styles = ScaledSheet.create({
     alignItems: 'center',
     justifyContent: 'center'
   },
+  initVerificationScrollView: {
+    marginTop: '8@s',
+    marginStart: '16@s',
+    marginEnd: '16@s',
+    height: '200@s',
+    borderRadius: '5@s',
+    borderWidth: '1@s',
+    borderColor: '#D9D9D9'
+  },
   bankAccountTitle: {
     fontSize: '13@s',
     marginTop: '16@s',
@@ -876,6 +870,13 @@ const styles = ScaledSheet.create({
     shadowRadius: '6@s',
     padding: 0
   },
+  registerPhoneContainer: {
+    borderRadius: '5@s',
+    padding: 0,
+    marginStart: '10@s',
+    marginEnd: '10@s',
+    height: 0.8 * Dimensions.get('window').height
+  },
   modalOtpVerification: {
     marginStart: '3@s',
     marginEnd: '3@s',
@@ -905,19 +906,29 @@ const styles = ScaledSheet.create({
     ...Fonts.NanumGothic_Regular
   },
   initOtpVerificationDescRecoveryCode: {
-    fontSize: '14@s', lineHeight: '22@s', color: 'blue', ...Fonts.NanumGothic_Regular
+    fontSize: '14@s',
+    lineHeight: '22@s',
+    color: 'blue',
+    ...Fonts.NanumGothic_Regular
   },
   initOtpVerificationInstructionBold: {
-    fontSize: '13@s', lineHeight: '22@s', ...Fonts.NanumGothic_Bold
+    fontSize: '13@s',
+    lineHeight: '22@s',
+    ...Fonts.NanumGothic_Bold
   },
   initOtpVerificationDescEmail: {
-    fontSize: '14@s', lineHeight: '22@s', ...Fonts.NanumGothic_Regular
+    fontSize: '14@s',
+    lineHeight: '22@s',
+    ...Fonts.NanumGothic_Regular
   },
   initOtpVerificationInstructionRegular: {
-    fontSize: '13@s', lineHeight: '22@s', ...Fonts.NanumGothic_Regular
+    fontSize: '13@s',
+    lineHeight: '22@s',
+    ...Fonts.NanumGothic_Regular
   },
   crossBar: {
-    height: '1@s', backgroundColor: '#EBEBEB'
+    height: '1@s',
+    backgroundColor: '#EBEBEB'
   },
   cancelOtpDesc: {
     fontSize: '13@s',
@@ -937,7 +948,9 @@ const styles = ScaledSheet.create({
     marginTop: '16@s'
   },
   cancelOtpSubmit: {
-    fontSize: '13@s', color: '#FFF', ...Fonts.NanumGothic_Regular
+    fontSize: '13@s',
+    color: '#FFF',
+    ...Fonts.NanumGothic_Regular
   },
   initOtpVerification2: {
     fontSize: '13@s',

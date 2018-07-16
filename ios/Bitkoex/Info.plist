@@ -52,6 +52,7 @@
 		<string>NanumGothic-Bold.ttf</string>
 		<string>NanumGothic-ExtraBold.ttf</string>
 		<string>NanumGothic-Regular.ttf</string>
+		<string>OpenSans-Light.ttf</string>
 	</array>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
