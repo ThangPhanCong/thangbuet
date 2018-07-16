@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button, Image, SafeAreaView, ScrollView, Text, View } from 'react-native';
+import { TouchableOpacity, Image, SafeAreaView, ScrollView, Text, View } from 'react-native';
 import BaseScreen from '../BaseScreen'
 import MasterdataUtils from '../../utils/MasterdataUtils'
 import ScaledSheet from '../../libs/reactSizeMatter/ScaledSheet'
@@ -160,20 +160,29 @@ export default class BalanceScreen extends BaseScreen {
                       {symbol.code !== 'krw' && parseFloat(symbol.balance)}
                     </Text>
                     <View style={styles.action}>
-                      <Button title={I18n.t('balances.deposit')} onPress={() => {
-                        if (symbol.code == 'krw') {
-                          this.navigate('DepositKRW', { symbol })
-                        } else {
-                          this.navigate('Deposit', { symbol })
-                        }
-                      }} />
-                      <Button title={I18n.t('balances.withdrawal')} onPress={() => {
-                        if (symbol.code == 'krw') {
-                          this.navigate('WithdrawalKRW', { symbol })
-                        } else {
-                          this.navigate('Withdrawal', { symbol })
-                        }
-                      }} />
+                      <TouchableOpacity
+                        style={styles.btnRow}
+                        onPress={() => {
+                          if (symbol.code == 'krw') {
+                            this.navigate('DepositKRW', { symbol })
+                          } else {
+                            this.navigate('Deposit', { symbol })
+                          }
+                        }}>
+                        <Text style={styles.btnText}>{I18n.t('balances.deposit')}</Text>
+                      </TouchableOpacity>
+
+                      <TouchableOpacity
+                        style={styles.btnRow}
+                        onPress={() => {
+                          if (symbol.code == 'krw') {
+                            this.navigate('WithdrawalKRW', { symbol })
+                          } else {
+                            this.navigate('Withdrawal', { symbol })
+                          }
+                        }}>
+                        <Text style={styles.btnText}>{I18n.t('balances.withdrawal')}</Text>
+                      </TouchableOpacity>
                     </View>
                   </View>
                 ))
@@ -218,4 +227,10 @@ const styles = ScaledSheet.create({
   textHeader: { flex: 1, textAlign: 'center', ...Fonts.NotoSans_Regular, fontSize: '12@s' },
   rowCoinName: { ...Fonts.OpenSans, fontWeight: 'bold', fontSize: '12@s', textAlign: 'left' },
   rowNumber: { ...Fonts.OpenSans, fontSize: '12@s', textAlign: 'right' },
+  btnText: {
+    ...Fonts.NanumGothic_Regular, fontSize: '12@s', color: 'rgba(0, 0, 0, 1)'
+  },
+  btnRow: {
+
+  }
 });
