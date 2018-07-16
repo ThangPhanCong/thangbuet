@@ -221,7 +221,7 @@ const styles = ScaledSheet.create({
   },
   normalHeader: {
     color: '#000',
-    fontSize: '13@s',
+    fontSize: '12@s',
     ...Fonts.NanumGothic_Bold,
   },
   tabBar: {
@@ -233,7 +233,7 @@ const styles = ScaledSheet.create({
     paddingRight: '10@s',
   },
   valueItem: {
-    fontSize: '13@s',
+    fontSize: '12@s',
     textAlign: 'center',
     ...Fonts.NanumGothic_Regular,
   }

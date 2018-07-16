@@ -18,7 +18,7 @@ export default class UIUtils {
       flex: 1,
       color: textColor,
       textAlign: 'center',
-      fontSize: scale(16),
+      fontSize: scale(options.fontSize || 16),
       ...Fonts.NotoSans
     };
     const separatorStyle = {
@@ -27,6 +27,7 @@ export default class UIUtils {
       backgroundColor: '#E0E0E0'
 
     }
+
     return (
       <View style={tabStyle}>
         <Text style={labelStyle}>{text}</Text>
