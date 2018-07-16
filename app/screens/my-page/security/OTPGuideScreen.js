@@ -36,9 +36,9 @@ export default class OTPGuideScreen extends BaseScreen {
             <View style={styles.googleAuthInfoSpace}/>
             <View style={styles.storeContainer}>
               <View style={{flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
-                <View style={{flex: 2, flexDirection: 'row', justifyContent: 'flex-start'}}>
+                <View style={{flex: 2, flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
                   <Image
-                    style={{flex: 1}}
+                    style={{flex: 1, alignSelf: 'center'}}
                     source={SmallAppleIcon}
                     resizeMode='contain'/>
                   <View style = {styles.storeInfoHorizontalSpace}/>
@@ -48,9 +48,9 @@ export default class OTPGuideScreen extends BaseScreen {
                   </Text>
                 </View>
                 <View style = {styles.storeInfoHorizontalSpace}/>
-                <View style={{flex: 5, flexDirection: 'row', justifyContent: 'flex-start'}}>
+                <View style={{flex: 5, flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
                   <Image
-                    style={{flex: 1}}
+                    style={{flex: 1, alignSelf: 'center'}}
                     source={SmallAppStoreIcon}
                     resizeMode='contain'/>
                   <View style = {styles.storeInfoHorizontalSpace}/>
@@ -62,9 +62,9 @@ export default class OTPGuideScreen extends BaseScreen {
               </View>
               <View style={styles.storeInfoVerticalSpace} />
               <View style={{flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
-                <View style={{flex: 2, flexDirection: 'row', justifyContent: 'flex-start'}}>
+                <View style={{flex: 2, flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
                   <Image
-                    style={{flex: 1}}
+                    style={{flex: 1, alignSelf: 'center'}}
                     source={SmallAndroidIcon}
                     resizeMode='contain'/>
                   <View style = {styles.storeInfoHorizontalSpace}/>
@@ -74,9 +74,9 @@ export default class OTPGuideScreen extends BaseScreen {
                   </Text>
                 </View>
                 <View style = {styles.storeInfoHorizontalSpace}/>
-                <View style={{flex: 5, flexDirection: 'row', justifyContent: 'flex-start'}}>
+                <View style={{flex: 5, flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
                   <Image
-                    style={{flex: 1}}
+                    style={{flex: 1, alignSelf: 'center'}}
                     source={SmallPlayStoreIcon}
                     resizeMode='contain'/>
                   <View style = {styles.storeInfoHorizontalSpace}/>
