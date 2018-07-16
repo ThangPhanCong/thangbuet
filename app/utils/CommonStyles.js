@@ -109,17 +109,20 @@ const iOSFonts = {
     fontFamily: 'OpenSans-Regular',
   },
   OpenSans_Bold: {
-    fontFamily: 'OpenSans-Bold',
+    fontFamily: 'OpenSans-Semibold'
     fontWeight: '700'
   },
   NotoSans: {
-    fontFamily: 'NotoSans'
+    fontFamily: 'NotoSans-Regular'
   },
+  // NotoSans_Bold: {
+  //   fontFamily: 'NotoSans',
+  //   fontWeight: '700'
+  // },
   NotoSans_Bold: {
-    fontFamily: 'NotoSans',
-    fontWeight: '700'
+    fontFamily: 'NotoSansCJKkr-Bold',
   },
-  NotoSansCJKkr_Regular: {
+  NotoSans_Regular: {
     fontFamily: 'NotoSansCJKkr-Regular'
   }
 };
@@ -135,12 +138,12 @@ const androidFonts = {
     fontFamily: 'OpenSans-Semibold'
   },
   NotoSans: {
-    fontFamily: 'NotoSans-Regular'
+    fontFamily: 'NotoSansCJKkr-Regular'
   },
   NotoSans_Bold: {
-    fontFamily: 'NotoSans-Bold'
+    fontFamily: 'NotoSansCJKkr-Bold'
   },
-  NotoSansCJKkr_Regular: {
+  NotoSans_Regular: {
     fontFamily: 'NotoSansCJKkr-Regular'
   }
 };

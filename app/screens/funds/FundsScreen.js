@@ -1,16 +1,5 @@
 import React from 'react';
-import {
-  PixelRatio,
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
-  Image,
-  SafeAreaView,
-  ScrollView,
-  Modal
-} from 'react-native';
+import { Image, Modal, SafeAreaView, ScrollView, Text, TouchableOpacity, View } from 'react-native'
 import BaseScreen from '../BaseScreen'
 import MasterdataUtils from '../../utils/MasterdataUtils'
 import ScaledSheet from '../../libs/reactSizeMatter/ScaledSheet'
@@ -297,13 +286,13 @@ const styles = ScaledSheet.create({
     alignItems: 'center', justifyContent: 'center', borderBottomWidth: '1@s'
   },
   tableRowDetail: { flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-start' },
-  fontNotoSansRegular: { ...Fonts.NotoSansCJKkr_Regular },
+  fontNotoSansRegular: { ...Fonts.NotoSans_Regular },
   headerText: { fontSize: '12@s', lineHeight: '20@s' },
   fontOpenSans: { ...Fonts.OpenSans },
   headerNumber: { fontSize: '14@s' },
   headerSymbol: { flex: 0.5, fontSize: '8@s', textAlign: 'left', ...Fonts.OpenSans },
   iconLogo: { height: '20@s', width: '20@s', margin: '2@s' },
-  tableHeaderText: { ...Fonts.NotoSansCJKkr_Regular, fontSize: '12@s', textAlign: 'right' },
+  tableHeaderText: { ...Fonts.NotoSans_Regular, fontSize: '12@s', textAlign: 'right' },
   iconRow: { width: '20@s', height: '20@s', marginRight: '8@s', marginLeft: '8@s' },
   rowCoinName: { ...Fonts.OpenSans, fontWeight: 'bold', fontSize: '12@s', textAlign: 'left' },
   rowNumber: { ...Fonts.OpenSans, fontSize: '12@s', textAlign: 'right' },

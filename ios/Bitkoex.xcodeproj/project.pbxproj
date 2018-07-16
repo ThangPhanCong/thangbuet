@@ -68,6 +68,10 @@
 		4CB4640280AF4A8CAC3E3DA4 /* OpenSans-Semibold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 33DBA13F59204150A0B5CD50 /* OpenSans-Semibold.ttf */; };
 		3ABE680C130C49F1BCFA17AB /* NotoSans-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 93E0603003A6462DB19B8192 /* NotoSans-Bold.ttf */; };
 		BAC45702B9B841AFB4432264 /* NotoSansCJKkr-Regular.otf in Resources */ = {isa = PBXBuildFile; fileRef = 581DB52FD269494B9170D86F /* NotoSansCJKkr-Regular.otf */; };
+		B8AD87E515924BEAAA5A675E /* NotoSansCJKkr-Bold.otf in Resources */ = {isa = PBXBuildFile; fileRef = B3DB6F3D092C4790873F8980 /* NotoSansCJKkr-Bold.otf */; };
+		2283B8290DC0424EB5582D8F /* NanumGothic-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 44C6A31A68304FBCB2144E2A /* NanumGothic-Bold.ttf */; };
+		D56EAB4D993C457FAE9D86F7 /* NanumGothic-ExtraBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = BBE6AFF079BA43ED9F2FE81B /* NanumGothic-ExtraBold.ttf */; };
+		47B6FE248A4E430C848199F7 /* NanumGothic-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 921C1DE8798E467B928A54C2 /* NanumGothic-Regular.ttf */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -531,6 +535,10 @@
 		33DBA13F59204150A0B5CD50 /* OpenSans-Semibold.ttf */ = {isa = PBXFileReference; name = "OpenSans-Semibold.ttf"; path = "../assets/fonts/OpenSans-Semibold.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
 		93E0603003A6462DB19B8192 /* NotoSans-Bold.ttf */ = {isa = PBXFileReference; name = "NotoSans-Bold.ttf"; path = "../assets/fonts/NotoSans-Bold.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
 		581DB52FD269494B9170D86F /* NotoSansCJKkr-Regular.otf */ = {isa = PBXFileReference; name = "NotoSansCJKkr-Regular.otf"; path = "../assets/fonts/NotoSansCJKkr-Regular.otf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		B3DB6F3D092C4790873F8980 /* NotoSansCJKkr-Bold.otf */ = {isa = PBXFileReference; name = "NotoSansCJKkr-Bold.otf"; path = "../assets/fonts/NotoSansCJKkr-Bold.otf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		44C6A31A68304FBCB2144E2A /* NanumGothic-Bold.ttf */ = {isa = PBXFileReference; name = "NanumGothic-Bold.ttf"; path = "../assets/fonts/NanumGothic-Bold.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		BBE6AFF079BA43ED9F2FE81B /* NanumGothic-ExtraBold.ttf */ = {isa = PBXFileReference; name = "NanumGothic-ExtraBold.ttf"; path = "../assets/fonts/NanumGothic-ExtraBold.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		921C1DE8798E467B928A54C2 /* NanumGothic-Regular.ttf */ = {isa = PBXFileReference; name = "NanumGothic-Regular.ttf"; path = "../assets/fonts/NanumGothic-Regular.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -680,6 +688,10 @@
 				33DBA13F59204150A0B5CD50 /* OpenSans-Semibold.ttf */,
 				93E0603003A6462DB19B8192 /* NotoSans-Bold.ttf */,
 				581DB52FD269494B9170D86F /* NotoSansCJKkr-Regular.otf */,
+				B3DB6F3D092C4790873F8980 /* NotoSansCJKkr-Bold.otf */,
+				44C6A31A68304FBCB2144E2A /* NanumGothic-Bold.ttf */,
+				BBE6AFF079BA43ED9F2FE81B /* NanumGothic-ExtraBold.ttf */,
+				921C1DE8798E467B928A54C2 /* NanumGothic-Regular.ttf */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -1557,6 +1569,10 @@
 				4CB4640280AF4A8CAC3E3DA4 /* OpenSans-Semibold.ttf in Resources */,
 				3ABE680C130C49F1BCFA17AB /* NotoSans-Bold.ttf in Resources */,
 				BAC45702B9B841AFB4432264 /* NotoSansCJKkr-Regular.otf in Resources */,
+				B8AD87E515924BEAAA5A675E /* NotoSansCJKkr-Bold.otf in Resources */,
+				2283B8290DC0424EB5582D8F /* NanumGothic-Bold.ttf in Resources */,
+				D56EAB4D993C457FAE9D86F7 /* NanumGothic-ExtraBold.ttf in Resources */,
+				47B6FE248A4E430C848199F7 /* NanumGothic-Regular.ttf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
