@@ -42,7 +42,8 @@ export default class OTPGuideScreen extends BaseScreen {
                     source={SmallAppleIcon}
                     resizeMode='contain'/>
                   <View style = {styles.storeInfoHorizontalSpace}/>
-                  <Text style={[styles.storeInfoText, {flex: 4}]}>
+                  <Text style={[styles.storeInfoText, {flex: 4}]}
+                    adjustsFontSizeToFit={true}>
                     {I18n.t('common.iPhone')}
                   </Text>
                 </View>
@@ -53,7 +54,8 @@ export default class OTPGuideScreen extends BaseScreen {
                     source={SmallAppStoreIcon}
                     resizeMode='contain'/>
                   <View style = {styles.storeInfoHorizontalSpace}/>
-                  <Text style={[styles.storeInfoText, {flex: 9}]}>
+                  <Text style={[styles.storeInfoText, {flex: 9}]}
+                    adjustsFontSizeToFit={true}>
                     {I18n.t('common.appStore')}
                   </Text>
                 </View>
@@ -66,7 +68,8 @@ export default class OTPGuideScreen extends BaseScreen {
                     source={SmallAndroidIcon}
                     resizeMode='contain'/>
                   <View style = {styles.storeInfoHorizontalSpace}/>
-                  <Text style={[styles.storeInfoText, {flex: 4}]}>
+                  <Text style={[styles.storeInfoText, {flex: 4}]}
+                    adjustsFontSizeToFit={true}>
                     {I18n.t('common.android')}
                   </Text>
                 </View>
@@ -77,7 +80,8 @@ export default class OTPGuideScreen extends BaseScreen {
                     source={SmallPlayStoreIcon}
                     resizeMode='contain'/>
                   <View style = {styles.storeInfoHorizontalSpace}/>
-                  <Text style={[styles.storeInfoText, {flex: 9}]}>
+                  <Text style={[styles.storeInfoText, {flex: 9}]}
+                    adjustsFontSizeToFit={true}>
                     {I18n.t('common.playStore')}
                   </Text>
                 </View>
@@ -127,8 +131,6 @@ const styles = ScaledSheet.create({
     flexDirection: 'row',
     marginTop: '50@s',
     marginBottom: '20@s',
-    marginStart: '20@s',
-    marginEnd: '20@s',
     height: '100@s'
   },
   text: {

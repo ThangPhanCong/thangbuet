@@ -781,7 +781,7 @@ const styles = ScaledSheet.create({
     justifyContent: 'center'
   },
   text: {
-    fontSize: '14@s',
+    fontSize: '13@s',
     ...Fonts.NanumGothic_Regular
   },
   activeButton: {
