@@ -142,7 +142,7 @@ export default class BalanceScreen extends BaseScreen {
             <View style={styles.tableHeader}>
               <Text style={[styles.textHeader]}>{I18n.t('balances.coin')}</Text>
               <Text style={[styles.textHeader, { textAlign: 'right' }]}> {I18n.t('balances.quantity')}</Text>
-              <Text style={[styles.textHeader, { flex: 1.2 }]}>{I18n.t('balances.action')}</Text>
+              <Text style={[styles.textHeader, { flex: 1.4}]}>{I18n.t('balances.action')}</Text>
             </View>
             <ScrollView>
               {
@@ -219,7 +219,7 @@ const styles = ScaledSheet.create({
   tableRowDetail: { flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-start' },
   imageSize: { width: '20@s', height: '20@s', margin: '10@s' },
   balance: { flex: 1 },
-  action: { flex: 1.2, flexDirection: 'row', alignItems: 'center', justifyContent: 'center' },
+  action: { flex: 1.4, flexDirection: 'row', alignItems: 'center', justifyContent: 'center' },
   iconLogo: { height: '20@s', width: '20@s', margin: '2@s', marginLeft: '15@s', },
   fontNotoSansRegular: { ...Fonts.NotoSans_Regular, fontSize: '14@s' },
   fontNotoSansBold: { ...Fonts.NotoSans_Bold, fontSize: '14@s' },
@@ -228,9 +228,13 @@ const styles = ScaledSheet.create({
   rowCoinName: { ...Fonts.OpenSans, fontWeight: 'bold', fontSize: '12@s', textAlign: 'left' },
   rowNumber: { ...Fonts.OpenSans, fontSize: '12@s', textAlign: 'right' },
   btnText: {
-    ...Fonts.NanumGothic_Regular, fontSize: '12@s', color: 'rgba(0, 0, 0, 1)'
+    ...Fonts.NanumGothic_Bold, fontSize: '12@s', color: 'rgba(0, 0, 0, 1)',
+    paddingLeft: '15@s', paddingRight: '15@s'
   },
   btnRow: {
+    height: '25@s', margin: '5@s', backgroundColor: 'rgba(222, 227, 235, 1)',
+    justifyContent: 'center', alignItems: 'center', borderWidth: '1@s', borderRadius: '4@s',
+    borderColor: 'rgba(222, 227, 235, 0.1)'
 
   }
 });
