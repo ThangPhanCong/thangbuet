@@ -11,6 +11,7 @@ import {
   View,
   Image
 } from 'react-native';
+import LinearGradient from 'react-native-linear-gradient';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import ScaledSheet from '../../libs/reactSizeMatter/ScaledSheet';
 import { scale } from '../../libs/reactSizeMatter/scalingUtils';
@@ -21,7 +22,7 @@ import Consts from '../../utils/Consts';
 import I18n from '../../i18n/i18n';
 import Utils from '../../utils/Utils';
 import BaseScreen from '../BaseScreen';
-import { CommonColors, CommonSize, CommonStyles } from '../../utils/CommonStyles';
+import { CommonColors, CommonSize, CommonStyles, Fonts } from '../../utils/CommonStyles';
 import { formatCurrency, formatPercent } from '../../utils/Filters';
 import Events from '../../utils/Events';
 
@@ -423,7 +424,7 @@ export default class OrderBook extends BaseScreen {
         {this._renderHeader()}
         <View style={styles.sellGroup}>
           {this.state.sellOrderBook.map((item, index) => {
-            return this._renderSellRow(item, index);
+            return this._renderSellRow(item, index, index == this.state.sellOrderBook.length - 1);
           })}
         </View>
         <View style={styles.separator}/>
@@ -438,7 +439,7 @@ export default class OrderBook extends BaseScreen {
 
   _renderHeader() {
     return (
-      <View style={styles.orderBookHeader}>
+      <LinearGradient style={styles.orderBookHeader} colors={['#F2F2F2', '#D9D9D9']}>
         <View style={styles.userQuantityHeader}>
           <Text style={styles.headerText}>{I18n.t('orderBook.sell')}</Text>
         </View>
@@ -454,14 +455,14 @@ export default class OrderBook extends BaseScreen {
         <View style={styles.userQuantityHeader}>
           <Text style={styles.headerText}>{I18n.t('orderBook.buy')}</Text>
         </View>
-      </View>
+      </LinearGradient>
     );
   }
 
-  _renderSellRow(item, index) {
+  _renderSellRow(item, index, isLastRow = false) {
     return (
-      <TouchableWithoutFeedback key={index} onPress={() => this._onPressSmallOrderBookRow(item, Consts.TRADE_TYPE_SELL)}>
-        <View style={styles.orderBookRow}>
+      <TouchableWithoutFeedback key={index} onPress={() => this._onPressOrderBookCell(item, Consts.TRADE_TYPE_SELL)}>
+        <View style={[styles.orderBookRow, isLastRow && {borderBottomWidth: 0}]}>
           <View style={[styles.userSellQuantityCell, styles.topBorder]}>
             <Text style={styles.userSellQuantityText}>{this._formatQuantity(item.userQuantity)}</Text>
           </View>
@@ -520,7 +521,7 @@ export default class OrderBook extends BaseScreen {
     } else if (price >= this.yesterdayPrice) {
       return CommonStyles.priceIncreased;
     } else {
-      return CommonStyles.priceDescreased;
+      return CommonStyles.priceDecreased;
     }
   }
 
@@ -570,14 +571,14 @@ export default class OrderBook extends BaseScreen {
   _renderSmallSellRow(item, index) {
     return (
       <TouchableWithoutFeedback key={index} onPress={() => this._onPressSmallOrderBookRow(item, Consts.TRADE_TYPE_SELL)}>
-        <View style={styles.orderBookRow}>
+        <View style={styles.smallOrderBookRow}>
           <View
             style={[styles.priceCell, styles.smallTopBorder, styles.smallSellPrice, this._getPriceCellStyle(item.price)]}>
-            <Text style={[styles.priceText, this._getPriceTextStyle(item.price)]}>{this._formatPrice(item.price)}</Text>
+            <Text style={[styles.smallPriceText, this._getPriceTextStyle(item.price)]}>{this._formatPrice(item.price)}</Text>
           </View>
           <View style={[styles.quantityCell, styles.smallTopBorder, styles.smallQuantity]}>
             <View style={[styles.sellPercent, this._getPercentViewStyle(item)]} />
-            <Text style={styles.quantityText}>{this._formatQuantity(item.quantity)}</Text>
+            <Text style={styles.smallQuantityText}>{this._formatQuantity(item.quantity)}</Text>
           </View>
         </View>
       </TouchableWithoutFeedback>
@@ -587,17 +588,17 @@ export default class OrderBook extends BaseScreen {
   _renderSmallBuyRow(item, index) {
     return (
       <TouchableWithoutFeedback key={index} onPress={() => this._onPressSmallOrderBookRow(item, Consts.TRADE_TYPE_BUY)}>
-        <View style={styles.orderBookRow}>
+        <View style={styles.smallOrderBookRow}>
           <View style={[
               styles.priceCell,
               styles.smallBottomBorder,
               styles.smallBuyPrice,
               this._getPriceCellStyle(item.price)]}>
-            <Text style={[styles.priceText, this._getPriceTextStyle(item.price)]}>{this._formatPrice(item.price)}</Text>
+            <Text style={[styles.smallPriceText, this._getPriceTextStyle(item.price)]}>{this._formatPrice(item.price)}</Text>
           </View>
           <View style={[styles.quantityCell, styles.smallBottomBorder, styles.smallQuantity]}>
             <View style={[styles.sellPercent, this._getPercentViewStyle(item)]} />
-            <Text style={styles.quantityText}>{this._formatQuantity(item.quantity)}</Text>
+            <Text style={styles.smallQuantityText}>{this._formatQuantity(item.quantity)}</Text>
           </View>
         </View>
       </TouchableWithoutFeedback>
@@ -619,7 +620,7 @@ export default class OrderBook extends BaseScreen {
 }
 
 const fontSize = scale(12);
-const borderColor = '#DCDCDC';
+const borderColor = '#D9D9D9';
 const borderWidth = 1;
 const sellCellBorder = {
   borderTopWidth: borderWidth,
@@ -628,8 +629,8 @@ const sellCellBorder = {
 };
 const cellText = {
   fontSize: fontSize,
-  marginLeft: 5,
-  marginRight: 5
+  marginLeft: scale(5),
+  marginRight: scale(5)
 };
 
 const styles = ScaledSheet.create({
@@ -650,42 +651,47 @@ const styles = ScaledSheet.create({
   orderBookRow: {
     flex: 1,
     flexDirection: 'row',
-    alignItems: 'stretch'
+    alignItems: 'stretch',
+    borderTopWidth: borderWidth,
+    borderTopColor: '#FFF',
+    borderBottomWidth: borderWidth,
+    borderBottomColor: borderColor
   },
   separator: {
     width: '100%',
     height: 1,
-    backgroundColor: '#616161'
+    backgroundColor: '#595959'
   },
 
   orderBookHeader: {
     flexDirection: 'row',
-    backgroundColor: '#E1E0E1',
     height: '25@s',
     borderBottomWidth: 1,
     borderTopWidth: 1,
-    borderColor: '#F2E5E5'
+    borderColor: '#BFBFBF'
   },
   userQuantityHeader: {
     flex: 0.9,
     justifyContent: 'center',
-    borderLeftWidth: borderWidth,
+    borderRightWidth: borderWidth,
     borderColor: borderColor
   },
   quantityHeader: {
     flex: 0.8,
     justifyContent: 'center',
-    borderLeftWidth: borderWidth,
+    borderRightWidth: borderWidth,
     borderColor: borderColor
   },
   priceHeader: {
     flex: 1,
     justifyContent: 'center',
-    borderLeftWidth: borderWidth,
+    borderRightWidth: borderWidth,
     borderColor: borderColor
   },
   headerText: {
-    textAlign: 'center'
+    textAlign: 'center',
+    fontSize: '14@s',
+    ...Fonts.NotoSans
   },
 
   userSellQuantityCell: {
@@ -695,7 +701,9 @@ const styles = ScaledSheet.create({
   },
   userSellQuantityText: {
     ...cellText,
-    textAlign: 'right'
+    textAlign: 'right',
+    fontSize: '13@s',
+    ...Fonts.OpensSans
   },
   sellPercent: {
     position: 'absolute',
@@ -710,7 +718,9 @@ const styles = ScaledSheet.create({
   quantityText: {
     ...cellText,
     textAlign: 'right',
-    color: '#000'
+    color: '#000',
+    fontSize: '13@s',
+    ...Fonts.OpensSans
   },
   priceCell: {
     flex: 1,
@@ -718,7 +728,9 @@ const styles = ScaledSheet.create({
   },
   priceText: {
     ...cellText,
-    textAlign: 'center'
+    textAlign: 'center',
+    fontSize: '13@s',
+    ...Fonts.OpensSans
   },
   userBuyQuantityCell: {
     flex: 0.9,
@@ -730,23 +742,28 @@ const styles = ScaledSheet.create({
     textAlign: 'right'
   },
   topBorder: {
-    borderTopWidth: borderWidth,
-    borderLeftWidth: borderWidth,
-    borderColor: borderColor
+    borderRightWidth: borderWidth,
+    borderRightColor: borderColor
   },
   bottomBorder: {
-    borderBottomWidth: borderWidth,
-    borderLeftWidth: borderWidth,
-    borderColor: borderColor
+    borderRightWidth: borderWidth,
+    borderRightColor: borderColor
   },
 
   currentPriceCell: {
-    backgroundColor: '#002A68'
+    backgroundColor: '#002060'
   },
   currentPrice: {
     color: '#FFF'
   },
 
+  smallOrderBookRow: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'stretch',
+    borderBottomWidth: borderWidth,
+    borderColor: '#FFF'
+  },
   smallBuyPrice: {
     backgroundColor: '#FFF0F0'
   },
@@ -757,13 +774,22 @@ const styles = ScaledSheet.create({
     backgroundColor: '#FBFAFA'
   },
   smallTopBorder: {
-    borderTopWidth: borderWidth,
-    borderLeftWidth: borderWidth,
+    borderRightWidth: borderWidth,
     borderColor: '#FFF'
   },
   smallBottomBorder: {
-    borderBottomWidth: borderWidth,
-    borderLeftWidth: borderWidth,
+    borderRightWidth: borderWidth,
     borderColor: '#FFF'
   },
+  smallPriceText: {
+    ...cellText,
+    textAlign: 'center',
+    fontSize: '13.5@s',
+    ...Fonts.OpensSans
+  },
+  smallQuantityText: {
+    ...cellText,
+    fontSize: '12@s',
+    ...Fonts.OpensSans
+  }
 });
