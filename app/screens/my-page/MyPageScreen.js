@@ -19,30 +19,31 @@ import WalletScreen from './wallet/WalletScreen';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import RNRestart from 'react-native-restart';
 import AppPreferences from '../../utils/AppPreferences';
+import UIUtils from '../../utils/UIUtils';
 
 const TabBarNavigator = TabNavigator({
   BasicInfoScreen: {
     screen: BasicInfoScreen,
     navigationOptions: () => ({
-      tabBarLabel: I18n.t('myPage.tab.basic'),
+      tabBarLabel: options => UIUtils.renderTabItem(I18n.t('myPage.tab.basic'), {fontSize: 14, ...options})
     })
   },
   SecurityScreen: {
     screen: SecurityScreen,
     navigationOptions: () => ({
-      tabBarLabel: I18n.t('myPage.tab.security'),
+      tabBarLabel: options => UIUtils.renderTabItem(I18n.t('myPage.tab.security'), {fontSize: 14, ...options})
     })
   },
   ConnectionScreen: {
     screen: ConnectionScreen,
     navigationOptions: () => ({
-      tabBarLabel: I18n.t('myPage.tab.connection'),
+      tabBarLabel: options => UIUtils.renderTabItem(I18n.t('myPage.tab.connection'), {fontSize: 14, ...options})
     })
   },
   WalletScreen: {
     screen: WalletScreen,
     navigationOptions: () => ({
-      tabBarLabel: I18n.t('myPage.tab.wallet'),
+      tabBarLabel: options => UIUtils.renderTabItem(I18n.t('myPage.tab.wallet'), {fontSize: 14, ...options}, false)
     })
   }
 },{
@@ -51,29 +52,7 @@ const TabBarNavigator = TabNavigator({
   }),
   tabBarComponent: TabBarTop,
   tabBarPosition: 'top',
-  tabBarOptions: {
-    upperCaseLabel: true,
-    activeTintColor: '#FFC000',
-    inactiveTintColor: '#D9D9D9',
-    style: {
-      backgroundColor: '#3B3838',
-      height: 48
-    },
-    indicatorStyle: {
-      backgroundColor: '#FFC000'
-    },
-    labelStyle: {
-      fontSize: 13,
-      alignSelf: 'center'
-    },
-    tabStyle: {
-      flex: 1,
-      alignItems: 'center',
-      justifyContent: 'center'
-    }
-  },
-  animationEnabled: false,
-  swipeEnabled: false
+  ...CommonStyles.tabOptions
 })
 
 export default class MyPageScreen extends BaseScreen {
