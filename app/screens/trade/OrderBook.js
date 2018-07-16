@@ -30,6 +30,13 @@ export default class OrderBook extends BaseScreen {
   static TYPE_FULL = 'full';
   static TYPE_SMALL = 'small';
 
+  static COLUMN_COUNT = 5;
+  static COLUMN_USER_SELL_QUANTITY = 0;
+  static COLUMN_SELL_QUANTITY = 1;
+  static COLUMN_PRICE = 2;
+  static COLUMN_BUY_QUANTITY = 3;
+  static COLUMN_USER_BUY_QUANTITY = 4;
+
   constructor(props) {
     super(props);
     this.state = {
@@ -43,6 +50,8 @@ export default class OrderBook extends BaseScreen {
       priceSetting: { digits: 4 },
 
       currencyPrice: 1,
+
+      highlightCells: []
     };
 
     this.orderBook = undefined;
@@ -427,7 +436,6 @@ export default class OrderBook extends BaseScreen {
             return this._renderSellRow(item, index, index == this.state.sellOrderBook.length - 1);
           })}
         </View>
-        <View style={styles.separator}/>
         <View style={styles.buyGroup}>
           {this.state.buyOrderBook.map((item, index) => {
             return this._renderBuyRow(item, index);
@@ -460,50 +468,72 @@ export default class OrderBook extends BaseScreen {
   }
 
   _renderSellRow(item, index, isLastRow = false) {
+    const borders = this._generateBorderStyles(index, extendedStyles.topBorder, isLastRow);
     return (
-      <TouchableWithoutFeedback key={index} onPress={() => this._onPressOrderBookCell(item, Consts.TRADE_TYPE_SELL)}>
-        <View style={[styles.orderBookRow, isLastRow && {borderBottomWidth: 0}]}>
-          <View style={[styles.userSellQuantityCell, styles.topBorder]}>
+      <View style={styles.orderBookRow} key={index}>
+        <TouchableWithoutFeedback onPress={() => this._onPressOrderBookCell(item, index, Consts.TRADE_TYPE_SELL)}>
+          <View style={[styles.userSellQuantityCell, borders[0]]}>
             <Text style={styles.userSellQuantityText}>{this._formatQuantity(item.userQuantity)}</Text>
           </View>
-          <View style={[styles.quantityCell, styles.topBorder]}>
-            <View style={[styles.sellPercent, this._getPercentViewStyle(item)]} />
-            <Text style={styles.quantityText}>{this._formatQuantity(item.quantity)}</Text>
-          </View>
-          <View style={[styles.priceCell, styles.topBorder, this._getPriceCellStyle(item.price)]}>
-            <Text style={[styles.priceText, this._getPriceTextStyle(item.price)]}>{this._formatPrice(item.price)}</Text>
-          </View>
-          <View style={[styles.quantityCell, styles.topBorder]}>
-          </View>
-          <View style={[styles.userBuyQuantityCell, styles.topBorder]}>
+        </TouchableWithoutFeedback>
+        <View style={[styles.quantityCell, borders[1]]}>
+          <View style={[styles.sellPercent, this._getPercentViewStyle(item)]} />
+          <Text style={styles.quantityText}>{this._formatQuantity(item.quantity)}</Text>
+        </View>
+        <View style={[styles.priceCell, borders[2], this._getPriceCellStyle(item.price)]}>
+          <Text style={[styles.priceText, this._getPriceTextStyle(item.price)]}>{this._formatPrice(item.price)}</Text>
+        </View>
+        <View style={[styles.quantityCell, borders[3]]}>
+        </View>
+        <TouchableWithoutFeedback onPress={() => this._onPressOrderBookCell(item, index, Consts.TRADE_TYPE_BUY)}>
+          <View style={[styles.userBuyQuantityCell, borders[4]]}>
             <Text style={styles.userBuyQuantityText}></Text>
           </View>
-        </View>
-      </TouchableWithoutFeedback>
+        </TouchableWithoutFeedback>
+      </View>
     );
   }
 
+  _generateBorderStyles(index, normalStyle, isLastRow = false) {
+    let borderStyles = normalStyle;
+    if (isLastRow) {
+      borderStyles = Object.assign({}, borderStyles, extendedStyles.separatorBorder);
+    }
+    let borders = [borderStyles, borderStyles, borderStyles, borderStyles, borderStyles]
+    for (let highlightCell of this.state.highlightCells) {
+      if (index == highlightCell.row) {
+        let column = highlightCell.column;
+        borders[column] = Object.assign({}, borders[column], extendedStyles.selectedBorder);
+      }
+    }
+    return borders;
+  }
+
   _renderBuyRow(item, index) {
+    const orderBookRowIndex = index + this._getOrderBookSize();
+    const borders = this._generateBorderStyles(orderBookRowIndex, extendedStyles.bottomBorder);
     return (
-      <TouchableWithoutFeedback key={index} onPress={() => this._onPressOrderBookCell(item, Consts.TRADE_TYPE_BUY)}>
-        <View style={styles.orderBookRow}>
-          <View style={[styles.userSellQuantityCell, styles.bottomBorder]}>
+      <View style={styles.orderBookRow} key={index}>
+        <TouchableWithoutFeedback onPress={() => this._onPressOrderBookCell(item, orderBookRowIndex, Consts.TRADE_TYPE_SELL)}>
+          <View style={[styles.userSellQuantityCell, borders[0]]}>
             <Text style={styles.userSellQuantityText}></Text>
           </View>
-          <View style={[styles.quantityCell, styles.bottomBorder]}>
-          </View>
-          <View style={[styles.priceCell, styles.bottomBorder, this._getPriceCellStyle(item.price)]}>
-            <Text style={[styles.priceText, this._getPriceTextStyle(item.price)]}>{this._formatPrice(item.price)}</Text>
-          </View>
-          <View style={[styles.quantityCell, styles.bottomBorder]}>
-            <View style={[styles.sellPercent, this._getPercentViewStyle(item)]} />
-            <Text style={styles.quantityText}>{this._formatQuantity(item.quantity)}</Text>
-          </View>
-          <View style={[styles.userBuyQuantityCell, styles.bottomBorder]}>
+        </TouchableWithoutFeedback>
+        <View style={[styles.quantityCell, borders[1]]}>
+        </View>
+        <View style={[styles.priceCell, borders[2], this._getPriceCellStyle(item.price)]}>
+          <Text style={[styles.priceText, this._getPriceTextStyle(item.price)]}>{this._formatPrice(item.price)}</Text>
+        </View>
+        <View style={[styles.quantityCell, borders[3]]}>
+          <View style={[styles.sellPercent, this._getPercentViewStyle(item)]} />
+          <Text style={styles.quantityText}>{this._formatQuantity(item.quantity)}</Text>
+        </View>
+        <TouchableWithoutFeedback onPress={() => this._onPressOrderBookCell(item, orderBookRowIndex, Consts.TRADE_TYPE_BUY)}>
+          <View style={[styles.userBuyQuantityCell, borders[4]]}>
             <Text style={styles.userBuyQuantityText}>{this._formatQuantity(item.userQuantity)}</Text>
           </View>
-        </View>
-      </TouchableWithoutFeedback>
+        </TouchableWithoutFeedback>
+      </View>
     );
   }
 
@@ -525,7 +555,15 @@ export default class OrderBook extends BaseScreen {
     }
   }
 
-  _onPressOrderBookCell(item, tradeType) {
+  _onPressOrderBookCell(item, index, tradeType) {
+    const column = tradeType == Consts.TRADE_TYPE_SELL
+                              ? OrderBook.COLUMN_USER_SELL_QUANTITY
+                              : OrderBook.COLUMN_USER_BUY_QUANTITY;
+    const highlightCells = [
+      { row: index, column: OrderBook.COLUMN_PRICE},
+      { row: index, column: column}
+    ];
+    this.setState({ highlightCells });
     this._notifyOrderBookPressed(item, tradeType, OrderBook.TYPE_FULL);
   }
 
@@ -632,6 +670,44 @@ const cellText = {
   marginLeft: scale(5),
   marginRight: scale(5)
 };
+const selectedBorderWidth = 2;
+const selectedBotderColor = '#F00';
+const extendedStyles = {
+  topBorder: {
+    borderRightWidth: borderWidth,
+    borderRightColor: borderColor,
+    borderTopWidth: borderWidth,
+    borderTopColor: '#FFF',
+    borderBottomWidth: borderWidth,
+    borderBottomColor: borderColor,
+    borderLeftWidth: 1,
+    borderLeftColor: '#0000'
+  },
+  bottomBorder: {
+    borderRightWidth: borderWidth,
+    borderRightColor: borderColor,
+    borderTopWidth: borderWidth,
+    borderTopColor: '#FFF',
+    borderBottomWidth: borderWidth,
+    borderBottomColor: borderColor
+  },
+  separatorBorder: {
+    borderBottomWidth: borderWidth,
+    borderBottomColor: '#595959'
+  },
+  selectedBorder: {
+    borderTopWidth: selectedBorderWidth,
+    borderLeftWidth: selectedBorderWidth,
+    borderBottomWidth: selectedBorderWidth,
+    borderRightWidth: selectedBorderWidth,
+    borderTopColor: selectedBotderColor,
+    borderLeftColor: selectedBotderColor,
+    borderBottomColor: selectedBotderColor,
+    borderRightColor: selectedBotderColor,
+    marginRight: -1,
+    marginLeft: -1
+  }
+};
 
 const styles = ScaledSheet.create({
   screen: {
@@ -651,16 +727,7 @@ const styles = ScaledSheet.create({
   orderBookRow: {
     flex: 1,
     flexDirection: 'row',
-    alignItems: 'stretch',
-    borderTopWidth: borderWidth,
-    borderTopColor: '#FFF',
-    borderBottomWidth: borderWidth,
-    borderBottomColor: borderColor
-  },
-  separator: {
-    width: '100%',
-    height: 1,
-    backgroundColor: '#595959'
+    alignItems: 'stretch'
   },
 
   orderBookHeader: {
@@ -740,14 +807,6 @@ const styles = ScaledSheet.create({
   userBuyQuantityText: {
     ...cellText,
     textAlign: 'right'
-  },
-  topBorder: {
-    borderRightWidth: borderWidth,
-    borderRightColor: borderColor
-  },
-  bottomBorder: {
-    borderRightWidth: borderWidth,
-    borderRightColor: borderColor
   },
 
   currentPriceCell: {
