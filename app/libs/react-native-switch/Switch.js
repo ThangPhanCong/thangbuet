@@ -188,18 +188,22 @@ export class Switch extends Component {
 
     return (
       <TouchableWithoutFeedback onPress={this.handleSwitch}>
-        <Animated.View
-          style={[
-            styles.container,
-            containerStyle,
-            {
-              backgroundColor: interpolatedColorAnimation,
-              width: circleSize * switchWidthMultiplier,
-              height: barHeight || circleSize,
-              borderRadius: circleSize
-            }
-          ]}
-        >
+        <View>
+          <Animated.View
+            style={[
+              styles.container,
+              containerStyle,
+              {
+                backgroundColor: interpolatedColorAnimation,
+                width: circleSize * switchWidthMultiplier,
+                height: barHeight || circleSize,
+                borderRadius: circleSize
+              }
+            ]}
+          >
+
+          </Animated.View>
+
           <Animated.View
             style={[
               styles.animatedContainer,
@@ -240,7 +244,8 @@ export class Switch extends Component {
               </Text>
             )}
           </Animated.View>
-        </Animated.View>
+
+        </View>
       </TouchableWithoutFeedback>
     );
   }
@@ -258,7 +263,8 @@ const styles = StyleSheet.create({
     width: 78,
     flexDirection: "row",
     justifyContent: "center",
-    alignItems: "center"
+    alignItems: "center",
+    position: 'absolute'
   },
   circle: {
     width: 30,

@@ -23,6 +23,9 @@ function formatPercent(value, onlyFormat) {
 };
 
 function getCurrencyName(value) {
+  if (value == 'wbc') {
+    return 'WWW';
+  }
   return value ? value.toUpperCase() : value;
 }
 
