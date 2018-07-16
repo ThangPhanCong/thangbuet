@@ -50,8 +50,8 @@ const CommonStyles = {
     flex: 1,
   },
   checkBox: {
-    checkedImage: (<Image source={require('../../assets/common/checkbox/checked.png')}/>),
-    unCheckedImage: (<Image source={require('../../assets/common/checkbox/unchecked.png')}/>)
+    checkedImage: (<Image source={require('../../assets/common/checkbox/checked.png')} />),
+    unCheckedImage: (<Image source={require('../../assets/common/checkbox/unchecked.png')} />)
   },
   switch: {
     activeText: 'ON',
@@ -109,15 +109,26 @@ const iOSFonts = {
     fontFamily: 'OpenSans-Regular',
   },
   OpenSans_Bold: {
-    fontFamily: 'OpenSans-Bold',
-    fontWeight: '700'
+    fontFamily: 'OpenSans-Semibold'
   },
   NotoSans: {
-    fontFamily: 'NotoSans'
+    fontFamily: 'NotoSans-Regular'
   },
+  // NotoSans_Bold: {
+  //   fontFamily: 'NotoSans',
+  //   fontWeight: '700'
+  // },
   NotoSans_Bold: {
-    fontFamily: 'NotoSans',
-    fontWeight: '700'
+    fontFamily: 'NotoSansCJKkr-Bold',
+  },
+  NotoSans_Regular: {
+    fontFamily: 'NotoSansCJKkr-Regular'
+  },
+  NanumGothic_Regular: {
+    fontFamily: 'NanumGothic-Regular'
+  },
+  NanumGothic_Bold: {
+    fontFamily: 'NanumGothic-Bold'
   }
 };
 
@@ -132,16 +143,19 @@ const androidFonts = {
     fontFamily: 'OpenSans-Semibold'
   },
   NotoSans: {
-    fontFamily: 'NotoSans-Regular'
+    fontFamily: 'NotoSansCJKkr-Regular'
   },
   NotoSans_Bold: {
-    fontFamily: 'NotoSans-Bold'
+    fontFamily: 'NotoSansCJKkr-Bold'
+  },
+  NotoSans_Regular: {
+    fontFamily: 'NotoSansCJKkr-Regular'
   },
   NanumGothic_Regular: {
     fontFamily: 'NanumGothic-Regular'
   },
   NanumGothic_Bold: {
-    fontFamily: 'NanumGothic-ExtraBold'
+    fontFamily: 'NanumGothic-Bold'
   }
 };
 
