@@ -124,6 +124,12 @@ const iOSFonts = {
   },
   NotoSans_Regular: {
     fontFamily: 'NotoSansCJKkr-Regular'
+  },
+  NanumGothic_Regular: {
+    fontFamily: 'NanumGothic-Regular'
+  },
+  NanumGothic_Bold: {
+    fontFamily: 'NanumGothic-Bold'
   }
 };
 
@@ -145,6 +151,12 @@ const androidFonts = {
   },
   NotoSans_Regular: {
     fontFamily: 'NotoSansCJKkr-Regular'
+  },
+  NanumGothic_Regular: {
+    fontFamily: 'NanumGothic-Regular'
+  },
+  NanumGothic_Bold: {
+    fontFamily: 'NanumGothic-Bold'
   }
 };
 

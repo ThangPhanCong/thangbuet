@@ -5,7 +5,8 @@ import {
   Text,
   View,
   SafeAreaView,
-  TouchableOpacity
+  TouchableOpacity,
+  Image
 } from 'react-native';
 import { TabNavigator, TabBarTop } from 'react-navigation';
 import BaseScreen from '../BaseScreen';
