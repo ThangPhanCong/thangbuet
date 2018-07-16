@@ -11,12 +11,12 @@ import { formatPercent, getCurrencyName } from '../../utils/Filters';
 import ScaledSheet from '../../libs/reactSizeMatter/ScaledSheet';
 import { scale } from '../../libs/reactSizeMatter/scalingUtils';
 
-export default class TradingTransactionsScreen extends BaseScreen {
+export default class OpenOrders extends BaseScreen {
 
   constructor(props) {
     super(props);
     this.state = {
-      transactions: [],
+      orders: [],
       quantityPrecision: 4,
       decimalDigitCount: 4
     };
@@ -29,12 +29,11 @@ export default class TradingTransactionsScreen extends BaseScreen {
     this._loadData();
   }
 
-  componentDidUpdate() {
-    let { coin, currency } = this.props.screenProps;
-    if (coin != this.state.coin || currency != this.state.currency) {
-      this.setState({ coin, currency });
-      this.reloadData();
-    }
+  componentDidUpdate(prevProps) {
+      let { coin, currency } = this.props;
+      if (coin != prevProps.coin || currency != prevProps.currency) {
+        this.reloadData();
+      }
   }
 
   _getMaxTransactionCount() {
@@ -46,63 +45,24 @@ export default class TradingTransactionsScreen extends BaseScreen {
   }
 
   async _loadData() {
-    let { coin, currency } = this.props.screenProps
-    const count = this._getMaxTransactionCount();
+    let { coin, currency } = this.props
 
-    let response = await rf.getRequest('OrderRequest').getRecentTransactions({ coin, currency, count });
-    this._onReceiveTransactions(response.data);
-  }
-
-  _onReceiveTransactions(data) {
-    let transactions = [];
-    for (let i = 0; i < data.length - 1; i++) {
-      data[i].priceIncreased = data[i].price >= data[i + 1].price;
-    }
-    if (data.length <= this.props.screenProps.count) {
-      if (data.length > 0) {
-        data[data.length - 1].priceIncreased = true;
-      }
-      transactions = data;
-    } else {
-      transactions = data.slice(0, this._getMaxTransactionCount());
-    }
-    this.setState({ transactions: transactions });
-  }
-
-  _onOrderTransactionCreated(data) {
-    let { coin, currency } = this.props.screenProps
-    if (currency != data.buyOrder.currency || coin != data.buyOrder.coin) {
-      return;
-    }
-
-    let lastTransaction = this.state.transactions.length > 0 ? this.state.transactions[0] : undefined;
-
-    let newItem = {};
-    newItem.created_at = data.orderTransaction.created_at;
-    if (data.buyOrder.price && data.sellOrder.price) {
-      newItem.price = data.buyOrder.created_at < data.sellOrder.created_at ? data.buyOrder.price : data.sellOrder.price;
-    } else {
-      newItem.price = data.buyOrder.price || data.sellOrder.price;
-    }
-    newItem.quantity = data.buyOrder.quantity;
-    newItem.priceIncreased = lastTransaction == null || newItem.price >= lastTransaction.price;
-
-    let transactions = this.state.transactions;
-    transactions.splice(0, 0, newItem);
-    if (transactions.length > this._getMaxTransactionCount()) {
-      transactions = transactions.slice(0, _getMaxTransactionCount());
-    }
-    this.setState({ transactions: transactions });
+    // let response = await rf.getRequest('OrderRequest').getRecentTransactions({ coin, currency, count });
+    // this._onReceiveTransactions(response.data);
   }
 
   getSocketEventHandlers() {
     return {
-      OrderTransactionCreated: this._onOrderTransactionCreated.bind(this),
+      OrderChanged: this._onOrderChanged.bind(this),
     }
   }
 
+  _onOrderChanged(data) {
+    this._reloadData();
+  }
+
   async _getTickerSize() {
-    let { coin, currency } = this.props.screenProps
+    let { coin, currency } = this.props;
     let response = await rf.getRequest('MasterdataRequest').getAll()
     let priceGroups = filter(response.price_groups, (value) => {
       return value.currency == currency && value.coin == coin;
@@ -120,7 +80,7 @@ export default class TradingTransactionsScreen extends BaseScreen {
   }
 
   async _getQuantityPrecision() {
-    let { coin, currency } = this.props.screenProps
+    let { coin, currency } = this.props;
     let response = await rf.getRequest('MasterdataRequest').getAll();
     let setting = find(response.coin_settings, (setting) => {
       return setting.currency == currency && setting.coin == coin;

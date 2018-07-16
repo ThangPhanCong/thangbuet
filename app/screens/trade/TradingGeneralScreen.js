@@ -16,9 +16,12 @@ import { CommonColors, CommonSize, CommonStyles, Fonts } from '../../utils/Commo
 import OrderBook from './OrderBook';
 import OrderBookSettingModal from './OrderBookSettingModal';
 import OrderForm from './OrderForm';
+import OpenOrders from './OpenOrders';
 import CurrencyInput from '../common/CurrencyInput';
 
 export default class TradingGeneralScreen extends BaseScreen {
+
+  static OPEN_ORDERS_TAB = 'open_orders'
 
   constructor(props) {
     super(props)
@@ -105,14 +108,19 @@ export default class TradingGeneralScreen extends BaseScreen {
 
   _renderOrderForm() {
     const isSelectedBuy = this.state.selectedTab == Consts.TRADE_TYPE_BUY;
+    const isSelectedSell = this.state.selectedTab == Consts.TRADE_TYPE_SELL;
+    const isSelectedOpenOrders = !(isSelectedBuy || isSelectedSell);
     return (
       <View style={styles.trades}>
         {this._renderTypeTabs()}
         <View style={[CommonStyles.matchParent, isSelectedBuy ? {} : { display: 'none' }]}>
           <OrderForm currency={this._getCurrency()} coin={this._getCoin()} tradeType={Consts.TRADE_TYPE_BUY}/>
         </View>
-        <View style={[CommonStyles.matchParent, !isSelectedBuy ? {} : { display: 'none' }]}>
+        <View style={[CommonStyles.matchParent, isSelectedSell ? {} : { display: 'none' }]}>
           <OrderForm currency={this._getCurrency()} coin={this._getCoin()} tradeType={Consts.TRADE_TYPE_SELL}/>
+        </View>
+        <View style={[CommonStyles.matchParent, isSelectedOpenOrders ? {} : { display: 'none' }]}>
+          <OpenOrders currency={this._getCurrency()} coin={this._getCoin()}/>
         </View>
       </View>
     );
@@ -121,6 +129,7 @@ export default class TradingGeneralScreen extends BaseScreen {
   _renderTypeTabs() {
     const isSelectedBuy = this.state.selectedTab == Consts.TRADE_TYPE_BUY;
     const isSelectedSell = this.state.selectedTab == Consts.TRADE_TYPE_SELL;
+    const isSelectedOpenOrders = !(isSelectedBuy || isSelectedSell);
     return (
       <View style={styles.tabs}>
         <TouchableOpacity
@@ -147,8 +156,11 @@ export default class TradingGeneralScreen extends BaseScreen {
 
         <TouchableOpacity
           activeOpacity={1}
-          style={styles.tab}>
-          <Text style={styles.tabLabel}>{I18n.t('orderForm.pendingOrder')}</Text>
+          style={[styles.tab, isSelectedOpenOrders ? styles.selectedOpenOrders : {}]}
+          onPress={() => this.setState({selectedTab: TradingGeneralScreen.OPEN_ORDERS_TAB})}>
+          <Text style={[styles.tabLabel, styles.openOrdersLabel, isSelectedOpenOrders ? styles.selectedLabel : {}]}>
+            {I18n.t('orderForm.pendingOrder')}
+          </Text>
         </TouchableOpacity>
       </View>
     );
@@ -238,6 +250,14 @@ const styles = ScaledSheet.create({
     borderBottomWidth: '2@s',
     borderColor: '#007AC5',
     marginBottom: 0
+  },
+  selectedOpenOrders: {
+    borderBottomWidth: '2@s',
+    borderColor: '#70AD47',
+    marginBottom: 0
+  },
+  openOrdersLabel: {
+    color: '#70AD47'
   },
   selectedLabel: {
     ...Fonts.NotoSans_Bold
