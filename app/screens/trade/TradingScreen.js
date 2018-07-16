@@ -24,7 +24,7 @@ import UIUtils from '../../utils/UIUtils';
 import TradingGeneralScreen from './TradingGeneralScreen';
 import TradingOrderBookScreen from './TradingOrderBookScreen';
 import TradingChartScreen from './TradingChartScreen';
-import TradingConclusionScreen from './TradingConclusionScreen';
+import TradingTransactionsScreen from './TradingTransactionsScreen';
 import I18n from '../../i18n/i18n';
 import Consts from '../../utils/Consts';
 import { ListItem, List, Icon } from 'react-native-elements';
@@ -53,7 +53,7 @@ const TradeTabs = TabNavigator(
       })
     },
     Transaction: {
-      screen: TradingConclusionScreen,
+      screen: TradingTransactionsScreen,
       navigationOptions: () => ({
         tabBarLabel: (options) => UIUtils.renderTabItem(I18n.t('tradeScreen.transaction'), options, false)
       })
@@ -73,7 +73,7 @@ export default class TradingScreen extends BaseScreen {
   constructor(props) {
     super(props)
 
-    let params = {currency: 'krw', coin: 'btc'};//this.props.navigation.state.params;
+    let params = this.props.navigation.state.params;
     this.state = {
       modalVisible: false,
       itemSelected: {},
