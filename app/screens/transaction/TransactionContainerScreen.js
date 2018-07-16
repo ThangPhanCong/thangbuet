@@ -29,7 +29,8 @@ class TransactionContainerScreen extends Component {
     start_date: moment(new Date()).subtract(1, 'months'),
     end_date: new Date(),
     sortField: TransactionContainerScreen.SORT_FIELDS.DATE,
-    sortDirection: TransactionContainerScreen.SORT_DIRECTION.DESC
+    sortDirection: TransactionContainerScreen.SORT_DIRECTION.DESC,
+    scrollLeft: false
   }
 
 
@@ -255,6 +256,9 @@ class TransactionContainerScreen extends Component {
 
   _scrollFlatList(event, title) {
     const y = event.nativeEvent.contentOffset.y;
+    if(title === this.flatListLeft) {
+      this.setState({scrollLeft: true})
+    }
 
     title.scrollToOffset({
       offset: y,
@@ -290,6 +294,7 @@ class TransactionContainerScreen extends Component {
             <FlatList data={[...transactions, ...transactions, ...transactions, ...transactions]}
                       ref={elm => this.flatListLeft = elm}
                       onScroll={(event) => this._scrollFlatList(event, this.flatListRight)}
+                      onScrollEndDrag={() => this.setState({scrollLeft: false})}
                       renderItem={this._renderItem.bind(this)}
                       onEndReached={this._handleLoadMore.bind(this)}
                       onEndThreshold={100}/>
@@ -299,7 +304,8 @@ class TransactionContainerScreen extends Component {
             <HeaderTransactionsRight titles={titles}/>
             <FlatList data={[...transactions, ...transactions, ...transactions, ...transactions]}
                       ref={elm => this.flatListRight = elm}
-                      onScroll={(event) => this._scrollFlatList(event, this.flatListLeft)}
+                      onScroll={!this.state.scrollLeft ? (event) => this._scrollFlatList(event, this.flatListLeft) : () => {}}
+                      onScrollEndDrag={() => this.setState({scrollLeft: true})}
                       renderItem={this._renderItemRight.bind(this)}
                       onEndReached={this._handleLoadMore.bind(this)}
                       onEndThreshold={100}/>
