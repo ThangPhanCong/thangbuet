@@ -18,7 +18,7 @@ export default class OrderUtils {
       flex: 1,
       color: textColor,
       textAlign: 'center',
-      fontSize: scale(16),
+      fontSize: scale(14),
       ...Fonts.NotoSans
     };
     const separatorStyle = {

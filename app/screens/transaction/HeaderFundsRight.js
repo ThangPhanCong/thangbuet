@@ -1,24 +1,36 @@
-import React, { Component } from 'react';
+import React, {Component} from "react";
 import { scale } from "../../libs/reactSizeMatter/scalingUtils";
 import ScaledSheet from "../../libs/reactSizeMatter/ScaledSheet";
 import { CommonColors, Fonts } from "../../utils/CommonStyles";
 import { Text, View } from "react-native";
 
-class HeaderProfitAndLoss extends Component {
+class HeaderFundsRight extends Component{
   render() {
-    const { titles } = this.props;
+    const {titles} = this.props;
 
-    return (
+    return(
       <View style={styles.headerContainer}>
-        <View style={styles.headerCurrency}>
+        <View style={styles.headerItem}>
           <Text style={styles.headerTitle}>{titles[0]}</Text>
+        </View>
+
+        <View style={styles.headerBlockChainItem}>
+          <Text style={styles.headerTitle}>{titles[1]}</Text>
+        </View>
+
+        <View style={styles.headerItem}>
+          <Text style={styles.headerTitle}>{titles[2]}</Text>
+        </View>
+
+        <View style={[styles.headerItem, { marginRight: scale(10) }]}>
+          <Text style={styles.headerTitle}>{titles[3]}</Text>
         </View>
       </View>
     )
   }
 }
 
-export default HeaderProfitAndLoss;
+export default HeaderFundsRight;
 
 const styles = ScaledSheet.create({
   headerContainer: {
@@ -26,23 +38,24 @@ const styles = ScaledSheet.create({
     height: '40@s',
     backgroundColor: '#f8f9fb',
     borderWidth: '1@s',
+    borderLeftWidth: 0,
     borderColor: CommonColors.separator
   },
   headerItem: {
     flexDirection: 'column',
-    width: '100@s',
+    width: '80@s',
     alignItems: 'flex-end',
     justifyContent: 'center',
   },
-  headerCurrency: {
+  headerBlockChainItem: {
     flexDirection: 'column',
-    width: '48@s',
-    alignItems: 'center',
+    width: '90@s',
+    alignItems: 'flex-end',
     justifyContent: 'center',
   },
   headerTitle: {
-    ...Fonts.NotoSans,
     fontSize: '12@s',
-    color: CommonColors.mainText
-  }
+    color: CommonColors.mainText,
+    ...Fonts.NotoSans,
+  },
 })

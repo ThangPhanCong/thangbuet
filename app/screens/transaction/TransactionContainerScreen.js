@@ -2,16 +2,15 @@ import React, { Component } from 'react';
 import { FlatList, Text, View, TouchableWithoutFeedback, ScrollView, Image } from "react-native";
 import rf from "../../libs/RequestFactory";
 import moment from "moment";
-import { scale } from "../../libs/reactSizeMatter/scalingUtils";
 import { getDayMonth, formatCurrency, getTime, getCurrencyName } from "../../utils/Filters";
 import { CommonColors, CommonStyles } from "../../utils/CommonStyles";
 import ScaledSheet from "../../libs/reactSizeMatter/ScaledSheet";
 import I18n from "../../i18n/i18n";
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { orderBy } from "lodash";
 import BitkoexDatePicker from "./common/BitkoexDatePicker";
 import HeaderTransaction from "./common/HeaderTransaction";
 import { Fonts } from "../../../app/utils/CommonStyles";
+import HeaderTransactionsRight from "./common/HeaderTransactionsRight";
 
 class TransactionContainerScreen extends Component {
   static SORT_FIELDS = {
@@ -214,35 +213,52 @@ class TransactionContainerScreen extends Component {
           </View>
         </View>
 
-        <View style={{ flexDirection: 'row' }}>
-          <View style={styles.itemRight}>
-            <Text style={stylesQuantity}>
-              {formatCurrency(item.quantity, item.coin)}
-            </Text>
 
-            <Text style={[styles.itemTransaction]}>{getCurrencyName(item.coin)}</Text>
-          </View>
-
-          <View style={styles.itemRight}>
-            <Text style={styles.itemPrice}>{formatCurrency(item.price, item.currency)}</Text>
-            <Text style={styles.itemTransaction}>{getCurrencyName(item.currency)}</Text>
-          </View>
-
-          <View style={styles.itemRight}>
-            <Text style={styles.itemQuantityPrice}>{formatCurrency(item.price * item.quantity, item.currency)}</Text>
-            <Text style={styles.itemTransaction}>{getCurrencyName(item.currency)}</Text>
-          </View>
-
-          {title === I18n.t('transactions.openOrderTab') ? this._renderStatusOrder(item) :
-            <View style={[styles.lastItemRight]}>
-              <Text style={styles.itemFee}>
-                {formatCurrency(item.fee, item.coin)}
-              </Text>
-              <Text style={styles.itemTransaction}>{getCurrencyName(item.coin)}</Text>
-            </View>}
-        </View>
       </View>
     )
+  }
+
+  _renderItemRight({ item }) {
+    const { title } = this.props;
+    const stylesQuantity = item.quantity.includes('-') ? styles.itemDecreaseQuantity : styles.itemIncreaseQuantity;
+
+    return (
+      <View style={styles.itemContainer}>
+        <View style={styles.itemRight}>
+          <Text style={stylesQuantity}>
+            {formatCurrency(item.quantity, item.coin)}
+          </Text>
+
+          <Text style={[styles.itemTransaction]}>{getCurrencyName(item.coin)}</Text>
+        </View>
+
+        <View style={styles.itemRight}>
+          <Text style={styles.itemPrice}>{formatCurrency(item.price, item.currency)}</Text>
+          <Text style={styles.itemTransaction}>{getCurrencyName(item.currency)}</Text>
+        </View>
+
+        <View style={styles.itemRight}>
+          <Text style={styles.itemQuantityPrice}>{formatCurrency(item.price * item.quantity, item.currency)}</Text>
+          <Text style={styles.itemTransaction}>{getCurrencyName(item.currency)}</Text>
+        </View>
+
+        {title === I18n.t('transactions.openOrderTab') ? this._renderStatusOrder(item) :
+          <View style={[styles.lastItemRight]}>
+            <Text style={styles.itemFee}>
+              {formatCurrency(item.fee, item.coin)}
+            </Text>
+            <Text style={styles.itemTransaction}>{getCurrencyName(item.coin)}</Text>
+          </View>}
+      </View>
+    )
+  }
+
+  _scrollFlatList(event, title) {
+    const y = event.nativeEvent.contentOffset.y;
+
+    title.scrollToOffset({
+      offset: y,
+    });
   }
 
   render() {
@@ -263,17 +279,28 @@ class TransactionContainerScreen extends Component {
           {this._renderDatePicker('end_date')}
           {this._renderButtonSeach()}
         </View>
-
-        <View>
-          <ScrollView horizontal={true} contentContainerStyle={{ flexDirection: 'column' }}>
+        <View style={{ flexDirection: 'row' }}>
+          <View style={{ flexDirection: 'column' }}>
             <HeaderTransaction sortDate={() => this._onSortDate()}
-                               titles={titles}
                                sortPair={() => this._onSortPair()}
                                renderArrowDate={this._renderArrow(TransactionContainerScreen.SORT_FIELDS.DATE)}
                                renderArrowPair={this._renderArrow(TransactionContainerScreen.SORT_FIELDS.PAIR)}
             />
-            <FlatList data={transactions}
+
+            <FlatList data={[...transactions, ...transactions, ...transactions, ...transactions]}
+                      ref={elm => this.flatListLeft = elm}
+                      onScroll={(event) => this._scrollFlatList(event, this.flatListRight)}
                       renderItem={this._renderItem.bind(this)}
+                      onEndReached={this._handleLoadMore.bind(this)}
+                      onEndThreshold={100}/>
+          </View>
+
+          <ScrollView horizontal={true} contentContainerStyle={{ flexDirection: 'column' }}>
+            <HeaderTransactionsRight titles={titles}/>
+            <FlatList data={[...transactions, ...transactions, ...transactions, ...transactions]}
+                      ref={elm => this.flatListRight = elm}
+                      onScroll={(event) => this._scrollFlatList(event, this.flatListLeft)}
+                      renderItem={this._renderItemRight.bind(this)}
                       onEndReached={this._handleLoadMore.bind(this)}
                       onEndThreshold={100}/>
           </ScrollView>

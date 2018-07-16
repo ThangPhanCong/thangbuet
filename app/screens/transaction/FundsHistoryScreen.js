@@ -11,6 +11,8 @@ import TransactionRequest from "../../requests/TransactionRequest";
 import { orderBy } from "lodash";
 import { formatCurrency, getCurrencyName, getDayMonth, getTime } from "../../utils/Filters";
 import HeaderFunds from "./HeaderFunds";
+import HeaderFundsRight from "./HeaderFundsRight";
+import HeaderTransactionsRight from "./common/HeaderTransactionsRight";
 
 class FundsHistoryScreen extends Component {
   static SORT_FIELDS = {
@@ -150,8 +152,6 @@ class FundsHistoryScreen extends Component {
 
   _renderItem({ item }) {
     const pardeDayMonth = moment(item.transaction_date).format('MM-DD');
-    const truntCateAddress = item.foreign_blockchain_address.substr(0, 11) + "...";
-    const stylesQuantity = item.amount.includes('-') ? styles.itemDecreaseQuantity : styles.itemIncreaseQuantity;
 
     return (
       <View style={styles.itemContainer}>
@@ -166,29 +166,37 @@ class FundsHistoryScreen extends Component {
           </View>
         </View>
 
-        <View style={{ flexDirection: 'row' }}
-        >
-          <View style={styles.itemRight}>
-            <Text style={stylesQuantity}>
-              {formatCurrency(item.amount, item.currency)}
-            </Text>
 
-            <Text style={[styles.itemFunds]}>{getCurrencyName(item.currency)}</Text>
-          </View>
+      </View>
+    )
+  }
 
-          <View style={styles.viewAddressBlockChain}>
-            <Text style={styles.itemBlockchain}>{truntCateAddress}</Text>
-          </View>
+  _renderItemRight({ item }) {
+    const truntCateAddress = item.foreign_blockchain_address.substr(0, 11) + "...";
+    const stylesQuantity = item.amount.includes('-') ? styles.itemDecreaseQuantity : styles.itemIncreaseQuantity;
 
-          <View style={styles.itemRight}>
-            <Text style={styles.itemQuantityPrice}>{formatCurrency(item.fee, item.currency)}</Text>
-            <Text style={styles.itemFunds}>{getCurrencyName(item.currency)}</Text>
-          </View>
+    return (
+      <View style={styles.itemContainer}>
+        <View style={styles.itemRight}>
+          <Text style={stylesQuantity}>
+            {formatCurrency(item.amount, item.currency)}
+          </Text>
 
-          <View style={[styles.itemRight, { marginRight: scale(10) }]}>
-            {item.status === 'pending' ? <Text style={styles.itemPending}> {I18n.t('transactions.pending')}</Text>
-              : <Text style={styles.itemSuccess}>{I18n.t('transactions.success')}</Text>}
-          </View>
+          <Text style={[styles.itemFunds]}>{getCurrencyName(item.currency)}</Text>
+        </View>
+
+        <View style={styles.viewAddressBlockChain}>
+          <Text style={styles.itemBlockchain}>{truntCateAddress}</Text>
+        </View>
+
+        <View style={styles.itemRight}>
+          <Text style={styles.itemQuantityPrice}>{formatCurrency(item.fee, item.currency)}</Text>
+          <Text style={styles.itemFunds}>{getCurrencyName(item.currency)}</Text>
+        </View>
+
+        <View style={[styles.itemRight, { marginRight: scale(10) }]}>
+          {item.status === 'pending' ? <Text style={styles.itemPending}> {I18n.t('transactions.pending')}</Text>
+            : <Text style={styles.itemSuccess}>{I18n.t('transactions.success')}</Text>}
         </View>
       </View>
     )
@@ -210,16 +218,23 @@ class FundsHistoryScreen extends Component {
           {this._renderButtonSeach()}
         </View>
 
-        <View>
-          <ScrollView horizontal={true} contentContainerStyle={{ flexDirection: 'column' }}>
+        <View style={{ flexDirection: 'row' }}>
+          <View style={{ flexDirection: 'column' }}>
             <HeaderFunds sortDate={() => this._onSortDate()}
                          sortPair={() => this._onSortPair()}
                          renderArrowDate={this._renderArrow(FundsHistoryScreen.SORT_FIELDS.DATE)}
                          renderArrowPair={this._renderArrow(FundsHistoryScreen.SORT_FIELDS.PAIR)}
-                         titles={titles}
             />
             <FlatList data={transactions}
                       renderItem={this._renderItem.bind(this)}
+              // onEndReached={this._handleLoadMore.bind(this)}
+                      onEndThreshold={100}/>
+          </View>
+
+          <ScrollView horizontal={true} contentContainerStyle={{ flexDirection: 'column' }}>
+            <HeaderFundsRight titles={titles}/>
+            <FlatList data={transactions}
+                      renderItem={this._renderItemRight.bind(this)}
               // onEndReached={this._handleLoadMore.bind(this)}
                       onEndThreshold={100}/>
           </ScrollView>

@@ -12,6 +12,8 @@ import { formatCurrency, getCurrencyName } from "../../utils/Filters";
 import BaseScreen from "../BaseScreen";
 import Consts from "../../../app/utils/Consts";
 import HeaderProfitAndLoss from "./HeaderProfitAndLoss";
+import HeaderProfitRight from "./HeaderProfitRight";
+import HeaderProfitCenter from "./HeaderProfitCenter";
 
 class ProfitAndLossScreen extends BaseScreen {
   state = {
@@ -171,20 +173,25 @@ class ProfitAndLossScreen extends BaseScreen {
     return false;
   }
 
-  _renderSum() {
+  _renderSumLeft() {
+    return (
+      <View style={styles.itemContainer}>
+        <View style={styles.currencyGroup}>
+          <Text style={styles.itemCurrency}>{I18n.t('transactions.profit.titleSum')}</Text>
+        </View>
+      </View>
+    )
+  }
+
+  _renderSumCenter() {
     const { sum } = this.state;
 
     if (sum.deposit) {
       return (
-        <View style={styles.itemContainer}>
-          <View style={styles.currencyGroup}>
-            <Text style={styles.itemCurrency}>{I18n.t('transactions.profit.titleSum')}</Text>
-          </View>
-
+        <View style={[styles.itemContainer,]}>
           <View style={styles.profitGroup}>
             <Text style={styles.itemBalanceSum}>{sum.startingBalance}</Text>
             <Text style={styles.itemBalanceSum}>{Consts.CURRENCY_KRW.toUpperCase()}</Text>
-
           </View>
 
           <View style={styles.profitGroup}>
@@ -211,31 +218,48 @@ class ProfitAndLossScreen extends BaseScreen {
               style={this._checkDecrease(sum.increaseBalance) ? styles.decreaseSumChange : styles.increaseSumChange}>{Consts.CURRENCY_KRW.toUpperCase()}</Text>
           </View>
 
-          <View style={[styles.profitGroup, { marginRight: scale(10) }]}>
-            <Text
-              style={this._checkDecrease(sum.percentIncrease) ? styles.decreaseSumChange : styles.increaseSumChange}>{sum.percentIncrease}</Text>
-          </View>
+
         </View>
       )
     }
 
   }
 
-  _renderItem({ item }) {
-    const startBalance = this.getStartingBalanceByCoin(item);
-    const increase = this.getIncreaseBalanceByCoin(item);
-    const percent = this.getPercentIncreaseBalance(increase, startBalance) + '%';
+  _renderSumRight() {
+    const { sum } = this.state;
 
+    if (sum.deposit) {
+      return (
+        <View style={styles.itemContainer}>
+          <View style={[styles.profitRightGroup, { marginRight: scale(10) }]}>
+            <Text
+              style={this._checkDecrease(sum.percentIncrease) ? styles.decreaseSumChange : styles.increaseSumChange}>{sum.percentIncrease}</Text>
+          </View>
+        </View>
+
+      )
+    }
+  }
+
+  _renderItem({ item }) {
     return (
       <View style={styles.itemContainer}>
         <View style={styles.currencyGroup}>
           <Text style={styles.itemCurrency}>{getCurrencyName(item.currency)}</Text>
         </View>
+      </View>
+    )
+  }
 
+  _renderItemCenter({ item }) {
+    const startBalance = this.getStartingBalanceByCoin(item);
+    const increase = this.getIncreaseBalanceByCoin(item);
+
+    return (
+      <View style={[styles.itemContainer]}>
         <View style={styles.profitGroup}>
           <Text style={[styles.itemDeposit]}>{startBalance}</Text>
           <Text style={[styles.itemBalance]}>{getCurrencyName(item.currency)}</Text>
-
         </View>
 
         <View style={styles.profitGroup}>
@@ -261,8 +285,20 @@ class ProfitAndLossScreen extends BaseScreen {
           <Text
             style={this._checkDecrease(increase) ? styles.decreaseChange : styles.increaseChange}>{getCurrencyName(item.currency)}</Text>
         </View>
+        <View style={{width: scale(20)}}></View>
 
-        <View style={[styles.profitGroup, { marginRight: scale(10) }]}>
+      </View>
+    )
+  }
+
+  _renderItemRight({ item }) {
+    const startBalance = this.getStartingBalanceByCoin(item);
+    const increase = this.getIncreaseBalanceByCoin(item);
+    const percent = this.getPercentIncreaseBalance(increase, startBalance) + '%';
+
+    return (
+      <View style={styles.itemContainer}>
+        <View style={[styles.profitRightGroup, { marginRight: scale(10) }]}>
           <Text style={this._checkDecrease(percent) ? styles.decreaseChange : styles.increaseChange}>{percent}</Text>
         </View>
       </View>
@@ -286,15 +322,33 @@ class ProfitAndLossScreen extends BaseScreen {
           {this._renderButtonSeach()}
         </View>
 
-        <View>
-          <ScrollView horizontal={true} contentContainerStyle={{ flexDirection: 'column' }}>
+        <View style={{ flexDirection: 'row' }}>
+          <View style={{ flexDirection: 'column' }}>
             <HeaderProfitAndLoss titles={titles}/>
-            {this._renderSum()}
+            {this._renderSumLeft()}
             <FlatList data={transactions}
                       renderItem={this._renderItem.bind(this)}
               // onEndReached={this._handleLoadMore.bind(this)}
                       onEndThreshold={100}/>
+          </View>
+
+          <ScrollView horizontal={true} contentContainerStyle={{ flexDirection: 'column' }}>
+            <HeaderProfitCenter titles={titles}/>
+            {this._renderSumCenter()}
+            <FlatList data={transactions}
+                      renderItem={this._renderItemCenter.bind(this)}
+              // onEndReached={this._handleLoadMore.bind(this)}
+                      onEndThreshold={100}/>
           </ScrollView>
+
+          <View style={styles.profitRightContainer}>
+            <HeaderProfitRight titles={titles}/>
+            {this._renderSumRight()}
+            <FlatList data={transactions}
+                      renderItem={this._renderItemRight.bind(this)}
+              // onEndReached={this._handleLoadMore.bind(this)}
+                      onEndThreshold={100}/>
+          </View>
 
         </View>
       </View>
@@ -387,7 +441,13 @@ const styles = ScaledSheet.create({
     ...Fonts.OpenSans_Bold,
   },
   profitGroup: {
-    width: '100@s',
+    width: '80@s',
+    flexDirection: 'column',
+    alignItems: 'flex-end',
+    justifyContent: 'center',
+  },
+  profitRightGroup: {
+    width: '50@s',
     flexDirection: 'column',
     alignItems: 'flex-end',
     justifyContent: 'center',
@@ -407,5 +467,10 @@ const styles = ScaledSheet.create({
   viewSymbol: {
     alignSelf: 'center',
     marginLeft: '10@s'
+  },
+  profitRightContainer: {
+    flexDirection: 'column',
+    borderLeftWidth: '1@s',
+    borderLeftColor: CommonColors.separator
   }
 });
