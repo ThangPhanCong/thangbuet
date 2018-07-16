@@ -24,7 +24,7 @@ import UIUtils from '../../utils/UIUtils';
 import TradingGeneralScreen from './TradingGeneralScreen';
 import TradingOrderBookScreen from './TradingOrderBookScreen';
 import TradingChartScreen from './TradingChartScreen';
-import TradingConclusionScreen from './TradingConclusionScreen';
+import TradingTransactionsScreen from './TradingTransactionsScreen';
 import I18n from '../../i18n/i18n';
 import Consts from '../../utils/Consts';
 import { ListItem, List, Icon } from 'react-native-elements';
@@ -53,7 +53,7 @@ const TradeTabs = TabNavigator(
       })
     },
     Transaction: {
-      screen: TradingConclusionScreen,
+      screen: TradingTransactionsScreen,
       navigationOptions: () => ({
         tabBarLabel: (options) => UIUtils.renderTabItem(I18n.t('tradeScreen.transaction'), options, false)
       })
@@ -73,7 +73,7 @@ export default class TradingScreen extends BaseScreen {
   constructor(props) {
     super(props)
 
-    let params = {currency: 'krw', coin: 'btc'};//this.props.navigation.state.params;
+    let params = this.props.navigation.state.params;
     this.state = {
       modalVisible: false,
       itemSelected: {},
@@ -274,13 +274,14 @@ export default class TradingScreen extends BaseScreen {
         animationType="slide"
         transparent={true}
         visible={this.state.modalVisible}
-        onRequestClose={() => { }}>
+        onBackButtonPress={this._closeSymbolSelector.bind(this)}
+        onBackdropPress={this._closeSymbolSelector.bind(this)}>
         <View style={styles.popup}>
           <List containerStyle={styles.coinList} >
             <FlatList
               data={this.state.symbols}
               keyExtractor={item => item.key + "_" + item.id}
-              ItemSeparatorComponent={() => <View style={styles.separator} />}
+              ItemSeparatorComponent={() => <View style={styles.separator}/>}
               renderItem={({ item }) => (
                 <ListItem
                   onPress={() => this.setState({ currency: item.currency, coin: item.coin, modalVisible: false })}
@@ -288,12 +289,17 @@ export default class TradingScreen extends BaseScreen {
                   key={item.key + "_" + item.id}
                   title={this._getCurrencyName(item.coin) + ' ' + getCurrencyName(item.coin) + '/' + getCurrencyName(item.currency)}
                   titleStyle={styles.itemText}
-                  containerStyle={styles.item} />
+                  containerStyle={styles.item}
+                  underlayColor='#6C6C6C'/>
               )} />
           </List>
         </View>
       </Modal>
     );
+  }
+
+  _closeSymbolSelector() {
+    this.setState({ modalVisible: false });
   }
 
   _renderTypeDropdown() {
@@ -393,25 +399,29 @@ const styles = ScaledSheet.create({
 
   popup: {
     justifyContent: "center",
-    alignItems: "center"
+    alignItems: "center",
+    marginTop: '0@s',
+    marginBottom: '20@s'
   },
   coinList: {
-    width: '270@s',
-    backgroundColor: '#515151'
+    width: '245@s',
+    backgroundColor: '#515151',
+    ...UIUtils.generatePopupShadow()
   },
   item: {
-    height: '50@s',
+    height: '55@s',
     alignItems: 'center',
     justifyContent: 'center'
   },
   itemText: {
     color: '#D9D9D9',
     textAlign: 'center',
-    fontWeight: 'bold'
+    paddingRight: '8@s',
+    fontSize: '16@s',
+    ...Fonts.OpenSan_Bold
   },
   separator: {
-    height: 0.5,
     width: '100%',
-    backgroundColor: "#5F5F5F"
+    backgroundColor: "#606060"
   }
 });

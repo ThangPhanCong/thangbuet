@@ -2,6 +2,64 @@ import React from 'react';
 import { Image, Platform, StyleSheet } from 'react-native';
 import { scale } from '../libs/reactSizeMatter/scalingUtils';
 
+const iOSFonts = {
+  NanumSquareOTF_ExtraBold: {
+    fontFamily: 'NanumSquareOTF',
+    fontWeight: '800'
+  },
+  OpenSans: {
+    fontFamily: 'OpenSans-Regular',
+  },
+  OpenSans_Bold: {
+    fontFamily: 'OpenSans-Semibold'
+  },
+  // NotoSans_Bold: {
+  //   fontFamily: 'NotoSans',
+  //   fontWeight: '700'
+  // },
+  NotoSans_Bold: {
+    fontFamily: 'NotoSansCJKkr-Bold'
+  },
+  NotoSans_Regular: {
+    fontFamily: 'NotoSansCJKkr-Regular'
+  },
+  NanumGothic_Regular: {
+    fontFamily: 'NanumGothic-Regular'
+  },
+  NanumGothic_Bold: {
+    fontFamily: 'NanumGothic-Bold'
+  }
+};
+
+const androidFonts = {
+  NanumSquareOTF_ExtraBold: {
+    fontFamily: 'NanumSquareOTFBold',
+  },
+  OpenSans: {
+    fontFamily: 'OpenSans-Regular',
+  },
+  OpenSans_Bold: {
+    fontFamily: 'OpenSans-Semibold'
+  },
+  NotoSans: {
+    fontFamily: 'NotoSansCJKkr-Regular'
+  },
+  NotoSans_Bold: {
+    fontFamily: 'NotoSansCJKkr-Bold'
+  },
+  NotoSans_Regular: {
+    fontFamily: 'NotoSansCJKkr-Regular'
+  },
+  NanumGothic_Regular: {
+    fontFamily: 'NanumGothic-Regular'
+  },
+  NanumGothic_Bold: {
+    fontFamily: 'NanumGothic-Bold'
+  }
+};
+
+const Fonts = Platform.OS === 'ios' ? iOSFonts : androidFonts;
+
 class CommonColors {
   static screenBgColor = '#FFF';
   static increased = '#FD0001';
@@ -58,23 +116,28 @@ const CommonStyles = {
     inActiveText: ' OFF',
     renderActiveText: true,
     renderInActiveText: true,
-    circleSize: scale(14),
-    barHeight: scale(18),
+    circleSize: scale(12),
+    barHeight: scale(16),
     switchLeftPx: 1.1,
     switchRightPx: 1.3,
     switchWidthMultiplier: 3,
+    outerCircleStyle: {
+      top: scale(2)
+    },
     circleBorderWidth: 0,
     circleBorderActiveColor: '#0000',
     circleBorderInactiveColor: '#0000',
     backgroundActive: '#41BCF3',
     backgroundInactive: '#C4C4C4',
     activeTextStyle: {
-      fontSize: scale(9),
+      fontSize: scale(7),
+      ...Fonts.NanumSquareOTF_ExtraBold,
       paddingRight: scale(5)
     },
     inactiveTextStyle: {
-      fontSize: scale(9),
-      paddingLeft: scale(1)
+      fontSize: scale(7),
+      ...Fonts.NanumSquareOTF_ExtraBold,
+      paddingLeft: scale(2)
     }
   },
   bold: {
@@ -99,66 +162,5 @@ const CommonStyles = {
     swipeEnabled: false
   }
 };
-
-const iOSFonts = {
-  NanumSquareOTF_ExtraBold: {
-    fontFamily: 'NanumSquareOTF',
-    fontWeight: '800'
-  },
-  OpenSans: {
-    fontFamily: 'OpenSans-Regular',
-  },
-  OpenSans_Bold: {
-    fontFamily: 'OpenSans-Semibold'
-  },
-  NotoSans: {
-    fontFamily: 'NotoSans-Regular'
-  },
-  // NotoSans_Bold: {
-  //   fontFamily: 'NotoSans',
-  //   fontWeight: '700'
-  // },
-  NotoSans_Bold: {
-    fontFamily: 'NotoSansCJKkr-Bold',
-  },
-  NotoSans_Regular: {
-    fontFamily: 'NotoSansCJKkr-Regular'
-  },
-  NanumGothic_Regular: {
-    fontFamily: 'NanumGothic-Regular'
-  },
-  NanumGothic_Bold: {
-    fontFamily: 'NanumGothic-Bold'
-  }
-};
-
-const androidFonts = {
-  NanumSquareOTF_ExtraBold: {
-    fontFamily: 'NanumSquareOTFBold',
-  },
-  OpenSans: {
-    fontFamily: 'OpenSans-Regular',
-  },
-  OpenSans_Bold: {
-    fontFamily: 'OpenSans-Semibold'
-  },
-  NotoSans: {
-    fontFamily: 'NotoSansCJKkr-Regular'
-  },
-  NotoSans_Bold: {
-    fontFamily: 'NotoSansCJKkr-Bold'
-  },
-  NotoSans_Regular: {
-    fontFamily: 'NotoSansCJKkr-Regular'
-  },
-  NanumGothic_Regular: {
-    fontFamily: 'NanumGothic-Regular'
-  },
-  NanumGothic_Bold: {
-    fontFamily: 'NanumGothic-Bold'
-  }
-};
-
-const Fonts = Platform.OS === 'ios' ? iOSFonts : androidFonts;
 
 export { CommonStyles, CommonColors, CommonSize, Fonts };
