@@ -14,7 +14,7 @@ import { Card } from 'react-native-elements'
 import Modal from 'react-native-modal';
 import BaseScreen from '../../BaseScreen';
 import rf from '../../../libs/RequestFactory';
-import { CommonStyles } from '../../../utils/CommonStyles';
+import { CommonStyles, Fonts } from '../../../utils/CommonStyles';
 import Utils from '../../../utils/Utils';
 import I18n from '../../../i18n/i18n';
 import _ from 'lodash';
@@ -22,6 +22,7 @@ import Consts from '../../../utils/Consts';
 import TouchableTextHighlight from '../../../utils/TouchableTextHighlight';
 import ActionButton from 'react-native-action-button';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import ScaledSheet from '../../../libs/reactSizeMatter/ScaledSheet';
 
 export default class WalletScreen extends BaseScreen {
 
@@ -466,7 +467,7 @@ export default class WalletScreen extends BaseScreen {
   }
 }
 
-const styles = StyleSheet.create({
+const styles = ScaledSheet.create({
   screen: {
     ...CommonStyles.screen
   },
@@ -474,14 +475,14 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   listItem: {
-    height: 64
+    height: '64@s'
   },
   listItemContainer: {
     flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
-    paddingLeft: 10,
-    paddingRight: 10
+    paddingLeft: '10@s',
+    paddingRight: '10@s'
   },
   separator: {
     flex: 1,
@@ -507,72 +508,75 @@ const styles = StyleSheet.create({
   },
   normalHeader: {
     color: '#000',
-    fontSize: 12,
-    fontWeight: 'bold'
+    fontSize: '12@s',
+    ...Fonts.NanumGothic_Bold,
   },
   tabBar: {
     flexDirection: 'row',
     alignItems: 'center',
-    height: 36,
+    height: '36@s',
     backgroundColor: '#F8F9FB',
-    paddingLeft: 10,
-    paddingRight: 10,
+    paddingLeft: '10@s',
+    paddingRight: '10@s',
   },
   valueItem: {
-    fontSize: 12,
-    textAlign: 'center'
+    fontSize: '12@s',
+    textAlign: 'center',
+    ...Fonts.NanumGothic_Regular,
   },
   buttonTitle: {
-    fontSize: 13,
-    marginStart: 15,
-    marginEnd: 15,
-    color: '#FF3300'
+    fontSize: '13@s',
+    marginStart: '15@s',
+    marginEnd: '15@s',
+    color: '#FF3300',
+    ...Fonts.NanumGothic_Regular,
   },
   withdrawButton: {
     alignItems: 'center',
     justifyContent: 'center',
     borderColor: '#FF3300',
-    borderWidth: 1,
-    borderRadius: 5,
-    height: 30
+    borderWidth: '1@s',
+    borderRadius: '5@s',
+    height: '30@s'
   },
   dialog: {
-    marginStart: 40,
-    marginEnd: 40,
+    marginStart: '40@s',
+    marginEnd: '40@s',
     backgroundColor: '#FFF'
   },
   submitAddNewWallet: {
-    marginTop: 30,
-    marginStart: 16,
-    marginEnd: 16,
-    height: 40,
+    marginTop: '30@s',
+    marginStart: '16@s',
+    marginEnd: '16@s',
+    height: '40@s',
     backgroundColor: '#0070C0',
-    borderRadius: 5,
+    borderRadius: '5@s',
     alignItems: 'center',
     justifyContent: 'center'
   },
   addNewWalletTitle: {
-    fontSize: 13,
-    marginTop: 16,
-    marginStart: 16,
-    marginEnd: 16
+    fontSize: '13@s',
+    marginTop: '16@s',
+    marginStart: '16@s',
+    marginEnd: '16@s',
+    ...Fonts.NanumGothic_Regular,
   },
   addNewWalletTextInput: {
-    marginTop: 2,
-    marginStart: 16,
-    marginEnd: 16,
-    height: 40,
+    marginTop: '2@s',
+    marginStart: '16@s',
+    marginEnd: '16@s',
+    height: '40@s',
     borderColor: '#D9D9D9',
-    borderRadius: 5,
-    borderWidth: 1
+    borderRadius: '5@s',
+    borderWidth: '1@s'
   },
   picker: {
-    marginTop: 2,
-    marginStart: 16,
-    marginEnd: 16,
-    height: 40,
+    marginTop: '2@s',
+    marginStart: '16@s',
+    marginEnd: '16@s',
+    height: '40@s',
     borderColor: '#D9D9D9',
-    borderRadius: 5,
-    borderWidth: 1,
+    borderRadius: '5@s',
+    borderWidth: '1@s',
   }
 });

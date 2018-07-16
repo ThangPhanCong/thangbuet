@@ -49,6 +49,9 @@
 		<string>NanumSquareOTFBold.otf</string>
 		<string>OpenSans-Semibold.ttf</string>
 		<string>NotoSans-Bold.ttf</string>
+		<string>NanumGothic-Regular.ttf</string>
+		<string>NanumGothic-Bold.ttf</string>
+		<string>NanumGothic-ExtraBold.ttf</string>
 	</array>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>

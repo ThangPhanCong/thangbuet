@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
-import { FlatList, Text, TouchableWithoutFeedback, View, ScrollView } from "react-native";
+import { FlatList, Text, TouchableWithoutFeedback, View, ScrollView, Image } from "react-native";
 import ScaledSheet from "../../libs/reactSizeMatter/ScaledSheet";
-import { CommonColors, CommonStyles } from "../../utils/CommonStyles";
+import { CommonColors, CommonStyles, Fonts } from "../../utils/CommonStyles";
 import { scale } from "../../libs/reactSizeMatter/scalingUtils";
 import I18n from "../../i18n/i18n";
 import moment from "moment/moment";
@@ -9,10 +9,8 @@ import BitkoexDatePicker from "./common/BitkoexDatePicker";
 import rf from "../../libs/RequestFactory";
 import TransactionRequest from "../../requests/TransactionRequest";
 import { orderBy } from "lodash";
-import HeaderTransaction from "./common/HeaderTransaction";
-import TransactionContainerScreen from "./TransactionContainerScreen";
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { formatCurrency, getCurrencyName, getDayMonth, getTime } from "../../utils/Filters";
+import HeaderFunds from "./HeaderFunds";
 
 class FundsHistoryScreen extends Component {
   static SORT_FIELDS = {
@@ -84,7 +82,7 @@ class FundsHistoryScreen extends Component {
       return orderBy(transactions, (item) => item.created_at, sortDirection)
     } else {
       const revertedDirection = this._revertSortDirection(sortDirection);
-      return orderBy(transactions, ['coin', 'currency'], revertedDirection);
+      return orderBy(transactions, 'currency', revertedDirection);
     }
   }
 
@@ -140,24 +138,20 @@ class FundsHistoryScreen extends Component {
 
   _renderArrow(field) {
     const { sortField, sortDirection } = this.state;
-
     return (
-      sortField === field && sortDirection === TransactionContainerScreen.SORT_DIRECTION.ASC ?
-        <Icon
-          name='menu-up'
-          size={scale(20)}
-          color='#000'/> :
-        <Icon
-          name='menu-down'
-          size={scale(20)}
-          color='#000'/>
+      sortField === field && sortDirection === FundsHistoryScreen.SORT_DIRECTION.ASC ?
+        <Image
+          source={require('../../../assets/sortAsc/asc.png')}/> :
+        <Image
+          style={{ position: 'relative', top: -3 }}
+          source={require('../../../assets/sortDesc/desc.png')}/>
     )
   }
 
   _renderItem({ item }) {
-    const { title } = this.props;
     const pardeDayMonth = moment(item.transaction_date).format('MM-DD');
     const truntCateAddress = item.foreign_blockchain_address.substr(0, 11) + "...";
+    const stylesQuantity = item.amount.includes('-') ? styles.itemDecreaseQuantity : styles.itemIncreaseQuantity;
 
     return (
       <View style={styles.itemContainer}>
@@ -168,18 +162,18 @@ class FundsHistoryScreen extends Component {
           </View>
 
           <View style={styles.coinPairContainer}>
-            <Text style={[styles.itemCurrency, { fontWeight: 'bold' }]}>{getCurrencyName(item.currency)}</Text>
+            <Text style={styles.itemCurrency}>{getCurrencyName(item.currency)}</Text>
           </View>
         </View>
 
         <View style={{ flexDirection: 'row' }}
         >
           <View style={styles.itemRight}>
-            <Text style={styles.itemQuantity}>
+            <Text style={stylesQuantity}>
               {formatCurrency(item.amount, item.currency)}
             </Text>
 
-            <Text style={[styles.itemCurrency]}>{getCurrencyName(item.currency)}</Text>
+            <Text style={[styles.itemFunds]}>{getCurrencyName(item.currency)}</Text>
           </View>
 
           <View style={styles.viewAddressBlockChain}>
@@ -188,10 +182,10 @@ class FundsHistoryScreen extends Component {
 
           <View style={styles.itemRight}>
             <Text style={styles.itemQuantityPrice}>{formatCurrency(item.fee, item.currency)}</Text>
-            <Text style={styles.itemCurrency}>{getCurrencyName(item.currency)}</Text>
+            <Text style={styles.itemFunds}>{getCurrencyName(item.currency)}</Text>
           </View>
 
-          <View style={[styles.itemRight, {marginRight: scale(10)}]}>
+          <View style={[styles.itemRight, { marginRight: scale(10) }]}>
             {item.status === 'pending' ? <Text style={styles.itemPending}> {I18n.t('transactions.pending')}</Text>
               : <Text style={styles.itemSuccess}>{I18n.t('transactions.success')}</Text>}
           </View>
@@ -218,11 +212,11 @@ class FundsHistoryScreen extends Component {
 
         <View>
           <ScrollView horizontal={true} contentContainerStyle={{ flexDirection: 'column' }}>
-            <HeaderTransaction sortDate={() => this._onSortDate()}
-                               sortPair={() => this._onSortPair()}
-                               renderArrowDate={this._renderArrow(FundsHistoryScreen.SORT_FIELDS.DATE)}
-                               renderArrowPair={this._renderArrow(FundsHistoryScreen.SORT_FIELDS.PAIR)}
-                               titles={titles}
+            <HeaderFunds sortDate={() => this._onSortDate()}
+                         sortPair={() => this._onSortPair()}
+                         renderArrowDate={this._renderArrow(FundsHistoryScreen.SORT_FIELDS.DATE)}
+                         renderArrowPair={this._renderArrow(FundsHistoryScreen.SORT_FIELDS.PAIR)}
+                         titles={titles}
             />
             <FlatList data={transactions}
                       renderItem={this._renderItem.bind(this)}
@@ -248,23 +242,26 @@ const styles = ScaledSheet.create({
     flexDirection: 'column',
     justifyContent: 'center',
     alignItems: 'center',
-    height: '25@s',
+    height: '22@s',
     margin: '6@s',
-    width: '35@s',
-    borderRadius: '4@s'
+    width: '40@s',
+    borderRadius: '2@s',
+    borderBottomColor: '#000',
+    borderBottomWidth: '0.6@s'
   },
   textSearch: {
     fontSize: '12@s',
+    ...Fonts.NotoSans,
     color: CommonColors.mainText
   },
   itemContainer: {
     flexDirection: 'row',
-    height: '50@s',
+    height: '40@s',
     borderBottomColor: CommonColors.separator,
     borderBottomWidth: '1@s',
   },
   itemLeftContainer: {
-    flex: 1,
+    width: '120@s',
     flexDirection: 'row',
     borderRightColor: CommonColors.separator,
     borderRightWidth: '1@s',
@@ -272,62 +269,92 @@ const styles = ScaledSheet.create({
   itemDayMonth: {
     color: CommonColors.mainText,
     fontWeight: 'bold',
-    fontSize: '12@s'
+    fontSize: '12@s',
+    ...Fonts.OpenSans
   },
   itemTime: {
     color: CommonColors.mainText,
-    fontSize: '11@s'
+    fontSize: '11@s',
+    ...Fonts.OpenSans
   },
   itemCurrency: {
     color: CommonColors.mainText,
-    fontSize: '13@s'
+    fontSize: '12@s',
+    ...Fonts.OpenSans_Bold
+  },
+  itemFunds: {
+    color: CommonColors.mainText,
+    fontSize: '10@s',
+    ...Fonts.OpenSans
+  },
+  itemQuantity: {
+    fontSize: '10@s',
+    ...Fonts.OpenSans
+  },
+  itemDecreaseQuantity: {
+    fontSize: '10@s',
+    color: CommonColors.decreased,
+    ...Fonts.OpenSans
+  },
+  itemIncreaseQuantity: {
+    fontSize: '10@s',
+    color: CommonColors.increased,
+    ...Fonts.OpenSans
+  },
+  itemQuantityPrice: {
+    color: CommonColors.mainText,
+    fontSize: '10@s',
+    ...Fonts.OpenSans
   },
   itemPending: {
     color: 'red',
-    fontSize: '13@s'
+    fontSize: '10@s',
+    ...Fonts.OpenSans
   },
   itemSuccess: {
     color: CommonColors.mainText,
-    fontSize: '13@s'
+    fontSize: '10@s',
+    ...Fonts.OpenSans
   },
   itemRight: {
     flexDirection: 'column',
-    width: '100@s',
+    width: '80@s',
     alignItems: 'flex-end',
     justifyContent: 'center',
   },
   itemBlockchain: {
     color: CommonColors.decreased,
-    fontSize: '11@s',
+    fontSize: '10@s',
     borderBottomColor: CommonColors.decreased,
     borderBottomWidth: '0.5@s'
   },
   viewAddressBlockChain: {
     flexWrap: 'wrap',
-    width: '100@s',
+    width: '90@s',
     alignItems: 'flex-end',
     justifyContent: 'center',
   },
   timeContainer: {
-    flex: 1,
+    width: '50@s',
     marginLeft: '2@s',
     justifyContent: 'center',
     alignItems: 'center',
     flexDirection: 'column'
   },
   coinPairContainer: {
-    flex: 1,
+    width: '70@s',
     flexDirection: 'row',
     alignItems: 'center',
     marginLeft: '20@s',
-    marginRight: '20@s'
+    marginRight: '40@s'
   },
   viewDatePicker: {
+    height: '40@s',
     flexDirection: 'row',
     alignItems: 'center'
   },
   viewSymbol: {
     alignSelf: 'center',
-    marginLeft: scale(20)
-  }
+    marginLeft: '10@s'
+  },
 })
