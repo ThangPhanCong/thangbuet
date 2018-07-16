@@ -9,7 +9,6 @@ import {
   View,
   FlatList,
   Image,
-  Dimensions
 } from 'react-native';
 import BaseScreen from '../BaseScreen';
 import { TabNavigator, TabBarTop } from 'react-navigation';
