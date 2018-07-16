@@ -110,7 +110,6 @@ const iOSFonts = {
   },
   OpenSans_Bold: {
     fontFamily: 'OpenSans-Semibold'
-    fontWeight: '700'
   },
   NotoSans: {
     fontFamily: 'NotoSans-Regular'
