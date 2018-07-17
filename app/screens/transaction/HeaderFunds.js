@@ -23,8 +23,13 @@ class HeaderFunds extends Component {
           <TouchableWithoutFeedback onPress={sortPair ? () => sortPair() : () => {
           }}>
             <View style={styles.headerCoinPair}>
-              <Text style={styles.headerTitle}>{I18n.t('transactions.pair')}</Text>
-              {renderArrowPair}
+              <View style={{flex: 1}}>
+                <Text style={styles.headerTitle}>{I18n.t('transactions.pair')}</Text>
+              </View>
+
+              <View style={{flex: 2}}>
+                {renderArrowPair}
+              </View>
             </View>
           </TouchableWithoutFeedback>
         </View>
@@ -61,20 +66,18 @@ const styles = ScaledSheet.create({
     ...Fonts.NotoSans,
   },
   headerCoinPair: {
-    marginTop:  '10@s',
     flexDirection: 'column',
     width: '70@s',
     marginLeft: '20@s',
-    justifyContent: 'center',
   },
   viewHeaderLeft: {
     flexDirection: 'row',
     width: '118@s',
-    alignItems: 'center',
   },
   headerTime: {
     width: '50@s',
     flexDirection: 'row',
-    marginLeft: '2@s'
+    marginLeft: '2@s',
+    alignItems: 'center',
   }
 })

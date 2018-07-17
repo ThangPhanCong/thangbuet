@@ -171,9 +171,11 @@ class TransactionContainerScreen extends Component {
     return (
       sortField === field && sortDirection === TransactionContainerScreen.SORT_DIRECTION.ASC ?
         <Image
+          style={styles.iconSort}
           source={require('../../../assets/sortAsc/asc.png')}/>
         :
         <Image
+          style={styles.iconSort}
           source={require('../../../assets/sortDesc/desc.png')}/>
     )
   }
@@ -541,4 +543,9 @@ const styles = ScaledSheet.create({
     alignSelf: 'center',
     marginLeft: '10@s'
   },
+  iconSort: {
+    marginTop: '7@s',
+    height: '20@s',
+    width: '20@s',
+  }
 });
