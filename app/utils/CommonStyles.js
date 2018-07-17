@@ -44,6 +44,9 @@ const androidFonts = {
   OpenSans_Bold: {
     fontFamily: 'OpenSans-Semibold'
   },
+  OpenSans_Light: {
+    fontFamily: 'OpenSans-Light',
+  },
   NotoSans: {
     fontFamily: 'NotoSansCJKkr-Regular'
   },

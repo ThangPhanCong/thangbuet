@@ -3,7 +3,7 @@ import { Image, View, Text } from 'react-native';
 import { initApp } from '../../App';
 import AppConfig from '../utils/AppConfig';
 import BaseScreen from './BaseScreen';
-import { CommonColors, CommonStyles } from "../utils/CommonStyles";
+import { CommonColors, CommonStyles, Fonts } from "../utils/CommonStyles";
 import ScaledSheet from '../libs/reactSizeMatter/ScaledSheet';
 import I18n from '../i18n/i18n';
 
@@ -57,13 +57,15 @@ const styles = ScaledSheet.create({
     ...CommonStyles.screen,
     // justifyContent: 'center',
     alignItems: 'center',
-    paddingTop: '140@s'
+    paddingTop: '120@s'
   },
   title: {
-    fontSize: "35@s",
-    marginTop: "0@s"
+    fontSize: "40@s",
+    marginTop: "0@s",
+    ...Fonts.OpenSans_Bold
   },
   sentence: {
-    fontSize: '10@s'
+    fontSize: '10@s',
+    ...Fonts.NotoSans_Regular
   }
 });
