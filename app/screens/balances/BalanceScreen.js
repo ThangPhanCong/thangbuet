@@ -142,7 +142,7 @@ export default class BalanceScreen extends BaseScreen {
             <View style={styles.tableHeader}>
               <Text style={[styles.textHeader]}>{I18n.t('balances.coin')}</Text>
               <Text style={[styles.textHeader, { textAlign: 'right' }]}> {I18n.t('balances.quantity')}</Text>
-              <Text style={[styles.textHeader, { flex: 1.4}]}>{I18n.t('balances.action')}</Text>
+              <Text style={[styles.textHeader, { flex: 1.4 }]}>{I18n.t('balances.action')}</Text>
             </View>
             <ScrollView>
               {
@@ -235,6 +235,5 @@ const styles = ScaledSheet.create({
     height: '25@s', margin: '5@s', backgroundColor: 'rgba(222, 227, 235, 1)',
     justifyContent: 'center', alignItems: 'center', borderWidth: '1@s', borderRadius: '4@s',
     borderColor: 'rgba(222, 227, 235, 0.1)'
-
-  }
+  },
 });
