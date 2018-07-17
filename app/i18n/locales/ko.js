@@ -166,10 +166,13 @@ export default {
     quantity: '주문수량',
     total: '매수대금',
     balance: '주문가능금액',
-    estimateTotal: '매수대금',
+    estimateTotal: '매수금액',
     fee: '수수료',
     estimateQuantity: '총매수량',
-    tenThousand: '만'
+    tenThousand: '만',
+    availableQuantity: '매도가능수량',
+    sellQuantity: '매도수량',
+    sellAmount: '매도금액'
   },
   orderBook: {
     sell: '매도',

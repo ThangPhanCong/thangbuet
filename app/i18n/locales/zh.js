@@ -156,7 +156,10 @@ export default {
     estimateTotal: '매수대금',
     fee: '수수료',
     estimateQuantity: '총매수량',
-    tenThousand: '만'
+    tenThousand: '만',
+    availableQuantity: '매도가능수량',
+    sellQuantity: '매도수량',
+    sellAmount: '매도금액'
   },
   orderBook: {
     sell: '매도',

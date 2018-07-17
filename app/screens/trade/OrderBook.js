@@ -17,6 +17,7 @@ import ScaledSheet from '../../libs/reactSizeMatter/ScaledSheet';
 import { scale } from '../../libs/reactSizeMatter/scalingUtils';
 import _ from 'lodash';
 import Numeral from '../../libs/numeral';
+import BigNumber from 'bignumber.js';
 import rf from '../../libs/RequestFactory';
 import Consts from '../../utils/Consts';
 import I18n from '../../i18n/i18n';
@@ -205,7 +206,8 @@ export default class OrderBook extends BaseScreen {
   }
 
   _onOrderBookUpdated(data) {
-    if (data.currency == this._getCurrency() && data.coin == this._getCoin()) {
+    const isSameTickerSize = BigNumber(data.tickerSize).isEqualTo(BigNumber(this._getTickerSize()));
+    if (data.currency == this._getCurrency() && data.coin == this._getCoin() && isSameTickerSize) {
       this.orderBook = data.orderBook;
       this._convertOrderBookDataType(this.orderBook);
       this._updateOrderBook();
@@ -213,7 +215,8 @@ export default class OrderBook extends BaseScreen {
   }
 
   _onUserOrderBookUpdated(data) {
-    if (data.currency == this._getCurrency() && data.coin == this._getCoin()) {
+    const isSameTickerSize = BigNumber(data.tickerSize).isEqualTo(BigNumber(this._getTickerSize()));
+    if (data.currency == this._getCurrency() && data.coin == this._getCoin(), isSameTickerSize) {
       this.userOrderBook = data.orderBook;
       this._convertOrderBookDataType(this.userOrderBook);
       this._updateOrderBook();
