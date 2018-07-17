@@ -467,7 +467,7 @@ const styles = ScaledSheet.create({
     alignItems: 'flex-end',
   },
   volumeGroup: {
-    flex: 2,
+    flex: 3,
     alignItems: 'flex-end',
   },
   increasedChange: {
@@ -527,6 +527,7 @@ const styles = ScaledSheet.create({
   symbolHeader: {
     flex: 3,
     justifyContent: 'center',
+    alignItems: 'center',
     flexDirection: 'row'
   },
   priceHeader: {
@@ -535,7 +536,7 @@ const styles = ScaledSheet.create({
     flexDirection: 'row'
   },
   volumeHeader: {
-    flex: 2,
+    flex: 3,
     justifyContent: 'flex-end',
     flexDirection: 'row'
   }
