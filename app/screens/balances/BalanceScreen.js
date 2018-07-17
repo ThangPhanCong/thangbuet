@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button, Image, SafeAreaView, ScrollView, Text, View } from 'react-native';
+import { TouchableOpacity, Image, SafeAreaView, ScrollView, Text, View } from 'react-native';
 import BaseScreen from '../BaseScreen'
 import MasterdataUtils from '../../utils/MasterdataUtils'
 import ScaledSheet from '../../libs/reactSizeMatter/ScaledSheet'
@@ -8,6 +8,8 @@ import I18n from '../../i18n/i18n'
 import AppConfig from '../../utils/AppConfig'
 import HeaderBalance from './HeaderBalance'
 import { getCurrencyName } from '../../utils/Filters'
+import { Icon } from 'react-native-elements'
+import { CommonColors, CommonSize, CommonStyles, Fonts } from '../../utils/CommonStyles'
 
 export default class BalanceScreen extends BaseScreen {
   constructor(props) {
@@ -127,12 +129,20 @@ export default class BalanceScreen extends BaseScreen {
     return (
       <SafeAreaView style={styles.fullScreen}>
         <View style={styles.content}>
-          <HeaderBalance />
+          <View style={styles.logo}>
+            <Image
+              resizeMode="contain"
+              style={styles.iconLogo}
+              source={require('../../../assets/balance/logo_tab3.png')} />
+            <Text style={[styles.fontNotoSansBold]}>
+              {I18n.t('balances.depositAndWithdrawal')}
+            </Text>
+          </View>
           <View style={{ flex: 1 }}>
             <View style={styles.tableHeader}>
-              <Text style={{ flex: 1 }}>{I18n.t('balances.coin')}</Text>
-              <Text style={{ flex: 1 }}> {I18n.t('balances.quantity')}</Text>
-              <Text style={{ flex: 1 }}>{I18n.t('balances.action')}</Text>
+              <Text style={[styles.textHeader]}>{I18n.t('balances.coin')}</Text>
+              <Text style={[styles.textHeader, { textAlign: 'right' }]}> {I18n.t('balances.quantity')}</Text>
+              <Text style={[styles.textHeader, { flex: 1.4 }]}>{I18n.t('balances.action')}</Text>
             </View>
             <ScrollView>
               {
@@ -144,26 +154,35 @@ export default class BalanceScreen extends BaseScreen {
                       <Image
                         style={styles.imageSize}
                         source={{ uri: symbol.icon }} />
-                      <Text>{getCurrencyName(symbol.code)}</Text>
+                      <Text style={styles.rowCoinName}>{getCurrencyName(symbol.code)}</Text>
                     </View>
-                    <Text style={styles.balance}>
+                    <Text style={[styles.balance, styles.rowNumber]}>
                       {symbol.code !== 'krw' && parseFloat(symbol.balance)}
                     </Text>
                     <View style={styles.action}>
-                      <Button title={I18n.t('balances.deposit')} onPress={() => {
-                        if (symbol.code == 'krw') {
-                          this.navigate('DepositKRW', { symbol })
-                        } else {
-                          this.navigate('Deposit', { symbol })
-                        }
-                      }} />
-                      <Button title={I18n.t('balances.withdrawal')} onPress={() => {
-                        if (symbol.code == 'krw') {
-                          this.navigate('WithdrawalKRW', { symbol })
-                        } else {
-                          this.navigate('Withdrawal', { symbol })
-                        }
-                      }} />
+                      <TouchableOpacity
+                        style={styles.btnRow}
+                        onPress={() => {
+                          if (symbol.code == 'krw') {
+                            this.navigate('DepositKRW', { symbol })
+                          } else {
+                            this.navigate('Deposit', { symbol })
+                          }
+                        }}>
+                        <Text style={styles.btnText}>{I18n.t('balances.deposit')}</Text>
+                      </TouchableOpacity>
+
+                      <TouchableOpacity
+                        style={styles.btnRow}
+                        onPress={() => {
+                          if (symbol.code == 'krw') {
+                            this.navigate('WithdrawalKRW', { symbol })
+                          } else {
+                            this.navigate('Withdrawal', { symbol })
+                          }
+                        }}>
+                        <Text style={styles.btnText}>{I18n.t('balances.withdrawal')}</Text>
+                      </TouchableOpacity>
                     </View>
                   </View>
                 ))
@@ -177,24 +196,44 @@ export default class BalanceScreen extends BaseScreen {
 }
 
 const styles = ScaledSheet.create({
-  fullScreen: { flex: 1 },
+  fullScreen: { flex: 1, backgroundColor: 'white' },
   content: { flex: 1, flexDirection: "column" },
-  header: { height: 40, flexDirection: "row" },
-  logo: { flex: 1, flexDirection: "row", alignItems: 'center', justifyContent: 'center' },
+  header: { height: '80@s', flexDirection: "row", },
+  logo: {
+    height: '50@s', flexDirection: "row", alignItems: 'center', justifyContent: 'flex-start',
+    borderBottomWidth: '1@s', borderColor: 'rgba(222, 227, 235, 1)'
+  },
   info: { flex: 2, flexDirection: "column", alignItems: 'center', justifyContent: 'center' },
   infoRow: { flexDirection: "row", alignItems: 'center', justifyContent: 'center' },
   infoRowLeft: { flex: 1 },
   infoRowRight: { flex: 1.5 },
   tableHeader: {
-    flexDirection: "row", height: 30, backgroundColor: '#c7d2e2',
-    alignItems: 'center', justifyContent: 'center', borderBottomWidth: 1
+    flexDirection: "row", height: '30@s', backgroundColor: 'rgba(248, 249, 251, 1)',
+    alignItems: 'center', justifyContent: 'center', borderBottomWidth: '1@s',
+    borderColor: 'rgba(239, 241, 245, 1)'
   },
   tableRow: {
-    flexDirection: "row", height: 40,
-    alignItems: 'center', justifyContent: 'center', borderBottomWidth: 1
+    flexDirection: "row", height: '40@s', borderColor: 'rgba(239, 241, 245, 1)',
+    alignItems: 'center', justifyContent: 'center', borderBottomWidth: '1@s'
   },
   tableRowDetail: { flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-start' },
-  imageSize: { width: 24, height: 24 },
-  balance: { flex: 1, fontSize: 12 },
-  action: { flex: 1, flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'flex-start' }
+  imageSize: { width: '20@s', height: '20@s', margin: '10@s' },
+  balance: { flex: 1 },
+  action: { flex: 1.4, flexDirection: 'row', alignItems: 'center', justifyContent: 'center' },
+  iconLogo: { height: '20@s', width: '20@s', margin: '2@s', marginLeft: '15@s', },
+  fontNotoSansRegular: { ...Fonts.NotoSans_Regular, fontSize: '14@s' },
+  fontNotoSansBold: { ...Fonts.NotoSans_Bold, fontSize: '14@s' },
+  fontSize12: { fontSize: '12@s' },
+  textHeader: { flex: 1, textAlign: 'center', ...Fonts.NotoSans_Regular, fontSize: '12@s' },
+  rowCoinName: { ...Fonts.OpenSans, fontWeight: 'bold', fontSize: '12@s', textAlign: 'left' },
+  rowNumber: { ...Fonts.OpenSans, fontSize: '12@s', textAlign: 'right' },
+  btnText: {
+    ...Fonts.NanumGothic_Bold, fontSize: '12@s', color: 'rgba(0, 0, 0, 1)',
+    paddingLeft: '15@s', paddingRight: '15@s'
+  },
+  btnRow: {
+    height: '25@s', margin: '5@s', backgroundColor: 'rgba(222, 227, 235, 1)',
+    justifyContent: 'center', alignItems: 'center', borderWidth: '1@s', borderRadius: '4@s',
+    borderColor: 'rgba(222, 227, 235, 0.1)'
+  },
 });

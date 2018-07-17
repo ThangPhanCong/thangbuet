@@ -27,25 +27,25 @@ export default class TransactionScreen extends BaseScreen {
         OrderHistoryScreen: {
           screen: (props) => <TransactionContainerScreen {...props} title={I18n.t('transactions.orderHistoryTab')}/>,
           navigationOptions: () => ({
-            tabBarLabel: (options) => UIUtils.renderTabItem(I18n.t('transactions.orderHistoryTab'), options)
+            tabBarLabel: (options) => UIUtils.renderTabItem(I18n.t('transactions.orderHistoryTab'), {fontSize: 14, ...options})
           })
         },
         OpenOrderScreen: {
           screen: (props) => <TransactionContainerScreen {...props} title={I18n.t('transactions.openOrderTab')}/>,
           navigationOptions: () => ({
-            tabBarLabel: (options) => UIUtils.renderTabItem(I18n.t('transactions.openOrderTab'), options)
+            tabBarLabel: (options) => UIUtils.renderTabItem(I18n.t('transactions.openOrderTab'),{fontSize: 14, ...options})
           })
         },
         FundsHistory: {
           screen: (props) => <FundsHistoryScreen {...props} title={I18n.t('transactions.fundsHistoryTab')}/>,
           navigationOptions: () => ({
-            tabBarLabel: (options) => UIUtils.renderTabItem(I18n.t('transactions.fundsHistoryTab'), options)
+            tabBarLabel: (options) => UIUtils.renderTabItem(I18n.t('transactions.fundsHistoryTab'), {fontSize: 14, ...options})
           })
         },
         ProfitScreen: {
           screen: (props) => <ProfitAndLossScreen {...props} title={I18n.t('transactions.profitLostTab')}/>,
           navigationOptions: () => ({
-            tabBarLabel: (options) => UIUtils.renderTabItem(I18n.t('transactions.profitLostTab'), options)
+            tabBarLabel: (options) => UIUtils.renderTabItem(I18n.t('transactions.profitLostTab'), {fontSize: 14, ...options})
           })
         }
       },

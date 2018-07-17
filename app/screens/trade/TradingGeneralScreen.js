@@ -9,15 +9,19 @@ import {
 import BaseScreen from '../BaseScreen'
 import I18n from '../../i18n/i18n';
 import ScaledSheet from '../../libs/reactSizeMatter/ScaledSheet'
+import { scale } from '../../libs/reactSizeMatter/scalingUtils';
 import Utils from '../../utils/Utils';
 import Consts from '../../utils/Consts'
 import { CommonColors, CommonSize, CommonStyles, Fonts } from '../../utils/CommonStyles';
 import OrderBook from './OrderBook';
 import OrderBookSettingModal from './OrderBookSettingModal';
 import OrderForm from './OrderForm';
+import OpenOrders from './OpenOrders';
 import CurrencyInput from '../common/CurrencyInput';
 
 export default class TradingGeneralScreen extends BaseScreen {
+
+  static OPEN_ORDERS_TAB = 'open_orders'
 
   constructor(props) {
     super(props)
@@ -104,14 +108,19 @@ export default class TradingGeneralScreen extends BaseScreen {
 
   _renderOrderForm() {
     const isSelectedBuy = this.state.selectedTab == Consts.TRADE_TYPE_BUY;
+    const isSelectedSell = this.state.selectedTab == Consts.TRADE_TYPE_SELL;
+    const isSelectedOpenOrders = !(isSelectedBuy || isSelectedSell);
     return (
       <View style={styles.trades}>
         {this._renderTypeTabs()}
         <View style={[CommonStyles.matchParent, isSelectedBuy ? {} : { display: 'none' }]}>
           <OrderForm currency={this._getCurrency()} coin={this._getCoin()} tradeType={Consts.TRADE_TYPE_BUY}/>
         </View>
-        <View style={[CommonStyles.matchParent, !isSelectedBuy ? {} : { display: 'none' }]}>
+        <View style={[CommonStyles.matchParent, isSelectedSell ? {} : { display: 'none' }]}>
           <OrderForm currency={this._getCurrency()} coin={this._getCoin()} tradeType={Consts.TRADE_TYPE_SELL}/>
+        </View>
+        <View style={[CommonStyles.matchParent, isSelectedOpenOrders ? {} : { display: 'none' }]}>
+          <OpenOrders currency={this._getCurrency()} coin={this._getCoin()}/>
         </View>
       </View>
     );
@@ -120,6 +129,7 @@ export default class TradingGeneralScreen extends BaseScreen {
   _renderTypeTabs() {
     const isSelectedBuy = this.state.selectedTab == Consts.TRADE_TYPE_BUY;
     const isSelectedSell = this.state.selectedTab == Consts.TRADE_TYPE_SELL;
+    const isSelectedOpenOrders = !(isSelectedBuy || isSelectedSell);
     return (
       <View style={styles.tabs}>
         <TouchableOpacity
@@ -146,8 +156,11 @@ export default class TradingGeneralScreen extends BaseScreen {
 
         <TouchableOpacity
           activeOpacity={1}
-          style={styles.tab}>
-          <Text style={styles.tabLabel}>{I18n.t('orderForm.pendingOrder')}</Text>
+          style={[styles.tab, isSelectedOpenOrders ? styles.selectedOpenOrders : {}]}
+          onPress={() => this.setState({selectedTab: TradingGeneralScreen.OPEN_ORDERS_TAB})}>
+          <Text style={[styles.tabLabel, styles.openOrdersLabel, isSelectedOpenOrders ? styles.selectedLabel : {}]}>
+            {I18n.t('orderForm.pendingOrder')}
+          </Text>
         </TouchableOpacity>
       </View>
     );
@@ -206,7 +219,8 @@ const styles = ScaledSheet.create({
   tabs: {
     flexDirection: 'row',
     height: '37@vs',
-    alignItems: 'stretch'
+    alignItems: 'stretch',
+    paddingTop: '2@s'
   },
   tab: {
     flex: 1,
@@ -214,8 +228,7 @@ const styles = ScaledSheet.create({
     alignItems: 'center',
     borderBottomWidth: 1,
     borderColor: '#EEF1F5',
-    marginBottom: 1,
-    paddingBottom: 1
+    marginBottom: -1
   },
   tabLabel: {
     fontSize: '14@s',
@@ -231,14 +244,20 @@ const styles = ScaledSheet.create({
   selectedBuy: {
     borderBottomWidth: '2@s',
     borderColor: '#FF2C0D',
-    marginBottom: 0,
-    paddingBottom: 0,
+    marginBottom: 0
   },
   selectedSell: {
     borderBottomWidth: '2@s',
     borderColor: '#007AC5',
-    marginBottom: 0,
-    paddingBottom: 0
+    marginBottom: 0
+  },
+  selectedOpenOrders: {
+    borderBottomWidth: '2@s',
+    borderColor: '#70AD47',
+    marginBottom: 0
+  },
+  openOrdersLabel: {
+    color: '#70AD47'
   },
   selectedLabel: {
     ...Fonts.NotoSans_Bold

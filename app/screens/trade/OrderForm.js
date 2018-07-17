@@ -23,7 +23,7 @@ import { scale } from '../../libs/reactSizeMatter/scalingUtils';
 import Utils from '../../utils/Utils';
 import Consts from '../../utils/Consts'
 import OrderUtils from '../../utils/OrderUtils';
-import { CommonColors, CommonSize, CommonStyles } from '../../utils/CommonStyles';
+import { CommonColors, CommonSize, CommonStyles, Fonts } from '../../utils/CommonStyles';
 import { getCurrencyName, formatCurrency } from '../../utils/Filters';
 import OrderBook from './OrderBook';
 import OrderBookSettingModal from './OrderBookSettingModal';
@@ -315,7 +315,7 @@ export default class OrderForm extends BaseScreen {
 
         <View style={styles.inputRow}>
           <Text style={styles.inputLabel}>{I18n.t('orderForm.type')}</Text>
-            {this._renderOrderType()}
+          {this._renderOrderType()}
         </View>
 
         {this._isStopOrder() && this._renderStopInput()}
@@ -345,7 +345,7 @@ export default class OrderForm extends BaseScreen {
 
   _renderCaretDownIcon() {
     return (
-      <Icon name='triangle-down' type='entypo' size={scale(18)}/>
+      <Icon name='triangle-down' type='entypo' size={scale(15)}/>
     );
   }
 
@@ -399,7 +399,7 @@ export default class OrderForm extends BaseScreen {
             editable={!this._isMarketOrder()}
             onChangeText={(formatted, extracted) => this._onPriceChanged(this._getMaskInputValue(formatted, extracted))}
             keyboardType='numeric'
-            style={styles.inputText}
+            style={[styles.inputText, {textAlign: 'center'}]}
             underlineColorAndroid='transparent'/>
         </View>
       </View>
@@ -416,7 +416,7 @@ export default class OrderForm extends BaseScreen {
             precision={0}
             onChangeText={this._onStopChanged.bind(this)}
             keyboardType='numeric'
-            style={styles.inputText}
+            style={[styles.inputText, {textAlign: 'center'}]}
             underlineColorAndroid='transparent'/>
         </View>
       </View>
@@ -459,7 +459,8 @@ export default class OrderForm extends BaseScreen {
       onSelectItem: this._onQuantityItemSelected.bind(this),
       dropdownStyle: styles.quantityDropdown,
       itemButtonStyle: styles.quantityDropdownButton,
-      itemTextStyle: styles.quantityDropdownText
+      itemTextStyle: styles.quantityDropdownText,
+      separatorStyle: styles.quantityDropdownSeparator
     };
     this.notify(Events.SHOW_TRADE_SCREEN_DROPDOWN, { items, options });
   }
@@ -525,7 +526,8 @@ export default class OrderForm extends BaseScreen {
       onSelectItem: this._onTotalItemSelected.bind(this),
       dropdownStyle: styles.quantityDropdown,
       itemButtonStyle: styles.quantityDropdownButton,
-      itemTextStyle: styles.quantityDropdownText
+      itemTextStyle: styles.quantityDropdownText,
+      separatorStyle: styles.quantityDropdownSeparator
     };
     this.notify(Events.SHOW_TRADE_SCREEN_DROPDOWN, { items, options });
   }
@@ -710,13 +712,13 @@ export default class OrderForm extends BaseScreen {
 }
 
 const margin = scale(10);
-const dropdownRowHeight = scale(35);
-const inputHeight = scale(38);
+const dropdownRowHeight = scale(33);
+const inputHeight = scale(33);
 const inputBotderRadius = scale(3);
 
 const styles = ScaledSheet.create({
   inputGroup: {
-    flex: 1,
+    flex: 0.521,
     margin: margin,
     marginTop: margin * 1.5,
     justifyContent: 'space-between'
@@ -727,7 +729,9 @@ const styles = ScaledSheet.create({
     alignItems: 'center',
   },
   inputLabel: {
-    width: scale(60),
+    width: scale(55),
+    fontSize: '11@s',
+    ...Fonts.NotoSans
   },
   inputValue: {
     flex: 1,
@@ -742,7 +746,11 @@ const styles = ScaledSheet.create({
     flex: 1,
     height: '100%',
     padding: margin,
-    textAlign: 'right'
+    paddingTop: 0,
+    paddingBottom: 0,
+    textAlign: 'right',
+    fontSize: '13@s',
+    ...Fonts.OpenSans
   },
   disabled: {
     backgroundColor: '#F4F3F4'
@@ -753,12 +761,14 @@ const styles = ScaledSheet.create({
   },
   typeLabel: {
     paddingRight: margin,
-    textAlign: 'center'
+    textAlign: 'center',
+    fontSize: '12@s',
+    ...Fonts.NotoSans
   },
   caretDown: {
     width: '18@s',
     position: 'absolute',
-    right: '10@s'
+    right: '7@s'
   },
   caretButton: {
     width: inputHeight,
@@ -773,7 +783,7 @@ const styles = ScaledSheet.create({
   },
   typeDropdown: {
     height: dropdownRowHeight * 4,
-    backgroundColor: '#FF0',
+    backgroundColor: '#FFF'
   },
   typeDropdownButton: {
     width: '100%',
@@ -784,7 +794,9 @@ const styles = ScaledSheet.create({
   },
   typeDropdownText: {
     color: '#000',
-    textAlign: 'center'
+    textAlign: 'center',
+    fontSize: '12@s',
+    ...Fonts.NotoSans
   },
 
   quantityDropdownAnchor: {
@@ -795,6 +807,7 @@ const styles = ScaledSheet.create({
     backgroundColor: '#0000'
   },
   quantityDropdown: {
+    marginTop: 1,
     backgroundColor: '#FFF',
     borderRadius: '3@s'
   },
@@ -807,17 +820,24 @@ const styles = ScaledSheet.create({
   },
   quantityDropdownText: {
     color: '#000',
-    textAlign: 'center'
+    textAlign: 'center',
+    fontSize: '12@s',
+    ...Fonts.OpenSans
+  },
+  quantityDropdownSeparator: {
+    height: 1,
+    width: '100%',
+    backgroundColor: '#F0F0F0'
   },
 
   estimationValues: {
-    flex: 0.61,
+    flex: 0.38,
     marginLeft: margin,
     marginRight: margin,
     marginTop: '2@s',
     marginBottom: '2@s',
-    borderRightWidth: 1,
-    borderBottomWidth: 1,
+    borderTopWidth: 1,
+    borderLeftWidth: 1,
     borderColor: '#E7E5E5'
   },
   estimationRow: {
@@ -828,9 +848,11 @@ const styles = ScaledSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    borderTopWidth: 1,
-    borderLeftWidth: 1,
-    borderColor: '#E7E5E5'
+    borderWidth: 1,
+    borderTopColor: '#F6F5F5',
+    borderLeftColor: '#F6F5F5',
+    borderBottomColor: '#E7E5E5',
+    borderRightColor: '#E7E5E5'
   },
   estimationBuyCell: {
     backgroundColor: '#FFF0F0'
@@ -844,25 +866,29 @@ const styles = ScaledSheet.create({
     justifyContent: 'flex-end',
     alignItems: 'center',
     backgroundColor: '#F3F3F3',
-    borderTopWidth: 1,
-    borderLeftWidth: 1,
-    borderColor: '#E7E5E5'
+    borderWidth: 1,
+    borderTopColor: '#F6F5F5',
+    borderLeftColor: '#F6F5F5',
+    borderBottomColor: '#E7E5E5',
+    borderRightColor: '#E7E5E5'
   },
   estimateLabel: {
-    fontSize: '12@s'
+    fontSize: '11@s',
+    ...Fonts.NotoSans
   },
   estimateValue: {
-    fontSize: '12@s'
+    fontSize: '12@s',
+    ...Fonts.OpenSans
   },
   insideText: {
-    fontSize: '10@s',
-    width: '30@s',
-    marginTop: '3@s',
+    fontSize: '8@s',
+    width: '22@s',
+    marginTop: '2@s',
     marginLeft: '5@s'
   },
 
   submitGroup: {
-    flex: 0.307,
+    flex: 0.18,
     justifyContent: 'center'
   },
   submitButton: {
@@ -881,6 +907,8 @@ const styles = ScaledSheet.create({
   },
 
   submitText: {
-    color: '#FFF'
+    color: '#FFF',
+    fontSize: '11@s',
+    ...Fonts.NotoSans
   }
 });

@@ -13,30 +13,6 @@ class HeaderProfitAndLoss extends Component {
         <View style={styles.headerCurrency}>
           <Text style={styles.headerTitle}>{titles[0]}</Text>
         </View>
-
-        <View style={styles.headerItem}>
-          <Text style={styles.headerTitle}>{titles[1]}</Text>
-        </View>
-
-        <View style={styles.headerItem}>
-          <Text style={styles.headerTitle}>{titles[2]}</Text>
-        </View>
-
-        <View style={styles.headerItem}>
-          <Text style={styles.headerTitle}>{titles[3]}</Text>
-        </View>
-
-        <View style={styles.headerItem}>
-          <Text style={styles.headerTitle}>{titles[4]}</Text>
-        </View>
-
-        <View style={styles.headerItem}>
-          <Text style={styles.headerTitle}>{titles[5]}</Text>
-        </View>
-
-        <View style={[styles.headerItem, { marginRight: scale(10) }]}>
-          <Text style={styles.headerTitle}>{titles[6]}</Text>
-        </View>
       </View>
     )
   }
@@ -60,11 +36,9 @@ const styles = ScaledSheet.create({
   },
   headerCurrency: {
     flexDirection: 'column',
-    width: '49@s',
+    width: '48@s',
     alignItems: 'center',
     justifyContent: 'center',
-    borderRightColor: CommonColors.separator,
-    borderRightWidth: '1@s',
   },
   headerTitle: {
     ...Fonts.NotoSans,

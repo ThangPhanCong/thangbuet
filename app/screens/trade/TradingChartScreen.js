@@ -75,110 +75,12 @@ const chartButtonMargin = PixelRatio.getPixelSizeForLayoutSize(5);
 
 const styles = ScaledSheet.create({
   screen: {
-    flex: 1,
-    backgroundColor: '#12151B'
-  },
-
-  chartToolbar: {
-    flexDirection: 'row',
-    backgroundColor: '#191E26',
-    height: PixelRatio.getPixelSizeForLayoutSize(20),
-  },
-  buttonGroup: {
-    flex: 1,
-    flexDirection: 'row',
-  },
-  chartTimeGroup: {
-    width: PixelRatio.getPixelSizeForLayoutSize(35),
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginLeft: chartButtonMargin,
-    marginRight: chartButtonMargin,
-    borderBottomWidth: PixelRatio.getPixelSizeForLayoutSize(1),
-    borderBottomColor: '#0000',
-    borderTopWidth: PixelRatio.getPixelSizeForLayoutSize(1),
-    borderTopColor: '#0000',
-  },
-  charTimeButton: {
-    color: CommonColors.mainText,
-    marginRight: PixelRatio.getPixelSizeForLayoutSize(2),
-  },
-  depthGroup: {
-    width: PixelRatio.getPixelSizeForLayoutSize(35),
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginLeft: chartButtonMargin,
-    marginRight: chartButtonMargin,
-    borderBottomWidth: PixelRatio.getPixelSizeForLayoutSize(1),
-    borderBottomColor: '#0000',
-    borderTopWidth: PixelRatio.getPixelSizeForLayoutSize(1),
-    borderTopColor: '#0000',
-  },
-  depthButton: {
-    color: CommonColors.mainText,
-    textAlign: 'center',
-  },
-  fullGroupContainer: {
-    flex: 1,
-    flexDirection: 'row',
-    justifyContent: 'flex-end',
-    alignItems: 'center',
-  },
-  fullGroup: {
-    flexDirection: 'row',
-    justifyContent: 'flex-end',
-    alignItems: 'center',
-    borderRadius: PixelRatio.getPixelSizeForLayoutSize(1),
-    borderWidth: 1,
-    borderColor: '#000',
-    paddingLeft: PixelRatio.getPixelSizeForLayoutSize(5),
-    paddingRight: PixelRatio.getPixelSizeForLayoutSize(5),
-    paddingTop: PixelRatio.getPixelSizeForLayoutSize(2),
-    paddingBottom: PixelRatio.getPixelSizeForLayoutSize(2),
-    marginRight: PixelRatio.getPixelSizeForLayoutSize(2)
-  },
-  fullText: {
-    color: CommonColors.mainText,
-    marginRight: PixelRatio.getPixelSizeForLayoutSize(3)
-  },
-
-  popupContainer: {
-    backgroundColor: CommonColors.popupBg,
-    borderRadius: PixelRatio.getPixelSizeForLayoutSize(3),
-    borderWidth: 1,
-    borderColor: CommonColors.border
-  },
-  arrow: {
-    borderColor: CommonColors.border,
-    borderTopColor: CommonColors.popupBg
-  },
-  popup: {
-    width: PixelRatio.getPixelSizeForLayoutSize(170),
-    backgroundColor: CommonColors.popupBg
-  },
-  menuRow: {
-    flex: 1,
-    flexDirection: 'row'
-  },
-  menuItem: {
-    flex: 1,
-    paddingTop: PixelRatio.getPixelSizeForLayoutSize(5),
-    paddingBottom: PixelRatio.getPixelSizeForLayoutSize(5)
-  },
-  menuItemText: {
-    flex: 1,
-    color: CommonColors.mainText,
-    textAlign: 'center'
+    flex: 1
   },
 
   chart: {
-    flex: 1,
-    borderWidth: 1,
-    borderColor: CommonColors.border,
+    flex: 1
   },
   webView: {
-    backgroundColor: '#000'
   }
 });
