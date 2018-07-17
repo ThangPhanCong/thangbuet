@@ -33,6 +33,8 @@ class FundsHistoryScreen extends Component {
     sortDirection: FundsHistoryScreen.SORT_DIRECTION.DESC
   }
 
+  firstScrollView = null;
+
   _renderDatePicker(titleDate) {
     const date = this.state[titleDate];
     const showIcon = titleDate === 'start_date';
@@ -126,6 +128,72 @@ class FundsHistoryScreen extends Component {
     this.setState({ page: 1, transactions: [] }, () => {
       this._loadData();
     })
+  }
+
+  _onLeftListScroll(event) {
+    if (this.firstScrollView === 'left') {
+      const y = event.nativeEvent.contentOffset.y;
+      this.flatListRight.scrollToOffset({
+        offset: y,
+      });
+    }
+  }
+
+  _onRightListScroll(event) {
+    if (this.firstScrollView === 'right') {
+      const y = event.nativeEvent.contentOffset.y;
+      this.flatListLeft.scrollToOffset({
+        offset: y,
+      });
+    }
+  }
+
+  _handleLeftMomentumEnd() {
+    if (this.firstScrollView === 'left') {
+      this.firstScrollView = null;
+    }
+  }
+
+  _handleLeftMomentumStart() {
+    if (this.firstScrollView === null) {
+      this.firstScrollView = 'left';
+    }
+  }
+
+  _handleRightMomentumStart() {
+    if (this.firstScrollView == null) {
+      this.firstScrollView = 'right';
+    }
+  }
+
+  _handleRightMomentumEnd() {
+    if (this.firstScrollView === 'right') {
+      this.firstScrollView = null;
+    }
+  }
+
+  _handleTouchStartLeft() {
+    if (this.firstScrollView === null) {
+      this.firstScrollView = 'left';
+    }
+  }
+
+  _handleTouchEndLeft() {
+    if (this.firstScrollView === 'left') {
+      this.firstScrollView = null;
+    }
+  }
+
+  _handleTouchStartRight() {
+    if (this.firstScrollView === null) {
+      this.firstScrollView = 'right';
+    }
+  }
+
+  _handleTouchEndRight() {
+    if (this.firstScrollView === 'right') {
+      this.firstScrollView = null;
+    }
   }
 
   _renderButtonSeach() {
@@ -225,7 +293,13 @@ class FundsHistoryScreen extends Component {
                          renderArrowDate={this._renderArrow(FundsHistoryScreen.SORT_FIELDS.DATE)}
                          renderArrowPair={this._renderArrow(FundsHistoryScreen.SORT_FIELDS.PAIR)}
             />
-            <FlatList data={transactions}
+            <FlatList data={[transactions]}
+                      ref={elm => this.flatListLeft = elm}
+                      onScroll={(event) => this._onLeftListScroll(event)}
+                      onMomentumScrollStart={() => this._handleLeftMomentumStart()}
+                      onMomentumScrollEnd={() => this._handleLeftMomentumEnd()}
+                      onTouchStart={()=> this._handleTouchStartLeft()}
+                      onTouchEnd={()=> this._handleTouchEndLeft()}
                       renderItem={this._renderItem.bind(this)}
               // onEndReached={this._handleLoadMore.bind(this)}
                       onEndThreshold={100}/>
@@ -234,6 +308,12 @@ class FundsHistoryScreen extends Component {
           <ScrollView horizontal={true} contentContainerStyle={{ flexDirection: 'column' }}>
             <HeaderFundsRight titles={titles}/>
             <FlatList data={transactions}
+                      ref={elm => this.flatListRight = elm}
+                      onScroll={(event) => this._onRightListScroll(event)}
+                      onMomentumScrollStart={() => this._handleRightMomentumStart()}
+                      onMomentumScrollEnd={() => this._handleRightMomentumEnd()}
+                      onTouchStart={()=> this._handleTouchStartRight()}
+                      onTouchEnd={()=> this._handleTouchEndRight()}
                       renderItem={this._renderItemRight.bind(this)}
               // onEndReached={this._handleLoadMore.bind(this)}
                       onEndThreshold={100}/>

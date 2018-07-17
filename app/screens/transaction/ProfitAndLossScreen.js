@@ -24,6 +24,8 @@ class ProfitAndLossScreen extends BaseScreen {
     sum: {}
   }
 
+  firstScrollView = null;
+
   componentDidMount() {
     this._loadData();
     this._loadPrices();
@@ -171,6 +173,118 @@ class ProfitAndLossScreen extends BaseScreen {
     }
 
     return false;
+  }
+
+  _onLeftListScroll(event) {
+    if (this.firstScrollView === 'left') {
+      const y = event.nativeEvent.contentOffset.y;
+
+      this.flatListRight.scrollToOffset({
+        offset: y,
+      });
+      this.flatListCenter.scrollToOffset({
+        offset: y,
+      });
+    }
+  }
+
+  _onCenterListScroll(event) {
+    if (this.firstScrollView === 'center') {
+      const y = event.nativeEvent.contentOffset.y;
+
+      this.flatListRight.scrollToOffset({
+        offset: y,
+      });
+      this.flatListLeft.scrollToOffset({
+        offset: y,
+      });
+    }
+  }
+
+  _onRightListScroll(event) {
+    if (this.firstScrollView === 'right') {
+      const y = event.nativeEvent.contentOffset.y;
+
+      this.flatListLeft.scrollToOffset({
+        offset: y,
+      });
+      this.flatListCenter.scrollToOffset({
+        offset: y,
+      });
+    }
+  }
+
+  _handleLeftMomentumEnd() {
+    if (this.firstScrollView === 'left') {
+      this.firstScrollView = null;
+    }
+  }
+
+  _handleLeftMomentumStart() {
+    if (this.firstScrollView === null) {
+      this.firstScrollView = 'left';
+    }
+  }
+
+  _handleCenterMomentumEnd() {
+    if (this.firstScrollView === 'center') {
+      this.firstScrollView = null;
+    }
+  }
+
+  _handleCenterMomentumStart() {
+    if (this.firstScrollView === null) {
+      this.firstScrollView = 'center';
+    }
+  }
+
+  _handleRightMomentumStart() {
+    if (this.firstScrollView == null) {
+      this.firstScrollView = 'right';
+    }
+  }
+
+  _handleRightMomentumEnd() {
+    if (this.firstScrollView === 'right') {
+      this.firstScrollView = null;
+    }
+  }
+
+  _handleTouchStartLeft() {
+    if (this.firstScrollView === null) {
+      this.firstScrollView = 'left';
+    }
+  }
+
+  _handleTouchEndLeft() {
+    console.log("touch left end")
+    if (this.firstScrollView === 'left') {
+      this.firstScrollView = null;
+    }
+  }
+
+  _handleTouchStartCenter() {
+    if (this.firstScrollView === null) {
+      this.firstScrollView = 'center';
+    }
+  }
+
+  _handleTouchEndCenter() {
+    if (this.firstScrollView === 'center') {
+      this.firstScrollView = null;
+    }
+  }
+
+  _handleTouchStartRight() {
+    if (this.firstScrollView === null) {
+      this.firstScrollView = 'right';
+    }
+  }
+
+  _handleTouchEndRight() {
+    if (this.firstScrollView === 'right') {
+      this.firstScrollView = null;
+    }
   }
 
   _renderSumLeft() {
@@ -326,7 +440,13 @@ class ProfitAndLossScreen extends BaseScreen {
           <View style={{ flexDirection: 'column' }}>
             <HeaderProfitAndLoss titles={titles}/>
             {this._renderSumLeft()}
-            <FlatList data={transactions}
+            <FlatList data={[...transactions, ...transactions, ...transactions,...transactions, ...transactions, ...transactions, ...transactions, ...transactions, ...transactions,  ]}
+                      onScroll={(event) => this._onLeftListScroll(event)}
+                      ref={elm => this.flatListLeft = elm}
+                      onMomentumScrollStart={() => this._handleLeftMomentumStart()}
+                      onMomentumScrollEnd={() => this._handleLeftMomentumEnd()}
+                      onTouchStart={()=> this._handleTouchStartLeft()}
+                      onTouchEnd={()=> this._handleTouchEndLeft()}
                       renderItem={this._renderItem.bind(this)}
               // onEndReached={this._handleLoadMore.bind(this)}
                       onEndThreshold={100}/>
@@ -335,7 +455,13 @@ class ProfitAndLossScreen extends BaseScreen {
           <ScrollView horizontal={true} contentContainerStyle={{ flexDirection: 'column' }}>
             <HeaderProfitCenter titles={titles}/>
             {this._renderSumCenter()}
-            <FlatList data={transactions}
+            <FlatList data={[...transactions, ...transactions, ...transactions,...transactions, ...transactions, ...transactions, ...transactions, ...transactions, ...transactions, ]}
+                      onScroll={(event) => this._onCenterListScroll(event)}
+                      ref={elm => this.flatListCenter = elm}
+                      onMomentumScrollStart={() => this._handleCenterMomentumStart()}
+                      onMomentumScrollEnd={() => this._handleCenterMomentumEnd()}
+                      onTouchStart={()=> this._handleTouchStartCenter()}
+                      onTouchEnd={()=> this._handleTouchEndCenter()}
                       renderItem={this._renderItemCenter.bind(this)}
               // onEndReached={this._handleLoadMore.bind(this)}
                       onEndThreshold={100}/>
@@ -344,7 +470,13 @@ class ProfitAndLossScreen extends BaseScreen {
           <View style={styles.profitRightContainer}>
             <HeaderProfitRight titles={titles}/>
             {this._renderSumRight()}
-            <FlatList data={transactions}
+            <FlatList data={[...transactions, ...transactions, ...transactions,...transactions, ...transactions, ...transactions, ...transactions, ...transactions, ...transactions, ]}
+                      onScroll={(event) => this._onRightListScroll(event)}
+                      ref={elm => this.flatListRight = elm}
+                      onMomentumScrollStart={() => this._handleRightMomentumStart()}
+                      onMomentumScrollEnd={() => this._handleRightMomentumEnd()}
+                      onTouchStart={()=> this._handleTouchStartRight()}
+                      onTouchEnd={()=> this._handleTouchEndRight()}
                       renderItem={this._renderItemRight.bind(this)}
               // onEndReached={this._handleLoadMore.bind(this)}
                       onEndThreshold={100}/>
