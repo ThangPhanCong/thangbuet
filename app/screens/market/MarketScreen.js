@@ -112,7 +112,6 @@ class MarketScreen extends BaseScreen {
                   {getCurrencyName(item.coin) + ' / ' + getCurrencyName(item.currency)}
                 </Text>
               </Text>
-
             </View>
           </View>
 
