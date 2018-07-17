@@ -25,7 +25,6 @@ export default class UIUtils {
       width: 1,
       height: scale(10),
       backgroundColor: '#E0E0E0'
-
     }
 
     return (
