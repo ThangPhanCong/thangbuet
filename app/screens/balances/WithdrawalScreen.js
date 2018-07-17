@@ -196,7 +196,15 @@ class WithdrawalScreen extends BaseScreen {
       <SafeAreaView style={styles.fullScreen}>
         {this.state.isComplete &&
           <ScrollView style={styles.content}>
-            <HeaderBalance />
+              <View style={styles.logo}>
+              <Image
+                resizeMode="contain"
+                style={styles.iconLogo}
+                source={require('../../../assets/balance/logo_tab3.png')} />
+              <Text style={[styles.fontNotoSansBold]}>
+                {I18n.t('balances.depositAndWithdrawal')}
+              </Text>
+            </View>
 
             <View style={[styles.alignCenter, { marginTop: 20 }]}>
               <View style={styles.alignCenter}>
@@ -587,5 +595,10 @@ const styles = ScaledSheet.create({
     width: '70%', justifyContent: 'space-between',
     alignItems: 'center', flexDirection: 'row',
     marginBottom: 20, marginTop: 10
-  }
+  },
+  logo: {
+    height: '50@s', flexDirection: "row", alignItems: 'center', justifyContent: 'flex-start',
+    borderBottomWidth: '1@s', borderColor: 'rgba(222, 227, 235, 1)'
+  },
+  iconLogo: { height: '20@s', width: '20@s', margin: '2@s', marginLeft: '15@s', },
 });

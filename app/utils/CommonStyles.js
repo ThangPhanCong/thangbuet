@@ -31,6 +31,9 @@ const iOSFonts = {
   },
   NanumGothic_Bold: {
     fontFamily: 'NanumGothic-Bold'
+  },
+  Roboto: {
+    fontFamily: 'Roboto-Regular'
   }
 };
 
@@ -58,6 +61,9 @@ const androidFonts = {
   },
   NanumGothic_Bold: {
     fontFamily: 'NanumGothic-Bold'
+  },
+  Roboto: {
+    fontFamily: 'Roboto-Regular'
   }
 };
 
