@@ -22,6 +22,7 @@ import TouchableTextHighlight from '../../../utils/TouchableTextHighlight';
 import ActionButton from 'react-native-action-button';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import ScaledSheet from '../../../libs/reactSizeMatter/ScaledSheet';
+import { scale } from '../../../libs/reactSizeMatter/scalingUtils';
 
 export default class WalletScreen extends BaseScreen {
 
@@ -74,7 +75,7 @@ export default class WalletScreen extends BaseScreen {
           elevation={5}
           shadowColor='#000'
           shadowOpacity={0.3}
-          shadowOffset={{ width: 2, height: 1 }}
+          shadowOffset={{ width: scale(2), height: scale(1) }}
           onPress={this._onShowAddNewWallet.bind(this)}/>
         {this._renderAddNewWalletModal()}
         {this._renderRemoveConfirmationModal()}
@@ -179,30 +180,28 @@ export default class WalletScreen extends BaseScreen {
           <Text style={styles.titleNewWallet}>
             {I18n.t('myPage.wallet.addNewWalletHeader')}
           </Text>
-          <View style={{ height: 1, backgroundColor: '#EBEBEB' }}/>
+          <View style={{ height: scale(1), backgroundColor: '#EBEBEB' }}/>
 
           <Text style={styles.addNewWalletTitle}>
             {I18n.t('myPage.wallet.coinType')}
           </Text>
-          <View style={styles.addNewWalletTextInput}>
+          <View style={styles.viewModalDropDown}>
             <View style={styles.menuDownNewWallet}>
               <Icon
                 name='menu-down'
-                size={22}
-                color='#000'/>
+                color='#000'
+                style={styles.iconMenuDown}
+              />
             </View>
             <ModalDropdown
               style={{ flex: 1, justifyContent: 'center' }}
               defaultValue=''
-              dropdownStyle={{
-                position: 'absolute',
-                marginTop: scale(20),
-                left: 0,
-                right: scale(65),
+              dropdownStyle={[styles.modalAddWalletDropDown, {
                 height: this._calculateModalHeight()
-              }}
-              textStyle={{ marginStart: scale(6.5) }}
-              dropdownTextStyle={{ fontSize: scale(13) }}
+              }]}
+              textStyle={styles.modalTextInput}
+              // dropdownTextStyle={{ fontSize: scale(13) }}
+              dropdownTextStyle={styles.textModalDropDown}
               renderSeparator={() => <View style={{ height: 0 }}/>}
               options={this._generateOptionList()}
               onSelect={this._onCoinPickerSelect.bind(this)}/>
@@ -261,9 +260,9 @@ export default class WalletScreen extends BaseScreen {
                      }/>
 
           <TouchableOpacity
-            style={[styles.submitAddNewWallet, { marginTop: 20, marginBottom: 30 }]}
+            style={[styles.submitAddNewWallet, { marginTop: scale(20), marginBottom: scale(30) }]}
             onPress={this._onAddNewWallet.bind(this)}>
-            <Text style={styles.submitNewWallet}>
+            <Text style={styles.submitWallet}>
               {I18n.t('myPage.wallet.addNewWalletSubmit')}
             </Text>
           </TouchableOpacity>
@@ -507,7 +506,7 @@ const styles = ScaledSheet.create({
   },
   normalHeader: {
     color: '#000',
-    fontSize: '12@s',
+    fontSize: '13@s',
     ...Fonts.NanumGothic_Bold,
   },
   tabBar: {
@@ -567,7 +566,9 @@ const styles = ScaledSheet.create({
     height: '40@s',
     borderColor: '#D9D9D9',
     borderRadius: '5@s',
-    borderWidth: '1@s'
+    borderWidth: '1@s',
+    paddingLeft: '16@s',
+    paddingRight: '16@s'
   },
   picker: {
     marginTop: '2@s',
@@ -593,14 +594,17 @@ const styles = ScaledSheet.create({
     padding: 0,
     marginStart: '30@s',
     marginEnd: '30@s',
-    elevation: '10@s'
+    elevation: '5@s',
+    shadowOpacity: 0.3,
+    shadowRadius: '6@s',
   },
   titleNewWallet: {
     fontSize: '13@s',
     marginTop: '16@s',
     marginBottom: '16@s',
-    marginStart: '16@',
-    marginEnd: '16@s'
+    marginStart: '16@s',
+    marginEnd: '16@s',
+    ...Fonts.NanumGothic_Regular
   },
   menuDownNewWallet: {
     position: 'absolute',
@@ -611,6 +615,42 @@ const styles = ScaledSheet.create({
   },
   submitWallet: {
     fontSize: '13@s',
-    color: '#FFF'
+    color: '#FFF',
+    ...Fonts.NanumGothic_Regular
+  },
+  iconMenuDown: {
+    paddingRight: '10@s',
+    fontSize: '28@s'
+  },
+  modalAddWalletDropDown: {
+    position: 'absolute',
+    marginTop: '20@s',
+    right: '65@s',
+    borderColor: '#D9D9D9',
+    borderRadius: '3@s',
+    borderWidth: '1@s',
+  },
+  viewModalDropDown: {
+    marginTop: '2@s',
+    marginStart: '15@s',
+    marginEnd: '16@s',
+    height: '40@s',
+    borderColor: '#D9D9D9',
+    borderRadius: '5@s',
+    borderWidth: '1@s'
+  },
+  textModalDropDown: {
+    fontSize: '13@s',
+    color: '#000',
+    textAlign: 'center',
+    borderBottomColor: '#D9D9D9',
+    borderBottomWidth: '1@s',
+    ...Fonts.NanumGothic_Regular,
+  },
+  modalTextInput: {
+    textAlign: 'center',
+    fontSize: '13@s',
+    color: '#000',
+    ...Fonts.NanumGothic_Regular,
   }
 });
