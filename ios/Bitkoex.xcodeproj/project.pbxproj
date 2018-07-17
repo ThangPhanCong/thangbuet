@@ -71,6 +71,7 @@
 		FBDFB8BC261D4E23B6210F9C /* libRCTRestart.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 244128BC90A74C6AB9748EC4 /* libRCTRestart.a */; };
 		FF30C7E4F4A542C3970FB74B /* SimpleLineIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 26C07C0E65D1464CA7DFDD4B /* SimpleLineIcons.ttf */; };
 		8F13A066F6EA49DC83ABCFDB /* OpenSans-Light.ttf in Resources */ = {isa = PBXBuildFile; fileRef = D49D941C40C3485EA32D049C /* OpenSans-Light.ttf */; };
+		B849C9E579F748A0A9F0040A /* Roboto-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4DFAE32D3EB04D87845D461A /* Roboto-Regular.ttf */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -537,6 +538,7 @@
 		E491377B6D7048E59866B610 /* libRNTextInputMask.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libRNTextInputMask.a; sourceTree = "<group>"; };
 		EE6F31E358914ED6A9F017E2 /* libRNI18n.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libRNI18n.a; sourceTree = "<group>"; };
 		D49D941C40C3485EA32D049C /* OpenSans-Light.ttf */ = {isa = PBXFileReference; name = "OpenSans-Light.ttf"; path = "../assets/fonts/OpenSans-Light.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		4DFAE32D3EB04D87845D461A /* Roboto-Regular.ttf */ = {isa = PBXFileReference; name = "Roboto-Regular.ttf"; path = "../assets/fonts/Roboto-Regular.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -689,6 +691,7 @@
 				BBE6AFF079BA43ED9F2FE81B /* NanumGothic-ExtraBold.ttf */,
 				921C1DE8798E467B928A54C2 /* NanumGothic-Regular.ttf */,
 				D49D941C40C3485EA32D049C /* OpenSans-Light.ttf */,
+				4DFAE32D3EB04D87845D461A /* Roboto-Regular.ttf */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -1569,6 +1572,7 @@
 				D56EAB4D993C457FAE9D86F7 /* NanumGothic-ExtraBold.ttf in Resources */,
 				47B6FE248A4E430C848199F7 /* NanumGothic-Regular.ttf in Resources */,
 				8F13A066F6EA49DC83ABCFDB /* OpenSans-Light.ttf in Resources */,
+				B849C9E579F748A0A9F0040A /* Roboto-Regular.ttf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
