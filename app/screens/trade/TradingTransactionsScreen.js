@@ -1,25 +1,24 @@
 import React from 'react';
-import { Button, PixelRatio, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View, Image } from 'react-native';
+import { Button, FlatList, Text, View } from 'react-native';
 import { filter, find, orderBy } from 'lodash';
 import moment from 'moment';
 import Numeral from '../../libs/numeral';
 import rf from '../../libs/RequestFactory';
 import I18n from '../../i18n/i18n';
 import BaseScreen from '../BaseScreen';
-import { CommonColors, CommonSize, CommonStyles } from '../../utils/CommonStyles';
+import { CommonColors, CommonSize, CommonStyles, Fonts } from '../../utils/CommonStyles';
 import { formatPercent, getCurrencyName } from '../../utils/Filters';
 import ScaledSheet from '../../libs/reactSizeMatter/ScaledSheet';
+import { scale } from '../../libs/reactSizeMatter/scalingUtils';
 
-export default class TradingConclusionScreen extends BaseScreen {
+export default class TradingTransactionsScreen extends BaseScreen {
 
   constructor(props) {
     super(props);
     this.state = {
       transactions: [],
       quantityPrecision: 4,
-      decimalDigitCount: 4,
-      currency: '',
-      coin: ''
+      decimalDigitCount: 4
     };
   }
 
@@ -38,14 +37,19 @@ export default class TradingConclusionScreen extends BaseScreen {
     }
   }
 
+  _getMaxTransactionCount() {
+    return 30;
+  }
+
   async reloadData() {
     return await this._loadData();
   }
 
   async _loadData() {
     let { coin, currency } = this.props.screenProps
+    const count = this._getMaxTransactionCount();
 
-    let response = await rf.getRequest('OrderRequest').getRecentTransactions({ coin, currency });
+    let response = await rf.getRequest('OrderRequest').getRecentTransactions({ coin, currency, count });
     this._onReceiveTransactions(response.data);
   }
 
@@ -60,9 +64,8 @@ export default class TradingConclusionScreen extends BaseScreen {
       }
       transactions = data;
     } else {
-      transactions = data.slice(0, this.props.screenProps.count);
+      transactions = data.slice(0, this._getMaxTransactionCount());
     }
-    console.log('transactions', transactions)
     this.setState({ transactions: transactions });
   }
 
@@ -86,8 +89,8 @@ export default class TradingConclusionScreen extends BaseScreen {
 
     let transactions = this.state.transactions;
     transactions.splice(0, 0, newItem);
-    if (transactions.length > this.props.screenProps.count) {
-      transactions = transactions.slice(0, this.props.screenProps.count);
+    if (transactions.length > this._getMaxTransactionCount()) {
+      transactions = transactions.slice(0, _getMaxTransactionCount());
     }
     this.setState({ transactions: transactions });
   }
@@ -151,73 +154,91 @@ export default class TradingConclusionScreen extends BaseScreen {
       <View
         style={styles.screen}>
         <View style={styles.title}>
-          <Text style={styles.titleLabel}>{I18n.t('marketDetail.time')}</Text>
+          <Text style={[styles.titleLabel, styles.timeLabel]}>{I18n.t('marketDetail.time')}</Text>
           <Text style={[styles.titleLabel, styles.priceLabel]}>{I18n.t('marketDetail.price')}</Text>
           <Text style={[styles.titleLabel, styles.quantityLabel]}>{I18n.t('marketDetail.amount')}</Text>
         </View>
 
         <View style={styles.transactions}>
-          {this.state.transactions.map((item, index) => {
-            return (
-              <View
-                style={[styles.transactionRow, index < this.state.transactions.length - 1 ? styles.hasBorder : styles.noBorder]}
-                key={index}>
-                <Text style={styles.time}>{this._formatTime(item.created_at)}</Text>
-                <Text style={[styles.price, item.priceIncreased ? styles.priceIncreased : styles.priceDecreased]}>
-                  {this._formatPrice(item.price)}
-                </Text>
-                <Text style={[styles.quantity, , item.priceIncreased ? styles.priceIncreased : styles.priceDecreased]}>{this._formatQuantity(item.quantity)}</Text>
-              </View>
-            );
-          })}
+          <FlatList
+            data={this.state.transactions}
+            keyExtractor={(item, index) => `${index}`}
+            ItemSeparatorComponent={() => <View style={styles.separator}/>}
+            renderItem={this._renderItem.bind(this)}/>
         </View>
       </View>
-    )
+    );
+  }
+
+  _renderItem({ item }) {
+    return (
+      <View style={styles.transactionRow}>
+        <Text style={[styles.valueText, styles.time]}>{this._formatTime(item.created_at)}</Text>
+        <Text style={[styles.valueText, styles.price, item.priceIncreased ? styles.priceIncreased : styles.priceDecreased]}>
+          {this._formatPrice(item.price)}
+        </Text>
+        <Text style={[styles.valueText, styles.quantity, , item.priceIncreased ? styles.priceIncreased : styles.priceDecreased]}>
+          {this._formatQuantity(item.quantity)}
+        </Text>
+      </View>
+    );
   }
 }
 
-const fontSize = PixelRatio.getFontScale() * 12;
+const margin = scale(10);
+const fontSize = scale(11);
 
 const styles = ScaledSheet.create({
   screen: {
-    flex: 1,
-    paddingLeft: PixelRatio.getPixelSizeForLayoutSize(5),
-    paddingRight: PixelRatio.getPixelSizeForLayoutSize(5)
+    flex: 1
   },
   title: {
     flexDirection: 'row',
+    height: '28@s',
+    alignItems: 'center',
+    backgroundColor: '#F8F9FB',
     borderBottomWidth: 1,
-    borderBottomColor: '#4D535E',
-    marginBottom: PixelRatio.getPixelSizeForLayoutSize(3),
-    marginTop: PixelRatio.getPixelSizeForLayoutSize(3)
+    borderBottomColor: '#E4E8EF'
   },
   titleLabel: {
     flex: 1,
-    color: '#4D535E',
-    fontSize: PixelRatio.getFontScale() * 12,
-    marginBottom: PixelRatio.getPixelSizeForLayoutSize(3)
+    color: 'black',
+    fontSize: fontSize,
+    ...Fonts.NotoSans,
+    marginLeft: margin,
+    marginRight: margin
+  },
+  timeLabel: {
+    textAlign: 'center'
   },
   priceLabel: {
-    textAlign: 'center'
+    textAlign: 'right'
   },
   quantityLabel: {
     textAlign: 'right'
   },
   transactions: {
-    flex: 1,
-    marginRight: PixelRatio.getPixelSizeForLayoutSize(1)
+    flex: 1
   },
   transactionRow: {
     flexDirection: 'row',
+    height: '28@s',
+    alignItems: 'center',
+    borderBottomColor: '#F3F4F7'
+  },
+  valueText: {
+    flex: 1,
+    fontSize: fontSize,
+    ...Fonts.OpenSans,
+    marginLeft: margin,
+    marginRight: margin
   },
   time: {
-    flex: 1,
-    fontSize: fontSize
+    textAlign: 'center'
   },
   price: {
     flex: 1,
-    textAlign: 'center',
-    fontSize: fontSize
+    textAlign: 'right'
   },
   priceIncreased: {
     color: CommonColors.increased,
@@ -226,15 +247,11 @@ const styles = ScaledSheet.create({
     color: CommonColors.decreased,
   },
   quantity: {
-    flex: 1,
     textAlign: 'right',
     color: CommonColors.mainText,
-    fontSize: fontSize
   },
-  hasBorder: {
-    borderBottomWidth: 1
-  },
-  noBorder: {
-    borderBottomWidth: 0
+  separator: {
+    height: 1,
+    backgroundColor: '#F3F4F7'
   }
 });

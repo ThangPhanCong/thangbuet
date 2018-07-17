@@ -36,48 +36,52 @@ export default class OTPGuideScreen extends BaseScreen {
             <View style={styles.googleAuthInfoSpace}/>
             <View style={styles.storeContainer}>
               <View style={{flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
-                <View style={{flex: 2, flexDirection: 'row', justifyContent: 'flex-start'}}>
+                <View style={{flex: 2, flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
                   <Image
-                    style={{flex: 1}}
+                    style={{flex: 1, alignSelf: 'center'}}
                     source={SmallAppleIcon}
                     resizeMode='contain'/>
                   <View style = {styles.storeInfoHorizontalSpace}/>
-                  <Text style={[styles.storeInfoText, {flex: 4}]}>
+                  <Text style={[styles.storeInfoText, {flex: 4}]}
+                    adjustsFontSizeToFit={true}>
                     {I18n.t('common.iPhone')}
                   </Text>
                 </View>
                 <View style = {styles.storeInfoHorizontalSpace}/>
-                <View style={{flex: 5, flexDirection: 'row', justifyContent: 'flex-start'}}>
+                <View style={{flex: 5, flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
                   <Image
-                    style={{flex: 1}}
+                    style={{flex: 1, alignSelf: 'center'}}
                     source={SmallAppStoreIcon}
                     resizeMode='contain'/>
                   <View style = {styles.storeInfoHorizontalSpace}/>
-                  <Text style={[styles.storeInfoText, {flex: 9}]}>
+                  <Text style={[styles.storeInfoText, {flex: 9}]}
+                    adjustsFontSizeToFit={true}>
                     {I18n.t('common.appStore')}
                   </Text>
                 </View>
               </View>
               <View style={styles.storeInfoVerticalSpace} />
               <View style={{flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
-                <View style={{flex: 2, flexDirection: 'row', justifyContent: 'flex-start'}}>
+                <View style={{flex: 2, flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
                   <Image
-                    style={{flex: 1}}
+                    style={{flex: 1, alignSelf: 'center'}}
                     source={SmallAndroidIcon}
                     resizeMode='contain'/>
                   <View style = {styles.storeInfoHorizontalSpace}/>
-                  <Text style={[styles.storeInfoText, {flex: 4}]}>
+                  <Text style={[styles.storeInfoText, {flex: 4}]}
+                    adjustsFontSizeToFit={true}>
                     {I18n.t('common.android')}
                   </Text>
                 </View>
                 <View style = {styles.storeInfoHorizontalSpace}/>
-                <View style={{flex: 5, flexDirection: 'row', justifyContent: 'flex-start'}}>
+                <View style={{flex: 5, flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
                   <Image
-                    style={{flex: 1}}
+                    style={{flex: 1, alignSelf: 'center'}}
                     source={SmallPlayStoreIcon}
                     resizeMode='contain'/>
                   <View style = {styles.storeInfoHorizontalSpace}/>
-                  <Text style={[styles.storeInfoText, {flex: 9}]}>
+                  <Text style={[styles.storeInfoText, {flex: 9}]}
+                    adjustsFontSizeToFit={true}>
                     {I18n.t('common.playStore')}
                   </Text>
                 </View>
@@ -120,15 +124,12 @@ const styles = ScaledSheet.create({
   googleAuthText: {
     fontSize: '18@s',
     flex: 1,
-    fontWeight: 'bold',
     ...Fonts.OpenSans
   },
   googleAuthContainer: {
     flexDirection: 'row',
     marginTop: '50@s',
     marginBottom: '20@s',
-    marginStart: '20@s',
-    marginEnd: '20@s',
     height: '100@s'
   },
   text: {
@@ -137,7 +138,7 @@ const styles = ScaledSheet.create({
   },
   storeInfoText: {
     fontSize: '12@s',
-    ...Fonts.OpenSans
+    ...Fonts.OpenSans_Light
   },
   nextButton: {
     height: '40@s',

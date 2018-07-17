@@ -18,11 +18,12 @@ import I18n from '../../i18n/i18n';
 import rf from '../../libs/RequestFactory';
 import ScaledSheet from '../../libs/reactSizeMatter/ScaledSheet';
 import { scale } from '../../libs/reactSizeMatter/scalingUtils';
-import { CommonColors, CommonSize, CommonStyles } from '../../utils/CommonStyles';
+import { CommonColors, CommonSize, CommonStyles, Fonts } from '../../utils/CommonStyles';
 import Events from '../../utils/Events';
 import Utils from '../../utils/Utils';
 import Consts from '../../utils/Consts'
 import OrderUtils from '../../utils/OrderUtils';
+import UIUtils from '../../utils/UIUtils';
 import DropdownMenu from '../common/DropdownMenu';
 
 export default class OrderQuantityModal extends BaseScreen {
@@ -135,7 +136,7 @@ export default class OrderQuantityModal extends BaseScreen {
           animationType="slide"
           isVisible={this.state.modalVisible}
           backdropColor={'black'}
-          backdropOpacity={0.3}
+          backdropOpacity={0}
           onBackButtonPress={() => this.hideModal()}
           onBackdropPress={() => this.hideModal()}>
           <View style={styles.screen}>
@@ -212,7 +213,7 @@ export default class OrderQuantityModal extends BaseScreen {
   }
 }
 
-const margin = scale(30);
+const margin = scale(23);
 const inputHeight = scale(30);
 
 const styles = ScaledSheet.create({
@@ -221,10 +222,11 @@ const styles = ScaledSheet.create({
     justifyContent: 'center'
   },
   popup: {
-    width: '200@s',
+    width: '170@s',
     alignSelf: 'center',
     backgroundColor: '#FFF',
-    borderRadius: '5@s'
+    borderRadius: '5@s',
+    ...UIUtils.generatePopupShadow()
   },
   popupHeader: {
     flexDirection: 'row',
@@ -233,7 +235,8 @@ const styles = ScaledSheet.create({
     height: scale(40)
   },
   title: {
-
+    fontSize: '12@s',
+    ...Fonts.OpenSans
   },
 
   content: {
@@ -256,7 +259,9 @@ const styles = ScaledSheet.create({
     paddingRight: '5@s',
     paddingTop: 0,
     paddingBottom: 0,
-    textAlign: 'right'
+    textAlign: 'right',
+    fontSize: '12@s',
+    ...Fonts.OpenSans
   },
   caretContainer: {
     width: inputHeight,
@@ -282,7 +287,7 @@ const styles = ScaledSheet.create({
   },
   dropdownButton: {
     width: '100%',
-    height: '30@s',
+    height: inputHeight,
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#FFF'
@@ -301,11 +306,13 @@ const styles = ScaledSheet.create({
     alignItems: 'center',
     height: '30@s',
     margin: margin,
-    marginTop: '15@s',
+    marginTop: '11@s',
     borderRadius: scale(3),
     backgroundColor: '#007AC5'
   },
   updateButtonText: {
-    color: '#FFF'
+    color: '#FFF',
+    fontSize: '12@s',
+    ...Fonts.OpenSans
   }
 });
