@@ -13,6 +13,9 @@ const iOSFonts = {
   OpenSans_Bold: {
     fontFamily: 'OpenSans-Semibold'
   },
+  OpenSans_Light: {
+    fontFamily: 'OpenSans-Light',
+  },
   // NotoSans_Bold: {
   //   fontFamily: 'NotoSans',
   //   fontWeight: '700'

@@ -255,7 +255,7 @@ const styles = ScaledSheet.create({
   },
 
   header: {
-    height: '59@s',
+    height: '60@s',
     flexDirection: 'row'
   },
   favoriteButton: {},
