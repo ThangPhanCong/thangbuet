@@ -138,6 +138,12 @@ export default {
     chart: '챠트',
     transaction: '체결'
   },
+  openOrder: {
+    count: '수량',
+    price: '가격',
+    textMore: '자세히 보기',
+    cancelOrder: '선택한 주문 취소'
+  },
   orderForm: {
     buy: '매수',
     sell: '매도',
