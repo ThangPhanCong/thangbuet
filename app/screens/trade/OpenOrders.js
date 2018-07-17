@@ -1,15 +1,13 @@
 import React from 'react';
-import { Button, FlatList, Text, View } from 'react-native';
+import { FlatList, Text, TouchableWithoutFeedback, View } from 'react-native';
 import { filter, find, orderBy } from 'lodash';
-import moment from 'moment';
-import Numeral from '../../libs/numeral';
-import rf from '../../libs/RequestFactory';
-import I18n from '../../i18n/i18n';
 import BaseScreen from '../BaseScreen';
-import { CommonColors, CommonSize, CommonStyles, Fonts } from '../../utils/CommonStyles';
-import { formatPercent, getCurrencyName } from '../../utils/Filters';
 import ScaledSheet from '../../libs/reactSizeMatter/ScaledSheet';
-import { scale } from '../../libs/reactSizeMatter/scalingUtils';
+import rf from "../../libs/RequestFactory";
+import I18n from "../../i18n/i18n";
+import { getCurrencyName, formatCurrency, getTime } from "../../utils/Filters";
+import { CommonColors, CommonStyles, Fonts } from "../../utils/CommonStyles";
+import CheckBox from 'react-native-check-box'
 
 export default class OpenOrders extends BaseScreen {
 
@@ -17,201 +15,233 @@ export default class OpenOrders extends BaseScreen {
     super(props);
     this.state = {
       orders: [],
-      quantityPrecision: 4,
-      decimalDigitCount: 4
+      ids: [],
+      page: 1,
+      last_page: 1,
     };
   }
 
   componentDidMount() {
     super.componentDidMount();
-    this._getTickerSize();
-    this._getQuantityPrecision();
     this._loadData();
   }
 
-  componentDidUpdate(prevProps) {
-      let { coin, currency } = this.props;
-      if (coin != prevProps.coin || currency != prevProps.currency) {
-        this.reloadData();
-      }
-  }
-
-  _getMaxTransactionCount() {
-    return 30;
-  }
-
-  async reloadData() {
-    return await this._loadData();
-  }
-
   async _loadData() {
-    let { coin, currency } = this.props
+    try {
+      const { coin, currency } = this.props;
+      const { page, orders } = this.state;
+      const params = { coin, currency, page };
 
-    // let response = await rf.getRequest('OrderRequest').getRecentTransactions({ coin, currency, count });
-    // this._onReceiveTransactions(response.data);
-  }
+      const responseOrders = await rf.getRequest('OrderRequest').getOrdersPending(params);
 
-  getSocketEventHandlers() {
-    return {
-      OrderChanged: this._onOrderChanged.bind(this),
+      this.setState({
+        orders: [...orders, ...responseOrders.data.data],
+        last_page: responseOrders.data.last_page
+      });
+    } catch (err) {
+      console.log("OpenOrderRequest._error:", err)
     }
   }
 
-  _onOrderChanged(data) {
-    this._reloadData();
+  _handleLoadMore = () => {
+    const { page, last_page } = this.state;
+
+    if (page >= last_page)
+      return;
+    this.setState(state => ({ page: state.page + 1 }), () => this._loadData());
   }
 
-  async _getTickerSize() {
-    let { coin, currency } = this.props;
-    let response = await rf.getRequest('MasterdataRequest').getAll()
-    let priceGroups = filter(response.price_groups, (value) => {
-      return value.currency == currency && value.coin == coin;
-    });
-    let priceGroup = priceGroups[0];
-    this._calculateDecimalDigitCount(parseFloat(priceGroup.value));
-  }
+  async _onCancelOrder() {
+    try {
+      const { ids } = this.state;
 
-  _calculateDecimalDigitCount(tickerSize) {
-    let decimalDigitCount = 0;
-    while (tickerSize * Math.pow(10, decimalDigitCount) < 1) {
-      decimalDigitCount++;
+      await Promise.all(ids.map(async (id) => {
+        await rf.getRequest('OrderRequest').cancel(id);
+      }));
+
+      // for(let i = 0; i < ids.length; i++) {
+      //   await rf.getRequest('OrderRequest').cancel(ids[i]);
+      // }
+      // ids.forEach(async id => await rf.getRequest('OrderRequest').cancel(id));
+      this.setState({ page: 1, orders: [] })
+      this._loadData();
+    } catch (err) {
+      console.log("CancelOrder._error:", err)
     }
-    this.setState({ decimalDigitCount: decimalDigitCount });
   }
 
-  async _getQuantityPrecision() {
-    let { coin, currency } = this.props;
-    let response = await rf.getRequest('MasterdataRequest').getAll();
-    let setting = find(response.coin_settings, (setting) => {
-      return setting.currency == currency && setting.coin == coin;
-    });
-    let quantityPrecision = Math.round(Math.log(1 / setting.minimum_quantity) / Math.log(10));
-    this.setState({ quantityPrecision: quantityPrecision });
+  _renderSeparator(sectionID, rowID, adjacentRowHighlighted) {
+    return (
+      <View key="rowID" style={styles.separator}/>
+    );
   }
 
-  _formatQuantity(value) {
-    let precision = this.state.quantityPrecision;
-    let format = precision == 0 ?
-      '0,0' :
-      '0,0.' + Array(precision + 1).join('0') + '';
-    return value ? Numeral(value).format(format) : '--';
+  _toggleIdCancel(id) {
+    let { ids } = this.state;
+
+    if (ids.includes(id)) {
+      let newIds = ids.filter(item => item !== id);
+
+      this.setState({ ids: newIds })
+    } else {
+      ids.push(id);
+      this.setState({ ids })
+    }
+
   }
 
-  _formatPrice(value) {
-    let precision = this.state.decimalDigitCount;
-    let format = precision == 0 ?
-      '0,0' :
-      '0,0.' + Array(precision + 1).join('0') + '';
-    return value ? Numeral(value).format(format) : '--';
-  }
-
-  _formatTime(value) {
-    return moment(value, 'x').format('HH:mm:ss');
-  }
 
   render() {
+    const { orders } = this.state;
+
     return (
       <View
         style={styles.screen}>
-        <View style={styles.title}>
-          <Text style={[styles.titleLabel, styles.timeLabel]}>{I18n.t('marketDetail.time')}</Text>
-          <Text style={[styles.titleLabel, styles.priceLabel]}>{I18n.t('marketDetail.price')}</Text>
-          <Text style={[styles.titleLabel, styles.quantityLabel]}>{I18n.t('marketDetail.amount')}</Text>
+        <View style={styles.viewMore}>
+          <Text style={styles.textMore}>{I18n.t('openOrder.textMore')}</Text>
         </View>
-
-        <View style={styles.transactions}>
-          <FlatList
-            data={this.state.transactions}
-            keyExtractor={(item, index) => `${index}`}
-            ItemSeparatorComponent={() => <View style={styles.separator}/>}
-            renderItem={this._renderItem.bind(this)}/>
-        </View>
+        <FlatList data={orders}
+                  renderItem={this._renderItem.bind(this)}
+                  onEndReached={this._handleLoadMore.bind(this)}
+                  ItemSeparatorComponent={this._renderSeparator}
+                  onEndThreshold={100}/>
+        <TouchableWithoutFeedback onPress={() => this._onCancelOrder()}>
+          <View style={styles.cancelOrderContainer}>
+            <Text style={styles.textCancelOrder}>{I18n.t('openOrder.cancelOrder')}</Text>
+          </View>
+        </TouchableWithoutFeedback>
       </View>
     );
   }
 
   _renderItem({ item }) {
+    const price = formatCurrency(item.price, item.currency);
+    const quantity = formatCurrency(item.quantity);
+    const date = getTime(item.updated_at);
+    const { ids } = this.state;
+
     return (
-      <View style={styles.transactionRow}>
-        <Text style={[styles.valueText, styles.time]}>{this._formatTime(item.created_at)}</Text>
-        <Text style={[styles.valueText, styles.price, item.priceIncreased ? styles.priceIncreased : styles.priceDecreased]}>
-          {this._formatPrice(item.price)}
-        </Text>
-        <Text style={[styles.valueText, styles.quantity, , item.priceIncreased ? styles.priceIncreased : styles.priceDecreased]}>
-          {this._formatQuantity(item.quantity)}
-        </Text>
+      <View style={styles.itemContainer}>
+        <View style={styles.coinPairGroup}>
+          <View style={styles.checkBoxCoin}>
+            <CheckBox
+              isChecked={ids.includes(item.id)}
+              onClick={() => this._toggleIdCancel(item.id)}
+              style={styles.checkBox}
+              {...CommonStyles.checkBox}/>
+          </View>
+
+          <View style={styles.coinPairContainer}>
+            <Text style={styles.itemCoin}>
+              {getCurrencyName(item.coin) + ' / ' + getCurrencyName(item.currency)}
+            </Text>
+
+            <Text style={styles.timeOrders}>{date}</Text>
+          </View>
+        </View>
+
+        <View style={styles.titleGroup}>
+          <Text style={styles.titleQuantity}>{I18n.t('openOrder.count')}</Text>
+          <Text style={styles.titlePrice}>{I18n.t('openOrder.price')}</Text>
+        </View>
+
+        <View style={styles.priceGroup}>
+          <Text style={styles.quantity}>{quantity}</Text>
+          <Text style={styles.price}>{price}</Text>
+        </View>
       </View>
     );
   }
 }
 
-const margin = scale(10);
-const fontSize = scale(11);
-
 const styles = ScaledSheet.create({
   screen: {
     flex: 1
   },
-  title: {
+  itemContainer: {
     flexDirection: 'row',
-    height: '28@s',
-    alignItems: 'center',
-    backgroundColor: '#F8F9FB',
-    borderBottomWidth: 1,
-    borderBottomColor: '#E4E8EF'
+    height: '60@s',
+    marginLeft: '10@s',
+    marginRight: '10@s',
   },
-  titleLabel: {
-    flex: 1,
-    color: 'black',
-    fontSize: fontSize,
-    ...Fonts.NotoSans,
-    marginLeft: margin,
-    marginRight: margin
-  },
-  timeLabel: {
-    textAlign: 'center'
-  },
-  priceLabel: {
-    textAlign: 'right'
-  },
-  quantityLabel: {
-    textAlign: 'right'
-  },
-  transactions: {
-    flex: 1
-  },
-  transactionRow: {
+  coinPairGroup: {
+    flex: 2,
     flexDirection: 'row',
-    height: '28@s',
     alignItems: 'center',
-    borderBottomColor: '#F3F4F7'
   },
-  valueText: {
+  titleGroup: {
     flex: 1,
-    fontSize: fontSize,
-    ...Fonts.OpenSans,
-    marginLeft: margin,
-    marginRight: margin
+    alignItems: 'flex-start'
   },
-  time: {
-    textAlign: 'center'
+  priceGroup: {
+    flexDirection: 'column',
+    flex: 1.5,
+    alignItems: 'flex-end'
   },
-  price: {
-    flex: 1,
-    textAlign: 'right'
+  checkBoxCoin: {
+    flex: 0.5,
   },
-  priceIncreased: {
-    color: CommonColors.increased,
+  checkBox: {
+    width: '70@s'
   },
-  priceDecreased: {
-    color: CommonColors.decreased,
+  coinPairContainer: {
+    flexDirection: 'column'
   },
-  quantity: {
-    textAlign: 'right',
-    color: CommonColors.mainText,
+  itemCoin: {
+    fontSize: '10@s',
+    ...Fonts.NotoSans_Regular
+  },
+  timeOrders: {
+    fontSize: '10@s',
+    ...Fonts.NotoSans_Regular
   },
   separator: {
-    height: 1,
-    backgroundColor: '#F3F4F7'
+    flex: 1,
+    height: '1@s',
+    backgroundColor: '#DEE3EB',
+    opacity: 0.3
+  },
+  titleQuantity: {
+    fontSize: '10@s',
+    ...Fonts.NotoSans_Regular
+  },
+  titlePrice: {
+    fontSize: '10@s',
+    ...Fonts.NotoSans_Regular
+  },
+  quantity: {
+    fontSize: '10@s',
+    ...Fonts.NotoSans_Regular
+  },
+  price: {
+    fontSize: '10@s',
+    ...Fonts.NotoSans_Regular
+  },
+  cancelOrderContainer: {
+    height: '30.5@s',
+    borderRadius: '3@s',
+    marginBottom: '10@s',
+    marginLeft: '10@s',
+    marginRight: '10@s',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#70AD47'
+  },
+  textCancelOrder: {
+    color: '#FFF',
+    fontSize: '12@s',
+    ...Fonts.NotoSans_Regular
+  },
+  textMore: {
+    fontSize: '11@s',
+    alignSelf: 'flex-end',
+    marginRight: '10@s',
+    ...Fonts.NotoSans_Regular,
+    color: '#007AC5'
+  },
+  viewMore: {
+    borderBottomWidth: '1@s',
+    borderBottomColor: CommonColors.separator,
+    height: '30@s'
   }
 });
