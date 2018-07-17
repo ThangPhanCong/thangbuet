@@ -80,6 +80,12 @@ export default class OrderForm extends BaseScreen {
 
   componentDidUpdate(prevProps, prevState) {
     if (prevProps.currency != this.props.currency || prevProps.coin != this.props.coin) {
+      this.setState({
+        price: '',
+        stop: '',
+        quantity: '',
+        total: ''
+      });
       this._loadData();
     }
   }
