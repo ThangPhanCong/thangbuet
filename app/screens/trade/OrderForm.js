@@ -35,6 +35,12 @@ const setMask = NativeModules.RNTextInputMask.setMask
 
 export default class OrderForm extends BaseScreen {
 
+  static INPUT_TYPE = 'type';
+  static INPUT_PRICE = 'price';
+  static INPUT_QUANTITY = 'quantity';
+  static INPUT_TOTAL = 'total';
+  static INPUT_STOP = 'stop';
+
   constructor(props) {
     super(props)
     this.state = {
@@ -49,8 +55,9 @@ export default class OrderForm extends BaseScreen {
       coinSetting: {},
 
       enableQuantity: true,
-      settingsOrderConfirmation: undefined
+      settingsOrderConfirmation: undefined,
 
+      focusedInput: undefined
     }
     this.balances = {};
     this.types = [
@@ -389,15 +396,18 @@ export default class OrderForm extends BaseScreen {
   }
 
   _renderPriceInput() {
+    const inputBorderStyle = this._getInputBorderStyle(OrderForm.INPUT_PRICE);
     return (
       <View style={styles.inputRow}>
         <Text style={styles.inputLabel}>{I18n.t('orderForm.price')}</Text>
-        <View style={[styles.inputValue, this._isMarketOrder() ? styles.disabled : {}]}>
+        <View style={[styles.inputValue, this._isMarketOrder() ? styles.disabled : {}, inputBorderStyle]}>
           <CurrencyInput
             value={this.state.price}
             precision={0}
             editable={!this._isMarketOrder()}
             onChangeText={(formatted, extracted) => this._onPriceChanged(this._getMaskInputValue(formatted, extracted))}
+            onFocus={() => this.setState({focusedInput: OrderForm.INPUT_PRICE})}
+            onBlur={() => this.setState({focusedInput: undefined})}
             keyboardType='numeric'
             style={[styles.inputText, {textAlign: 'center'}]}
             underlineColorAndroid='transparent'/>
@@ -406,15 +416,33 @@ export default class OrderForm extends BaseScreen {
     );
   }
 
+  _getInputBorderStyle(input) {
+    return this.state.focusedInput == input ? { borderColor: focusedBorderColor} : {};
+  }
+
+  _getCaretBorderStyle(input) {
+    let style = {};
+    if (this.state.focusedInput == input) {
+      style = {
+        borderColor: focusedBorderColor,
+        borderLeftColor: '#95CCDE'
+      };
+    }
+    return style;
+  }
+
   _renderStopInput() {
+    const inputBorderStyle = this._getInputBorderStyle(OrderForm.INPUT_STOP);
     return (
       <View style={styles.inputRow}>
         <Text style={styles.inputLabel}>{I18n.t('orderForm.stop')}</Text>
-        <View style={styles.inputValue}>
+        <View style={[styles.inputValue, inputBorderStyle]}>
           <CurrencyInput
             value={this.state.stop}
             precision={0}
             onChangeText={this._onStopChanged.bind(this)}
+            onFocus={() => this.setState({focusedInput: OrderForm.INPUT_STOP})}
+            onBlur={() => this.setState({focusedInput: undefined})}
             keyboardType='numeric'
             style={[styles.inputText, {textAlign: 'center'}]}
             underlineColorAndroid='transparent'/>
@@ -424,22 +452,26 @@ export default class OrderForm extends BaseScreen {
   }
 
   _renderQuantityInput() {
+    const inputBorderStyle = this._getInputBorderStyle(OrderForm.INPUT_QUANTITY);
+    const caretBorderStyle = this._getCaretBorderStyle(OrderForm.INPUT_QUANTITY);
     const enableQuantity = this.state.enableQuantity;
     return (
       <View style={styles.inputRow}>
         <Text style={styles.inputLabel}>{I18n.t('orderForm.quantity')}</Text>
-        <View style={[styles.inputValue, {borderRightWidth: 0}, !enableQuantity ? styles.disabled : {}]}>
+        <View style={[styles.inputValue, {borderRightWidth: 0}, !enableQuantity ? styles.disabled : {}, inputBorderStyle]}>
           <View ref={ref => this._quantityRef = ref} style={styles.quantityDropdownAnchor}/>
           <CurrencyInput
+            refInput={ref => this._quantityInput = ref}
             value={this.state.quantity}
             precision={4}
             onChangeText={this._onQuantityChanged.bind(this)}
-            onFocus={() => this.setState({enableQuantity: true})}
+            onFocus={() => this.setState({enableQuantity: true, focusedInput: OrderForm.INPUT_QUANTITY})}
+            onBlur={() => this.setState({focusedInput: undefined})}
             keyboardType='numeric'
             style={styles.inputText}
             underlineColorAndroid='transparent'/>
             <TouchableWithoutFeedback onPress={this._openQuantityDropdown.bind(this)}>
-              <View style={styles.caretButton}>
+              <View style={[styles.caretButton, caretBorderStyle]}>
                 {this._renderCaretDownIcon()}
               </View>
             </TouchableWithoutFeedback>
@@ -484,6 +516,8 @@ export default class OrderForm extends BaseScreen {
   }
 
   _renderTotalInput() {
+    const inputBorderStyle = this._getInputBorderStyle(OrderForm.INPUT_TOTAL);
+    const caretBorderStyle = this._getCaretBorderStyle(OrderForm.INPUT_TOTAL);
     const enableQuantity = this.state.enableQuantity;
     return (
       <View style={styles.inputRow}>
@@ -491,19 +525,22 @@ export default class OrderForm extends BaseScreen {
         <View style={[
           styles.inputValue,
           {borderRightWidth: 0},
-          enableQuantity || this._isMarketOrder() ? styles.disabled : {}]}>
+          enableQuantity || this._isMarketOrder() ? styles.disabled : {},
+          inputBorderStyle]}>
           <View ref={ref => this._totalRef = ref} style={styles.quantityDropdownAnchor}/>
           <CurrencyInput
+            refInput={ref => this._totalInput = ref}
             value={this.state.total}
             precision={4}
             editable={!this._isMarketOrder()}
             onChangeText={this._onTotalChanged.bind(this)}
-            onFocus={() => this.setState({enableQuantity: false})}
+            onFocus={() => this.setState({enableQuantity: false, focusedInput: OrderForm.INPUT_TOTAL})}
+            onBlur={() => this.setState({focusedInput: undefined})}
             keyboardType='numeric'
             style={styles.inputText}
             underlineColorAndroid='transparent'/>
             <TouchableWithoutFeedback onPress={this._openTotalDropdown.bind(this)}>
-              <View style={styles.caretButton}>
+              <View style={[styles.caretButton, caretBorderStyle]}>
                 {this._renderCaretDownIcon()}
               </View>
             </TouchableWithoutFeedback>
@@ -715,6 +752,7 @@ const margin = scale(10);
 const dropdownRowHeight = scale(33);
 const inputHeight = scale(33);
 const inputBotderRadius = scale(3);
+const focusedBorderColor = '#0AB8F2';
 
 const styles = ScaledSheet.create({
   inputGroup: {

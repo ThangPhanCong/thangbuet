@@ -478,7 +478,9 @@ export default class OrderBook extends BaseScreen {
         </TouchableWithoutFeedback>
         <View style={[styles.quantityCell, borders[1]]}>
           <View style={[styles.sellPercent, this._getPercentViewStyle(item)]} />
-          <Text style={styles.quantityText}>{this._formatQuantity(item.quantity)}</Text>
+          <Text style={styles.quantityText} numberOfLines={1} ellipsizeMode='tail'>
+            {this._formatQuantity(item.quantity)}
+          </Text>
         </View>
         <View style={[styles.priceCell, borders[2], this._getPriceCellStyle(item.price)]}>
           <Text style={[styles.priceText, this._getPriceTextStyle(item.price)]}>{this._formatPrice(item.price)}</Text>
@@ -526,7 +528,9 @@ export default class OrderBook extends BaseScreen {
         </View>
         <View style={[styles.quantityCell, borders[3]]}>
           <View style={[styles.sellPercent, this._getPercentViewStyle(item)]} />
-          <Text style={styles.quantityText}>{this._formatQuantity(item.quantity)}</Text>
+          <Text style={styles.quantityText} numberOfLines={1} ellipsizeMode='tail'>
+            {this._formatQuantity(item.quantity)}
+          </Text>
         </View>
         <TouchableWithoutFeedback onPress={() => this._onPressOrderBookCell(item, orderBookRowIndex, Consts.TRADE_TYPE_BUY)}>
           <View style={[styles.userBuyQuantityCell, borders[4]]}>
@@ -616,7 +620,9 @@ export default class OrderBook extends BaseScreen {
           </View>
           <View style={[styles.quantityCell, styles.smallTopBorder, styles.smallQuantity]}>
             <View style={[styles.sellPercent, this._getPercentViewStyle(item)]} />
-            <Text style={styles.smallQuantityText}>{this._formatQuantity(item.quantity)}</Text>
+            <Text style={styles.smallQuantityText} numberOfLines={1} ellipsizeMode='tail'>
+              {this._formatQuantity(item.quantity)}
+            </Text>
           </View>
         </View>
       </TouchableWithoutFeedback>
@@ -636,7 +642,9 @@ export default class OrderBook extends BaseScreen {
           </View>
           <View style={[styles.quantityCell, styles.smallBottomBorder, styles.smallQuantity]}>
             <View style={[styles.sellPercent, this._getPercentViewStyle(item)]} />
-            <Text style={styles.smallQuantityText}>{this._formatQuantity(item.quantity)}</Text>
+            <Text style={styles.smallQuantityText} numberOfLines={1} ellipsizeMode='tail'>
+              {this._formatQuantity(item.quantity)}
+            </Text>
           </View>
         </View>
       </TouchableWithoutFeedback>
