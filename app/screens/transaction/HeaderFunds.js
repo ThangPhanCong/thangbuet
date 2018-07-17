@@ -7,7 +7,7 @@ import { Text, TouchableWithoutFeedback, View } from "react-native";
 
 class HeaderFunds extends Component {
   render() {
-    const { sortDate, sortPair, renderArrowDate, renderArrowPair, titles } = this.props;
+    const { sortDate, sortPair, renderArrowDate, renderArrowPair } = this.props;
 
     return (
       <View style={styles.headerContainer}>
@@ -27,24 +27,6 @@ class HeaderFunds extends Component {
               {renderArrowPair}
             </View>
           </TouchableWithoutFeedback>
-        </View>
-
-        <View style={{ flexDirection: 'row' }}>
-          <View style={styles.headerItem}>
-            <Text style={styles.headerTitle}>{titles[0]}</Text>
-          </View>
-
-          <View style={styles.headerBlockChainItem}>
-            <Text style={styles.headerTitle}>{titles[1]}</Text>
-          </View>
-
-          <View style={styles.headerItem}>
-            <Text style={styles.headerTitle}>{titles[2]}</Text>
-          </View>
-
-          <View style={[styles.headerItem, { marginRight: scale(10) }]}>
-            <Text style={styles.headerTitle}>{titles[3]}</Text>
-          </View>
         </View>
       </View>
     )
@@ -87,10 +69,8 @@ const styles = ScaledSheet.create({
   },
   viewHeaderLeft: {
     flexDirection: 'row',
-    width: '119@s',
+    width: '118@s',
     alignItems: 'center',
-    borderRightColor: CommonColors.separator,
-    borderRightWidth: '1@s',
   },
   headerTime: {
     width: '50@s',

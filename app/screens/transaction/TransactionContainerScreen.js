@@ -2,16 +2,15 @@ import React, { Component } from 'react';
 import { FlatList, Text, View, TouchableWithoutFeedback, ScrollView, Image } from "react-native";
 import rf from "../../libs/RequestFactory";
 import moment from "moment";
-import { scale } from "../../libs/reactSizeMatter/scalingUtils";
 import { getDayMonth, formatCurrency, getTime, getCurrencyName } from "../../utils/Filters";
 import { CommonColors, CommonStyles } from "../../utils/CommonStyles";
 import ScaledSheet from "../../libs/reactSizeMatter/ScaledSheet";
 import I18n from "../../i18n/i18n";
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { orderBy } from "lodash";
 import BitkoexDatePicker from "./common/BitkoexDatePicker";
 import HeaderTransaction from "./common/HeaderTransaction";
 import { Fonts } from "../../../app/utils/CommonStyles";
+import HeaderTransactionsRight from "./common/HeaderTransactionsRight";
 
 class TransactionContainerScreen extends Component {
   static SORT_FIELDS = {
@@ -30,8 +29,10 @@ class TransactionContainerScreen extends Component {
     start_date: moment(new Date()).subtract(1, 'months'),
     end_date: new Date(),
     sortField: TransactionContainerScreen.SORT_FIELDS.DATE,
-    sortDirection: TransactionContainerScreen.SORT_DIRECTION.DESC
+    sortDirection: TransactionContainerScreen.SORT_DIRECTION.DESC,
   }
+
+  firstScrollView = null;
 
 
   componentDidMount() {
@@ -197,9 +198,6 @@ class TransactionContainerScreen extends Component {
   }
 
   _renderItem({ item }) {
-    const { title } = this.props;
-    const stylesQuantity = item.quantity.includes('-') ? styles.itemDecreaseQuantity : styles.itemIncreaseQuantity;
-
     return (
       <View style={styles.itemContainer}>
         <View style={styles.itemLeftContainer}>
@@ -213,36 +211,110 @@ class TransactionContainerScreen extends Component {
             <Text style={styles.itemCurrency}>{' / ' + getCurrencyName(item.currency)}</Text>
           </View>
         </View>
-
-        <View style={{ flexDirection: 'row' }}>
-          <View style={styles.itemRight}>
-            <Text style={stylesQuantity}>
-              {formatCurrency(item.quantity, item.coin)}
-            </Text>
-
-            <Text style={[styles.itemTransaction]}>{getCurrencyName(item.coin)}</Text>
-          </View>
-
-          <View style={styles.itemRight}>
-            <Text style={styles.itemPrice}>{formatCurrency(item.price, item.currency)}</Text>
-            <Text style={styles.itemTransaction}>{getCurrencyName(item.currency)}</Text>
-          </View>
-
-          <View style={styles.itemRight}>
-            <Text style={styles.itemQuantityPrice}>{formatCurrency(item.price * item.quantity, item.currency)}</Text>
-            <Text style={styles.itemTransaction}>{getCurrencyName(item.currency)}</Text>
-          </View>
-
-          {title === I18n.t('transactions.openOrderTab') ? this._renderStatusOrder(item) :
-            <View style={[styles.lastItemRight]}>
-              <Text style={styles.itemFee}>
-                {formatCurrency(item.fee, item.coin)}
-              </Text>
-              <Text style={styles.itemTransaction}>{getCurrencyName(item.coin)}</Text>
-            </View>}
-        </View>
       </View>
     )
+  }
+
+  _renderItemRight({ item }) {
+    const { title } = this.props;
+    const stylesQuantity = item.quantity.includes('-') ? styles.itemDecreaseQuantity : styles.itemIncreaseQuantity;
+
+    return (
+      <View style={styles.itemContainer}>
+        <View style={styles.itemRight}>
+          <Text style={stylesQuantity}>
+            {formatCurrency(item.quantity, item.coin)}
+          </Text>
+
+          <Text style={[styles.itemTransaction]}>{getCurrencyName(item.coin)}</Text>
+        </View>
+
+        <View style={styles.itemRight}>
+          <Text style={styles.itemPrice}>{formatCurrency(item.price, item.currency)}</Text>
+          <Text style={styles.itemTransaction}>{getCurrencyName(item.currency)}</Text>
+        </View>
+
+        <View style={styles.itemRight}>
+          <Text style={styles.itemQuantityPrice}>{formatCurrency(item.price * item.quantity, item.currency)}</Text>
+          <Text style={styles.itemTransaction}>{getCurrencyName(item.currency)}</Text>
+        </View>
+
+        {title === I18n.t('transactions.openOrderTab') ? this._renderStatusOrder(item) :
+          <View style={[styles.lastItemRight]}>
+            <Text style={styles.itemFee}>
+              {formatCurrency(item.fee, item.coin)}
+            </Text>
+            <Text style={styles.itemTransaction}>{getCurrencyName(item.coin)}</Text>
+          </View>}
+      </View>
+    )
+  }
+
+  _onLeftListScroll(event) {
+    if (this.firstScrollView === 'left') {
+      const y = event.nativeEvent.contentOffset.y;
+      this.flatListRight.scrollToOffset({
+        offset: y,
+      });
+    }
+  }
+
+  _onRightListScroll(event) {
+    if (this.firstScrollView === 'right') {
+      const y = event.nativeEvent.contentOffset.y;
+      this.flatListLeft.scrollToOffset({
+        offset: y,
+      });
+    }
+  }
+
+  _handleLeftMomentumEnd() {
+    if (this.firstScrollView === 'left') {
+      this.firstScrollView = null;
+    }
+  }
+
+  _handleLeftMomentumStart() {
+    if (this.firstScrollView === null) {
+      this.firstScrollView = 'left';
+    }
+  }
+
+  _handleRightMomentumStart() {
+    if (this.firstScrollView == null) {
+      this.firstScrollView = 'right';
+    }
+  }
+
+  _handleRightMomentumEnd() {
+    if (this.firstScrollView === 'right') {
+      this.firstScrollView = null;
+    }
+  }
+
+  _handleTouchStartLeft() {
+    if (this.firstScrollView === null) {
+      this.firstScrollView = 'left';
+    }
+  }
+
+  _handleTouchEndLeft() {
+    console.log("touch left end")
+    if (this.firstScrollView === 'left') {
+      this.firstScrollView = null;
+    }
+  }
+
+  _handleTouchStartRight() {
+    if (this.firstScrollView === null) {
+      this.firstScrollView = 'right';
+    }
+  }
+
+  _handleTouchEndRight() {
+    if (this.firstScrollView === 'right') {
+      this.firstScrollView = null;
+    }
   }
 
   render() {
@@ -263,18 +335,37 @@ class TransactionContainerScreen extends Component {
           {this._renderDatePicker('end_date')}
           {this._renderButtonSeach()}
         </View>
-
-        <View>
-          <ScrollView horizontal={true} contentContainerStyle={{ flexDirection: 'column' }}>
+        <View style={{ flexDirection: 'row' }}>
+          <View style={{ flexDirection: 'column' }}>
             <HeaderTransaction sortDate={() => this._onSortDate()}
-                               titles={titles}
                                sortPair={() => this._onSortPair()}
                                renderArrowDate={this._renderArrow(TransactionContainerScreen.SORT_FIELDS.DATE)}
                                renderArrowPair={this._renderArrow(TransactionContainerScreen.SORT_FIELDS.PAIR)}
             />
+
             <FlatList data={transactions}
+                      ref={elm => this.flatListLeft = elm}
+                      onScroll={(event) => this._onLeftListScroll(event)}
                       renderItem={this._renderItem.bind(this)}
                       onEndReached={this._handleLoadMore.bind(this)}
+                      onMomentumScrollStart={() => this._handleLeftMomentumStart()}
+                      onMomentumScrollEnd={() => this._handleLeftMomentumEnd()}
+                      onTouchStart={()=> this._handleTouchStartLeft()}
+                      onTouchEnd={()=> this._handleTouchEndLeft()}
+                      onEndThreshold={100}/>
+          </View>
+
+          <ScrollView horizontal={true} contentContainerStyle={{ flexDirection: 'column' }}>
+            <HeaderTransactionsRight titles={titles}/>
+            <FlatList data={transactions}
+                      ref={elm => this.flatListRight = elm}
+                      onScroll={(event) => this._onRightListScroll(event)}
+                      renderItem={this._renderItemRight.bind(this)}
+                      onEndReached={this._handleLoadMore.bind(this)}
+                      onMomentumScrollStart={() => this._handleRightMomentumStart()}
+                      onMomentumScrollEnd={() => this._handleRightMomentumEnd()}
+                      onTouchStart={()=> this._handleTouchStartRight()}
+                      onTouchEnd={()=> this._handleTouchEndRight()}
                       onEndThreshold={100}/>
           </ScrollView>
         </View>
@@ -401,8 +492,8 @@ const styles = ScaledSheet.create({
     margin: '6@s',
     width: '40@s',
     borderRadius: '2@s',
-    borderBottomColor: '#000',
-    borderBottomWidth: '0.6@s'
+    borderColor: '#000',
+    borderWidth: '0.6@s'
   },
   textSearch: {
     fontSize: '12@s',

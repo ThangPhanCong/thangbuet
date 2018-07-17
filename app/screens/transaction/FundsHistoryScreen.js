@@ -11,6 +11,8 @@ import TransactionRequest from "../../requests/TransactionRequest";
 import { orderBy } from "lodash";
 import { formatCurrency, getCurrencyName, getDayMonth, getTime } from "../../utils/Filters";
 import HeaderFunds from "./HeaderFunds";
+import HeaderFundsRight from "./HeaderFundsRight";
+import HeaderTransactionsRight from "./common/HeaderTransactionsRight";
 
 class FundsHistoryScreen extends Component {
   static SORT_FIELDS = {
@@ -30,6 +32,8 @@ class FundsHistoryScreen extends Component {
     sortField: FundsHistoryScreen.SORT_FIELDS.DATE,
     sortDirection: FundsHistoryScreen.SORT_DIRECTION.DESC
   }
+
+  firstScrollView = null;
 
   _renderDatePicker(titleDate) {
     const date = this.state[titleDate];
@@ -126,6 +130,72 @@ class FundsHistoryScreen extends Component {
     })
   }
 
+  _onLeftListScroll(event) {
+    if (this.firstScrollView === 'left') {
+      const y = event.nativeEvent.contentOffset.y;
+      this.flatListRight.scrollToOffset({
+        offset: y,
+      });
+    }
+  }
+
+  _onRightListScroll(event) {
+    if (this.firstScrollView === 'right') {
+      const y = event.nativeEvent.contentOffset.y;
+      this.flatListLeft.scrollToOffset({
+        offset: y,
+      });
+    }
+  }
+
+  _handleLeftMomentumEnd() {
+    if (this.firstScrollView === 'left') {
+      this.firstScrollView = null;
+    }
+  }
+
+  _handleLeftMomentumStart() {
+    if (this.firstScrollView === null) {
+      this.firstScrollView = 'left';
+    }
+  }
+
+  _handleRightMomentumStart() {
+    if (this.firstScrollView == null) {
+      this.firstScrollView = 'right';
+    }
+  }
+
+  _handleRightMomentumEnd() {
+    if (this.firstScrollView === 'right') {
+      this.firstScrollView = null;
+    }
+  }
+
+  _handleTouchStartLeft() {
+    if (this.firstScrollView === null) {
+      this.firstScrollView = 'left';
+    }
+  }
+
+  _handleTouchEndLeft() {
+    if (this.firstScrollView === 'left') {
+      this.firstScrollView = null;
+    }
+  }
+
+  _handleTouchStartRight() {
+    if (this.firstScrollView === null) {
+      this.firstScrollView = 'right';
+    }
+  }
+
+  _handleTouchEndRight() {
+    if (this.firstScrollView === 'right') {
+      this.firstScrollView = null;
+    }
+  }
+
   _renderButtonSeach() {
     return (
       <TouchableWithoutFeedback onPress={() => this._searchByDate()}>
@@ -150,8 +220,6 @@ class FundsHistoryScreen extends Component {
 
   _renderItem({ item }) {
     const pardeDayMonth = moment(item.transaction_date).format('MM-DD');
-    const truntCateAddress = item.foreign_blockchain_address.substr(0, 11) + "...";
-    const stylesQuantity = item.amount.includes('-') ? styles.itemDecreaseQuantity : styles.itemIncreaseQuantity;
 
     return (
       <View style={styles.itemContainer}>
@@ -166,29 +234,37 @@ class FundsHistoryScreen extends Component {
           </View>
         </View>
 
-        <View style={{ flexDirection: 'row' }}
-        >
-          <View style={styles.itemRight}>
-            <Text style={stylesQuantity}>
-              {formatCurrency(item.amount, item.currency)}
-            </Text>
 
-            <Text style={[styles.itemFunds]}>{getCurrencyName(item.currency)}</Text>
-          </View>
+      </View>
+    )
+  }
 
-          <View style={styles.viewAddressBlockChain}>
-            <Text style={styles.itemBlockchain}>{truntCateAddress}</Text>
-          </View>
+  _renderItemRight({ item }) {
+    const truntCateAddress = item.foreign_blockchain_address.substr(0, 11) + "...";
+    const stylesQuantity = item.amount.includes('-') ? styles.itemDecreaseQuantity : styles.itemIncreaseQuantity;
 
-          <View style={styles.itemRight}>
-            <Text style={styles.itemQuantityPrice}>{formatCurrency(item.fee, item.currency)}</Text>
-            <Text style={styles.itemFunds}>{getCurrencyName(item.currency)}</Text>
-          </View>
+    return (
+      <View style={styles.itemContainer}>
+        <View style={styles.itemRight}>
+          <Text style={stylesQuantity}>
+            {formatCurrency(item.amount, item.currency)}
+          </Text>
 
-          <View style={[styles.itemRight, { marginRight: scale(10) }]}>
-            {item.status === 'pending' ? <Text style={styles.itemPending}> {I18n.t('transactions.pending')}</Text>
-              : <Text style={styles.itemSuccess}>{I18n.t('transactions.success')}</Text>}
-          </View>
+          <Text style={[styles.itemFunds]}>{getCurrencyName(item.currency)}</Text>
+        </View>
+
+        <View style={styles.viewAddressBlockChain}>
+          <Text style={styles.itemBlockchain}>{truntCateAddress}</Text>
+        </View>
+
+        <View style={styles.itemRight}>
+          <Text style={styles.itemQuantityPrice}>{formatCurrency(item.fee, item.currency)}</Text>
+          <Text style={styles.itemFunds}>{getCurrencyName(item.currency)}</Text>
+        </View>
+
+        <View style={[styles.itemRight, { marginRight: scale(10) }]}>
+          {item.status === 'pending' ? <Text style={styles.itemPending}> {I18n.t('transactions.pending')}</Text>
+            : <Text style={styles.itemSuccess}>{I18n.t('transactions.success')}</Text>}
         </View>
       </View>
     )
@@ -210,16 +286,35 @@ class FundsHistoryScreen extends Component {
           {this._renderButtonSeach()}
         </View>
 
-        <View>
-          <ScrollView horizontal={true} contentContainerStyle={{ flexDirection: 'column' }}>
+        <View style={{ flexDirection: 'row' }}>
+          <View style={{ flexDirection: 'column' }}>
             <HeaderFunds sortDate={() => this._onSortDate()}
                          sortPair={() => this._onSortPair()}
                          renderArrowDate={this._renderArrow(FundsHistoryScreen.SORT_FIELDS.DATE)}
                          renderArrowPair={this._renderArrow(FundsHistoryScreen.SORT_FIELDS.PAIR)}
-                         titles={titles}
             />
-            <FlatList data={transactions}
+            <FlatList data={[transactions]}
+                      ref={elm => this.flatListLeft = elm}
+                      onScroll={(event) => this._onLeftListScroll(event)}
+                      onMomentumScrollStart={() => this._handleLeftMomentumStart()}
+                      onMomentumScrollEnd={() => this._handleLeftMomentumEnd()}
+                      onTouchStart={()=> this._handleTouchStartLeft()}
+                      onTouchEnd={()=> this._handleTouchEndLeft()}
                       renderItem={this._renderItem.bind(this)}
+              // onEndReached={this._handleLoadMore.bind(this)}
+                      onEndThreshold={100}/>
+          </View>
+
+          <ScrollView horizontal={true} contentContainerStyle={{ flexDirection: 'column' }}>
+            <HeaderFundsRight titles={titles}/>
+            <FlatList data={transactions}
+                      ref={elm => this.flatListRight = elm}
+                      onScroll={(event) => this._onRightListScroll(event)}
+                      onMomentumScrollStart={() => this._handleRightMomentumStart()}
+                      onMomentumScrollEnd={() => this._handleRightMomentumEnd()}
+                      onTouchStart={()=> this._handleTouchStartRight()}
+                      onTouchEnd={()=> this._handleTouchEndRight()}
+                      renderItem={this._renderItemRight.bind(this)}
               // onEndReached={this._handleLoadMore.bind(this)}
                       onEndThreshold={100}/>
           </ScrollView>
@@ -246,8 +341,8 @@ const styles = ScaledSheet.create({
     margin: '6@s',
     width: '40@s',
     borderRadius: '2@s',
-    borderBottomColor: '#000',
-    borderBottomWidth: '0.6@s'
+    borderColor: '#000',
+    borderWidth: '0.6@s'
   },
   textSearch: {
     fontSize: '12@s',
