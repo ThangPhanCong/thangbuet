@@ -18,7 +18,7 @@ export default class UIUtils {
       flex: 1,
       color: textColor,
       textAlign: 'center',
-      fontSize: scale(14),
+      fontSize: scale(options.fontSize || 16),
       ...Fonts.NotoSans
     };
     const separatorStyle = {
