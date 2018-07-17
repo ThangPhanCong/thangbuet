@@ -30,8 +30,9 @@ class TransactionContainerScreen extends Component {
     end_date: new Date(),
     sortField: TransactionContainerScreen.SORT_FIELDS.DATE,
     sortDirection: TransactionContainerScreen.SORT_DIRECTION.DESC,
-    scrollLeft: false
   }
+
+  firstScrollView = null;
 
 
   componentDidMount() {
@@ -197,9 +198,6 @@ class TransactionContainerScreen extends Component {
   }
 
   _renderItem({ item }) {
-    const { title } = this.props;
-    const stylesQuantity = item.quantity.includes('-') ? styles.itemDecreaseQuantity : styles.itemIncreaseQuantity;
-
     return (
       <View style={styles.itemContainer}>
         <View style={styles.itemLeftContainer}>
@@ -213,8 +211,6 @@ class TransactionContainerScreen extends Component {
             <Text style={styles.itemCurrency}>{' / ' + getCurrencyName(item.currency)}</Text>
           </View>
         </View>
-
-
       </View>
     )
   }
@@ -254,15 +250,71 @@ class TransactionContainerScreen extends Component {
     )
   }
 
-  _scrollFlatList(event, title) {
-    const y = event.nativeEvent.contentOffset.y;
-    if(title === this.flatListLeft) {
-      this.setState({scrollLeft: true})
+  _onLeftListScroll(event) {
+    if (this.firstScrollView === 'left') {
+      const y = event.nativeEvent.contentOffset.y;
+      this.flatListRight.scrollToOffset({
+        offset: y,
+      });
     }
+  }
 
-    title.scrollToOffset({
-      offset: y,
-    });
+  _onRightListScroll(event) {
+    if (this.firstScrollView === 'right') {
+      const y = event.nativeEvent.contentOffset.y;
+      this.flatListLeft.scrollToOffset({
+        offset: y,
+      });
+    }
+  }
+
+  _handleLeftMomentumEnd() {
+    if (this.firstScrollView === 'left') {
+      this.firstScrollView = null;
+    }
+  }
+
+  _handleLeftMomentumStart() {
+    if (this.firstScrollView === null) {
+      this.firstScrollView = 'left';
+    }
+  }
+
+  _handleRightMomentumStart() {
+    if (this.firstScrollView == null) {
+      this.firstScrollView = 'right';
+    }
+  }
+
+  _handleRightMomentumEnd() {
+    if (this.firstScrollView === 'right') {
+      this.firstScrollView = null;
+    }
+  }
+
+  _handleTouchStartLeft() {
+    if (this.firstScrollView === null) {
+      this.firstScrollView = 'left';
+    }
+  }
+
+  _handleTouchEndLeft() {
+    console.log("touch left end")
+    if (this.firstScrollView === 'left') {
+      this.firstScrollView = null;
+    }
+  }
+
+  _handleTouchStartRight() {
+    if (this.firstScrollView === null) {
+      this.firstScrollView = 'right';
+    }
+  }
+
+  _handleTouchEndRight() {
+    if (this.firstScrollView === 'right') {
+      this.firstScrollView = null;
+    }
   }
 
   render() {
@@ -291,23 +343,29 @@ class TransactionContainerScreen extends Component {
                                renderArrowPair={this._renderArrow(TransactionContainerScreen.SORT_FIELDS.PAIR)}
             />
 
-            <FlatList data={[...transactions, ...transactions, ...transactions, ...transactions]}
+            <FlatList data={transactions}
                       ref={elm => this.flatListLeft = elm}
-                      onScroll={(event) => this._scrollFlatList(event, this.flatListRight)}
-                      onScrollEndDrag={() => this.setState({scrollLeft: false})}
+                      onScroll={(event) => this._onLeftListScroll(event)}
                       renderItem={this._renderItem.bind(this)}
                       onEndReached={this._handleLoadMore.bind(this)}
+                      onMomentumScrollStart={() => this._handleLeftMomentumStart()}
+                      onMomentumScrollEnd={() => this._handleLeftMomentumEnd()}
+                      onTouchStart={()=> this._handleTouchStartLeft()}
+                      onTouchEnd={()=> this._handleTouchEndLeft()}
                       onEndThreshold={100}/>
           </View>
 
           <ScrollView horizontal={true} contentContainerStyle={{ flexDirection: 'column' }}>
             <HeaderTransactionsRight titles={titles}/>
-            <FlatList data={[...transactions, ...transactions, ...transactions, ...transactions]}
+            <FlatList data={transactions}
                       ref={elm => this.flatListRight = elm}
-                      onScroll={!this.state.scrollLeft ? (event) => this._scrollFlatList(event, this.flatListLeft) : () => {}}
-                      onScrollEndDrag={() => this.setState({scrollLeft: true})}
+                      onScroll={(event) => this._onRightListScroll(event)}
                       renderItem={this._renderItemRight.bind(this)}
                       onEndReached={this._handleLoadMore.bind(this)}
+                      onMomentumScrollStart={() => this._handleRightMomentumStart()}
+                      onMomentumScrollEnd={() => this._handleRightMomentumEnd()}
+                      onTouchStart={()=> this._handleTouchStartRight()}
+                      onTouchEnd={()=> this._handleTouchEndRight()}
                       onEndThreshold={100}/>
           </ScrollView>
         </View>
@@ -434,8 +492,8 @@ const styles = ScaledSheet.create({
     margin: '6@s',
     width: '40@s',
     borderRadius: '2@s',
-    borderBottomColor: '#000',
-    borderBottomWidth: '0.6@s'
+    borderColor: '#000',
+    borderWidth: '0.6@s'
   },
   textSearch: {
     fontSize: '12@s',
