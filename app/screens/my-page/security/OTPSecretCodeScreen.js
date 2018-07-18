@@ -68,7 +68,6 @@ const styles = ScaledSheet.create({
   },
   secretCode: {
     fontSize: '16@s',
-    fontWeight: 'bold',
-    ...Fonts.OpenSans
+    ...Fonts.OpenSans_Bold,
   }
 });
