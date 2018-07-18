@@ -17,6 +17,7 @@ import rf from '../../libs/RequestFactory';
 import _ from 'lodash';
 import I18n from '../../i18n/i18n';
 import ScaledSheet from "../../libs/reactSizeMatter/ScaledSheet";
+import { scale } from "../../libs/reactSizeMatter/scalingUtils";
 
 class MarketScreen extends BaseScreen {
   static SORT_FIELDS = {
@@ -91,25 +92,26 @@ class MarketScreen extends BaseScreen {
         style={styles.listItem}
         onPress={() => this._onPressItem(item)}
         underlayColor='#FFECED'>
-        <View style = {styles.listItemContainer}>
+        <View style={styles.listItemContainer}>
           <View style={styles.nameGroup}>
-            <View style={{ flexDirection: 'row' }}>
-              <TouchableOpacity style = {{ alignItems: 'center', justifyContent: 'center' }}
-                onPress = {() => this._onEnableFavorite(item)}>
-                <Icon
-                  name='star'
-                  size={15}
-                  color={item.isFavorite ? '#FFC000' : '#D9D9D9'} />
-              </TouchableOpacity>
-              <View style={styles.spacePairName} />
-              <View style={{ alignSelf: 'center' }}>
-                <Text style={styles.itemFirstCoin}>
-                  {I18n.t(`currency.${item.coin}.fullname`) || getCurrencyName(item.coin)}
-                </Text>
+            <TouchableOpacity style={{ alignItems: 'center', justifyContent: 'center' }}
+                              onPress={() => this._onEnableFavorite(item)}>
+              <Icon
+                name='star'
+                size={scale(15)}
+                color={item.isFavorite ? '#FFC000' : '#D9D9D9'}/>
+            </TouchableOpacity>
+
+            <View style={styles.spacePairName}/>
+
+            <View style={{ flexDirection: 'column' }}>
+              <Text style={styles.itemFirstCoin}>
+                {I18n.t(`currency.${item.coin}.fullname`) || getCurrencyName(item.coin)}
+                {"\n"}
                 <Text style={styles.itemCoin}>
                   {getCurrencyName(item.coin) + ' / ' + getCurrencyName(item.currency)}
                 </Text>
-              </View>
+              </Text>
             </View>
           </View>
 
@@ -127,7 +129,7 @@ class MarketScreen extends BaseScreen {
 
           <View style={styles.volumeGroup}>
             <Text style={styles.itemVolume}>
-              {formatCurrency(item.volume, Consts.CURRENCY_KRW, 0) }
+              {formatCurrency(item.volume, Consts.CURRENCY_KRW, 0)}
               <Text style={styles.itemUnit}>{I18n.t('marketList.unit')}</Text>
             </Text>
           </View>
@@ -166,10 +168,15 @@ class MarketScreen extends BaseScreen {
 
         <TouchableWithoutFeedback onPress={() => this._onSortField(MarketScreen.SORT_FIELDS.CHANGE)}>
           <View style={styles.changeHeader}>
-            <Text style={styles.normalHeader}>
-              {I18n.t('marketList.change')}
-            </Text>
-            {this._renderArrow(MarketScreen.SORT_FIELDS.CHANGE)}
+            <View style={{ flex: 1 }}>
+              <Text style={styles.normalHeader}>
+                {I18n.t('marketList.change')}
+              </Text>
+            </View>
+
+            <View style={{ flex: 2 }}>
+              {this._renderArrow(MarketScreen.SORT_FIELDS.CHANGE)}
+            </View>
           </View>
         </TouchableWithoutFeedback>
 
@@ -187,7 +194,7 @@ class MarketScreen extends BaseScreen {
   }
 
   _renderArrow(field) {
-    let {sortField, sortDirection } = this.state;
+    let { sortField, sortDirection } = this.state;
     return (
       sortField === field && sortDirection === MarketScreen.SORT_DIRECTION.ASC ?
         <Image
@@ -195,6 +202,7 @@ class MarketScreen extends BaseScreen {
           source={require('../../../assets/sortAsc/asc.png')}/>
         :
         <Image
+          style={styles.iconSort}
           source={require('../../../assets/sortDesc/desc.png')}/>
     )
   }
@@ -215,7 +223,7 @@ class MarketScreen extends BaseScreen {
     else
       filterSymbols = this._symbols;
 
-    this.setState({symbols: filterSymbols})
+    this.setState({ symbols: filterSymbols })
   }
 
   async _onEnableFavorite(item) {
@@ -227,7 +235,7 @@ class MarketScreen extends BaseScreen {
         await rf.getRequest('FavoriteRequest').removeOne(favorite.id);
       }
       else {
-        await rf.getRequest('FavoriteRequest').createANewOne({coinPair: item.favoriteKey});
+        await rf.getRequest('FavoriteRequest').createANewOne({ coinPair: item.favoriteKey });
       }
     }
     catch (err) {
@@ -271,7 +279,7 @@ class MarketScreen extends BaseScreen {
         symbol.favoriteKey = symbol.coin + '/' + symbol.currency;
         return symbol;
       });
-      
+
       return symbols;
     } catch (err) {
       console.log('MarketScreen._getSymbols', err);
@@ -348,7 +356,7 @@ class MarketScreen extends BaseScreen {
       s.isFavorite = _.includes(favoriteKeys, s.favoriteKey);
       return s;
     });
-    
+
     this._symbols = symbols;
     symbols = this._sortSymbols(sortField, sortDirection);
     this._symbols = symbols;
@@ -358,7 +366,7 @@ class MarketScreen extends BaseScreen {
       filterSymbols = _.filter(symbols, s => s.isFavorite);
     else
       filterSymbols = symbols;
-    
+
     let result = {
       symbols: filterSymbols
     };
@@ -433,10 +441,12 @@ const styles = ScaledSheet.create({
     backgroundColor: CommonColors.separator,
   },
   nameGroup: {
-    flex: 3
+    flex: 3,
+    flexDirection: 'row',
+    alignItems: 'center'
   },
   spacePairName: {
-    width: 3
+    width: '3@s'
   },
   itemFirstCoin: {
     fontSize: '12@s',
@@ -457,7 +467,7 @@ const styles = ScaledSheet.create({
     alignItems: 'flex-end',
   },
   volumeGroup: {
-    flex: 2,
+    flex: 3,
     alignItems: 'flex-end',
   },
   increasedChange: {
@@ -480,6 +490,7 @@ const styles = ScaledSheet.create({
     paddingRight: '10@s',
   },
   iconSort: {
+    marginTop: '6@s',
     height: '20@s',
     width: '20@s',
   },
@@ -515,7 +526,8 @@ const styles = ScaledSheet.create({
   },
   symbolHeader: {
     flex: 3,
-    justifyContent: 'center', 
+    justifyContent: 'center',
+    alignItems: 'center',
     flexDirection: 'row'
   },
   priceHeader: {
@@ -524,7 +536,7 @@ const styles = ScaledSheet.create({
     flexDirection: 'row'
   },
   volumeHeader: {
-    flex: 2,
+    flex: 3,
     justifyContent: 'flex-end',
     flexDirection: 'row'
   }

@@ -6,7 +6,7 @@ import { Text, TouchableWithoutFeedback, View } from "react-native";
 
 class HeaderTransaction extends Component {
   render() {
-    const { sortDate, sortPair, renderArrowDate, renderArrowPair, titles } = this.props;
+    const { sortDate, sortPair, renderArrowDate, renderArrowPair } = this.props;
 
     return (
       <View style={styles.headerContainer}>
@@ -31,23 +31,7 @@ class HeaderTransaction extends Component {
           </TouchableWithoutFeedback>
         </View>
 
-        <View style={{ flexDirection: 'row' }}>
-          <View style={styles.headerItem}>
-            <Text style={styles.headerTitle}>{titles[0]}</Text>
-          </View>
 
-          <View style={styles.headerItem}>
-            <Text style={styles.headerTitle}>{titles[1]}</Text>
-          </View>
-
-          <View style={styles.headerItem}>
-            <Text style={styles.headerTitle}>{titles[2]}</Text>
-          </View>
-
-          <View style={styles.headerLastItem}>
-            <Text style={styles.headerTitle}>{titles[3]}</Text>
-          </View>
-        </View>
       </View>
     )
   }
@@ -63,19 +47,6 @@ const styles = ScaledSheet.create({
     borderWidth: '1@s',
     borderColor: CommonColors.separator
   },
-  headerItem: {
-    flexDirection: 'column',
-    width: '75@s',
-    alignItems: 'flex-end',
-    justifyContent: 'center',
-  },
-  headerLastItem: {
-    flexDirection: 'column',
-    width: '70@s',
-    marginLeft: '10@s',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
   headerTitle: {
     fontSize: '12@s',
     color: CommonColors.mainText,
@@ -88,10 +59,8 @@ const styles = ScaledSheet.create({
   },
   viewHeaderLeft: {
     flexDirection: 'row',
-    width: '149@s',
+    width: '148@s',
     alignItems: 'center',
-    borderRightColor: CommonColors.separator,
-    borderRightWidth: '1@s',
   },
   headerTime: {
     width: '50@s',

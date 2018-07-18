@@ -1,43 +1,38 @@
-import React, { Component } from 'react';
+import React, {Component} from "react";
 import { scale } from "../../libs/reactSizeMatter/scalingUtils";
 import ScaledSheet from "../../libs/reactSizeMatter/ScaledSheet";
 import { CommonColors, Fonts } from "../../utils/CommonStyles";
 import { Text, View } from "react-native";
 
-class HeaderProfitAndLoss extends Component {
+class HeaderProfitRight extends Component{
   render() {
-    const { titles } = this.props;
+    const {titles} = this.props;
 
-    return (
+    return(
       <View style={styles.headerContainer}>
-        <View style={styles.headerCurrency}>
-          <Text style={styles.headerTitle}>{titles[0]}</Text>
+        <View style={[styles.headerItem, { marginRight: scale(10) }]}>
+          <Text style={styles.headerTitle}>{titles[6]}</Text>
         </View>
       </View>
     )
   }
+
 }
 
-export default HeaderProfitAndLoss;
+export default HeaderProfitRight;
 
 const styles = ScaledSheet.create({
   headerContainer: {
     flexDirection: 'row',
     height: '40@s',
     backgroundColor: '#f8f9fb',
-    borderWidth: '1@s',
+    borderWidth: '0.5@s',
     borderColor: CommonColors.separator
   },
   headerItem: {
     flexDirection: 'column',
-    width: '100@s',
+    width: '50@s',
     alignItems: 'flex-end',
-    justifyContent: 'center',
-  },
-  headerCurrency: {
-    flexDirection: 'column',
-    width: '48@s',
-    alignItems: 'center',
     justifyContent: 'center',
   },
   headerTitle: {

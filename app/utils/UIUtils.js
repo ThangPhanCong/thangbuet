@@ -18,15 +18,15 @@ export default class UIUtils {
       flex: 1,
       color: textColor,
       textAlign: 'center',
-      fontSize: scale(16),
+      fontSize: scale(options.fontSize || 16),
       ...Fonts.NotoSans
     };
     const separatorStyle = {
       width: 1,
       height: scale(10),
       backgroundColor: '#E0E0E0'
-
     }
+
     return (
       <View style={tabStyle}>
         <Text style={labelStyle}>{text}</Text>

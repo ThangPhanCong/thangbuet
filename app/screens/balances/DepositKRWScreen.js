@@ -1,5 +1,5 @@
 import React from 'react';
-import { Alert, SafeAreaView, View } from 'react-native';
+import { Alert, SafeAreaView, View, Image, Text } from 'react-native';
 import BaseScreen from '../BaseScreen'
 import ScaledSheet from '../../libs/reactSizeMatter/ScaledSheet'
 import rf from '../../libs/RequestFactory'
@@ -8,6 +8,7 @@ import { withNavigationFocus } from 'react-navigation'
 import KRWScreen from './KRWScreen'
 import KRWPendingScreen from './KRWPendingScreen'
 import HeaderBalance from './HeaderBalance'
+import { CommonColors, CommonSize, CommonStyles, Fonts } from '../../utils/CommonStyles'
 
 class DepositKRWScreen extends BaseScreen {
   constructor(props) {
@@ -86,7 +87,15 @@ class DepositKRWScreen extends BaseScreen {
       <SafeAreaView style={styles.fullScreen}>
         {this.state.isComplete &&
           <View style={styles.content}>
-            <HeaderBalance />
+            <View style={styles.logo}>
+              <Image
+                resizeMode="contain"
+                style={styles.iconLogo}
+                source={require('../../../assets/balance/logo_tab3.png')} />
+              <Text style={[styles.fontNotoSansBold]}>
+                {I18n.t('balances.depositAndWithdrawal')}
+              </Text>
+            </View>
             <KRWScreen
               isPending={this.state.isPending}
               symbol={symbol}
@@ -106,6 +115,13 @@ class DepositKRWScreen extends BaseScreen {
 export default withNavigationFocus(DepositKRWScreen)
 
 const styles = ScaledSheet.create({
-  fullScreen: { flex: 1 },
+  fullScreen: { flex: 1, backgroundColor: 'white' },
   content: { flex: 1, flexDirection: "column" },
+  iconLogo: { height: '20@s', width: '20@s', margin: '2@s', marginLeft: '15@s', },
+  fontNotoSansRegular: { ...Fonts.NotoSans_Regular, fontSize: '14@s' },
+  fontNotoSansBold: { ...Fonts.NotoSans_Bold, fontSize: '14@s' },
+  logo: {
+    height: '50@s', flexDirection: "row", alignItems: 'center', justifyContent: 'flex-start',
+    borderBottomWidth: '1@s', borderColor: 'rgba(222, 227, 235, 1)'
+  },
 });

@@ -5,6 +5,7 @@ import {
   TouchableWithoutFeedback,
   View,
   Image,
+  StyleSheet,
   ImageBackground
 } from 'react-native';
 import { Icon } from 'react-native-elements'
@@ -15,7 +16,7 @@ import BaseScreen from '../BaseScreen';
 import LoginCommonStyle from './LoginCommonStyle'
 import ScaledSheet from '../../libs/reactSizeMatter/ScaledSheet';
 import { scale } from '../../libs/reactSizeMatter/scalingUtils';
-import { CommonSize, CommonStyles } from "../../utils/CommonStyles";
+import { CommonSize, CommonStyles, Fonts } from "../../utils/CommonStyles";
 
 export default class LoginScreen extends BaseScreen {
 
@@ -120,7 +121,7 @@ export default class LoginScreen extends BaseScreen {
             keyboardType= 'numeric'
             placeholder={I18n.t('login.otp')}
             // blurOnSubmit={false}
-            placeholderTextColor='#cfd0d1'
+            placeholderTextColor='#fff'
             underlineColorAndroid='transparent'
             autoCapitalize='none'
             style={[styles.inputLogin, {flex: 1, textAlign: 'center' }]}
@@ -140,7 +141,7 @@ export default class LoginScreen extends BaseScreen {
             keyboardType='email-address'
             placeholder={I18n.t('login.email')}
             // blurOnSubmit={false}
-            placeholderTextColor='#cfd0d1'
+            placeholderTextColor='#fff'
             underlineColorAndroid='transparent'
             autoCapitalize='none'
             style={[styles.inputLogin]}
@@ -176,7 +177,7 @@ export default class LoginScreen extends BaseScreen {
             style={[styles.inputLogin]}
             value={password}
             secureTextEntry={true}
-            placeholderTextColor='#cfd0d1'
+            placeholderTextColor='#fff'
             placeholder={I18n.t('login.password')}
             underlineColorAndroid='transparent'
             onChangeText={(text) => this.setState({ password: text })}/>
@@ -231,7 +232,7 @@ const styles = ScaledSheet.create({
     textDecorationLine: 'underline',
   },
   inputRowMarginTop: {
-    marginTop: "14@s",
+    marginTop: "11@s",
   },
   showPassword: {
     backgroundColor: 'transparent',
@@ -245,11 +246,13 @@ const styles = ScaledSheet.create({
   },
   textLogo: {
     color: '#FFF',
-    fontSize: '35@s'
+    fontSize: '40@s',
+    ...Fonts.OpenSans_Bold
   },
   titleLogo: {
     color: '#FFF',
-    fontSize: '10@s'
+    fontSize: '10@s',
+    ...Fonts.NotoSans_Regular
   },
   inputLogin: {
     height: '40@s',
@@ -270,14 +273,14 @@ const styles = ScaledSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     borderBottomColor: '#FFF',
-    borderBottomWidth: '0.5@s',
+    borderBottomWidth: StyleSheet.hairlineWidth,
     paddingLeft: '50@s',
     paddingRight: '50@s'
   },
   viewButtonLogin: {
     // flex: 1,
     width: '100%',
-    marginTop: '30@s',
+    marginTop: '35@s',
     height: '43@s',
     backgroundColor: '#467b92',
     flexDirection: 'row',
@@ -287,7 +290,8 @@ const styles = ScaledSheet.create({
   },
   textLogin: {
     fontSize: '14@s',
-    color: '#FFF'
+    color: '#FFF',
+    ...Fonts.OpenSans_Light
   },
   emptyInforLogin: {
     alignSelf: 'flex-start',

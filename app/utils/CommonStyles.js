@@ -13,6 +13,9 @@ const iOSFonts = {
   OpenSans_Bold: {
     fontFamily: 'OpenSans-Semibold'
   },
+  OpenSans_Light: {
+    fontFamily: 'OpenSans-Light',
+  },
   // NotoSans_Bold: {
   //   fontFamily: 'NotoSans',
   //   fontWeight: '700'
@@ -28,6 +31,9 @@ const iOSFonts = {
   },
   NanumGothic_Bold: {
     fontFamily: 'NanumGothic-Bold'
+  },
+  Roboto: {
+    fontFamily: 'Roboto-Regular'
   }
 };
 
@@ -40,6 +46,9 @@ const androidFonts = {
   },
   OpenSans_Bold: {
     fontFamily: 'OpenSans-Semibold'
+  },
+  OpenSans_Light: {
+    fontFamily: 'OpenSans-Light',
   },
   NotoSans: {
     fontFamily: 'NotoSansCJKkr-Regular'
@@ -55,6 +64,9 @@ const androidFonts = {
   },
   NanumGothic_Bold: {
     fontFamily: 'NanumGothic-Bold'
+  },
+  Roboto: {
+    fontFamily: 'Roboto-Regular'
   }
 };
 

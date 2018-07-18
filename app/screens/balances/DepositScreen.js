@@ -1,5 +1,5 @@
 import React from 'react';
-import { SafeAreaView, Text, TouchableOpacity, View, Clipboard, ToastAndroid } from 'react-native';
+import { SafeAreaView, Text, TouchableOpacity, View, Clipboard, ToastAndroid, Image } from 'react-native';
 import BaseScreen from '../BaseScreen'
 import ScaledSheet from '../../libs/reactSizeMatter/ScaledSheet'
 import I18n from '../../i18n/i18n'
@@ -9,6 +9,7 @@ import rf from '../../libs/RequestFactory'
 import QRCode from 'react-native-qrcode-svg'
 import { scale } from "../../libs/reactSizeMatter/scalingUtils"
 import { getCurrencyName } from '../../utils/Filters'
+import { Fonts } from '../../utils/CommonStyles';
 
 class DepositScreen extends BaseScreen {
   constructor(props) {
@@ -73,15 +74,24 @@ class DepositScreen extends BaseScreen {
     return (
       <SafeAreaView style={styles.fullScreen}>
         <View style={styles.content}>
-          <HeaderBalance />
+          <View style={styles.logo}>
+            <Image
+              resizeMode="contain"
+              style={styles.iconLogo}
+              source={require('../../../assets/balance/logo_tab3.png')} />
+            <Text style={[styles.fontNotoSansBold]}>
+              {I18n.t('balances.depositAndWithdrawal')}
+            </Text>
+          </View>
+
           {this.state.isComplete &&
-            <View style={[styles.alignCenter, { marginTop: 20 }]}>
+            <View style={[styles.alignCenter, styles.marginTop20]}>
               <View style={styles.alignCenter}>
-                <Text style={{ fontWeight: 'bold' }}>{getCurrencyName(this.state.symbol.code) + " " + I18n.t('deposit.title')}</Text>
+                <Text style={styles.title}>{getCurrencyName(this.state.symbol.code) + " " + I18n.t('deposit.title')}</Text>
               </View>
 
               {this.state.isComplete && (!this.state.symbol.blockchain_address || this.state.symbol.blockchain_address == null) &&
-                <View style={[styles.alignCenter, { width: '90%', marginTop: 20 }]}>
+                <View style={[styles.alignCenter, { width: '80%' }]}>
                   <View style={[styles.alignCenter, { width: '100%' }]}>
                     <View style={styles.noteContainer}>
                       <Text style={styles.noteTitle}>
@@ -101,45 +111,36 @@ class DepositScreen extends BaseScreen {
                   </View>
                   <TouchableOpacity
                     onPress={this._doGetBlockchainAddress.bind(this)}
-                    style={[styles.alignCenter, {
-                      marginTop: 10, width: '70%', height: 40,
-                      backgroundColor: 'blue', borderRadius: 4, borderColor: 'rgba(0, 0, 0, 0.1)'
-                    }]}>
-                    <Text style={{ color: 'white' }}>{I18n.t('deposit.coinBtn')}</Text>
+                    style={[styles.alignCenter, styles.actionGetAddress]}>
+                    <Text style={styles.actionGetAddressText}>{I18n.t('deposit.coinBtn')}</Text>
                   </TouchableOpacity>
                 </View>
               }
               {this.state.isComplete && this.state.symbol.blockchain_address && this.state.symbol.blockchain_address != null &&
-                <View style={[styles.alignCenter, { width: '90%', marginTop: 20 }]}>
+                <View style={[styles.alignCenter, styles.QRcodeWrapper]}>
                   <QRCode
-                    size={scale(150)}
+                    size={scale(200)}
                     value={this.state.symbol.blockchain_address ? this.state.symbol.blockchain_address : 'No address'} />
 
-                  <Text style={{ margin: 10, marginBottom: 5 }}>
+                  <Text style={styles.addressSpace}>
                     {this.state.symbol.blockchain_address}
                   </Text>
                   {this.state.symbol.blockchain_tag && this.state.symbol.blockchain_tag != null &&
-                    <Text style={{ margin: 5, marginBottom: 20 }}>
+                    <Text style={styles.tagSpace}>
                       {I18n.t('deposit.tagAddress') + " " + this.state.symbol.blockchain_tag}
                     </Text>
                   }
-                  <View style={{ flexDirection: 'row', width: '70%', height: 45, justifyContent: 'center', alignItems: 'center' }}>
+                  <View style={styles.actionWapper}>
                     <TouchableOpacity
                       onPress={() => this._doCopy(false)}
-                      style={[styles.alignCenter, {
-                        marginTop: 10, flex: 1, height: 40,
-                        backgroundColor: 'blue', borderRadius: 4, borderColor: 'rgba(0, 0, 0, 0.1)'
-                      }]}>
-                      <Text style={{ color: 'white' }}>{I18n.t('deposit.copyAddress')}</Text>
+                      style={[styles.alignCenter, styles.actionCopy]}>
+                      <Text style={styles.actionText}>{I18n.t('deposit.copyAddress')}</Text>
                     </TouchableOpacity>
                     {this.state.symbol.blockchain_tag && this.state.symbol.blockchain_tag != null &&
                       <TouchableOpacity
                         onPress={() => this._doCopy(true)}
-                        style={[styles.alignCenter, {
-                          marginTop: 10, flex: 1, height: 40, marginLeft: 5,
-                          backgroundColor: 'blue', borderRadius: 4, borderColor: 'rgba(0, 0, 0, 0.1)'
-                        }]}>
-                        <Text style={{ color: 'white' }}>{I18n.t('deposit.copyTag')}</Text>
+                        style={[styles.alignCenter, styles.actionCopy, styles.secondBtn]}>
+                        <Text style={styles.actionText}>{I18n.t('deposit.copyTag')}</Text>
                       </TouchableOpacity>
                     }
                   </View>
@@ -157,10 +158,32 @@ class DepositScreen extends BaseScreen {
 export default withNavigationFocus(DepositScreen)
 
 const styles = ScaledSheet.create({
-  fullScreen: { flex: 1 },
+  fullScreen: { flex: 1, backgroundColor: 'white' },
   content: { flex: 1, flexDirection: "column" },
   alignCenter: { alignItems: 'center', justifyContent: 'center' },
-  noteContainer: { marginTop: 10, flexDirection: 'column', width: '100%' },
-  noteTitle: { flexWrap: 'wrap', fontSize: 13, fontWeight: 'normal' },
-
+  noteContainer: { marginTop: '10@s', flexDirection: 'column', width: '100%' },
+  noteTitle: { flexWrap: 'wrap', fontSize: '12@s', ...Fonts.NanumGothic_Regular, lineHeight: '17@s' },
+  logo: {
+    height: '50@s', flexDirection: "row", alignItems: 'center', justifyContent: 'flex-start',
+    borderBottomWidth: '1@s', borderColor: 'rgba(222, 227, 235, 1)'
+  },
+  iconLogo: { height: '20@s', width: '20@s', margin: '2@s', marginLeft: '15@s', },
+  marginTop20: { marginTop: '20@s' },
+  title: { ...Fonts.NotoSans_Bold, fontSize: '14@s' },
+  QRcodeWrapper: { width: '90%', marginTop: '20@s' },
+  addressSpace: { margin: '20@s', marginBottom: '10@s' },
+  tagSpace: { margin: '5@s', marginBottom: '20@s', marginTop: '0@s' },
+  actionWapper: { flexDirection: 'row', width: '70%', height: '35@s', justifyContent: 'center', alignItems: 'center' },
+  actionCopy: {
+    marginTop: '10@s', flex: 1, height: '35@s',
+    backgroundColor: 'rgba(0, 112, 192, 1)', borderRadius: '4@s', borderColor: 'rgba(0, 0, 0, 0.1)'
+  },
+  secondBtn: { marginLeft: '5@s' },
+  actionText: { color: 'white', ...Fonts.OpenSans_Bold, fontSize: '14@s' },
+  fontNotoSansBold: { ...Fonts.NotoSans_Bold, fontSize: '14@s' },
+  actionGetAddress: {
+    marginTop: '20@s', width: '80%', height: '35@s',
+    backgroundColor: 'rgba(0, 112, 192, 1)', borderRadius: '4@s', borderColor: 'rgba(0, 0, 0, 0.1)'
+  },
+  actionGetAddressText: { color: 'white', ...Fonts.OpenSans_Bold, fontSize: '14@s' }
 });
