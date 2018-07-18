@@ -159,7 +159,7 @@ export default {
     tenThousand: '만',
     availableQuantity: '매도가능수량',
     sellQuantity: '매도수량',
-    sellAmount: '매도금액'
+    sellAmount: '매도대금'
   },
   orderBook: {
     sell: '매도',
