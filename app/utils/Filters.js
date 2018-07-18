@@ -15,6 +15,9 @@ function formatCurrency(amount, currency, zeroValue) {
 }
 
 function trimCurrency(value) {
+  if (value) {
+    value = value.toString();
+  }
   if (value && value.indexOf('.') >= 0) {
     return value.replace(/\.[0]+$/g, '');
   } else {
