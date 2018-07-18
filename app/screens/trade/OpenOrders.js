@@ -63,8 +63,9 @@ export default class OpenOrders extends BaseScreen {
       //   await rf.getRequest('OrderRequest').cancel(ids[i]);
       // }
       // ids.forEach(async id => await rf.getRequest('OrderRequest').cancel(id));
-      this.setState({ page: 1, orders: [] })
-      this._loadData();
+      const orderFilter = this.state.orders.filter((item) =>  !ids.includes(item.id));
+
+      this.setState({orders: orderFilter})
     } catch (err) {
       console.log("CancelOrder._error:", err)
     }
