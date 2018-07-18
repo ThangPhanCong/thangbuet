@@ -14,6 +14,14 @@ function formatCurrency(amount, currency, zeroValue) {
   return amount ? Numeral(amount).format(format) : zeroValue;
 }
 
+function trimCurrency(value) {
+  if (value && value.indexOf('.') >= 0) {
+    return value.replace(/\.[0]+$/g, '');
+  } else {
+    return value;
+  }
+}
+
 function formatPercent(value, onlyFormat) {
   if (onlyFormat) {
     return Numeral(value).format("0.00")
@@ -43,6 +51,7 @@ function getTime(timestamp) {
 
 export {
   formatCurrency,
+  trimCurrency,
   formatPercent,
   getCurrencyName,
   getDateTime,

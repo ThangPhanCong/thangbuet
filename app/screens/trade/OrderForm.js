@@ -28,11 +28,6 @@ import { getCurrencyName, formatCurrency } from '../../utils/Filters';
 import OrderBook from './OrderBook';
 import OrderBookSettingModal from './OrderBookSettingModal';
 
-
-const mask = NativeModules.RNTextInputMask.mask
-const unmask = NativeModules.RNTextInputMask.unmask
-const setMask = NativeModules.RNTextInputMask.setMask
-
 export default class OrderForm extends BaseScreen {
 
   static INPUT_TYPE = 'type';
@@ -233,11 +228,7 @@ export default class OrderForm extends BaseScreen {
   }
 
   _getMaskInputValue(formatted, extracted) {
-    if (formatted.endsWith('.')) {
-      return extracted;
-    } else {
-      return formatted;
-    }
+   return extracted;
   }
 
   _onStopChanged(formatted, extracted) {
