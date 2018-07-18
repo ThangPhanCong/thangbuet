@@ -13,6 +13,7 @@ import BaseScreen from '../../BaseScreen';
 import I18n from '../../../i18n/i18n';
 import rf from '../../../libs/RequestFactory';
 import ScaledSheet from '../../../libs/reactSizeMatter/ScaledSheet';
+import { Fonts } from '../../../utils/CommonStyles';
 
 export default class BasicInfoScreen extends BaseScreen {
   _infoProps = [{
@@ -152,6 +153,7 @@ const styles = ScaledSheet.create({
   },
   text: {
     fontSize: '13@s',
+    ...Fonts.NanumGothic_Regular,
   },
   iconArrow: {
     width: '12@s',
