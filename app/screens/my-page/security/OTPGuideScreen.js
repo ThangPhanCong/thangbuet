@@ -124,7 +124,7 @@ const styles = ScaledSheet.create({
   googleAuthText: {
     fontSize: '18@s',
     flex: 1,
-    ...Fonts.OpenSans
+    ...Fonts.OpenSans_Bold
   },
   googleAuthContainer: {
     flexDirection: 'row',

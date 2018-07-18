@@ -71,10 +71,7 @@ export default class SecurityOverviewScreen extends BaseScreen {
   _otpParams = {};
   _bankParams = {};
 
-  _banks = [{ id: 1, name: 'ABC' }, { id: 2, name: 'DEF' }, { id: 3, name: 'GHI' }, { id: 4, name: 'JKL' }, {
-    id: 5,
-    name: 'MNO'
-  }];
+  _banks = [];
   _passwordParams = {}
 
   _verifyPhoneResult = {}
@@ -93,6 +90,11 @@ export default class SecurityOverviewScreen extends BaseScreen {
       bankAccountDialogVisible: false,
       changePasswordDialogVisible: false
     }
+  }
+
+  componentWillMount(){
+    super.componentWillMount();
+    this._getAvailableBanks();
   }
 
   componentDidMount() {
@@ -493,6 +495,16 @@ export default class SecurityOverviewScreen extends BaseScreen {
     )
   }
 
+  async _getAvailableBanks() {
+    try {
+      let res = await rf.getRequest('MasterdataRequest').getAll();
+      this._banks = res.banks;
+    }
+    catch(err) {
+      console.log('SecurityScreen._getAvailableBanks', err);
+    }
+  }
+
   _calculateModalHeight() {
     if (this._banks.length == 0)
       return scale(39);
@@ -796,6 +808,7 @@ const styles = ScaledSheet.create({
     backgroundColor: '#FFF'
   },
   textInput: {
+    fontSize: '13@s',
     height: '40@s',
     borderRadius: '5@s',
     borderWidth: '1@s',
@@ -803,7 +816,8 @@ const styles = ScaledSheet.create({
     marginStart: '16@s',
     marginEnd: '16@s',
     paddingLeft: '16@s',
-    paddingRight: '16@s'
+    paddingRight: '16@s',
+    ...Fonts.NanumGothic_Regular
   },
   submitCancelOtpButton: {
     marginTop: '30@s',
@@ -841,6 +855,7 @@ const styles = ScaledSheet.create({
     ...Fonts.NanumGothic_Regular
   },
   bankAccountTextInput: {
+    fontSize: '13@s',
     marginTop: '4@s',
     marginStart: '16@s',
     marginEnd: '16@s',
@@ -871,6 +886,8 @@ const styles = ScaledSheet.create({
     padding: 0
   },
   registerPhoneContainer: {
+    borderColor: '#7F7F7F',
+    borderWidth: '1@s',
     borderRadius: '5@s',
     padding: 0,
     marginStart: '10@s',
@@ -1001,6 +1018,7 @@ const styles = ScaledSheet.create({
     ...Fonts.NanumGothic_Regular,
   },
   textModal: {
+    fontSize: '13@s',
     marginStart: '16@s',
     ...Fonts.NanumGothic_Regular,
   }
