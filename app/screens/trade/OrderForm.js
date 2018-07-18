@@ -35,6 +35,12 @@ const setMask = NativeModules.RNTextInputMask.setMask
 
 export default class OrderForm extends BaseScreen {
 
+  static INPUT_TYPE = 'type';
+  static INPUT_PRICE = 'price';
+  static INPUT_QUANTITY = 'quantity';
+  static INPUT_TOTAL = 'total';
+  static INPUT_STOP = 'stop';
+
   constructor(props) {
     super(props)
     this.state = {
@@ -46,11 +52,11 @@ export default class OrderForm extends BaseScreen {
 
       currencyBalance: undefined,
       coinBalance: undefined,
-      coinSetting: {},
 
       enableQuantity: true,
-      settingsOrderConfirmation: undefined
+      settingsOrderConfirmation: undefined,
 
+      focusedInput: undefined
     }
     this.balances = {};
     this.types = [
@@ -60,6 +66,8 @@ export default class OrderForm extends BaseScreen {
       { type: Consts.ORDER_TYPE_STOP_MARKET, label: I18n.t('orderForm.stopMarket') }
     ];
     this.prefillAmounts = [50000, 100000, 300000, 500000, 1000000, 1500000, 2000000, 3000000, 5000000];
+    this.quantityPrecision = 4;
+    this.pricePrecision = 0;
   }
 
   componentDidMount() {
@@ -72,6 +80,12 @@ export default class OrderForm extends BaseScreen {
 
   componentDidUpdate(prevProps, prevState) {
     if (prevProps.currency != this.props.currency || prevProps.coin != this.props.coin) {
+      this.setState({
+        price: '',
+        stop: '',
+        quantity: '',
+        total: ''
+      });
       this._loadData();
     }
   }
@@ -93,11 +107,33 @@ export default class OrderForm extends BaseScreen {
 
   async _loadData() {
     await Promise.all([
-      this._getBalance(),
       this._getCoinSetting(),
-      this._getFeeRate(),
-      this._getOrderBookSettings()
+      this._getQuantitySetting()
     ]);
+    await Promise.all([
+      this._getBalance(),
+      this._getFeeRate(),
+      this._getOrderBookSettings(),
+      this._getPrice()
+    ]);
+  }
+
+  async _getCoinSetting() {
+    const { coin, currency } = this.props;
+    let response = await rf.getRequest('MasterdataRequest').getAll();
+    const coinSetting = response.coin_settings.find((item) => item.coin == coin && item.currency == currency);
+
+    this.quantityPrecision = Utils.getPrecision(coinSetting.minimum_quantity);
+  }
+
+  async _getQuantitySetting() {
+    const { coin, currency } = this.props;
+    let response = await rf.getRequest('MasterdataRequest').getAll();
+    const priceGroup = response.price_groups.find((item) => {
+      return item.coin == coin && item.currency == currency && item.group == 0;
+    });
+
+    this.pricePrecision = Utils.getPrecision(priceGroup.value);
   }
 
   async _getBalance() {
@@ -125,16 +161,6 @@ export default class OrderForm extends BaseScreen {
     this.setState(newState);
   }
 
-  async _getCoinSetting() {
-    const { coin, currency } = this.props;
-    let response = await rf.getRequest('MasterdataRequest').getAll();
-    const coinSetting = response.coin_settings.find((item) => item.coin == coin && item.currency == currency);
-
-    this.setState({
-      coinSetting
-    });
-  }
-
   async _getFeeRate() {
     const response = await rf.getRequest('UserRequest').getCurrentUser();
     const user = response.data;
@@ -152,6 +178,15 @@ export default class OrderForm extends BaseScreen {
     };
     const response = await rf.getRequest('UserRequest').getOrderBookSettings(params);
     this._onOrderBookSettingsUpdated(response.data);
+  }
+
+  async _getPrice() {
+    const response = await rf.getRequest('PriceRequest').getPrices();
+    const prices = response.data;
+    const key = Utils.getPriceKey(this._getCurrency(), this._getCoin());
+    if (prices[key] && !this.state.price) {
+      this.setState({ price : prices[key].price });
+    }
   }
 
   _isBuyOrder() {
@@ -389,15 +424,18 @@ export default class OrderForm extends BaseScreen {
   }
 
   _renderPriceInput() {
+    const inputBorderStyle = this._getInputBorderStyle(OrderForm.INPUT_PRICE);
     return (
       <View style={styles.inputRow}>
         <Text style={styles.inputLabel}>{I18n.t('orderForm.price')}</Text>
-        <View style={[styles.inputValue, this._isMarketOrder() ? styles.disabled : {}]}>
+        <View style={[styles.inputValue, this._isMarketOrder() ? styles.disabled : {}, inputBorderStyle]}>
           <CurrencyInput
             value={this.state.price}
-            precision={0}
+            precision={this.pricePrecision}
             editable={!this._isMarketOrder()}
             onChangeText={(formatted, extracted) => this._onPriceChanged(this._getMaskInputValue(formatted, extracted))}
+            onFocus={() => this.setState({focusedInput: OrderForm.INPUT_PRICE})}
+            onBlur={() => this.setState({focusedInput: undefined})}
             keyboardType='numeric'
             style={[styles.inputText, {textAlign: 'center'}]}
             underlineColorAndroid='transparent'/>
@@ -406,15 +444,33 @@ export default class OrderForm extends BaseScreen {
     );
   }
 
+  _getInputBorderStyle(input) {
+    return this.state.focusedInput == input ? { borderColor: focusedBorderColor} : {};
+  }
+
+  _getCaretBorderStyle(input) {
+    let style = {};
+    if (this.state.focusedInput == input) {
+      style = {
+        borderColor: focusedBorderColor,
+        borderLeftColor: '#95CCDE'
+      };
+    }
+    return style;
+  }
+
   _renderStopInput() {
+    const inputBorderStyle = this._getInputBorderStyle(OrderForm.INPUT_STOP);
     return (
       <View style={styles.inputRow}>
         <Text style={styles.inputLabel}>{I18n.t('orderForm.stop')}</Text>
-        <View style={styles.inputValue}>
+        <View style={[styles.inputValue, inputBorderStyle]}>
           <CurrencyInput
             value={this.state.stop}
-            precision={0}
+            precision={this.pricePrecision}
             onChangeText={this._onStopChanged.bind(this)}
+            onFocus={() => this.setState({focusedInput: OrderForm.INPUT_STOP})}
+            onBlur={() => this.setState({focusedInput: undefined})}
             keyboardType='numeric'
             style={[styles.inputText, {textAlign: 'center'}]}
             underlineColorAndroid='transparent'/>
@@ -424,22 +480,26 @@ export default class OrderForm extends BaseScreen {
   }
 
   _renderQuantityInput() {
+    const inputBorderStyle = this._getInputBorderStyle(OrderForm.INPUT_QUANTITY);
+    const caretBorderStyle = this._getCaretBorderStyle(OrderForm.INPUT_QUANTITY);
     const enableQuantity = this.state.enableQuantity;
     return (
       <View style={styles.inputRow}>
         <Text style={styles.inputLabel}>{I18n.t('orderForm.quantity')}</Text>
-        <View style={[styles.inputValue, {borderRightWidth: 0}, !enableQuantity ? styles.disabled : {}]}>
+        <View style={[styles.inputValue, {borderRightWidth: 0}, !enableQuantity ? styles.disabled : {}, inputBorderStyle]}>
           <View ref={ref => this._quantityRef = ref} style={styles.quantityDropdownAnchor}/>
           <CurrencyInput
+            refInput={ref => this._quantityInput = ref}
             value={this.state.quantity}
-            precision={4}
+            precision={this.quantityPrecision}
             onChangeText={this._onQuantityChanged.bind(this)}
-            onFocus={() => this.setState({enableQuantity: true})}
+            onFocus={() => this.setState({enableQuantity: true, focusedInput: OrderForm.INPUT_QUANTITY})}
+            onBlur={() => this.setState({focusedInput: undefined})}
             keyboardType='numeric'
             style={styles.inputText}
             underlineColorAndroid='transparent'/>
             <TouchableWithoutFeedback onPress={this._openQuantityDropdown.bind(this)}>
-              <View style={styles.caretButton}>
+              <View style={[styles.caretButton, caretBorderStyle]}>
                 {this._renderCaretDownIcon()}
               </View>
             </TouchableWithoutFeedback>
@@ -484,6 +544,8 @@ export default class OrderForm extends BaseScreen {
   }
 
   _renderTotalInput() {
+    const inputBorderStyle = this._getInputBorderStyle(OrderForm.INPUT_TOTAL);
+    const caretBorderStyle = this._getCaretBorderStyle(OrderForm.INPUT_TOTAL);
     const enableQuantity = this.state.enableQuantity;
     return (
       <View style={styles.inputRow}>
@@ -491,19 +553,22 @@ export default class OrderForm extends BaseScreen {
         <View style={[
           styles.inputValue,
           {borderRightWidth: 0},
-          enableQuantity || this._isMarketOrder() ? styles.disabled : {}]}>
+          enableQuantity || this._isMarketOrder() ? styles.disabled : {},
+          inputBorderStyle]}>
           <View ref={ref => this._totalRef = ref} style={styles.quantityDropdownAnchor}/>
           <CurrencyInput
+            refInput={ref => this._totalInput = ref}
             value={this.state.total}
-            precision={4}
+            precision={this.pricePrecision}
             editable={!this._isMarketOrder()}
             onChangeText={this._onTotalChanged.bind(this)}
-            onFocus={() => this.setState({enableQuantity: false})}
+            onFocus={() => this.setState({enableQuantity: false, focusedInput: OrderForm.INPUT_TOTAL})}
+            onBlur={() => this.setState({focusedInput: undefined})}
             keyboardType='numeric'
             style={styles.inputText}
             underlineColorAndroid='transparent'/>
             <TouchableWithoutFeedback onPress={this._openTotalDropdown.bind(this)}>
-              <View style={styles.caretButton}>
+              <View style={[styles.caretButton, caretBorderStyle]}>
                 {this._renderCaretDownIcon()}
               </View>
             </TouchableWithoutFeedback>
@@ -583,7 +648,7 @@ export default class OrderForm extends BaseScreen {
             <Text style={styles.estimateLabel}>{I18n.t('orderForm.estimateTotal')}</Text>
           </View>
           <View style={styles.estimationRightCell}>
-            <Text style={styles.estimateValue}>{this._getOrderTotal()}</Text>
+            <Text style={styles.estimateValue}>{formatCurrency(this._getOrderTotal(), currency)}</Text>
             <Text style={styles.insideText}>{getCurrencyName(currency)}</Text>
           </View>
         </View>
@@ -593,7 +658,7 @@ export default class OrderForm extends BaseScreen {
             <Text style={styles.estimateLabel}>{I18n.t('orderForm.fee')}</Text>
           </View>
           <View style={styles.estimationRightCell}>
-            <Text style={styles.estimateValue}>{this._getOrderFee()}</Text>
+            <Text style={styles.estimateValue}>{formatCurrency(this._getOrderFee(), coin)}</Text>
             <Text style={styles.insideText}>{getCurrencyName(coin)}</Text>
           </View>
         </View>
@@ -603,7 +668,7 @@ export default class OrderForm extends BaseScreen {
             <Text style={styles.estimateLabel}>{I18n.t('orderForm.estimateQuantity')}</Text>
           </View>
           <View style={styles.estimationRightCell}>
-            <Text style={styles.estimateValue}>{this.state.quantity}</Text>
+            <Text style={styles.estimateValue}>{formatCurrency(this.state.quantity, coin)}</Text>
             <Text style={styles.insideText}>{getCurrencyName(coin)}</Text>
           </View>
         </View>
@@ -624,13 +689,13 @@ export default class OrderForm extends BaseScreen {
     const { price, quantity, feeRate } = this.state;
     if (this._isBuyOrder()) {
       if (quantity) {
-        return BigNumber(quantity).times(feeRate).toString();
+        return BigNumber(quantity).times(feeRate);
       } else {
         return '';
       }
     } else {
       if (quantity && price) {
-        return BigNumber(quantity).times(price).times(feeRate).toString();
+        return BigNumber(quantity).times(price).times(feeRate);
       } else {
         return '';
       }
@@ -645,7 +710,7 @@ export default class OrderForm extends BaseScreen {
       <View style={styles.estimationValues}>
         <View style={styles.estimationRow}>
           <View style={[styles.estimationLeftCell, styles.estimationSellCell]}>
-            <Text style={styles.estimateLabel}>{I18n.t('orderForm.balance')}</Text>
+            <Text style={styles.estimateLabel}>{I18n.t('orderForm.availableQuantity')}</Text>
           </View>
           <View style={styles.estimationRightCell}>
             <Text style={styles.estimateValue}>{formatCurrency(balance, coin)}</Text>
@@ -654,10 +719,10 @@ export default class OrderForm extends BaseScreen {
         </View>
         <View style={styles.estimationRow}>
           <View style={[styles.estimationLeftCell, styles.estimationSellCell]}>
-            <Text style={styles.estimateLabel}>{I18n.t('orderForm.estimateTotal')}</Text>
+            <Text style={styles.estimateLabel}>{I18n.t('orderForm.sellQuantity')}</Text>
           </View>
           <View style={styles.estimationRightCell}>
-            <Text style={styles.estimateValue}>{this.state.quantity}</Text>
+            <Text style={styles.estimateValue}>{formatCurrency(this.state.quantity, coin)}</Text>
             <Text style={styles.insideText}>{getCurrencyName(coin)}</Text>
           </View>
         </View>
@@ -666,16 +731,16 @@ export default class OrderForm extends BaseScreen {
             <Text style={styles.estimateLabel}>{I18n.t('orderForm.fee')}</Text>
           </View>
           <View style={styles.estimationRightCell}>
-            <Text style={styles.estimateValue}>{this._getOrderFee()}</Text>
+            <Text style={styles.estimateValue}>{formatCurrency(this._getOrderFee(), currency)}</Text>
             <Text style={styles.insideText}>{getCurrencyName(currency)}</Text>
           </View>
         </View>
         <View style={styles.estimationRow}>
           <View style={[styles.estimationLeftCell, styles.estimationSellCell]}>
-            <Text style={styles.estimateLabel}>{I18n.t('orderForm.estimateQuantity')}</Text>
+            <Text style={styles.estimateLabel}>{I18n.t('orderForm.sellAmount')}</Text>
           </View>
           <View style={styles.estimationRightCell}>
-            <Text style={styles.estimateValue}>{this._getOrderTotal()}</Text>
+            <Text style={styles.estimateValue}>{formatCurrency(this._getOrderTotal(), currency)}</Text>
             <Text style={styles.insideText}>{getCurrencyName(currency)}</Text>
           </View>
         </View>
@@ -715,6 +780,7 @@ const margin = scale(10);
 const dropdownRowHeight = scale(33);
 const inputHeight = scale(33);
 const inputBotderRadius = scale(3);
+const focusedBorderColor = '#0AB8F2';
 
 const styles = ScaledSheet.create({
   inputGroup: {

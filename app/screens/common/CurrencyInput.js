@@ -29,10 +29,10 @@ export default class CurrencyInput extends Component {
     return (<TextInputMask
       {...this.props}
       mask={this.state.mask}
-      ref={ref => {
+      refInput={ref => {
         this.input = ref
         if (typeof this.props.refInput === 'function') {
-          this.props.refInput(ref)
+          this.props.refInput(ref);
         }
       }}
       onChangeText={(masked, unmasked) => {
