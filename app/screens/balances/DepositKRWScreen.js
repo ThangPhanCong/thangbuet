@@ -7,7 +7,6 @@ import I18n from '../../i18n/i18n'
 import { withNavigationFocus } from 'react-navigation'
 import KRWScreen from './KRWScreen'
 import KRWPendingScreen from './KRWPendingScreen'
-import HeaderBalance from './HeaderBalance'
 import { CommonColors, CommonSize, CommonStyles, Fonts } from '../../utils/CommonStyles'
 
 class DepositKRWScreen extends BaseScreen {

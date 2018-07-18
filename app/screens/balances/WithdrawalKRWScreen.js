@@ -1,14 +1,14 @@
 import React from 'react';
-import { Alert, SafeAreaView, ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native'
+import { Alert, SafeAreaView, ScrollView, Text, TextInput, TouchableOpacity, View, Image } from 'react-native'
 import BaseScreen from '../BaseScreen'
 import ScaledSheet from '../../libs/reactSizeMatter/ScaledSheet'
 import rf from '../../libs/RequestFactory'
 import I18n from '../../i18n/i18n'
 import { formatCurrency, getCurrencyName } from '../../utils/Filters'
 import { withNavigationFocus } from 'react-navigation'
-import HeaderBalance from './HeaderBalance'
 import { Icon, Divider } from 'react-native-elements'
 import Modal from "react-native-modal"
+import { Fonts } from '../../utils/CommonStyles'
 
 class WithdrawalKRWScreen extends BaseScreen {
   constructor(props) {
@@ -213,10 +213,19 @@ class WithdrawalKRWScreen extends BaseScreen {
       <SafeAreaView style={styles.fullScreen}>
         {this.state.isComplete &&
           <View style={styles.content}>
-            <HeaderBalance />
+            <View style={styles.logo}>
+              <Image
+                resizeMode="contain"
+                style={styles.iconLogo}
+                source={require('../../../assets/balance/logo_tab3.png')} />
+              <Text style={[styles.fontNotoSansBold]}>
+                {I18n.t('balances.depositAndWithdrawal')}
+              </Text>
+            </View>
+
             <ScrollView>
               <View style={styles.alignCenter}>
-                <Text style={{ fontWeight: 'bold' }}>{getCurrencyName(symbol.code) + " " + I18n.t('deposit.title')}</Text>
+                <Text style={styles.title}>{getCurrencyName(symbol.code) + " " + I18n.t('deposit.title')}</Text>
               </View>
               <View style={[styles.header, styles.line]}>
                 <View style={styles.row}>
@@ -239,71 +248,50 @@ class WithdrawalKRWScreen extends BaseScreen {
                 </View>
               </View>
               <View style={[styles.line, styles.amount]}>
-                <Text>
+                <Text style={[styles.amountText, styles.textInline]}>
                   {I18n.t('withdrawal.request')}
                   <Text>({I18n.t('funds.currency')})</Text>
                 </Text>
-                <View style={{
-                  flexDirection: 'row', alignItems: 'center', justifyContent: 'center',
-                  borderWidth: 1, borderRadius: 4, borderColor: "rgba(0, 0, 0, 0.3)"
-                }}>
+                <View style={styles.amountWrapper}>
                   <TextInput
                     keyboardType='numeric'
                     autoCorrect={false}
                     underlineColorAndroid='rgba(0, 0, 0, 0)'
                     value={formatCurrency(this.state.amount, this.currency)}
-                    // value={this.state.amount + ''}
-                    onChangeText={(text) => {
-                      // console.log(text, text.split(',').join(''))
-                      this.setState({ amount: parseFloat(text.split(',').join('')) })
-                    }}
-                    // onChangeText={(text) => this.setState({ amount: parseFloat(text) })}
-                    style={{ flex: 1, height: 30, textAlign: 'right', paddingRight: 5 }} />
-                  <Text style={{ fontSize: 11 }}>{getCurrencyName(this.currency)}</Text>
+                    onChangeText={(text) => this.setState({ amount: parseFloat(text.split(',').join('')) })}
+                    style={[styles.amountInput, styles.amountText]} />
+                  <Text style={styles.amountText}>{getCurrencyName(this.currency)}</Text>
                   <TouchableOpacity
-                    style={{
-                      borderLeftWidth: 1, borderColor: "rgba(0, 0, 0, 0.3)",
-                      height: 30, justifyContent: 'center', padding: 5
-                    }}
+                    style={styles.amountActionInline}
                     onPress={() => this.setState({ amount: this.state.daily.withdrawalLimit - this.state.daily.withdrawalKrw })}>
-                    <Text>{I18n.t('withdrawal.maximum')}</Text>
+                    <Text style={styles.amountText}>{I18n.t('withdrawal.maximum')}</Text>
                   </TouchableOpacity>
                 </View>
               </View>
 
               <View style={[styles.line, styles.amount]}>
-                <Text>{I18n.t('withdrawal.accountRegister')}</Text>
-                <View style={{
-                  flexDirection: 'row', alignItems: 'center', justifyContent: 'center',
-                  borderWidth: 1, borderRadius: 4, borderColor: "rgba(0, 0, 0, 0.3)"
-                }}>
+                <Text style={[styles.amountText, styles.textInline]}>{I18n.t('withdrawal.accountRegister')}</Text>
+                <View style={styles.accountWrapper}>
                   <TextInput
                     editable={false}
                     value={this.state.currentUser.encodeAccount}
                     autoCorrect={false}
                     underlineColorAndroid='rgba(0, 0, 0, 0)'
-                    style={{ flex: 1, height: 30, textAlign: 'right', opacity: 0.7 }} />
+                    style={[styles.accountInput, styles.amountText]} />
                 </View>
               </View>
 
               <TouchableOpacity
-                style={{
-                  flex: 1, alignItems: 'center', height: 35, justifyContent: 'center',
-                  borderLeftWidth: 1, borderRadius: 4, backgroundColor: 'blue', borderColor: 'blue',
-                  marginTop: 20, marginLeft: 40, marginRight: 40,
-                }}
+                style={styles.actionBtn}
                 onPress={this._validateAmount.bind(this)}>
-                <Text style={{ color: 'white' }}>{I18n.t('withdrawal.confirm')}</Text>
+                <Text style={styles.actionText}>{I18n.t('withdrawal.confirm')}</Text>
               </TouchableOpacity>
 
-              <Divider style={{ backgroundColor: '#aaaaaa', flex: 1, marginTop: 20, marginBottom: 20 }} />
+              <Divider style={styles.divider} />
 
-              <View style={{ marginLeft: 20, marginRight: 20, justifyContent: 'center', alignItems: 'center' }}>
-                <View style={{
-                  borderBottomWidth: 1, borderBottomColor: '#aaaaaa', width: '100%',
-                  justifyContent: 'center', alignItems: 'center'
-                }}>
-                  <Text style={{ paddingBottom: 10, fontWeight: 'bold' }}>{I18n.t('withdrawal.noteTitle')}</Text>
+              <View style={styles.noteWrapper}>
+                <View style={styles.titleWrapper}>
+                  <Text style={styles.noteHeader}>{I18n.t('withdrawal.noteTitle')}</Text>
                 </View>
 
                 <View style={styles.noteContainer}>
@@ -322,7 +310,7 @@ class WithdrawalKRWScreen extends BaseScreen {
                   </Text>
                 </View>
                 <View style={styles.noteContainer}>
-                  <Text style={[styles.noteTitle, { fontWeight: 'bold' }]}>
+                  <Text style={[styles.noteTitle, { ...Fonts.NanumGothic_Bold }]}>
                     {'\u2022' + I18n.t('withdrawal.noteLine4')}
                   </Text>
                 </View>
@@ -352,27 +340,24 @@ class WithdrawalKRWScreen extends BaseScreen {
                   </Text>
                 </View>
 
-                <View style={{
-                  borderBottomWidth: 1, borderBottomColor: '#aaaaaa', width: '100%',
-                  justifyContent: 'center', alignItems: 'center', marginTop: 30,
-                }}>
-                  <Text style={{ paddingBottom: 10, fontWeight: 'bold' }}>{I18n.t('withdrawal.noteTitle')}</Text>
+                <View style={styles.noteWrapperMore}>
+                  <Text style={styles.titleMore}>{I18n.t('withdrawal.noteTitle')}</Text>
                 </View>
 
                 <View style={styles.noteContainer}>
-                  <Text style={[styles.noteTitle, { lineHeight: 20 }]}>
+                  <Text style={[styles.noteTitle, styles.noteLineHeight]}>
                     {I18n.t('withdrawal.noteLine10')}
                   </Text>
                 </View>
 
-                <View style={[styles.noteContainer, { marginTop: 20 }]}>
-                  <Text style={[styles.noteTitle, { lineHeight: 20 }]}>
+                <View style={[styles.noteContainer, styles.notephra]}>
+                  <Text style={[styles.noteTitle, styles.noteLineHeight]}>
                     {I18n.t('withdrawal.noteLine11')}
                   </Text>
                 </View>
 
-                <View style={[styles.noteContainer, { marginTop: 20, paddingBottom: 50 }]}>
-                  <View style={[styles.table, { backgroundColor: '#e4eef8', borderTopWidth: 1, }]}>
+                <View style={[styles.noteContainer, styles.noteTableSpace]}>
+                  <View style={[styles.table, styles.tbHeader]}>
                     <Text style={[styles.tbRow, styles.tbContent]}>{I18n.t('withdrawal.tbTitleDepost')}</Text>
                     <Text style={[styles.tbRow, styles.tbArrow]}></Text>
                     <Text style={[styles.tbRow, styles.tbContent]}>{I18n.t('withdrawal.tbTitleTrades')}</Text>
@@ -456,34 +441,34 @@ class WithdrawalKRWScreen extends BaseScreen {
     return (
       <View style={styles.modalStyle}>
         <View style={styles.headerModalStyle}>
-          <Text>{I18n.t('withdrawal.amountConfirmTitle')}</Text>
+          <Text style={styles.headerModalTitle}>{I18n.t('withdrawal.amountConfirmTitle')}</Text>
         </View>
-        <View>
-          <Text style={{ marginTop: 10, marginBottom: 3 }}>
+        <View style={{ width: '80%', justifyContent: 'center', alignItems: 'flex-start' }}>
+          <Text style={styles.modalLine}>
             {'\u2022' + I18n.t('withdrawal.amountNumber')}
           </Text>
-          <Text style={{ marginBottom: 10 }}>
+          <Text style={[styles.lineSpace, styles.modalAmount]}>
             {formatCurrency(this.state.amount, this.currency)}
-            <Text style={{ fontSize: 11 }}>{getCurrencyName(this.currency)}</Text>
+            <Text>{getCurrencyName(this.currency)}</Text>
           </Text>
-          <Text style={{ marginTop: 10, marginBottom: 3 }}>
+          <Text style={styles.modalLine}>
             {'\u2022' + I18n.t('withdrawal.amountAccount')}
           </Text>
-          <Text style={{ marginBottom: 10 }}>
+          <Text style={styles.lineSpace}>
             {this.state.currentUser.decodeAccount}
           </Text>
-          <Text style={{ marginBottom: 10, marginTop: 10 }}>{I18n.t('withdrawal.amountMessage')}</Text>
+          <Text style={styles.messageSpace}>{I18n.t('withdrawal.amountMessage')}</Text>
 
           <View style={styles.modalActionStyle}>
             <TouchableOpacity
               onPress={() => this.setState({ amountConfirm: false, agree: false })}
-              style={{ width: '45%', justifyContent: 'center', backgroundColor: '#aaa', height: 30, borderRadius: 4, }}>
-              <Text style={{ color: 'white', textAlign: 'center' }}>{I18n.t('withdrawal.amountCancel')}</Text>
+              style={styles.modalCancelBtn}>
+              <Text style={styles.modalBtnText}>{I18n.t('withdrawal.amountCancel')}</Text>
             </TouchableOpacity>
             <TouchableOpacity
               onPress={this._doConfirm.bind(this)}
-              style={{ width: '45%', justifyContent: 'center', backgroundColor: 'blue', height: 30, borderRadius: 4, }}>
-              <Text style={{ color: 'white', textAlign: 'center' }}>{I18n.t('withdrawal.amountAccept')}</Text>
+              style={styles.modalAcceptBtn}>
+              <Text style={styles.modalBtnText}>{I18n.t('withdrawal.amountAccept')}</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -495,45 +480,35 @@ class WithdrawalKRWScreen extends BaseScreen {
     return (
       <View style={[styles.modalStyle, { alignContent: 'center', justifyContent: 'center', }]}>
         <View style={styles.headerModalStyle}>
-          <Text>{I18n.t('withdrawal.smsConfirmTitle')}</Text>
+          <Text style={styles.headerModalTitle}>{I18n.t('withdrawal.smsConfirmTitle')}</Text>
         </View>
 
-        <Text style={{ width: '80%', marginTop: 10, marginBottom: 10, textAlign: 'center' }}>{I18n.t('withdrawal.smsContent')}</Text>
+        <Text style={styles.smsContent}>{I18n.t('withdrawal.smsContent')}</Text>
 
-        <View style={{
-          width: '80%', alignContent: 'center', justifyContent: 'center', flexDirection: 'row',
-          borderWidth: 1, borderRadius: 4, borderColor: "rgba(0, 0, 0, 0.1)",
-          marginTop: 10, marginBottom: 10
-        }}>
+        <View style={styles.smsInputWrapper}>
           <TextInput
+            autoCorrect={false}
+            underlineColorAndroid='rgba(0, 0, 0, 0)'
             keyboardType='numeric'
             value={this.state.otp}
             onChangeText={(text) => this.setState({ otp: text })}
-            style={{ flex: 1, height: 30, textAlign: 'center' }} />
+            style={styles.smsInput} />
           <TouchableOpacity
             onPress={this._doRequestSmsOtp.bind(this)}
-            style={{
-              justifyContent: 'center', backgroundColor: '#e0742c', height: 30, borderWidth: 0,
-              borderColor: "rgba(0, 0, 0, 0.1)", borderTopRightRadius: 4, borderBottomRightRadius: 4, padding: 5
-            }}>
-            <Text style={{ color: 'white', fontSize: 12, textAlign: 'center' }}>{I18n.t('withdrawal.smsRequestCode')}</Text>
+            style={styles.smsConfirmBtn}>
+            <Text style={styles.smsConfirmText}>{I18n.t('withdrawal.smsRequestCode')}</Text>
           </TouchableOpacity>
         </View>
-
         {
           this.state.optErr &&
-          <Text style={{ color: 'red', marginTop: 10, marginBottom: 10, textAlign: 'center' }}>
+          <Text style={styles.smsError}>
             {I18n.t('withdrawal.optErrMsg')}
           </Text>
         }
-
         <TouchableOpacity
           onPress={this._doWithdrawal.bind(this)}
-          style={{
-            width: '80%', justifyContent: 'center', backgroundColor: 'blue', height: 30, borderRadius: 4,
-            marginTop: 10, marginBottom: 20
-          }}>
-          <Text style={{ color: 'white', textAlign: 'center' }}>{I18n.t('withdrawal.smsAction')}</Text>
+          style={styles.executeBtn}>
+          <Text style={styles.executeBtnText}>{I18n.t('withdrawal.smsAction')}</Text>
         </TouchableOpacity>
       </View >
     )
@@ -543,39 +518,32 @@ class WithdrawalKRWScreen extends BaseScreen {
     return (
       <View style={[styles.modalStyle, { alignContent: 'center', justifyContent: 'center', }]}>
         <View style={styles.headerModalStyle}>
-          <Text>{I18n.t('withdrawal.optConfirmTitle')}</Text>
+          <Text style={styles.headerModalTitle}>{I18n.t('withdrawal.optConfirmTitle')}</Text>
         </View>
 
-        <Text style={{ width: '80%', marginTop: 10, marginBottom: 10, textAlign: 'center' }}>
+        <Text style={styles.optContent}>
           {I18n.t('withdrawal.optContent')}
         </Text>
 
-        <View style={{
-          width: '80%', alignContent: 'center', justifyContent: 'center', flexDirection: 'row',
-          borderWidth: 1, borderRadius: 4, borderColor: "rgba(0, 0, 0, 0.1)",
-          marginTop: 10, marginBottom: 10
-        }}>
+        <View style={styles.optWrapper}>
           <TextInput
+            autoCorrect={false}
+            underlineColorAndroid='rgba(0, 0, 0, 0)'
             keyboardType='numeric'
             value={this.state.otp}
             onChangeText={(text) => this.setState({ otp: text })}
-            style={{ flex: 1, height: 30, textAlign: 'center' }} />
+            style={styles.optInput} />
         </View>
-
         {
           this.state.optErr &&
-          <Text style={{ color: 'red', marginTop: 10, marginBottom: 10, textAlign: 'center' }}>
+          <Text style={styles.optError}>
             {I18n.t('withdrawal.optErrMsg')}
           </Text>
         }
-
         <TouchableOpacity
           onPress={this._doWithdrawal.bind(this)}
-          style={{
-            width: '80%', justifyContent: 'center', backgroundColor: 'blue', height: 30, borderRadius: 4,
-            marginTop: 10, marginBottom: 20
-          }}>
-          <Text style={{ color: 'white', textAlign: 'center' }}>{I18n.t('withdrawal.smsAction')}</Text>
+          style={styles.executeBtn}>
+          <Text style={styles.executeBtnText}>{I18n.t('withdrawal.smsAction')}</Text>
         </TouchableOpacity>
       </View >
     )
@@ -585,56 +553,121 @@ class WithdrawalKRWScreen extends BaseScreen {
 export default withNavigationFocus(WithdrawalKRWScreen)
 
 const styles = ScaledSheet.create({
-  fullScreen: { flex: 1 },
+  fullScreen: { flex: 1, backgroundColor: 'white' },
   content: { flex: 1, flexDirection: "column" },
-  alignCenter: { alignItems: 'center', justifyContent: 'center' },
-  header: {
-    flexDirection: 'column', flex: 1
-  },
+  alignCenter: { alignItems: 'center', justifyContent: 'center', marginTop: '10@s' },
+  header: { flexDirection: 'column', flex: 1 },
   line: {
-    justifyContent: 'center', alignItems: 'center', marginTop: 10, marginLeft: 40, marginRight: 40
+    justifyContent: 'center', alignItems: 'center', marginTop: '15@s', marginLeft: '40@s', marginRight: '40@s'
   },
-  row: { flexDirection: 'row' },
-  leftView: { flex: 0.9 },
-  rightView: { flex: 1, alignContent: 'flex-end' },
-  rightContent: { flex: 1, alignSelf: 'flex-end', fontWeight: 'bold' },
-  symbol: { fontSize: 11 },
+  row: { flexDirection: 'row', alignItems: 'flex-end', marginBottom: '5@s' },
+  leftView: { flex: 0.9, fontSize: '12@s', ...Fonts.NanumGothic_Regular, paddingBottom: '3@s' },
+  rightView: { flex: 1, alignItems: 'flex-end', justifyContent: 'flex-end' },
+  rightContent: { flex: 1, alignSelf: 'flex-end', fontSize: '18@s', ...Fonts.OpenSans_Bold },
+  symbol: { fontSize: '9@s' },
   amount: {
-    flexDirection: 'column', flex: 1, alignItems: 'flex-start', justifyContent: 'center', marginTop: 20
+    flexDirection: 'column', flex: 1, alignItems: 'flex-start', justifyContent: 'center'
   },
-  noteContainer: { marginTop: 10, flexDirection: 'column', width: '100%' },
-  noteTitle: { flexWrap: 'wrap', fontSize: 13, },
-  tbContent: {
-    flex: 1,
-  },
-  tbArrow: {
-    flex: 0.5,
-  },
-  tbColor: {
-    color: 'red'
-  },
-  tbRow: {
-    height: 30, lineHeight: 30,
-    textAlign: "center", textAlignVertical: "center",
-  },
+  noteContainer: { marginTop: '10@s', flexDirection: 'column', width: '100%' },
+  noteTitle: { flexWrap: 'wrap', fontSize: '11@s', ...Fonts.NanumGothic_Regular },
+  tbContent: { flex: 1, ...Fonts.NanumGothic_Regular, fontSize: '11@s' },
+  tbArrow: { flex: 0.5, },
+  tbColor: { color: 'red' },
+  tbRow: { height: '30@s', lineHeight: '30@s', textAlign: "center", textAlignVertical: "center", },
   table: {
-    flexDirection: 'row', borderBottomWidth: 1, justifyContent: 'center', alignItems: 'center'
-  },
-  modalStyle: {
-    backgroundColor: "white",
-    justifyContent: "center",
-    alignItems: "center",
-    alignContent: 'center',
-    borderRadius: 4,
-    borderColor: "rgba(0, 0, 0, 0.1)"
-  },
-  headerModalStyle: {
-    borderBottomWidth: 1, borderColor: "rgba(0, 0, 0, 0.1)", height: 50, width: '100%',
+    flexDirection: 'row', borderBottomWidth: '1@s', borderColor: 'rgba(217, 217, 217, 1)',
     justifyContent: 'center', alignItems: 'center'
   },
+  modalStyle: {
+    backgroundColor: "white", justifyContent: "center", alignItems: "center",
+    alignContent: 'center', borderRadius: '4@s', borderColor: "rgba(0, 0, 0, 0.1)"
+  },
+  headerModalStyle: {
+    borderBottomWidth: 1, borderColor: "rgba(0, 0, 0, 0.1)", height: '50@s', width: '100%',
+    justifyContent: 'center', alignItems: 'center'
+  },
+  headerModalTitle: { fontSize: '12@s', ...Fonts.NanumGothic_Regular },
   modalActionStyle: {
-    width: '70%', justifyContent: 'space-between',
-    alignItems: 'center', flexDirection: 'row',
-    marginBottom: 20, marginTop: 10
-  }
+    width: '100%', justifyContent: 'space-between', alignItems: 'center', flexDirection: 'row',
+    marginBottom: '20@s', marginTop: '10@s'
+  },
+  logo: {
+    height: '50@s', flexDirection: "row", alignItems: 'center', justifyContent: 'flex-start',
+    borderBottomWidth: '1@s', borderColor: 'rgba(222, 227, 235, 1)'
+  },
+  iconLogo: { height: '20@s', width: '20@s', margin: '2@s', marginLeft: '15@s', },
+  title: { ...Fonts.NotoSans_Bold, fontSize: '14@s' },
+  amountWrapper: {
+    flexDirection: 'row', alignItems: 'center', justifyContent: 'center',
+    borderWidth: '1@s', borderRadius: '4@s', borderColor: "rgba(0, 0, 0, 0.3)"
+  },
+  amountText: { ...Fonts.NanumGothic_Regular, fontSize: '12@s' },
+  amountInput: { flex: 1, height: '30@s', textAlign: 'right', paddingRight: '5@s' },
+  amountSymbol: {},
+  amountActionInline: {
+    borderLeftWidth: 1, borderColor: "rgba(0, 0, 0, 0.3)", height: '30@s', justifyContent: 'center', padding: '5@s'
+  },
+  textInline: { marginBottom: '5@s' },
+  accountWrapper: {
+    flexDirection: 'row', alignItems: 'center', justifyContent: 'center',
+    borderWidth: '1@s', borderRadius: '4@s', borderColor: "rgba(0, 0, 0, 0.3)"
+  },
+  accountInput: { flex: 1, height: '30@s', textAlign: 'right', opacity: 0.9, textAlignVertical: 'bottom', paddingTop: '8@s' },
+  actionBtn: {
+    flex: 1, alignItems: 'center', height: '35@s', justifyContent: 'center',
+    borderWidth: '1@s', borderRadius: '4@s', backgroundColor: 'rgba(0, 112, 192, 1)',
+    marginTop: '20@s', marginLeft: '40@s', marginRight: '40@s', borderColor: 'rgba(0, 112, 192, 1)',
+  },
+  actionText: { color: 'white', fontSize: '12@s', ...Fonts.NanumGothic_Regular },
+  divider: { backgroundColor: 'rgba(222, 227, 235, 1)', flex: 1, marginTop: '20@s', marginBottom: '20@s' },
+  noteWrapper: { marginLeft: '20@s', marginRight: '20@s', justifyContent: 'center', alignItems: 'center' },
+  titleWrapper: {
+    borderBottomWidth: '1@s', borderBottomColor: 'rgba(222, 227, 235, 1)',
+    width: '100%', justifyContent: 'center', alignItems: 'center'
+  },
+  noteHeader: { paddingBottom: '10@s', fontSize: '11@s', ...Fonts.NanumGothic_Bold },
+  noteWrapperMore: {
+    borderBottomWidth: '1@s', borderBottomColor: 'rgba(222, 227, 235, 1)', width: '100%',
+    justifyContent: 'center', alignItems: 'center', marginTop: '30@s',
+  },
+  titleMore: { paddingBottom: '10@s', fontSize: '11@s', ...Fonts.NanumGothic_Bold },
+  noteLineHeight: { lineHeight: '20@s' },
+  notephra: { marginTop: '20@s' },
+  noteTableSpace: { marginTop: '20@s', paddingBottom: '50@s' },
+  tbHeader: { backgroundColor: 'rgba(228, 238, 248, 1)', borderTopWidth: '1@s', },
+  modalLine: { marginTop: '10@s', marginBottom: '3@s', ...Fonts.OpenSans_Bold, fontSize: '12@s' },
+  lineSpace: { marginBottom: '10@s' },
+  messageSpace: { marginBottom: '10@s', marginTop: '10@s' },
+  modalAmount: { ...Fonts.OpenSans_Bold, fontSize: '11@s' },
+  modalCancelBtn: { width: '45%', justifyContent: 'center', backgroundColor: 'rgba(127, 127, 127, 1)', height: '30@s', borderRadius: '4@s' },
+  modalBtnText: { color: 'white', textAlign: 'center', ...Fonts.NanumGothic_Regular, fontSize: '12@s' },
+  modalAcceptBtn: { width: '45%', justifyContent: 'center', backgroundColor: 'rgba(0, 112, 192, 1)', height: '30@s', borderRadius: '4@s' },
+  smsContent: { width: '80%', marginTop: '10@s', marginBottom: '10@s', textAlign: 'center', fontSize: '12@s', ...Fonts.NanumGothic_Regular },
+  smsInputWrapper: {
+    width: '80%', alignContent: 'center', justifyContent: 'center', flexDirection: 'row',
+    borderWidth: '1@s', borderRadius: '4@s', borderColor: "rgba(0, 0, 0, 0.1)",
+    marginTop: '10@s', marginBottom: '10@s'
+  },
+  smsInput: { flex: 1, height: '30@s', textAlign: 'center', fontSize: '12@s', ...Fonts.NanumGothic_Regular },
+  smsConfirmBtn: {
+    justifyContent: 'center', backgroundColor: 'rgba(237, 125, 49, 1)', height: '30@s', borderWidth: '1@s',
+    borderColor: "rgba(237, 125, 49, 1)", borderTopRightRadius: '4@s', borderBottomRightRadius: '4@s', padding: '5@s'
+  },
+  smsConfirmText: { color: 'white', fontSize: '12@s', textAlign: 'center', ...Fonts.NanumGothic_Regular },
+  smsError: { color: 'red', marginTop: '10@s', marginBottom: '10@s', fontSize: '12@s', textAlign: 'center', ...Fonts.NanumGothic_Regular },
+  executeBtn: {
+    width: '80%', justifyContent: 'center', backgroundColor: 'rgba(0, 112, 192, 1)', height: '35@s',
+    marginTop: '10@s', marginBottom: '20@s', borderRadius: '4@s',
+  },
+  executeBtnText: { color: 'white', fontSize: '12@s', textAlign: 'center', ...Fonts.NanumGothic_Regular },
+  optContent: { width: '80%', marginTop: '10@s', marginBottom: '10@s', textAlign: 'center', fontSize: '12@s', ...Fonts.NanumGothic_Regular },
+  optWrapper: {
+    width: '80%', alignContent: 'center', justifyContent: 'center', flexDirection: 'row',
+    borderWidth: '1@s', borderRadius: '4@s', borderColor: "rgba(0, 0, 0, 0.1)",
+    marginTop: '10@s', marginBottom: '10@s'
+  },
+  optInput: { flex: 1, height: '30@s', textAlign: 'center', fontSize: '12@s', ...Fonts.NanumGothic_Regular },
+  optError: { color: 'red', marginTop: '10@s', marginBottom: '10@s', fontSize: '12@s', textAlign: 'center', ...Fonts.NanumGothic_Regular },
+
+
 });

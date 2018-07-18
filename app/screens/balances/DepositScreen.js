@@ -4,7 +4,6 @@ import BaseScreen from '../BaseScreen'
 import ScaledSheet from '../../libs/reactSizeMatter/ScaledSheet'
 import I18n from '../../i18n/i18n'
 import { withNavigationFocus } from 'react-navigation'
-import HeaderBalance from './HeaderBalance'
 import rf from '../../libs/RequestFactory'
 import QRCode from 'react-native-qrcode-svg'
 import { scale } from "../../libs/reactSizeMatter/scalingUtils"
