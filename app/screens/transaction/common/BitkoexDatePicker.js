@@ -24,7 +24,7 @@ class BitkoexDatePicker extends Component {
             mode="date"
             showIcon={false}
             placeholder="select date"
-            format="YYYY-MM-DD"
+            format="YYYY/MM/DD"
             confirmBtnText="Confirm"
             cancelBtnText="Cancel"
             customStyles={{

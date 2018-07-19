@@ -518,7 +518,7 @@ const styles = ScaledSheet.create({
     width: '50@s',
     height: '25@s',
     marginRight: '5@s',
-    borderRadius: '5@s',
+    borderRadius: '3@s',
     alignItems: 'center',
     justifyContent: 'center'
   },
@@ -544,7 +544,7 @@ const styles = ScaledSheet.create({
     marginLeft: '10@s'
   },
   iconSort: {
-    marginTop: '7@s',
+    marginTop: '10@s',
     height: '20@s',
     width: '20@s',
   }
