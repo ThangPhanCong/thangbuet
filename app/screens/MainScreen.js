@@ -2,7 +2,7 @@ import React from 'react';
 import { TabNavigator, TabBarBottom, StackNavigator } from 'react-navigation';
 import I18n from "../i18n/i18n";
 import Icon from 'react-native-vector-icons/FontAwesome';
-import { PixelRatio } from 'react-native';
+import { Image, PixelRatio } from 'react-native';
 import TradingScreen from './trade/TradingScreen'
 import FundsScreen from './funds/FundsScreen'
 import TransactionScreen from './transaction/TransactionScreen'
@@ -12,6 +12,7 @@ import DepositScreen from './balances/DepositScreen'
 import DepositKRWScreen from './balances/DepositKRWScreen'
 import WithdrawalKRWScreen from './balances/WithdrawalKRWScreen'
 import WithdrawalScreen from './balances/WithdrawalScreen'
+import { scale } from '../libs/reactSizeMatter/scalingUtils';
 
 export const BalanceStack = StackNavigator({
   Balance: {
@@ -81,7 +82,19 @@ export default TabNavigator(
         const { routeName } = navigation.state;
         let iconName;
 
-        return <Icon name={iconName} size={PixelRatio.getPixelSizeForLayoutSize(8)} color={tintColor} />;
+        if (routeName === 'MarketSearchScreen') {
+          iconName = require('../../assets/marketTab/marketTab.png');
+        } else if (routeName === 'BalanceScreen') {
+          iconName = require('../../assets/balanceTab/balanceTab.png')
+        } else if (routeName === 'FundsScreen') {
+          iconName = require('../../assets/fundsTab/fundsTab.png')
+        } else if (routeName === 'TransactionScreen') {
+          iconName = require('../../assets/transactionTab/transactionTab.png')
+        } else if (routeName === 'MyPageScreen') {
+          iconName = require('../../assets/myPageTab/mypageTab.png')
+        }
+
+        return <Image resizeMode={'contain'} style={{ width: scale(15), height: scale(15) }} source={iconName}/>
       },
       gesturesEnabled: false
     }),
