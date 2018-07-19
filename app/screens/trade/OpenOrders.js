@@ -91,8 +91,8 @@ export default class OpenOrders extends BaseScreen {
 
   }
 
-  _checkStyleQuantity(quantity) {
-    if (parseFloat(quantity) > 0) {
+  _checkStyleQuantity(type) {
+    if (type === 'buy') {
       return true;
     } else {
       return false;
@@ -130,7 +130,7 @@ export default class OpenOrders extends BaseScreen {
     const { ids } = this.state;
 
     return (
-      <View style={styles.itemContainer}>
+      <View style={styles.itemContainer} key={item.id}>
         <View style={styles.coinPairGroup}>
           <View style={styles.checkBoxCoin}>
             <CheckBox
@@ -155,8 +155,8 @@ export default class OpenOrders extends BaseScreen {
         </View>
 
         <View style={styles.priceGroup}>
-          <Text style={this._checkStyleQuantity(quantity) ? styles.increaseQuantity : styles.decreaseQuantity}>{
-            this._checkStyleQuantity(quantity) ? '+ ' + quantity : '- ' + quantity}</Text>
+          <Text style={this._checkStyleQuantity(item.trade_type) ? styles.increaseQuantity : styles.decreaseQuantity}>{
+            this._checkStyleQuantity(item.trade_type) ? '+ ' + quantity : '- ' + quantity}</Text>
           <Text style={styles.price}>{price}</Text>
         </View>
       </View>
@@ -199,8 +199,7 @@ const styles = ScaledSheet.create({
   },
   itemCoin: {
     fontSize: '10@s',
-    fontWeight: 'bold',
-    ...Fonts.NotoSans_Regular
+    ...Fonts.NotoSans_Bold
   },
   timeOrders: {
     fontSize: '10@s',
@@ -248,9 +247,8 @@ const styles = ScaledSheet.create({
     alignSelf: 'flex-end',
     marginRight: '10@s',
     ...Fonts.NotoSans_Regular,
-    lineHeight: '15@s',
-    borderBottomWidth: '1@s',
-    borderBottomColor: CommonColors.decreased,
+    textDecorationLine: "underline",
+    textDecorationColor: CommonColors.decreased,
     color: CommonColors.decreased
   },
   viewMore: {
