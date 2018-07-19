@@ -9,6 +9,7 @@ import I18n from '../../i18n/i18n'
 import AppConfig from '../../utils/AppConfig'
 import { formatCurrency, formatPercent, getCurrencyName } from '../../utils/Filters'
 import { CommonColors, CommonSize, CommonStyles, Fonts } from '../../utils/CommonStyles'
+import { scale } from "../../libs/reactSizeMatter/scalingUtils";
 
 export default class FundsScreen extends BaseScreen {
 
@@ -155,7 +156,7 @@ export default class FundsScreen extends BaseScreen {
               <Image
                 resizeMode="contain"
                 style={styles.iconLogo}
-                source={require('../../../assets/funds/fundLogo.png')} />
+                source={require('../../../assets/funds/fundLogo.png')}/>
               <Text style={[styles.fontNotoSansRegular, styles.headerSize14]}>{I18n.t('funds.assetStatus')}</Text>
             </View>
             <View style={styles.info}>
@@ -184,8 +185,12 @@ export default class FundsScreen extends BaseScreen {
                   style={[styles.infoRowLeft, { flexDirection: 'row', justifyContent: 'flex-start' }]}
                   onPress={() => this.setState({ openHelp: true })}>
                   <Text style={[styles.fontNotoSansRegular, styles.headerText]}>{I18n.t('funds.ratingYeild')}</Text>
-                  <Icon name="help" size={15} />
                 </TouchableOpacity>
+
+                <View style={styles.iconHelp}>
+                  <Icon name="help"
+                        size={scale(15)}/>
+                </View>
                 <Text
                   style={[styles.infoRowRight, styles.fontOpenSans, styles.headerNumber, { color: 'red' }]}>
                   {formatPercent(this.state.yield, true)}
@@ -196,7 +201,8 @@ export default class FundsScreen extends BaseScreen {
           </View>
           <View style={{ flex: 1 }}>
             <View style={styles.tableHeader}>
-              <Text style={[{ flex: 0.5 }, styles.tableHeaderText, { textAlign: 'center' }]}>{I18n.t('funds.division')}</Text>
+              <Text
+                style={[{ flex: 0.5 }, styles.tableHeaderText]}>{I18n.t('funds.division')}</Text>
               <Text style={[{ flex: 1 }, styles.tableHeaderText]}> {I18n.t('funds.quantity')}</Text>
               <Text style={[{ flex: 0.5 }, styles.tableHeaderText]}>{I18n.t('funds.profitAndLoss')}
                 <Text>{I18n.t('funds.percent')}</Text>
@@ -210,7 +216,7 @@ export default class FundsScreen extends BaseScreen {
                 this.state.symbolArr.map((symbol, index) => (
                   <View key={symbol + "_" + index} style={styles.tableRow}>
                     <View style={[{ flex: 0.5 }, styles.tableRowDetail]}>
-                      <Image style={styles.iconRow} source={{ uri: symbol.icon }} />
+                      <Image style={styles.iconRow} source={{ uri: symbol.icon }}/>
                       <Text style={styles.rowCoinName}>{getCurrencyName(symbol.code)}</Text>
                     </View>
                     <Text style={[{ flex: 1 }, styles.rowNumber]}>
@@ -224,9 +230,9 @@ export default class FundsScreen extends BaseScreen {
                     </Text>
                     <Text
                       style={[{ flex: 1, fontWeight: 'bold' },
-                      styles.marginRight10, styles.rowNumber,
-                      symbol.yield > 0 ? { color: 'red' } : { color: 'blue' },
-                      symbol.code === 'krw' ? { color: 'black' } : {}]}>
+                        styles.marginRight10, styles.rowNumber,
+                        symbol.yield > 0 ? { color: 'red' } : { color: 'blue' },
+                        symbol.code === 'krw' ? { color: 'black' } : {}]}>
                       {formatCurrency(parseFloat(symbol.balance * symbol.price), this.currency)}
                     </Text>
                   </View>
@@ -251,18 +257,19 @@ export default class FundsScreen extends BaseScreen {
           animationType="slide"
           transparent={false}
           visible={this.state.openHelp}
-          onRequestClose={() => { }}>
+          onRequestClose={() => {
+          }}>
           <SafeAreaView>
             <View style={{ alignContent: 'flex-end', justifyContent: 'flex-end', borderBottomWidth: 1 }}>
               <TouchableOpacity onPress={() => this.setState({ openHelp: false })}>
-                <Icon name="close" size={20} />
+                <Icon name="close" size={20}/>
               </TouchableOpacity>
             </View>
             <View><Text>Help Content</Text></View>
           </SafeAreaView>
         </Modal>
 
-      </SafeAreaView >
+      </SafeAreaView>
     )
   }
 }
@@ -305,5 +312,6 @@ const styles = ScaledSheet.create({
   footerTotalField: { fontWeight: 'bold', textAlign: 'left', marginLeft: '30@s', fontSize: '14@s' },
   footerNumer: { fontWeight: 'bold', color: 'red', textAlign: 'right', fontSize: '14@s' },
   footerYield: { marginRight: '8@s' },
-  headerSize14: { fontSize: '14@s' }
+  headerSize14: { fontSize: '14@s' },
+  iconHelp: { marginBottom: scale(20), flex: 1, alignItems: 'flex-start'}
 })
