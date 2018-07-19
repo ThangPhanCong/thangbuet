@@ -101,10 +101,11 @@ export default TabNavigator(
     tabBarComponent: TabBarBottom,
     tabBarPosition: 'bottom',
     tabBarOptions: {
-      activeTintColor: '#EBB50C',
+      activeTintColor: '#FFF',
       inactiveTintColor: 'gray',
+      activeBackgroundColor: '#000',
       style: {
-        backgroundColor: '#1F2833'
+        backgroundColor: '#131722'
       },
     },
     animationEnabled: false,
