@@ -1,5 +1,5 @@
 import React from 'react';
-import { TouchableOpacity, Image, SafeAreaView, ScrollView, Text, View } from 'react-native';
+import { TouchableHighlight, Image, SafeAreaView, ScrollView, Text, View } from 'react-native';
 import BaseScreen from '../BaseScreen'
 import MasterdataUtils from '../../utils/MasterdataUtils'
 import ScaledSheet from '../../libs/reactSizeMatter/ScaledSheet'
@@ -16,7 +16,10 @@ export default class BalanceScreen extends BaseScreen {
     this.state = {
       symbolArr: [],
       symbols: {},
-      assetsValuation: 0
+      assetsValuation: 0,
+      highLightText: false,
+      name: '',
+      titleButton: '',
     }
     this.currency = 'krw'
   }
@@ -124,6 +127,24 @@ export default class BalanceScreen extends BaseScreen {
     }
   }
 
+  _colorTextHighLight(name, title) {
+    this.setState({ highLightText: true, coinCurrent: name, titleButton: title})
+  }
+
+  _resetColorText() {
+    this.setState({ highLightText: false })
+  }
+
+  _checkColorText(name, title) {
+    const { highLightText, coinCurrent, titleButton } = this.state;
+
+    if (highLightText && name === coinCurrent && titleButton === title) {
+      return styles.btnTextHighLight;
+    }
+
+    return styles.btnText;
+  }
+
   render() {
     return (
       <SafeAreaView style={styles.fullScreen}>
@@ -132,7 +153,7 @@ export default class BalanceScreen extends BaseScreen {
             <Image
               resizeMode="contain"
               style={styles.iconLogo}
-              source={require('../../../assets/balance/logo_tab3.png')} />
+              source={require('../../../assets/balance/logo_tab3.png')}/>
             <Text style={[styles.fontNotoSansBold]}>
               {I18n.t('balances.depositAndWithdrawal')}
             </Text>
@@ -152,15 +173,18 @@ export default class BalanceScreen extends BaseScreen {
                     <View style={styles.tableRowDetail}>
                       <Image
                         style={styles.imageSize}
-                        source={{ uri: symbol.icon }} />
+                        source={{ uri: symbol.icon }}/>
                       <Text style={styles.rowCoinName}>{getCurrencyName(symbol.code)}</Text>
                     </View>
                     <Text style={[styles.balance, styles.rowNumber]}>
                       {symbol.code !== 'krw' && parseFloat(symbol.balance)}
                     </Text>
                     <View style={styles.action}>
-                      <TouchableOpacity
+                      <TouchableHighlight
                         style={styles.btnRow}
+                        underlayColor='#0070C0'
+                        onPressIn={() =>this._colorTextHighLight(symbol.name, 'deposit')}
+                        onPressOut={() =>this._resetColorText()}
                         onPress={() => {
                           if (symbol.code == 'krw') {
                             this.navigate('DepositKRW', { symbol })
@@ -168,11 +192,14 @@ export default class BalanceScreen extends BaseScreen {
                             this.navigate('Deposit', { symbol })
                           }
                         }}>
-                        <Text style={styles.btnText}>{I18n.t('balances.deposit')}</Text>
-                      </TouchableOpacity>
+                        <Text style={this._checkColorText(symbol.name, 'deposit')}>{I18n.t('balances.deposit')}</Text>
+                      </TouchableHighlight>
 
-                      <TouchableOpacity
+                      <TouchableHighlight
+                        underlayColor='#0070C0'
                         style={styles.btnRow}
+                        onPressIn={() =>this._colorTextHighLight(symbol.name, 'withDrawl')}
+                        onPressOut={() =>this._resetColorText()}
                         onPress={() => {
                           if (symbol.code == 'krw') {
                             this.navigate('WithdrawalKRW', { symbol })
@@ -180,8 +207,8 @@ export default class BalanceScreen extends BaseScreen {
                             this.navigate('Withdrawal', { symbol })
                           }
                         }}>
-                        <Text style={styles.btnText}>{I18n.t('balances.withdrawal')}</Text>
-                      </TouchableOpacity>
+                        <Text style={this._checkColorText(symbol.name, 'withDrawl')}>{I18n.t('balances.withdrawal')}</Text>
+                      </TouchableHighlight>
                     </View>
                   </View>
                 ))
@@ -230,9 +257,13 @@ const styles = ScaledSheet.create({
     ...Fonts.NanumGothic_Bold, fontSize: '12@s', color: 'rgba(0, 0, 0, 1)',
     paddingLeft: '15@s', paddingRight: '15@s'
   },
+  btnTextHighLight: {
+    ...Fonts.NanumGothic_Bold, fontSize: '12@s', color: '#FFF',
+    paddingLeft: '15@s', paddingRight: '15@s'
+  },
   btnRow: {
     height: '25@s', margin: '5@s', backgroundColor: 'rgba(222, 227, 235, 1)',
-    justifyContent: 'center', alignItems: 'center', borderWidth: '1@s', borderRadius: '4@s',
+    justifyContent: 'center', alignItems: 'center', borderWidth: '1@s', borderRadius: '3@s',
     borderColor: 'rgba(222, 227, 235, 0.1)'
   },
 });
