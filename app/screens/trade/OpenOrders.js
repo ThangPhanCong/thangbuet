@@ -94,9 +94,9 @@ export default class OpenOrders extends BaseScreen {
   _checkStyleQuantity(type) {
     if (type === 'buy') {
       return true;
-    } else {
-      return false;
     }
+
+    return false;
   }
 
 
