@@ -6,7 +6,8 @@ import {
   TouchableOpacity,
   View,
   FlatList,
-  Animated
+  Animated,
+  Image
 } from 'react-native';
 import ModalDropdown from 'react-native-modal-dropdown';
 import { Card } from 'react-native-elements'
@@ -70,15 +71,18 @@ export default class WalletScreen extends BaseScreen {
           onEndReached={this._onLoadMore.bind(this)}
           refreshing={this.state.isLoading}
           keyExtractor={(item, index) => index.toString()}/>
-        <ActionButton
-          buttonColor='rgba(255,192,0,1)'
-          elevation={5}
-          shadowColor='#000'
-          shadowOpacity={0.3}
-          shadowOffset={{ width: scale(2), height: scale(1) }}
-          onPress={this._onShowAddNewWallet.bind(this)}/>
+        <TouchableOpacity
+          style = {styles.buttonAddContainer}
+          onPress={this._onShowAddNewWallet.bind(this)}>
+          <Image
+            style={styles.buttonAdd}
+            source={require('../../../../assets/myPage/wallet/add.png')}/>
+        </TouchableOpacity>
+
+
         {this._renderAddNewWalletModal()}
         {this._renderRemoveConfirmationModal()}
+
       </View>
     )
   }
@@ -652,5 +656,14 @@ const styles = ScaledSheet.create({
     fontSize: '13@s',
     color: '#000',
     ...Fonts.NanumGothic_Regular,
+  },
+  buttonAdd: {
+    width: '60@s',
+    height: '60@s'
+  },
+  buttonAddContainer: {
+    position: 'absolute',
+    right: '15@s',
+    bottom: '20@s',
   }
 });

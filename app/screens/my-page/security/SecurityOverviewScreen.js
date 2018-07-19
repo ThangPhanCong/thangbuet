@@ -8,7 +8,8 @@ import {
   TextInput,
   ScrollView,
   WebView,
-  Dimensions
+  Dimensions,
+  StyleSheet
 } from 'react-native';
 import ModalDropdown from 'react-native-modal-dropdown';
 import TouchableTextHighlight from '../../../utils/TouchableTextHighlight';
@@ -109,13 +110,9 @@ export default class SecurityOverviewScreen extends BaseScreen {
           style={{ flex: 1 }}
           ItemSeparatorComponent={this._renderSeparator}>
           {this._renderVerifyEmail()}
-          <View style={styles.separator}/>
           {this._renderVerifyGoogle()}
-          <View style={styles.separator}/>
           {this._renderVerifyPhone()}
-          <View style={styles.separator}/>
           {this._renderVerifyBankAccount()}
-          <View style={styles.separator}/>
           {this._renderVerifyPassword()}
         </ScrollView>
         {this._renderSubmitModal()}
@@ -745,19 +742,16 @@ export default class SecurityOverviewScreen extends BaseScreen {
 const styles = ScaledSheet.create({
   listView: {
     flex: 1,
+    backgroundColor: '#fff'
   },
   listItem: {
-    height: '64@s',
+    height: '65@s',
     flexDirection: 'row',
     alignItems: 'center',
     paddingLeft: '20@s',
-    paddingRight: '20@s'
-  },
-  separator: {
-    flex: 1,
-    height: '1@s',
-    backgroundColor: '#DEE3EB',
-    opacity: 0.3
+    paddingRight: '20@s',
+    borderBottomWidth:  StyleSheet.hairlineWidth,
+    borderBottomColor: '#DEE3EB'
   },
   iconGroup: {
     flex: 4,
@@ -880,7 +874,7 @@ const styles = ScaledSheet.create({
     borderRadius: '5@s',
     marginStart: '30@s',
     marginEnd: '30@s',
-    elevation: 3,
+    elevation: '3@s',
     shadowOpacity: 0.3,
     shadowRadius: '6@s',
     padding: 0

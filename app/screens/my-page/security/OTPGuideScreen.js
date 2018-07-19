@@ -95,7 +95,7 @@ export default class OTPGuideScreen extends BaseScreen {
           onPress={this._onNext.bind(this)}>
           <LinearGradient 
             style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}
-            colors={['#7CB953', '#70AD47']}
+            colors={['#75BB5D', '#76BB5E', '#77B960', '#78B861']}
             start={{x: 0.0, y: 1.0}} end={{x: 1.0, y: 1.0}}>
             <Text style={[styles.text, {color: '#FFF'}]}>
               {I18n.t('myPage.security.next').toLocaleUpperCase()}
@@ -134,7 +134,7 @@ const styles = ScaledSheet.create({
   },
   text: {
     fontSize: '14@s',
-    ...Fonts.OpenSans
+    ...Fonts.OpenSans_Bold
   },
   storeInfoText: {
     fontSize: '12@s',
