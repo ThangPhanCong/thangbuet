@@ -45,7 +45,7 @@ export default class TransactionScreen extends BaseScreen {
         ProfitScreen: {
           screen: (props) => <ProfitAndLossScreen {...props} title={I18n.t('transactions.profitLostTab')}/>,
           navigationOptions: () => ({
-            tabBarLabel: (options) => UIUtils.renderTabItem(I18n.t('transactions.profitLostTab'), {fontSize: 14, ...options})
+            tabBarLabel: (options) => UIUtils.renderTabItem(I18n.t('transactions.profitLostTab'), {fontSize: 14, ...options}, false)
           })
         }
       },
@@ -55,23 +55,7 @@ export default class TransactionScreen extends BaseScreen {
         }),
         tabBarComponent: TabBarTop,
         tabBarPosition: 'top',
-        tabBarOptions: {
-          upperCaseLabel: true,
-          activeTintColor: '#FFC000',
-          inactiveTintColor: '#D9D9D9',
-          style: {
-            backgroundColor: '#3B3838',
-          },
-          indicatorStyle: {
-            backgroundColor: '#FFC000'
-          },
-          labelStyle: {
-            fontSize: scale(12),
-            ...Fonts.NotoSans
-          }
-        },
-        animationEnabled: false,
-        swipeEnabled: false
+        ...CommonStyles.tabOptions,
       }
     );
   }

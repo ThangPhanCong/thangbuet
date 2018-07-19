@@ -38,6 +38,7 @@ const styles = ScaledSheet.create({
     height: '40@s',
     backgroundColor: '#f8f9fb',
     borderWidth: '1@s',
+    borderLeftWidth: 0,
     borderColor: CommonColors.separator
   },
   headerTitle: {
