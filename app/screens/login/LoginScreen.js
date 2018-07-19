@@ -2,7 +2,7 @@ import React from 'react';
 import {
   Text,
   TextInput,
-  TouchableWithoutFeedback,
+  TouchableOpacity,
   View,
   Image,
   StyleSheet,
@@ -194,11 +194,11 @@ export default class LoginScreen extends BaseScreen {
         </View>
         <Text style={styles.emptyInforLogin}>{passwordEmpty}</Text>
 
-        <TouchableWithoutFeedback onPress={this._onPressLogin.bind(this)}>
-          <View style={styles.viewButtonLogin}>
+        <TouchableOpacity onPress={this._onPressLogin.bind(this)} style={styles.viewButtonLogin}>
+          <View>
             <Text style={styles.textLogin}>{I18n.t('login.login')}</Text>
           </View>
-        </TouchableWithoutFeedback>
+        </TouchableOpacity>
 
         <Text style={styles.emptyInforLogin}>{messageUnCorrect}</Text>
 

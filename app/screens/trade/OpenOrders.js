@@ -1,5 +1,5 @@
 import React from 'react';
-import { FlatList, Text, TouchableWithoutFeedback, View } from 'react-native';
+import { FlatList, Text, TouchableOpacity, View } from 'react-native';
 import { filter, find, orderBy } from 'lodash';
 import BaseScreen from '../BaseScreen';
 import ScaledSheet from '../../libs/reactSizeMatter/ScaledSheet';
@@ -63,9 +63,9 @@ export default class OpenOrders extends BaseScreen {
       //   await rf.getRequest('OrderRequest').cancel(ids[i]);
       // }
       // ids.forEach(async id => await rf.getRequest('OrderRequest').cancel(id));
-      const orderFilter = this.state.orders.filter((item) =>  !ids.includes(item.id));
+      const orderFilter = this.state.orders.filter((item) => !ids.includes(item.id));
 
-      this.setState({orders: orderFilter})
+      this.setState({ orders: orderFilter })
     } catch (err) {
       console.log("CancelOrder._error:", err)
     }
@@ -91,6 +91,14 @@ export default class OpenOrders extends BaseScreen {
 
   }
 
+  _checkStyleQuantity(quantity) {
+    if (parseFloat(quantity) > 0) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
 
   render() {
     const { orders } = this.state;
@@ -106,11 +114,11 @@ export default class OpenOrders extends BaseScreen {
                   onEndReached={this._handleLoadMore.bind(this)}
                   ItemSeparatorComponent={this._renderSeparator}
                   onEndThreshold={100}/>
-        <TouchableWithoutFeedback onPress={() => this._onCancelOrder()}>
+        <TouchableOpacity onPress={() => this._onCancelOrder()}>
           <View style={styles.cancelOrderContainer}>
             <Text style={styles.textCancelOrder}>{I18n.t('openOrder.cancelOrder')}</Text>
           </View>
-        </TouchableWithoutFeedback>
+        </TouchableOpacity>
       </View>
     );
   }
@@ -147,7 +155,8 @@ export default class OpenOrders extends BaseScreen {
         </View>
 
         <View style={styles.priceGroup}>
-          <Text style={styles.quantity}>{quantity}</Text>
+          <Text style={this._checkStyleQuantity(quantity) ? styles.increaseQuantity : styles.decreaseQuantity}>{
+            this._checkStyleQuantity(quantity) ? '+ ' + quantity : '- ' + quantity}</Text>
           <Text style={styles.price}>{price}</Text>
         </View>
       </View>
@@ -190,6 +199,7 @@ const styles = ScaledSheet.create({
   },
   itemCoin: {
     fontSize: '10@s',
+    fontWeight: 'bold',
     ...Fonts.NotoSans_Regular
   },
   timeOrders: {
@@ -234,15 +244,30 @@ const styles = ScaledSheet.create({
     ...Fonts.NotoSans_Regular
   },
   textMore: {
-    fontSize: '11@s',
+    fontSize: '12@s',
     alignSelf: 'flex-end',
     marginRight: '10@s',
     ...Fonts.NotoSans_Regular,
-    color: '#007AC5'
+    lineHeight: '15@s',
+    borderBottomWidth: '1@s',
+    borderBottomColor: CommonColors.decreased,
+    color: CommonColors.decreased
   },
   viewMore: {
     borderBottomWidth: '1@s',
     borderBottomColor: CommonColors.separator,
-    height: '30@s'
+    flexDirection: 'column',
+    justifyContent: 'center',
+    height: '40@s'
+  },
+  increaseQuantity: {
+    color: CommonColors.increased,
+    fontSize: '10@s',
+    ...Fonts.NotoSans_Regular
+  },
+  decreaseQuantity: {
+    color: CommonColors.decreased,
+    fontSize: '10@s',
+    ...Fonts.NotoSans_Regular
   }
 });
