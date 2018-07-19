@@ -294,7 +294,7 @@ class FundsHistoryScreen extends Component {
                          renderArrowDate={this._renderArrow(FundsHistoryScreen.SORT_FIELDS.DATE)}
                          renderArrowPair={this._renderArrow(FundsHistoryScreen.SORT_FIELDS.PAIR)}
             />
-            <FlatList data={[transactions]}
+            <FlatList data={transactions}
                       ref={elm => this.flatListLeft = elm}
                       onScroll={(event) => this._onLeftListScroll(event)}
                       onMomentumScrollStart={() => this._handleLeftMomentumStart()}
