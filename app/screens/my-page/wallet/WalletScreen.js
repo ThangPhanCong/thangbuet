@@ -24,6 +24,7 @@ import ActionButton from 'react-native-action-button';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import ScaledSheet from '../../../libs/reactSizeMatter/ScaledSheet';
 import { scale } from '../../../libs/reactSizeMatter/scalingUtils';
+import UIUtils from "../../../utils/UIUtils";
 
 export default class WalletScreen extends BaseScreen {
 
@@ -598,9 +599,7 @@ const styles = ScaledSheet.create({
     padding: 0,
     marginStart: '30@s',
     marginEnd: '30@s',
-    elevation: '5@s',
-    shadowOpacity: 0.3,
-    shadowRadius: '6@s',
+    ...UIUtils.generatePopupShadow()
   },
   titleNewWallet: {
     fontSize: '13@s',
@@ -633,6 +632,7 @@ const styles = ScaledSheet.create({
     borderColor: '#D9D9D9',
     borderRadius: '3@s',
     borderWidth: '1@s',
+    ...UIUtils.generatePopupShadow()
   },
   viewModalDropDown: {
     marginTop: '2@s',
