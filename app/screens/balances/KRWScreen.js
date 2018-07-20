@@ -124,7 +124,6 @@ export default class KRWScreen extends BaseScreen {
                     underlineColorAndroid='rgba(0, 0, 0, 0)'
                     autoCorrect={false} />
                   <Image style={styles.iconWon} source={require('../../../assets/won/won.png')}/>
-                  {/*<Text style={styles.inlineSymbol}>{I18n.t('common.fiatSymbol')}</Text>*/}
                 </View>
               </View>
             </View>
@@ -371,7 +370,7 @@ const styles = ScaledSheet.create({
   btnAccept: { backgroundColor: 'rgba(0, 112, 192, 1)' },
   depositNote: {
     color: 'rgba(0, 112, 192, 1)',
-    ...Fonts.NanumGothic_Regular,
+    ...Fonts.NanumGothic_Bold,
     textDecorationLine: 'underline',
     textDecorationColor: 'rgba(0, 112, 192, 1)'
   },
