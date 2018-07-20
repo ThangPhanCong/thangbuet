@@ -9,7 +9,8 @@ import {
   View,
   FlatList,
   Image,
-  Keyboard
+  Keyboard,
+  Dimensions
 } from 'react-native';
 import BaseScreen from '../BaseScreen';
 import { TabNavigator, TabBarTop } from 'react-navigation';
@@ -67,9 +68,9 @@ class MarketSearchScreen extends BaseScreen {
             {I18n.t('marketList.favorite')}
           </Text>
         </View>
-        <View style={styles.searchViewContainer}>
-          <View style={styles.searchView}
-                onLayout={(event) => this._searchInputWidth = event.nativeEvent.layout.width}>
+        <View style={styles.searchViewContainer}
+          onLayout={(event) => this._searchInputWidth = event.nativeEvent.layout.width}>
+          <View style={styles.searchView}>
             <TextInput style={styles.inputSearch}
                        underlineColorAndroid='transparent'
                        onChangeText={this._onTextChanged.bind(this)}
@@ -88,6 +89,7 @@ class MarketSearchScreen extends BaseScreen {
 
   _renderSearchList() {
     let { searchList } = this.state;
+
     return (
       this.state.searchListVisible &&
       <View
@@ -103,7 +105,7 @@ class MarketSearchScreen extends BaseScreen {
           <View
             style={{flex: 1}}>
             <FlatList
-              style={[styles.searchResult, { width: this._searchInputWidth }]}
+              style={[styles.searchResult, { marginStart: Dimensions.get('window').width - this._searchInputWidth - scale(16)}]}
               keyboardDismissMode='interactive'
               keyboardShouldPersistTaps='handled'
               data={searchList}
@@ -329,7 +331,7 @@ const styles = ScaledSheet.create({
     borderRadius: '2@s',
     borderWidth: '1@s',
     backgroundColor: '#FFF',
-    left: '97@s'
+    marginEnd: '16@s'
   }
 });
 
