@@ -70,9 +70,9 @@ export default {
   login: {
     textLogo: 'BITKOEX',
     titleLogo: '디테일이 다르다. 거래가 편한 최고의 암호화폐 거래소',
-    email: 'id-Email',
+    email: 'ID-EMAIL',
     otp: 'OTP CODE',
-    password: 'Password',
+    password: 'PASSWORD',
     login: 'LOGIN',
     register: 'Register',
     forgotText: 'Forgot your password',

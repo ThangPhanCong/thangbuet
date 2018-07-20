@@ -119,7 +119,7 @@ export default class LoginScreen extends BaseScreen {
           <TextInput
             value={otp}
             keyboardType= 'numeric'
-            placeholder={I18n.t('login.otp').toUpperCase()}
+            placeholder={I18n.t('login.otp')}
             // blurOnSubmit={false}
             placeholderTextColor='#fff'
             underlineColorAndroid='transparent'
@@ -139,7 +139,7 @@ export default class LoginScreen extends BaseScreen {
           <TextInput
             value={email}
             keyboardType='email-address'
-            placeholder={I18n.t('login.email').toUpperCase()}
+            placeholder={I18n.t('login.email')}
             // blurOnSubmit={false}
             placeholderTextColor='#fff'
             underlineColorAndroid='transparent'
@@ -178,7 +178,7 @@ export default class LoginScreen extends BaseScreen {
             value={password}
             secureTextEntry={true}
             placeholderTextColor='#fff'
-            placeholder={I18n.t('login.password').toUpperCase()}
+            placeholder={I18n.t('login.password')}
             underlineColorAndroid='transparent'
             onChangeText={(text) => this.setState({ password: text })}/>
 
