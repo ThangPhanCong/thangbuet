@@ -30,7 +30,8 @@ const iOSFonts = {
     fontFamily: 'NanumGothic-Regular'
   },
   NanumGothic_Bold: {
-    fontFamily: 'NanumGothic-Bold'
+    fontFamily: 'NanumGothic',
+    fontWeight: '700'
   },
   Roboto: {
     fontFamily: 'Roboto-Regular'
