@@ -54,7 +54,7 @@ export default class BasicInfoScreen extends BaseScreen {
         data={this._infoProps}
         extraData={this.state}
         renderItem={this._renderItem.bind(this)}
-        ItemSeparatorComponent={this._renderSeparator}
+        // ItemSeparatorComponent={this._renderSeparator}
         keyExtractor={(item, index) => index.toString()}
       />
     )
@@ -122,7 +122,7 @@ const styles = ScaledSheet.create({
     flex: 1,
   },
   listItem: {
-    height: '64@s'
+    height: '65@s'
   },
   listItemContainer: {
     flex: 1,
@@ -130,8 +130,8 @@ const styles = ScaledSheet.create({
     alignItems: 'center',
     paddingLeft: '20@s',
     paddingRight: '20@s',
-    borderBottomWidth: 0.2,
-    borderBottomColor: '#C9C7C5'
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderBottomColor: '#DEE3EB'
   },
   separator: {
     flex: 1,

@@ -8,7 +8,8 @@ import {
   TextInput,
   ScrollView,
   WebView,
-  Dimensions
+  Dimensions,
+  StyleSheet
 } from 'react-native';
 import ModalDropdown from 'react-native-modal-dropdown';
 import TouchableTextHighlight from '../../../utils/TouchableTextHighlight';
@@ -22,8 +23,8 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import ScaledSheet from '../../../libs/reactSizeMatter/ScaledSheet';
 import { scale } from '../../../libs/reactSizeMatter/scalingUtils';
 import { Fonts } from '../../../utils/CommonStyles';
+import UIUtils from "../../../utils/UIUtils";
 // const DownArrowIcon = require('../../../../assets/common/caretdown.png');
-
 const submitPhoneHtmlString =
   `<!DOCTYPE html>
   <html>
@@ -92,7 +93,7 @@ export default class SecurityOverviewScreen extends BaseScreen {
     }
   }
 
-  componentWillMount(){
+  componentWillMount() {
     super.componentWillMount();
     this._getAvailableBanks();
   }
@@ -109,13 +110,9 @@ export default class SecurityOverviewScreen extends BaseScreen {
           style={{ flex: 1 }}
           ItemSeparatorComponent={this._renderSeparator}>
           {this._renderVerifyEmail()}
-          <View style={styles.separator}/>
           {this._renderVerifyGoogle()}
-          <View style={styles.separator}/>
           {this._renderVerifyPhone()}
-          <View style={styles.separator}/>
           {this._renderVerifyBankAccount()}
-          <View style={styles.separator}/>
           {this._renderVerifyPassword()}
         </ScrollView>
         {this._renderSubmitModal()}
@@ -237,19 +234,33 @@ export default class SecurityOverviewScreen extends BaseScreen {
   }
 
   _renderVerifyButtonView(item, onPressHandler) {
-    return (
-      <View style={styles.buttonGroup}>
-        <TouchableHighlight
-          style={this.state.info[item.propVerify] ? styles.activeButton : styles.inactiveButton}
-          onPress={onPressHandler}
-          disabled={this.state.info[item.propVerify] > 0}
-          underlayColor='#595959'>
-          <Text style={{ alignSelf: 'center', color: '#FFF' }}>
-            {this.state.info[item.propVerify] ? I18n.t('myPage.security.verified') : I18n.t('myPage.security.unverified')}
-          </Text>
-        </TouchableHighlight>
-      </View>
-    )
+    let indexItem = this._infoProps.indexOf(item);
+    let disable = false;
+    if (indexItem > 1 && indexItem < 4) {
+      if (!this.state.info[this._infoProps[indexItem - 1].propVerify]
+        || !this.state.info[this._infoProps[indexItem - 2].propVerify]
+        || this.state.info[item.propVerify]) {
+        disable = true
+      }
+    } else {
+      console.log(this.state.info[item.propVerify])
+      if (this.state.info[item.propVerify]){
+        disable = true
+      }
+    }
+      return (
+        <View style={styles.buttonGroup}>
+          <TouchableHighlight
+            style={this.state.info[item.propVerify] ? styles.activeButton : styles.inactiveButton}
+            onPress={onPressHandler}
+            disabled={disable}
+            underlayColor='#595959'>
+            <Text style={{ alignSelf: 'center', color: '#FFF' }}>
+              {this.state.info[item.propVerify] ? I18n.t('myPage.security.verified') : I18n.t('myPage.security.unverified')}
+            </Text>
+          </TouchableHighlight>
+        </View>
+      )
   }
 
   _renderSubmitModal() {
@@ -396,31 +407,31 @@ export default class SecurityOverviewScreen extends BaseScreen {
     )
   }
 
-  // _renderExistedPhoneModal() {
-  //   return (
-  //     <Modal
-  //       isVisible={this.state.existedPhoneDialogVisible}
-  //       avoidKeyboard={true}
-  //       useNativeDriver={true}
-  //       backdropColor='transparent'
-  //       onBackdropPress={this._dismissExistedPhoneModal.bind(this)}>
-  //       <Card
-  //         style={styles.dialog}
-  //         containerStyle={{ borderRadius: 5, padding: 0, marginStart: 30, marginEnd: 30 }}>
-  //         <Text style={{ fontSize: 13, marginTop: 16, marginBottom: 16, marginStart: 16, marginEnd: 16 }}>
-  //           {I18n.t('myPage.security.existedPhoneHeader')}
-  //         </Text>
-  //         <TouchableOpacity
-  //           style={[styles.submitCancelOtpButton, { marginTop: 20, marginBottom: 30 }]}
-  //           onPress={this._dismissExistedPhoneModal.bind(this)}>
-  //           <Text style={{ fontSize: 13, color: '#FFF', marginStart: 20, marginEnd: 20 }}>
-  //             {I18n.t('myPage.security.existedPhoneButtonText')}
-  //           </Text>
-  //         </TouchableOpacity>
-  //       </Card>
-  //     </Modal>
-  //   )
-  // }
+  _renderExistedPhoneModal() {
+    return (
+      <Modal
+        isVisible={this.state.existedPhoneDialogVisible}
+        avoidKeyboard={true}
+        useNativeDriver={true}
+        backdropColor='transparent'
+        onBackdropPress={this._dismissExistedPhoneModal.bind(this)}>
+        <Card
+          style={styles.dialog}
+          containerStyle={styles.containerCard}>
+          <Text style={styles.cancelOtpHeader}>
+            {I18n.t('myPage.security.existedPhoneHeader')}
+          </Text>
+          <TouchableOpacity
+            style={styles.bankAccountSubmitButton}
+            onPress={this._dismissExistedPhoneModal.bind(this)}>
+            <Text style={styles.existedPhoneButtonText}>
+              {I18n.t('myPage.security.existedPhoneButtonText')}
+            </Text>
+          </TouchableOpacity>
+        </Card>
+      </Modal>
+    )
+  }
 
   _renderBankAccountModal() {
     return (
@@ -500,7 +511,7 @@ export default class SecurityOverviewScreen extends BaseScreen {
       let res = await rf.getRequest('MasterdataRequest').getAll();
       this._banks = res.banks;
     }
-    catch(err) {
+    catch (err) {
       console.log('SecurityScreen._getAvailableBanks', err);
     }
   }
@@ -617,7 +628,7 @@ export default class SecurityOverviewScreen extends BaseScreen {
     let selectedBank = this._banks[index];
 
     this.setState({ selectedBank });
-    this._bankParams.bank_id = selectedBank.id;
+    this._bankParams.bank_id = selectedBank.code;
     this._bankParams.bank_name = selectedBank.name;
   }
 
@@ -745,19 +756,16 @@ export default class SecurityOverviewScreen extends BaseScreen {
 const styles = ScaledSheet.create({
   listView: {
     flex: 1,
+    backgroundColor: '#fff'
   },
   listItem: {
-    height: '64@s',
+    height: '65@s',
     flexDirection: 'row',
     alignItems: 'center',
     paddingLeft: '20@s',
-    paddingRight: '20@s'
-  },
-  separator: {
-    flex: 1,
-    height: '1@s',
-    backgroundColor: '#DEE3EB',
-    opacity: 0.3
+    paddingRight: '20@s',
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderBottomColor: '#DEE3EB'
   },
   iconGroup: {
     flex: 4,
@@ -880,10 +888,8 @@ const styles = ScaledSheet.create({
     borderRadius: '5@s',
     marginStart: '30@s',
     marginEnd: '30@s',
-    elevation: 3,
-    shadowOpacity: 0.3,
-    shadowRadius: '6@s',
-    padding: 0
+    padding: 0,
+    ...UIUtils.generatePopupShadow()
   },
   registerPhoneContainer: {
     borderColor: '#7F7F7F',
@@ -999,6 +1005,7 @@ const styles = ScaledSheet.create({
     borderColor: '#D9D9D9',
     borderRadius: '3@s',
     borderWidth: '1@s',
+    ...UIUtils.generatePopupShadow()
   },
   viewModalDropDown: {
     marginTop: '5@s',
@@ -1021,5 +1028,7 @@ const styles = ScaledSheet.create({
     fontSize: '13@s',
     marginStart: '16@s',
     ...Fonts.NanumGothic_Regular,
-  }
+  },
+  existedPhoneButtonText:
+    { fontSize: '13@s', color: '#FFF', marginStart: '20@s', marginEnd: '20@s' }
 });
