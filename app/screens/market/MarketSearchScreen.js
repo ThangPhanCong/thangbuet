@@ -9,6 +9,7 @@ import {
   View,
   FlatList,
   Image,
+  Keyboard
 } from 'react-native';
 import BaseScreen from '../BaseScreen';
 import { TabNavigator, TabBarTop } from 'react-navigation';
@@ -93,16 +94,18 @@ class MarketSearchScreen extends BaseScreen {
         style={{
           position: 'absolute',
           top: scale(50),
-          left: scale(97),
+          left: 0,
           right: 0,
           bottom: 0,
         }}>
-        <TouchableWithoutFeedback onPress={this._dismissSearchList.bind(this)}>
+        <TouchableWithoutFeedback
+          onPress={this._dismissSearchList.bind(this)}>
           <View
-            style={[styles.searchResult, { width: this._searchInputWidth }]}>
+            style={{flex: 1}}>
             <FlatList
-              keyboardDismissMode='on-drag'
-              keyboardShouldPersistTaps='always'
+              style={[styles.searchResult, { width: this._searchInputWidth }]}
+              keyboardDismissMode='interactive'
+              keyboardShouldPersistTaps='handled'
               data={searchList}
               extraData={this.state}
               renderItem={this._renderItem.bind(this)}
@@ -174,6 +177,7 @@ class MarketSearchScreen extends BaseScreen {
   }
 
   _onPressItem(item) {
+    Keyboard.dismiss();
     this.navigate('TradingScreen', item);
   }
 
@@ -325,6 +329,7 @@ const styles = ScaledSheet.create({
     borderRadius: '2@s',
     borderWidth: '1@s',
     backgroundColor: '#FFF',
+    left: '97@s'
   }
 });
 

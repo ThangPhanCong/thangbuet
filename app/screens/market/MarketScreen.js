@@ -6,7 +6,8 @@ import {
   TouchableOpacity,
   TouchableHighlight,
   TouchableWithoutFeedback,
-  View
+  View,
+  Keyboard
 } from 'react-native';
 import BaseScreen from '../BaseScreen';
 import Consts from '../../utils/Consts';
@@ -76,8 +77,8 @@ class MarketScreen extends BaseScreen {
       <View style={styles.screen}>
         {this._renderHeader()}
         <FlatList
-          keyboardDismissMode='on-drag'
-          keyboardShouldPersistTaps='always'
+          keyboardDismissMode='interactive'
+          keyboardShouldPersistTaps='handled'
           style={styles.listView}
           data={this.state.symbols}
           extraData={this.state}
@@ -210,6 +211,7 @@ class MarketScreen extends BaseScreen {
   }
 
   _onPressItem(item) {
+    Keyboard.dismiss();
     this.props.showMarketScreenDetail(item);
   }
 
