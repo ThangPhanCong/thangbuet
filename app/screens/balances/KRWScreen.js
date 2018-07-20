@@ -1,5 +1,5 @@
 import React from 'react';
-import { Alert, ScrollView, Text, TextInput, TouchableOpacity, View, Image } from 'react-native'
+import { Alert, ScrollView, Text, TextInput, TouchableOpacity, View, Image, TouchableHighlight } from 'react-native'
 import BaseScreen from '../BaseScreen'
 import ScaledSheet from '../../libs/reactSizeMatter/ScaledSheet'
 import { CheckBox, Divider } from 'react-native-elements'
@@ -8,6 +8,7 @@ import I18n from '../../i18n/i18n'
 import { formatCurrency, getCurrencyName } from '../../utils/Filters'
 import Modal from "react-native-modal"
 import { CommonColors, CommonSize, CommonStyles, Fonts } from '../../utils/CommonStyles'
+import { scale } from '../../libs/reactSizeMatter/scalingUtils';
 
 export default class KRWScreen extends BaseScreen {
   constructor(props) {
@@ -122,7 +123,8 @@ export default class KRWScreen extends BaseScreen {
                     keyboardType='numeric'
                     underlineColorAndroid='rgba(0, 0, 0, 0)'
                     autoCorrect={false} />
-                  <Text style={styles.inlineSymbol}>{I18n.t('common.fiatSymbol')}</Text>
+                  <Image style={styles.iconWon} source={require('../../../assets/won/won.png')}/>
+                  {/*<Text style={styles.inlineSymbol}>{I18n.t('common.fiatSymbol')}</Text>*/}
                 </View>
               </View>
             </View>
@@ -142,13 +144,14 @@ export default class KRWScreen extends BaseScreen {
                   source={require('../../../assets/balance/unchecked.png')} />
               }
               <TouchableOpacity>
-                <Text style={[{ color: 'rgba(0, 112, 192, 1)', ...Fonts.NanumGothic_Regular }, styles.fontSize12]}>
+                <Text style={[styles.depositNote, styles.fontSize12]}>
                   {I18n.t('deposit.note')}
                 </Text>
               </TouchableOpacity>
               <Text style={[{ ...Fonts.NanumGothic_Regular }, styles.fontSize12]}>{I18n.t('deposit.check')}</Text>
             </TouchableOpacity>
-            <TouchableOpacity
+            <TouchableHighlight
+              underlayColor='#BFBFBF'
               disabled={!(this.state.checked && this.state.amount > 0)}
               onPress={this._doDeposit.bind(this)}
               style={[
@@ -159,7 +162,7 @@ export default class KRWScreen extends BaseScreen {
               <Text style={[{ color: 'rgba(255, 255, 255, 1)', ...Fonts.NanumGothic_Regular }, styles.fontSize12]}>
                 {I18n.t('deposit.apply')}
               </Text>
-            </TouchableOpacity>
+            </TouchableHighlight>
 
             <Divider style={styles.divider} />
 
@@ -206,9 +209,13 @@ export default class KRWScreen extends BaseScreen {
                   <Text>{I18n.t('deposit.note5Title')}</Text>
                 </Text>
                 <Text style={styles.noteTextInside}>
-                  {I18n.t('deposit.note5Content')}&nbsp;&nbsp;&nbsp;
+                  {I18n.t('deposit.note5Content')}
+                  <Text style={styles.note5Phone}>{I18n.t('deposit.note5Contenta')}</Text>
+                  <Text style={styles.noteTextInside}>{I18n.t('deposit.note5Contentb')}</Text>
+                  &nbsp;&nbsp;&nbsp;
                   <Text style={styles.linkText}>{I18n.t('deposit.note5Link')}</Text>
                 </Text>
+
               </View>
               {/* More */}
               <View style={styles.noteContainer}>
@@ -329,14 +336,20 @@ const styles = ScaledSheet.create({
     flex: 1, marginLeft: '30@s', marginRight: '30@s', justifyContent: 'center', alignItems: 'center'
   },
   iconLogo: { height: '15@s', width: '15@s', margin: '2@s', marginRight: '5@s' },
-  divider: { backgroundColor: 'rgba(222, 227, 235, 1)', flex: 1, marginTop: '20@s', marginBottom: '20@s' },
+  divider: { backgroundColor: 'rgba(222, 227, 235, 1)', flex: 1, marginTop: '30@s', marginBottom: '20@s' },
   noteWrapper: { marginLeft: '30@s', marginRight: '30@s', justifyContent: 'center', alignItems: 'center' },
   noteTitleWrapper: {
     borderBottomWidth: '1@s', borderBottomColor: 'rgba(222, 227, 235, 1)',
     width: '100%', justifyContent: 'center', alignItems: 'center'
   },
   noteTitleContent: { paddingBottom: '5@s', ...Fonts.NanumGothic_Bold, fontSize: '12@s' },
-  linkText: { flexWrap: 'wrap', fontSize: '10@s', ...Fonts.NanumGothic_Regular, lineHeight: '13@s', color: 'rgba(0, 112, 192, 1)' },
+  linkText: {
+    flexWrap: 'wrap',
+    fontSize: '10@s',
+    ...Fonts.NanumGothic_Bold,
+    lineHeight: '13@s',
+    color: 'rgba(0, 112, 192, 1)',
+  },
   fontSize12: { fontSize: '12@s' },
   modalText: { ...Fonts.NanumGothic_Regular, alignContent: 'flex-end' },
   rowWrapper: {
@@ -355,5 +368,20 @@ const styles = ScaledSheet.create({
   },
   modalConfirmText: { color: 'white', textAlign: 'center', ...Fonts.NanumGothic_Regular, fontSize: '12@s' },
   btnCancel: { backgroundColor: 'rgba(127, 127, 127, 1)' },
-  btnAccept: { backgroundColor: 'rgba(0, 112, 192, 1)' }
+  btnAccept: { backgroundColor: 'rgba(0, 112, 192, 1)' },
+  depositNote: {
+    color: 'rgba(0, 112, 192, 1)',
+    ...Fonts.NanumGothic_Regular,
+    textDecorationLine: 'underline',
+    textDecorationColor: 'rgba(0, 112, 192, 1)'
+  },
+  iconWon: {
+    width: '23@s',
+    height: '23@s',
+    marginTop: '2@s',
+    marginRight: '7@s',
+  },
+  note5Phone: {
+    ...Fonts.NanumGothic_Bold
+  }
 });
