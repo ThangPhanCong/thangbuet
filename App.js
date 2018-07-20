@@ -28,33 +28,37 @@ YellowBox.ignoreWarnings([
 MicroEvent.mixin(GlobalSocket);
 MicroEvent.mixin(EventBus);
 
-function initApp() {
+async function initApp() {
   MicroEvent.mixin(BaseScreen);
-
-  AppPreferences.init();
-  AppPreferences.getLocale().then((locale) => {
-    if (!locale) {
-      locale = 'ko';
-      AppPreferences.saveLocale(locale);
-    }
-    I18n.locale = locale;
-  });
-
+  await initI18n();
   window.EventBus = new EventBus();
-
-  return AppPreferences.getAccessToken()
-    .then(credentials => {
-      AppConfig.ACCESS_TOKEN = credentials.password;
-      window.GlobalSocket = new GlobalSocket();
-
-      if (__DEV__) {
-        console.log('API Server: ' + AppConfig.getApiServer());
-        console.log('ACCESS_TOKEN: ' + AppConfig.ACCESS_TOKEN);
-      }
-    })
-    .then(() => {
-      return MasterdataUtils.loadData();
-    });
+  return await initMasterdata();
 }
+
+async function initI18n() {
+  await AppPreferences.init();
+  let locale = await AppPreferences.getLocale();;
+  if (!locale) {
+    locale = 'ko';
+    AppPreferences.saveLocale(locale);
+  }
+  I18n.init();
+  I18n.locale = locale;
+}
+
+async function initMasterdata() {
+  const credentials = await AppPreferences.getAccessToken();
+
+  AppConfig.ACCESS_TOKEN = credentials.password;
+  window.GlobalSocket = new GlobalSocket();
+
+  if (__DEV__) {
+    console.log('API Server: ' + AppConfig.getApiServer());
+    console.log('ACCESS_TOKEN: ' + AppConfig.ACCESS_TOKEN);
+  }
+
+  return await MasterdataUtils.loadData();
+}
+
 export default App = StackNavigator(Screens, { headerMode: 'screen' });
 export { initApp };

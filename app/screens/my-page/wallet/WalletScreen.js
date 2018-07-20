@@ -205,7 +205,6 @@ export default class WalletScreen extends BaseScreen {
                 height: this._calculateModalHeight()
               }]}
               textStyle={styles.modalTextInput}
-              // dropdownTextStyle={{ fontSize: scale(13) }}
               dropdownTextStyle={styles.textModalDropDown}
               renderSeparator={() => <View style={{ height: 0 }}/>}
               options={this._generateOptionList()}
@@ -286,14 +285,13 @@ export default class WalletScreen extends BaseScreen {
     })
   }
 
-
   _calculateModalHeight() {
     if (this._coinTypes.length == 0)
       return scale(39);
     if (this._coinTypes.length > 5)
       return scale(200);
 
-    return this._coinTypes.length * 39;
+    return this._coinTypes.length * scale(39);
   }
 
   _renderRemoveConfirmationModal() {
@@ -358,7 +356,7 @@ export default class WalletScreen extends BaseScreen {
   }
 
   _onWithdraw(wallet) {
-    this._withdraw(wallet);
+    // Navigate to withdraw screen
   }
 
   _onShowRemoveWalletConfirmation(wallet) {
@@ -415,15 +413,6 @@ export default class WalletScreen extends BaseScreen {
       this.setState({
         isLoading: false
       })
-    }
-  }
-
-  async _withdraw(wallet) {
-    try {
-
-    }
-    catch (err) {
-      console.log('WalletScreen._loadWallets', err);
     }
   }
 

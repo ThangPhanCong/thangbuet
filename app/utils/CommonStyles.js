@@ -27,10 +27,12 @@ const iOSFonts = {
     fontFamily: 'NotoSansCJKkr-Regular'
   },
   NanumGothic_Regular: {
-    fontFamily: 'NanumGothic-Regular'
+    fontFamily: 'NanumGothic',
+    fontWeight: '400'
   },
   NanumGothic_Bold: {
-    fontFamily: 'NanumGothic-Bold'
+    fontFamily: 'NanumGothic',
+    fontWeight: '700'
   },
   Roboto: {
     fontFamily: 'Roboto-Regular'

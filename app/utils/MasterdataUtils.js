@@ -6,6 +6,7 @@ import { flatMap, uniq } from 'lodash';
 
 const masterdataVersionKey = 'masterdata_version';
 const masterdataKey = 'masterdata';
+const translationVersionKey = 'translation_version';
 
 let masterdataVersion = null;
 let cacheMasterdata = null;
@@ -66,6 +67,14 @@ export default class MasterdataUtils {
 
   static getCachedMasterdata() {
     return cacheMasterdata;
+  }
+
+  static async getTranslationVersion() {
+    return await AsyncStorage.getItem(translationVersionKey);
+  }
+
+  static async saveTranslationVersion(version) {
+    return await AsyncStorage.setItem(translationVersionKey, version)
   }
 
   static async getCoins() {

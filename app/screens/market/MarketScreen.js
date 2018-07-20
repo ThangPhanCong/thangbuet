@@ -45,7 +45,8 @@ class MarketScreen extends BaseScreen {
     this.state = {
       sortField: sortField || MarketScreen.SORT_FIELDS.VOLUME,
       sortDirection: sortDirection || MarketScreen.SORT_DIRECTION.DESC,
-      symbols: []
+      symbols: [],
+      isLoading: false
     };
   }
 
@@ -83,6 +84,8 @@ class MarketScreen extends BaseScreen {
           data={this.state.symbols}
           extraData={this.state}
           renderItem={this._renderItem.bind(this)}
+          onRefresh={this._loadData.bind(this)}
+          refreshing={this.state.isLoading}
           ItemSeparatorComponent={this._renderSeparator}
         />
       </View>
@@ -112,7 +115,7 @@ class MarketScreen extends BaseScreen {
                 {I18n.t(`currency.${item.coin}.fullname`) || getCurrencyName(item.coin)}
                 {"\n"}
                 <Text style={styles.itemCoin}>
-                  {getCurrencyName(item.coin) + ' / ' + getCurrencyName(item.currency)}
+                  {I18n.t(`currency.${item.coin}.fullname`) || getCurrencyName(item.coin)}
                 </Text>
               </Text>
             </View>
@@ -261,6 +264,10 @@ class MarketScreen extends BaseScreen {
   }
 
   async _loadData() {
+    this.setState({
+      isLoading: true
+    })
+
     const data = await Promise.all([
       this._getSymbols(),
       this._getPrices(),
@@ -271,7 +278,10 @@ class MarketScreen extends BaseScreen {
     let prices = data[1];
     let favorites = data[2]
 
-    this.setState(this._updateSymbolsData(symbols, prices, favorites));
+    this.setState({
+      ...this._updateSymbolsData(symbols, prices, favorites),
+      isLoading: false
+    });
   }
 
   async _getSymbols() {
