@@ -236,18 +236,18 @@ export default class SecurityOverviewScreen extends BaseScreen {
   _renderVerifyButtonView(item, onPressHandler) {
     let indexItem = this._infoProps.indexOf(item);
     let disable = false;
-    // if (indexItem > 1 && indexItem < 4) {
-    //   if (!this.state.info[this._infoProps[indexItem - 1].propVerify]
-    //     || !this.state.info[this._infoProps[indexItem - 2].propVerify]
-    //     || this.state.info[item.propVerify]) {
-    //     disable = true
-    //   }
-    // } else {
-    //   console.log(this.state.info[item.propVerify])
-    //   if (this.state.info[item.propVerify]){
-    //     disable = true
-    //   }
-    // }
+    if (indexItem > 1 && indexItem < 4) {
+      if (!this.state.info[this._infoProps[indexItem - 1].propVerify]
+        || !this.state.info[this._infoProps[indexItem - 2].propVerify]
+        || this.state.info[item.propVerify]) {
+        disable = true
+      }
+    } else {
+      console.log(this.state.info[item.propVerify])
+      if (this.state.info[item.propVerify]){
+        disable = true
+      }
+    }
       return (
         <View style={styles.buttonGroup}>
           <TouchableHighlight
