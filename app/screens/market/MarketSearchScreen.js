@@ -9,6 +9,8 @@ import {
   View,
   FlatList,
   Image,
+  Keyboard,
+  Dimensions
 } from 'react-native';
 import BaseScreen from '../BaseScreen';
 import { TabNavigator, TabBarTop } from 'react-navigation';
@@ -66,9 +68,9 @@ class MarketSearchScreen extends BaseScreen {
             {I18n.t('marketList.favorite')}
           </Text>
         </View>
-        <View style={styles.searchViewContainer}>
-          <View style={styles.searchView}
-                onLayout={(event) => this._searchInputWidth = event.nativeEvent.layout.width}>
+        <View style={styles.searchViewContainer}
+          onLayout={(event) => this._searchInputWidth = event.nativeEvent.layout.width}>
+          <View style={styles.searchView}>
             <TextInput style={styles.inputSearch}
                        underlineColorAndroid='transparent'
                        onChangeText={this._onTextChanged.bind(this)}
@@ -87,20 +89,25 @@ class MarketSearchScreen extends BaseScreen {
 
   _renderSearchList() {
     let { searchList } = this.state;
+
     return (
       this.state.searchListVisible &&
       <View
         style={{
           position: 'absolute',
           top: scale(50),
-          left: scale(97),
+          left: 0,
           right: 0,
           bottom: 0,
         }}>
-        <TouchableWithoutFeedback onPress={this._dismissSearchList.bind(this)}>
+        <TouchableWithoutFeedback
+          onPress={this._dismissSearchList.bind(this)}>
           <View
-            style={[styles.searchResult, { width: this._searchInputWidth }]}>
+            style={{flex: 1}}>
             <FlatList
+              style={[styles.searchResult, { marginStart: Dimensions.get('window').width - this._searchInputWidth - scale(16)}]}
+              keyboardDismissMode='interactive'
+              keyboardShouldPersistTaps='handled'
               data={searchList}
               extraData={this.state}
               renderItem={this._renderItem.bind(this)}
@@ -116,7 +123,7 @@ class MarketSearchScreen extends BaseScreen {
     return (
       <TouchableHighlight
         style={styles.listItem}
-        onPress={() => this._onPressItem(item)}
+        onPressIn={() => this._onPressItem(item)}
         underlayColor='#FFECED'>
         <View style={styles.listItemContainer}>
           <Text style={styles.searchResultLabel}>
@@ -172,6 +179,7 @@ class MarketSearchScreen extends BaseScreen {
   }
 
   _onPressItem(item) {
+    Keyboard.dismiss();
     this.navigate('TradingScreen', item);
   }
 
@@ -323,6 +331,7 @@ const styles = ScaledSheet.create({
     borderRadius: '2@s',
     borderWidth: '1@s',
     backgroundColor: '#FFF',
+    marginEnd: '16@s'
   }
 });
 
