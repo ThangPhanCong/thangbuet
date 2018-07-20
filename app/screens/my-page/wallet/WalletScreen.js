@@ -282,11 +282,11 @@ export default class WalletScreen extends BaseScreen {
 
   _calculateModalHeight() {
     if (this._coinTypes.length == 0)
-      return 39;
+      return scale(39);
     if (this._coinTypes.length > 5)
-      return 200;
+      return scale(200);
 
-    return this._coinTypes.length * 39;
+    return this._coinTypes.length * scale(39);
   }
 
   _renderRemoveConfirmationModal() {
