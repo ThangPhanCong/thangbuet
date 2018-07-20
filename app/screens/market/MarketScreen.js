@@ -1,6 +1,6 @@
 import React from 'react';
 import {
-  StyleSheet,
+  Image,
   FlatList,
   Text,
   TouchableOpacity,
@@ -10,12 +10,14 @@ import {
 } from 'react-native';
 import BaseScreen from '../BaseScreen';
 import Consts from '../../utils/Consts';
-import { CommonStyles } from '../../utils/CommonStyles';
+import { CommonColors, CommonStyles, Fonts } from '../../utils/CommonStyles';
 import { getCurrencyName, formatCurrency, formatPercent } from "../../utils/Filters";
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import rf from '../../libs/RequestFactory';
 import _ from 'lodash';
 import I18n from '../../i18n/i18n';
+import ScaledSheet from "../../libs/reactSizeMatter/ScaledSheet";
+import { scale } from "../../libs/reactSizeMatter/scalingUtils";
 
 class MarketScreen extends BaseScreen {
   static SORT_FIELDS = {
@@ -93,25 +95,26 @@ class MarketScreen extends BaseScreen {
         style={styles.listItem}
         onPress={() => this._onPressItem(item)}
         underlayColor='#FFECED'>
-        <View style = {styles.listItemContainer}>
+        <View style={styles.listItemContainer}>
           <View style={styles.nameGroup}>
-            <View style={{ flexDirection: 'row' }}>
-              <TouchableOpacity style = {{ alignItems: 'center', justifyContent: 'center' }}
-                onPress = {() => this._onEnableFavorite(item)}>
-                <Icon
-                  name='star'
-                  size={15}
-                  color={item.isFavorite ? '#FFC000' : '#D9D9D9'} />
-              </TouchableOpacity>
-              <View style={styles.spacePairName} />
-              <View style={{ alignSelf: 'center' }}>
+            <TouchableOpacity style={{ alignItems: 'center', justifyContent: 'center' }}
+                              onPress={() => this._onEnableFavorite(item)}>
+              <Icon
+                name='star'
+                size={scale(15)}
+                color={item.isFavorite ? '#FFC000' : '#D9D9D9'}/>
+            </TouchableOpacity>
+
+            <View style={styles.spacePairName}/>
+
+            <View style={{ flexDirection: 'column' }}>
+              <Text style={styles.itemFirstCoin}>
+                {I18n.t(`currency.${item.coin}.fullname`) || getCurrencyName(item.coin)}
+                {"\n"}
                 <Text style={styles.itemCoin}>
                   {I18n.t(`currency.${item.coin}.fullname`) || getCurrencyName(item.coin)}
                 </Text>
-                <Text style={styles.itemCoin}>
-                  {getCurrencyName(item.coin) + ' / ' + getCurrencyName(item.currency)}
-                </Text>
-              </View>
+              </Text>
             </View>
           </View>
 
@@ -128,8 +131,9 @@ class MarketScreen extends BaseScreen {
           </View>
 
           <View style={styles.volumeGroup}>
-            <Text style={{ color: '#000' }}>
-              {formatCurrency(item.volume, Consts.CURRENCY_KRW, 0) + I18n.t('marketList.unit')}
+            <Text style={styles.itemVolume}>
+              {formatCurrency(item.volume, Consts.CURRENCY_KRW, 0)}
+              <Text style={styles.itemUnit}>{I18n.t('marketList.unit')}</Text>
             </Text>
           </View>
         </View>
@@ -147,38 +151,45 @@ class MarketScreen extends BaseScreen {
     return (
       <View style={styles.tabBar}>
         <TouchableWithoutFeedback onPress={() => this._onSortField(MarketScreen.SORT_FIELDS.SYMBOL)}>
-          <View style={{ flex: 3, alignItems: 'center' }}>
+          <View style={styles.symbolHeader}>
             <Text style={styles.normalHeader}>
               {I18n.t('marketList.symbol')}
-              {this._renderArrow(MarketScreen.SORT_FIELDS.SYMBOL)}
             </Text>
+            {this._renderArrow(MarketScreen.SORT_FIELDS.SYMBOL)}
           </View>
         </TouchableWithoutFeedback>
 
         <TouchableWithoutFeedback onPress={() => this._onSortField(MarketScreen.SORT_FIELDS.PRICE)}>
-          <View style={{ flex: 3, alignItems: 'flex-end' }}>
+          <View style={styles.priceHeader}>
             <Text style={styles.normalHeader}>
               {I18n.t('marketList.price')}
-              {this._renderArrow(MarketScreen.SORT_FIELDS.PRICE)}
             </Text>
+
+            {this._renderArrow(MarketScreen.SORT_FIELDS.PRICE)}
           </View>
         </TouchableWithoutFeedback>
 
         <TouchableWithoutFeedback onPress={() => this._onSortField(MarketScreen.SORT_FIELDS.CHANGE)}>
-          <View style={{ flex: 2, alignItems: 'flex-end' }}>
-            <Text style={styles.normalHeader}>
-              {I18n.t('marketList.change')}
+          <View style={styles.changeHeader}>
+            <View style={{ flex: 1 }}>
+              <Text style={styles.normalHeader}>
+                {I18n.t('marketList.change')}
+              </Text>
+            </View>
+
+            <View style={{ flex: 2 }}>
               {this._renderArrow(MarketScreen.SORT_FIELDS.CHANGE)}
-            </Text>
+            </View>
           </View>
         </TouchableWithoutFeedback>
 
         <TouchableWithoutFeedback onPress={() => this._onSortField(MarketScreen.SORT_FIELDS.VOLUME)}>
-          <View style={{ flex: 3, alignItems: 'flex-end' }}>
+          <View style={styles.volumeHeader}>
             <Text style={styles.normalHeader}>
               {I18n.t('marketList.volume')}
-              {this._renderArrow(MarketScreen.SORT_FIELDS.VOLUME)}
             </Text>
+
+            {this._renderArrow(MarketScreen.SORT_FIELDS.VOLUME)}
           </View>
         </TouchableWithoutFeedback>
       </View>
@@ -186,17 +197,16 @@ class MarketScreen extends BaseScreen {
   }
 
   _renderArrow(field) {
-    let {sortField, sortDirection } = this.state;
+    let { sortField, sortDirection } = this.state;
     return (
       sortField === field && sortDirection === MarketScreen.SORT_DIRECTION.ASC ?
-      <Icon
-        name='menu-up'
-        size={20}
-        color= '#000'/> :
-      <Icon
-        name='menu-down'
-        size={20}
-        color= '#000'/>
+        <Image
+          style={styles.iconSort}
+          source={require('../../../assets/sortAsc/asc.png')}/>
+        :
+        <Image
+          style={styles.iconSort}
+          source={require('../../../assets/sortDesc/desc.png')}/>
     )
   }
 
@@ -216,7 +226,7 @@ class MarketScreen extends BaseScreen {
     else
       filterSymbols = this._symbols;
 
-    this.setState({symbols: filterSymbols})
+    this.setState({ symbols: filterSymbols })
   }
 
   async _onEnableFavorite(item) {
@@ -228,7 +238,7 @@ class MarketScreen extends BaseScreen {
         await rf.getRequest('FavoriteRequest').removeOne(favorite.id);
       }
       else {
-        await rf.getRequest('FavoriteRequest').createANewOne({coinPair: item.favoriteKey});
+        await rf.getRequest('FavoriteRequest').createANewOne({ coinPair: item.favoriteKey });
       }
     }
     catch (err) {
@@ -279,7 +289,7 @@ class MarketScreen extends BaseScreen {
         symbol.favoriteKey = symbol.coin + '/' + symbol.currency;
         return symbol;
       });
-      
+
       return symbols;
     } catch (err) {
       console.log('MarketScreen._getSymbols', err);
@@ -356,7 +366,7 @@ class MarketScreen extends BaseScreen {
       s.isFavorite = _.includes(favoriteKeys, s.favoriteKey);
       return s;
     });
-    
+
     this._symbols = symbols;
     symbols = this._sortSymbols(sortField, sortDirection);
     this._symbols = symbols;
@@ -366,7 +376,7 @@ class MarketScreen extends BaseScreen {
       filterSymbols = _.filter(symbols, s => s.isFavorite);
     else
       filterSymbols = symbols;
-    
+
     let result = {
       symbols: filterSymbols
     };
@@ -418,7 +428,7 @@ class MarketScreen extends BaseScreen {
 
 export default MarketScreen;
 
-const styles = StyleSheet.create({
+const styles = ScaledSheet.create({
   screen: {
     ...CommonStyles.screen
   },
@@ -426,33 +436,40 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   listItem: {
-    height: 64
+    height: '50@s'
   },
   listItemContainer: {
     flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
-    paddingLeft: 10,
-    paddingRight: 10
+    paddingLeft: '10@s',
+    paddingRight: '10@s'
   },
   separator: {
     flex: 1,
-    height: 1,
-    backgroundColor: '#DEE3EB',
-    opacity: 0.3
+    height: '0.5@s',
+    backgroundColor: CommonColors.separator,
   },
   nameGroup: {
-    flex: 3
+    flex: 3,
+    flexDirection: 'row',
+    alignItems: 'center'
   },
   spacePairName: {
-    width: 3
+    width: '3@s'
+  },
+  itemFirstCoin: {
+    fontSize: '12@s',
+    ...Fonts.NotoSans,
+    color: '#000'
   },
   itemCoin: {
-    fontSize: 13,
+    fontSize: '10@s',
+    ...Fonts.NotoSans,
     color: '#000'
   },
   priceGroup: {
-    flex: 3,
+    flex: 2,
     alignItems: 'flex-end',
   },
   changeGroup: {
@@ -461,7 +478,7 @@ const styles = StyleSheet.create({
   },
   volumeGroup: {
     flex: 3,
-    alignItems: 'flex-end'
+    alignItems: 'flex-end',
   },
   increasedChange: {
     backgroundColor: '#3ea954',
@@ -470,31 +487,67 @@ const styles = StyleSheet.create({
     backgroundColor: '#e0533c',
   },
   normalHeader: {
-    fontSize: 13,
+    fontSize: '10@s',
+    ...Fonts.NotoSans,
     color: '#000'
   },
   tabBar: {
     flexDirection: 'row',
     alignItems: 'center',
-    height: 36,
+    height: '40@s',
     backgroundColor: '#F8F9FB',
-    paddingLeft: 10,
-    paddingRight: 10,
+    paddingLeft: '10@s',
+    paddingRight: '10@s',
   },
   iconSort: {
-    height: 25,
-    width: 14,
+    marginTop: '6@s',
+    height: '20@s',
+    width: '20@s',
   },
   negativeText: {
-    fontSize: 13,
+    fontSize: '12@s',
+    ...Fonts.OpenSans,
     color: '#0070C0'
   },
   positiveText: {
-    fontSize: 13,
+    fontSize: '12@s',
+    ...Fonts.OpenSans,
     color: '#FF0000'
   },
   normalText: {
-    fontSize: 13,
+    fontSize: '12@s',
+    ...Fonts.OpenSans,
     color: '#000'
+  },
+  itemVolume: {
+    color: '#000',
+    fontSize: '12@s',
+    ...Fonts.OpenSans,
+  },
+  itemUnit: {
+    color: '#000',
+    fontSize: '12@s',
+    ...Fonts.NotoSans,
+  },
+  changeHeader: {
+    flex: 2,
+    alignItems: 'flex-end',
+    flexDirection: 'column'
+  },
+  symbolHeader: {
+    flex: 3,
+    justifyContent: 'center',
+    alignItems: 'center',
+    flexDirection: 'row'
+  },
+  priceHeader: {
+    flex: 2,
+    justifyContent: 'flex-end',
+    flexDirection: 'row'
+  },
+  volumeHeader: {
+    flex: 3,
+    justifyContent: 'flex-end',
+    flexDirection: 'row'
   }
 });

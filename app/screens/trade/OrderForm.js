@@ -1,6 +1,7 @@
 import React from 'react';
 import {
   Image,
+  Keyboard,
   NativeModules,
   Text,
   TextInput,
@@ -9,7 +10,7 @@ import {
   View
 } from 'react-native';
 import ModalDropdown from 'react-native-modal-dropdown';
-import Icon from 'react-native-vector-icons/FontAwesome';
+import { Icon } from 'react-native-elements';
 import BigNumber from 'bignumber.js';
 import CurrencyInput from '../common/CurrencyInput';
 import BaseScreen from '../BaseScreen'
@@ -22,17 +23,18 @@ import { scale } from '../../libs/reactSizeMatter/scalingUtils';
 import Utils from '../../utils/Utils';
 import Consts from '../../utils/Consts'
 import OrderUtils from '../../utils/OrderUtils';
-import { CommonColors, CommonSize, CommonStyles } from '../../utils/CommonStyles';
+import { CommonColors, CommonSize, CommonStyles, Fonts } from '../../utils/CommonStyles';
 import { getCurrencyName, formatCurrency } from '../../utils/Filters';
 import OrderBook from './OrderBook';
 import OrderBookSettingModal from './OrderBookSettingModal';
 
-
-const mask = NativeModules.RNTextInputMask.mask
-const unmask = NativeModules.RNTextInputMask.unmask
-const setMask = NativeModules.RNTextInputMask.setMask
-
 export default class OrderForm extends BaseScreen {
+
+  static INPUT_TYPE = 'type';
+  static INPUT_PRICE = 'price';
+  static INPUT_QUANTITY = 'quantity';
+  static INPUT_TOTAL = 'total';
+  static INPUT_STOP = 'stop';
 
   constructor(props) {
     super(props)
@@ -45,11 +47,11 @@ export default class OrderForm extends BaseScreen {
 
       currencyBalance: undefined,
       coinBalance: undefined,
-      coinSetting: {},
 
       enableQuantity: true,
-      settingsOrderConfirmation: undefined
+      settingsOrderConfirmation: undefined,
 
+      focusedInput: undefined
     }
     this.balances = {};
     this.types = [
@@ -58,16 +60,9 @@ export default class OrderForm extends BaseScreen {
       { type: Consts.ORDER_TYPE_STOP_LIMIT, label: I18n.t('orderForm.stopLimit') },
       { type: Consts.ORDER_TYPE_STOP_MARKET, label: I18n.t('orderForm.stopMarket') }
     ];
-    this.percents = [
-      { value: 10, label: '10%' }, { value: 20, label: '20%' }, { value: 30, label: '30%' }, { value: 40, label: '40%' },
-      { value: 50, label: '50%' }, { value: 60, label: '60%' }, { value: 70, label: '70%' }, { value: 80, label: '80%' },
-      { value: 90, label: '90%' }, { value: 100, label: '100%' }
-    ];
-    this.krws = [
-      { value: 50, label: '50K KRW' }, { value: 100, label: '100K KRW' }, { value: 300, label: '300K KRW' },
-      { value: 500, label: '500K KRW' }, { value: 1000, label: '1000K KRW' }, { value: 1500, label: '1500K KRW' },
-      { value: 2000, label: '2000K KRW' }, { value: 3000, label: '3000K KRW' }, { value: 5000, label: '5000K KRW' }
-    ];
+    this.prefillAmounts = [50000, 100000, 300000, 500000, 1000000, 1500000, 2000000, 3000000, 5000000];
+    this.quantityPrecision = 4;
+    this.pricePrecision = 0;
   }
 
   componentDidMount() {
@@ -80,6 +75,12 @@ export default class OrderForm extends BaseScreen {
 
   componentDidUpdate(prevProps, prevState) {
     if (prevProps.currency != this.props.currency || prevProps.coin != this.props.coin) {
+      this.setState({
+        price: '',
+        stop: '',
+        quantity: '',
+        total: ''
+      });
       this._loadData();
     }
   }
@@ -101,11 +102,33 @@ export default class OrderForm extends BaseScreen {
 
   async _loadData() {
     await Promise.all([
-      this._getBalance(),
       this._getCoinSetting(),
-      this._getFeeRate(),
-      this._getOrderBookSettings()
+      this._getQuantitySetting()
     ]);
+    await Promise.all([
+      this._getBalance(),
+      this._getFeeRate(),
+      this._getOrderBookSettings(),
+      this._getPrice()
+    ]);
+  }
+
+  async _getCoinSetting() {
+    const { coin, currency } = this.props;
+    let response = await rf.getRequest('MasterdataRequest').getAll();
+    const coinSetting = response.coin_settings.find((item) => item.coin == coin && item.currency == currency);
+
+    this.quantityPrecision = Utils.getPrecision(coinSetting.minimum_quantity);
+  }
+
+  async _getQuantitySetting() {
+    const { coin, currency } = this.props;
+    let response = await rf.getRequest('MasterdataRequest').getAll();
+    const priceGroup = response.price_groups.find((item) => {
+      return item.coin == coin && item.currency == currency && item.group == 0;
+    });
+
+    this.pricePrecision = Utils.getPrecision(priceGroup.value);
   }
 
   async _getBalance() {
@@ -133,16 +156,6 @@ export default class OrderForm extends BaseScreen {
     this.setState(newState);
   }
 
-  async _getCoinSetting() {
-    const { coin, currency } = this.props;
-    let response = await rf.getRequest('MasterdataRequest').getAll();
-    const coinSetting = response.coin_settings.find((item) => item.coin == coin && item.currency == currency);
-
-    this.setState({
-      coinSetting
-    });
-  }
-
   async _getFeeRate() {
     const response = await rf.getRequest('UserRequest').getCurrentUser();
     const user = response.data;
@@ -160,6 +173,15 @@ export default class OrderForm extends BaseScreen {
     };
     const response = await rf.getRequest('UserRequest').getOrderBookSettings(params);
     this._onOrderBookSettingsUpdated(response.data);
+  }
+
+  async _getPrice() {
+    const response = await rf.getRequest('PriceRequest').getPrices();
+    const prices = response.data;
+    const key = Utils.getPriceKey(this._getCurrency(), this._getCoin());
+    if (prices[key] && !this.state.price) {
+      this.setState({ price : prices[key].price });
+    }
   }
 
   _isBuyOrder() {
@@ -206,11 +228,7 @@ export default class OrderForm extends BaseScreen {
   }
 
   _getMaskInputValue(formatted, extracted) {
-    if (formatted.endsWith('.')) {
-      return extracted;
-    } else {
-      return formatted;
-    }
+   return extracted;
   }
 
   _onStopChanged(formatted, extracted) {
@@ -323,7 +341,7 @@ export default class OrderForm extends BaseScreen {
 
         <View style={styles.inputRow}>
           <Text style={styles.inputLabel}>{I18n.t('orderForm.type')}</Text>
-            {this._renderOrderType()}
+          {this._renderOrderType()}
         </View>
 
         {this._isStopOrder() && this._renderStopInput()}
@@ -336,22 +354,37 @@ export default class OrderForm extends BaseScreen {
 
   _renderOrderType() {
     return (
-      <View style={styles.inputValue}>
-        <Image
-          resizeMode={'contain'}
-          style={styles.caretDown}
-          source={require('../../../assets/common/caretdown.png')}/>
-        <ModalDropdown
-          defaultValue={this._getOrderTypeText() + ' ' + I18n.t('orderForm.order')}
-          style={styles.typeButton}
-          textStyle={styles.typeLabel}
-          dropdownStyle={styles.typeDropdown}
-          dropdownTextStyle={styles.typeDropdownText}
-          renderSeparator={() => <View style={{height: 0}}/>}
-          options={this.types.map(item => item.label + ' ' + I18n.t('orderForm.order'))}
-          onSelect={this._onTypeSelected.bind(this)}/>
-      </View>
+      <TouchableWithoutFeedback onPress={this._openTypeMenu.bind(this)}>
+        <View style={styles.inputValue} ref={ref => this._typeRef = ref}>
+          <View style={styles.caretDown}>
+            {this._renderCaretDownIcon()}
+          </View>
+          <View style={styles.typeButton}>
+            <Text style={styles.typeLabel}>
+              {this._getOrderTypeText() + ' ' + I18n.t('orderForm.order')}
+            </Text>
+          </View>
+        </View>
+      </TouchableWithoutFeedback>
     );
+  }
+
+  _renderCaretDownIcon() {
+    return (
+      <Icon name='triangle-down' type='entypo' size={scale(15)}/>
+    );
+  }
+
+  _openTypeMenu() {
+    const items= this.types.map(item => item.label + ' ' + I18n.t('orderForm.order'));
+    const options = {
+      sourceView: this._typeRef,
+      onSelectItem: this._onTypeSelected.bind(this),
+      dropdownStyle: styles.typeDropdown,
+      itemButtonStyle: styles.typeDropdownButton,
+      itemTextStyle: styles.typeDropdownText
+    };
+    this.notify(Events.SHOW_TRADE_SCREEN_DROPDOWN, { items, options });
   }
 
   _onTypeSelected(index) {
@@ -382,34 +415,55 @@ export default class OrderForm extends BaseScreen {
   }
 
   _renderPriceInput() {
+    const inputBorderStyle = this._getInputBorderStyle(OrderForm.INPUT_PRICE);
     return (
       <View style={styles.inputRow}>
         <Text style={styles.inputLabel}>{I18n.t('orderForm.price')}</Text>
-        <View style={[styles.inputValue, this._isMarketOrder() ? styles.disabled : {}]}>
+        <View style={[styles.inputValue, this._isMarketOrder() ? styles.disabled : {}, inputBorderStyle]}>
           <CurrencyInput
             value={this.state.price}
-            precision={0}
+            precision={this.pricePrecision}
             editable={!this._isMarketOrder()}
             onChangeText={(formatted, extracted) => this._onPriceChanged(this._getMaskInputValue(formatted, extracted))}
+            onFocus={() => this.setState({focusedInput: OrderForm.INPUT_PRICE})}
+            onBlur={() => this.setState({focusedInput: undefined})}
             keyboardType='numeric'
-            style={styles.inputText}
+            style={[styles.inputText, {textAlign: 'center'}]}
             underlineColorAndroid='transparent'/>
         </View>
       </View>
     );
   }
 
+  _getInputBorderStyle(input) {
+    return this.state.focusedInput == input ? { borderColor: focusedBorderColor} : {};
+  }
+
+  _getCaretBorderStyle(input) {
+    let style = {};
+    if (this.state.focusedInput == input) {
+      style = {
+        borderColor: focusedBorderColor,
+        borderLeftColor: '#95CCDE'
+      };
+    }
+    return style;
+  }
+
   _renderStopInput() {
+    const inputBorderStyle = this._getInputBorderStyle(OrderForm.INPUT_STOP);
     return (
       <View style={styles.inputRow}>
         <Text style={styles.inputLabel}>{I18n.t('orderForm.stop')}</Text>
-        <View style={styles.inputValue}>
+        <View style={[styles.inputValue, inputBorderStyle]}>
           <CurrencyInput
             value={this.state.stop}
-            precision={0}
+            precision={this.pricePrecision}
             onChangeText={this._onStopChanged.bind(this)}
+            onFocus={() => this.setState({focusedInput: OrderForm.INPUT_STOP})}
+            onBlur={() => this.setState({focusedInput: undefined})}
             keyboardType='numeric'
-            style={styles.inputText}
+            style={[styles.inputText, {textAlign: 'center'}]}
             underlineColorAndroid='transparent'/>
         </View>
       </View>
@@ -417,42 +471,151 @@ export default class OrderForm extends BaseScreen {
   }
 
   _renderQuantityInput() {
+    const inputBorderStyle = this._getInputBorderStyle(OrderForm.INPUT_QUANTITY);
+    const caretBorderStyle = this._getCaretBorderStyle(OrderForm.INPUT_QUANTITY);
     const enableQuantity = this.state.enableQuantity;
     return (
       <View style={styles.inputRow}>
         <Text style={styles.inputLabel}>{I18n.t('orderForm.quantity')}</Text>
-        <View style={[styles.inputValue, !enableQuantity ? styles.disabled : {}]}>
+        <View style={[styles.inputValue, {borderRightWidth: 0}, !enableQuantity ? styles.disabled : {}, inputBorderStyle]}>
+          <View ref={ref => this._quantityRef = ref} style={styles.quantityDropdownAnchor}/>
           <CurrencyInput
+            refInput={ref => this._quantityInput = ref}
             value={this.state.quantity}
-            precision={4}
+            precision={this.quantityPrecision}
             onChangeText={this._onQuantityChanged.bind(this)}
-            onFocus={() => this.setState({enableQuantity: true})}
+            onFocus={() => this.setState({enableQuantity: true, focusedInput: OrderForm.INPUT_QUANTITY})}
+            onBlur={() => this.setState({focusedInput: undefined})}
             keyboardType='numeric'
             style={styles.inputText}
             underlineColorAndroid='transparent'/>
+            <TouchableWithoutFeedback onPress={this._openQuantityDropdown.bind(this)}>
+              <View style={[styles.caretButton, caretBorderStyle]}>
+                {this._renderCaretDownIcon()}
+              </View>
+            </TouchableWithoutFeedback>
         </View>
       </View>
     );
   }
 
+  _openQuantityDropdown() {
+    Keyboard.dismiss();
+    let items = [];
+    for (let i = 100; i > 0; i-= 10) {
+      items.push(i + '%');
+    }
+    const options = {
+      sourceView: this._quantityRef,
+      onSelectItem: this._onQuantityItemSelected.bind(this),
+      dropdownStyle: styles.quantityDropdown,
+      itemButtonStyle: styles.quantityDropdownButton,
+      itemTextStyle: styles.quantityDropdownText,
+      separatorStyle: styles.quantityDropdownSeparator
+    };
+    this.notify(Events.SHOW_TRADE_SCREEN_DROPDOWN, { items, options });
+  }
+
+  _onQuantityItemSelected(index) {
+    let { type, price, coinBalance, currencyBalance } = this.state;
+    const percent = 100 - index * 10;
+
+    let newState = { enableQuantity: true };
+    if (this._isBuyOrder()) {
+      if (price) {
+        newState.quantity = BigNumber(currencyBalance).div(price).times(percent).div(100).toString();
+      }
+    } else {
+      newState.quantity = BigNumber(coinBalance).times(percent).div(100).toString();
+    }
+    if (newState.quantity && type == Consts.ORDER_TYPE_LIMIT && price) {
+      newState.total = newState.quantity ? BigNumber(price).times(newState.quantity).toString() : '';
+    }
+    this.setState(newState);
+  }
+
   _renderTotalInput() {
+    const inputBorderStyle = this._getInputBorderStyle(OrderForm.INPUT_TOTAL);
+    const caretBorderStyle = this._getCaretBorderStyle(OrderForm.INPUT_TOTAL);
     const enableQuantity = this.state.enableQuantity;
     return (
       <View style={styles.inputRow}>
         <Text style={styles.inputLabel}>{I18n.t('orderForm.total')}</Text>
-        <View style={[styles.inputValue, enableQuantity || this._isMarketOrder() ? styles.disabled : {}]}>
+        <View style={[
+          styles.inputValue,
+          {borderRightWidth: 0},
+          enableQuantity || this._isMarketOrder() ? styles.disabled : {},
+          inputBorderStyle]}>
+          <View ref={ref => this._totalRef = ref} style={styles.quantityDropdownAnchor}/>
           <CurrencyInput
+            refInput={ref => this._totalInput = ref}
             value={this.state.total}
-            precision={4}
+            precision={this.pricePrecision}
             editable={!this._isMarketOrder()}
             onChangeText={this._onTotalChanged.bind(this)}
-            onFocus={() => this.setState({enableQuantity: false})}
+            onFocus={() => this.setState({enableQuantity: false, focusedInput: OrderForm.INPUT_TOTAL})}
+            onBlur={() => this.setState({focusedInput: undefined})}
             keyboardType='numeric'
             style={styles.inputText}
             underlineColorAndroid='transparent'/>
+            <TouchableWithoutFeedback onPress={this._openTotalDropdown.bind(this)}>
+              <View style={[styles.caretButton, caretBorderStyle]}>
+                {this._renderCaretDownIcon()}
+              </View>
+            </TouchableWithoutFeedback>
         </View>
       </View>
     );
+  }
+
+  _openTotalDropdown() {
+    Keyboard.dismiss();
+    let items = [];
+    for (let item of this.prefillAmounts) {
+      items.push(item / 10000 + I18n.t('orderForm.tenThousand'));
+    }
+    for (let i = 100; i > 0; i-= 10) {
+      items.push(i + '%');
+    }
+    const options = {
+      sourceView: this._totalRef,
+      onSelectItem: this._onTotalItemSelected.bind(this),
+      dropdownStyle: styles.quantityDropdown,
+      itemButtonStyle: styles.quantityDropdownButton,
+      itemTextStyle: styles.quantityDropdownText,
+      separatorStyle: styles.quantityDropdownSeparator
+    };
+    this.notify(Events.SHOW_TRADE_SCREEN_DROPDOWN, { items, options });
+  }
+
+  _onTotalItemSelected(index) {
+    const { type, price } = this.state;
+    let total = this._getSelectedTotal(index);
+
+    let newState = {
+      enableQuantity: false,
+      total: total
+    };
+    if (type == Consts.ORDER_TYPE_LIMIT && price) {
+      newState.quantity = total ? this.floor(BigNumber(total).div(price), 4) : '';
+    }
+    this.setState(newState);
+  }
+
+  _getSelectedTotal(index) {
+    if (index < this.prefillAmounts.length) {
+      return this.prefillAmounts[index];
+    } else {
+      let percent = 100 - (index - this.prefillAmounts.length) * 10;
+      if (this._isBuyOrder()) {
+        let { price, coinBalance, currencyBalance } = this.state;
+        if (price) {
+          return BigNumber(currencyBalance).times(percent).div(100).toString();
+        }
+      } else {
+        return BigNumber(coinBalance).times(price).times(percent).div(100).toString();
+      }
+    }
   }
 
   _renderEstimationBuyValues() {
@@ -476,7 +639,7 @@ export default class OrderForm extends BaseScreen {
             <Text style={styles.estimateLabel}>{I18n.t('orderForm.estimateTotal')}</Text>
           </View>
           <View style={styles.estimationRightCell}>
-            <Text style={styles.estimateValue}>{this._getOrderTotal()}</Text>
+            <Text style={styles.estimateValue}>{formatCurrency(this._getOrderTotal(), currency)}</Text>
             <Text style={styles.insideText}>{getCurrencyName(currency)}</Text>
           </View>
         </View>
@@ -486,7 +649,7 @@ export default class OrderForm extends BaseScreen {
             <Text style={styles.estimateLabel}>{I18n.t('orderForm.fee')}</Text>
           </View>
           <View style={styles.estimationRightCell}>
-            <Text style={styles.estimateValue}>{this._getOrderFee()}</Text>
+            <Text style={styles.estimateValue}>{formatCurrency(this._getOrderFee(), coin)}</Text>
             <Text style={styles.insideText}>{getCurrencyName(coin)}</Text>
           </View>
         </View>
@@ -496,7 +659,7 @@ export default class OrderForm extends BaseScreen {
             <Text style={styles.estimateLabel}>{I18n.t('orderForm.estimateQuantity')}</Text>
           </View>
           <View style={styles.estimationRightCell}>
-            <Text style={styles.estimateValue}>{this.state.quantity}</Text>
+            <Text style={styles.estimateValue}>{formatCurrency(this.state.quantity, coin)}</Text>
             <Text style={styles.insideText}>{getCurrencyName(coin)}</Text>
           </View>
         </View>
@@ -517,13 +680,13 @@ export default class OrderForm extends BaseScreen {
     const { price, quantity, feeRate } = this.state;
     if (this._isBuyOrder()) {
       if (quantity) {
-        return BigNumber(quantity).times(feeRate).toString();
+        return BigNumber(quantity).times(feeRate);
       } else {
         return '';
       }
     } else {
       if (quantity && price) {
-        return BigNumber(quantity).times(price).times(feeRate).toString();
+        return BigNumber(quantity).times(price).times(feeRate);
       } else {
         return '';
       }
@@ -538,7 +701,7 @@ export default class OrderForm extends BaseScreen {
       <View style={styles.estimationValues}>
         <View style={styles.estimationRow}>
           <View style={[styles.estimationLeftCell, styles.estimationSellCell]}>
-            <Text style={styles.estimateLabel}>{I18n.t('orderForm.balance')}</Text>
+            <Text style={styles.estimateLabel}>{I18n.t('orderForm.availableQuantity')}</Text>
           </View>
           <View style={styles.estimationRightCell}>
             <Text style={styles.estimateValue}>{formatCurrency(balance, coin)}</Text>
@@ -547,10 +710,10 @@ export default class OrderForm extends BaseScreen {
         </View>
         <View style={styles.estimationRow}>
           <View style={[styles.estimationLeftCell, styles.estimationSellCell]}>
-            <Text style={styles.estimateLabel}>{I18n.t('orderForm.estimateTotal')}</Text>
+            <Text style={styles.estimateLabel}>{I18n.t('orderForm.sellQuantity')}</Text>
           </View>
           <View style={styles.estimationRightCell}>
-            <Text style={styles.estimateValue}>{this.state.quantity}</Text>
+            <Text style={styles.estimateValue}>{formatCurrency(this.state.quantity, coin)}</Text>
             <Text style={styles.insideText}>{getCurrencyName(coin)}</Text>
           </View>
         </View>
@@ -559,16 +722,16 @@ export default class OrderForm extends BaseScreen {
             <Text style={styles.estimateLabel}>{I18n.t('orderForm.fee')}</Text>
           </View>
           <View style={styles.estimationRightCell}>
-            <Text style={styles.estimateValue}>{this._getOrderFee()}</Text>
+            <Text style={styles.estimateValue}>{formatCurrency(this._getOrderFee(), currency)}</Text>
             <Text style={styles.insideText}>{getCurrencyName(currency)}</Text>
           </View>
         </View>
         <View style={styles.estimationRow}>
           <View style={[styles.estimationLeftCell, styles.estimationSellCell]}>
-            <Text style={styles.estimateLabel}>{I18n.t('orderForm.estimateQuantity')}</Text>
+            <Text style={styles.estimateLabel}>{I18n.t('orderForm.sellAmount')}</Text>
           </View>
           <View style={styles.estimationRightCell}>
-            <Text style={styles.estimateValue}>{this._getOrderTotal()}</Text>
+            <Text style={styles.estimateValue}>{formatCurrency(this._getOrderTotal(), currency)}</Text>
             <Text style={styles.insideText}>{getCurrencyName(currency)}</Text>
           </View>
         </View>
@@ -578,14 +741,16 @@ export default class OrderForm extends BaseScreen {
 
   _renderSubmitButton() {
     return (
-      <TouchableOpacity
-        style={[styles.submitButton, this._isBuyOrder() ? styles.submitBuy : styles.submitSell]}
-        onPress={this._onPressSubmit.bind(this)}>
-        <Text style={styles.submitText}>
-          {getCurrencyName(this._getCoin()) + ' / ' + getCurrencyName(this._getCurrency())
-            + ' ' + this._getOrderTypeText() + ' ' + this._getTradeTypeText()}
-        </Text>
-      </TouchableOpacity>
+      <View style={styles.submitGroup}>
+        <TouchableOpacity
+          style={[styles.submitButton, this._isBuyOrder() ? styles.submitBuy : styles.submitSell]}
+          onPress={this._onPressSubmit.bind(this)}>
+          <Text style={styles.submitText}>
+            {getCurrencyName(this._getCoin()) + ' / ' + getCurrencyName(this._getCurrency())
+              + ' ' + this._getOrderTypeText() + ' ' + this._getTradeTypeText()}
+          </Text>
+        </TouchableOpacity>
+      </View>
     );
   }
 
@@ -603,22 +768,27 @@ export default class OrderForm extends BaseScreen {
 }
 
 const margin = scale(10);
-const dropdownRowHeight = scale(35);
+const dropdownRowHeight = scale(33);
+const inputHeight = scale(33);
+const inputBotderRadius = scale(3);
+const focusedBorderColor = '#0AB8F2';
 
 const styles = ScaledSheet.create({
   inputGroup: {
-    flex: 1,
+    flex: 0.521,
     margin: margin,
     marginTop: margin * 1.5,
     justifyContent: 'space-between'
   },
   inputRow: {
-    height: scale(38),
+    height: inputHeight,
     flexDirection: 'row',
     alignItems: 'center',
   },
   inputLabel: {
-    width: scale(60),
+    width: scale(55),
+    fontSize: '11@s',
+    ...Fonts.NotoSans
   },
   inputValue: {
     flex: 1,
@@ -627,13 +797,17 @@ const styles = ScaledSheet.create({
     height: '100%',
     borderWidth: 1,
     borderColor: '#D9D9D9',
-    borderRadius: scale(3)
+    borderRadius: inputBotderRadius
   },
   inputText: {
-    width: '100%',
+    flex: 1,
     height: '100%',
     padding: margin,
-    textAlign: 'right'
+    paddingTop: 0,
+    paddingBottom: 0,
+    textAlign: 'right',
+    fontSize: '13@s',
+    ...Fonts.OpenSans
   },
   disabled: {
     backgroundColor: '#F4F3F4'
@@ -644,30 +818,83 @@ const styles = ScaledSheet.create({
   },
   typeLabel: {
     paddingRight: margin,
-    textAlign: 'center'
+    textAlign: 'center',
+    fontSize: '12@s',
+    ...Fonts.NotoSans
   },
   caretDown: {
-    width: '10@s',
+    width: '18@s',
     position: 'absolute',
-    right: '10@s'
+    right: '7@s'
+  },
+  caretButton: {
+    width: inputHeight,
+    height: inputHeight,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: '#D9D9D9',
+    borderTopRightRadius: inputBotderRadius,
+    borderBottomRightRadius: inputBotderRadius,
+    backgroundColor: '#FCFBFB'
   },
   typeDropdown: {
-    width: '150@s',
-    height: dropdownRowHeight * 4 + 4,
-    marginTop: '12@s'
+    height: dropdownRowHeight * 4,
+    backgroundColor: '#FFF'
+  },
+  typeDropdownButton: {
+    width: '100%',
+    height: dropdownRowHeight,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#FFF'
   },
   typeDropdownText: {
-    height: dropdownRowHeight,
     color: '#000',
     textAlign: 'center',
-    borderColor: '#0000'
+    fontSize: '12@s',
+    ...Fonts.NotoSans
+  },
+
+  quantityDropdownAnchor: {
+    position: 'absolute',
+    right: 0,
+    width: '80@s',
+    height: '100%',
+    backgroundColor: '#0000'
+  },
+  quantityDropdown: {
+    marginTop: 1,
+    backgroundColor: '#FFF',
+    borderRadius: '3@s'
+  },
+  quantityDropdownButton: {
+    width: '100%',
+    height: '30@s',
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#FFF'
+  },
+  quantityDropdownText: {
+    color: '#000',
+    textAlign: 'center',
+    fontSize: '12@s',
+    ...Fonts.OpenSans
+  },
+  quantityDropdownSeparator: {
+    height: 1,
+    width: '100%',
+    backgroundColor: '#F0F0F0'
   },
 
   estimationValues: {
-    flex: 0.75,
-    margin: margin,
-    borderRightWidth: 1,
-    borderBottomWidth: 1,
+    flex: 0.38,
+    marginLeft: margin,
+    marginRight: margin,
+    marginTop: '2@s',
+    marginBottom: '2@s',
+    borderTopWidth: 1,
+    borderLeftWidth: 1,
     borderColor: '#E7E5E5'
   },
   estimationRow: {
@@ -678,9 +905,11 @@ const styles = ScaledSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    borderTopWidth: 1,
-    borderLeftWidth: 1,
-    borderColor: '#E7E5E5'
+    borderWidth: 1,
+    borderTopColor: '#F6F5F5',
+    borderLeftColor: '#F6F5F5',
+    borderBottomColor: '#E7E5E5',
+    borderRightColor: '#E7E5E5'
   },
   estimationBuyCell: {
     backgroundColor: '#FFF0F0'
@@ -694,26 +923,35 @@ const styles = ScaledSheet.create({
     justifyContent: 'flex-end',
     alignItems: 'center',
     backgroundColor: '#F3F3F3',
-    borderTopWidth: 1,
-    borderLeftWidth: 1,
-    borderColor: '#E7E5E5'
+    borderWidth: 1,
+    borderTopColor: '#F6F5F5',
+    borderLeftColor: '#F6F5F5',
+    borderBottomColor: '#E7E5E5',
+    borderRightColor: '#E7E5E5'
   },
   estimateLabel: {
-    fontSize: '12@s'
+    fontSize: '11@s',
+    ...Fonts.NotoSans
   },
   estimateValue: {
-    fontSize: '12@s'
+    fontSize: '12@s',
+    ...Fonts.OpenSans
   },
   insideText: {
-    fontSize: '10@s',
-    width: '30@s',
-    marginTop: '3@s',
+    fontSize: '8@s',
+    width: '22@s',
+    marginTop: '2@s',
     marginLeft: '5@s'
   },
 
-  submitButton: {
+  submitGroup: {
     flex: 0.18,
-    margin: margin,
+    justifyContent: 'center'
+  },
+  submitButton: {
+    height: '30.5@s',
+    marginLeft: margin,
+    marginRight: margin,
     borderRadius: scale(3),
     justifyContent: 'center',
     alignItems: 'center'
@@ -726,6 +964,8 @@ const styles = ScaledSheet.create({
   },
 
   submitText: {
-    color: '#FFF'
+    color: '#FFF',
+    fontSize: '11@s',
+    ...Fonts.NotoSans
   }
 });

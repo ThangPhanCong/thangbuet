@@ -1,18 +1,19 @@
-import React, { Component } from 'react';
+import React from 'react';
 import { FlatList, Text, TouchableWithoutFeedback, View, ScrollView } from "react-native";
-import { CommonColors, CommonStyles } from "../../utils/CommonStyles";
+import { CommonColors, CommonStyles, Fonts } from "../../utils/CommonStyles";
 import ScaledSheet from "../../libs/reactSizeMatter/ScaledSheet";
 import { scale } from "../../libs/reactSizeMatter/scalingUtils";
 import I18n from "../../i18n/i18n";
 import moment from "moment/moment";
 import BitkoexDatePicker from "./common/BitkoexDatePicker";
-import HeaderTransaction from "./common/HeaderTransaction";
 import rf from "../../libs/RequestFactory";
 import BigNumber from 'bignumber.js';
 import { formatCurrency, getCurrencyName } from "../../utils/Filters";
 import BaseScreen from "../BaseScreen";
 import Consts from "../../../app/utils/Consts";
 import HeaderProfitAndLoss from "./HeaderProfitAndLoss";
+import HeaderProfitRight from "./HeaderProfitRight";
+import HeaderProfitCenter from "./HeaderProfitCenter";
 
 class ProfitAndLossScreen extends BaseScreen {
   state = {
@@ -22,6 +23,8 @@ class ProfitAndLossScreen extends BaseScreen {
     statsPrices: {},
     sum: {}
   }
+
+  firstScrollView = null;
 
   componentDidMount() {
     this._loadData();
@@ -172,71 +175,205 @@ class ProfitAndLossScreen extends BaseScreen {
     return false;
   }
 
-  _renderSum() {
+  _onLeftListScroll(event) {
+    if (this.firstScrollView === 'left') {
+      const y = event.nativeEvent.contentOffset.y;
+
+      this.flatListRight.scrollToOffset({
+        offset: y,
+      });
+      this.flatListCenter.scrollToOffset({
+        offset: y,
+      });
+    }
+  }
+
+  _onCenterListScroll(event) {
+    if (this.firstScrollView === 'center') {
+      const y = event.nativeEvent.contentOffset.y;
+
+      this.flatListRight.scrollToOffset({
+        offset: y,
+      });
+      this.flatListLeft.scrollToOffset({
+        offset: y,
+      });
+    }
+  }
+
+  _onRightListScroll(event) {
+    if (this.firstScrollView === 'right') {
+      const y = event.nativeEvent.contentOffset.y;
+
+      this.flatListLeft.scrollToOffset({
+        offset: y,
+      });
+      this.flatListCenter.scrollToOffset({
+        offset: y,
+      });
+    }
+  }
+
+  _handleLeftMomentumEnd() {
+    if (this.firstScrollView === 'left') {
+      this.firstScrollView = null;
+    }
+  }
+
+  _handleLeftMomentumStart() {
+    if (this.firstScrollView === null) {
+      this.firstScrollView = 'left';
+    }
+  }
+
+  _handleCenterMomentumEnd() {
+    if (this.firstScrollView === 'center') {
+      this.firstScrollView = null;
+    }
+  }
+
+  _handleCenterMomentumStart() {
+    if (this.firstScrollView === null) {
+      this.firstScrollView = 'center';
+    }
+  }
+
+  _handleRightMomentumStart() {
+    if (this.firstScrollView == null) {
+      this.firstScrollView = 'right';
+    }
+  }
+
+  _handleRightMomentumEnd() {
+    if (this.firstScrollView === 'right') {
+      this.firstScrollView = null;
+    }
+  }
+
+  _handleTouchStartLeft() {
+    if (this.firstScrollView === null) {
+      this.firstScrollView = 'left';
+    }
+  }
+
+  _handleTouchEndLeft() {
+    console.log("touch left end")
+    if (this.firstScrollView === 'left') {
+      this.firstScrollView = null;
+    }
+  }
+
+  _handleTouchStartCenter() {
+    if (this.firstScrollView === null) {
+      this.firstScrollView = 'center';
+    }
+  }
+
+  _handleTouchEndCenter() {
+    if (this.firstScrollView === 'center') {
+      this.firstScrollView = null;
+    }
+  }
+
+  _handleTouchStartRight() {
+    if (this.firstScrollView === null) {
+      this.firstScrollView = 'right';
+    }
+  }
+
+  _handleTouchEndRight() {
+    if (this.firstScrollView === 'right') {
+      this.firstScrollView = null;
+    }
+  }
+
+  _renderSumLeft() {
+    return (
+      <View style={styles.itemContainer}>
+        <View style={styles.currencyGroup}>
+          <Text style={styles.itemCurrency}>{I18n.t('transactions.profit.titleSum')}</Text>
+        </View>
+      </View>
+    )
+  }
+
+  _renderSumCenter() {
     const { sum } = this.state;
 
     if (sum.deposit) {
       return (
-        <View style={styles.itemContainer}>
-          <View style={styles.currencyGroup}>
-            <Text style={[styles.itemCurrency, { fontWeight: 'bold' }]}>합계</Text>
+        <View style={[styles.itemContainer,]}>
+          <View style={styles.profitGroup}>
+            <Text style={styles.itemBalanceSum}>{sum.startingBalance}</Text>
+            <Text style={styles.itemBalanceSum}>{Consts.CURRENCY_KRW.toUpperCase()}</Text>
           </View>
 
           <View style={styles.profitGroup}>
-            <Text style={[styles.itemCurrency]}>{sum.startingBalance}</Text>
-            <Text style={[styles.itemCurrency]}>{Consts.CURRENCY_KRW.toUpperCase()}</Text>
-
+            <Text style={styles.itemDepositSum}>{sum.deposit}</Text>
+            <Text style={styles.itemDepositSum}>{Consts.CURRENCY_KRW.toUpperCase()}</Text>
           </View>
 
           <View style={styles.profitGroup}>
-            <Text style={styles.itemDeposit}>{sum.deposit}</Text>
-            <Text style={styles.itemDeposit}>{Consts.CURRENCY_KRW.toUpperCase()}</Text>
+            <Text style={styles.itemWithDrawlSum}>{sum.withdraw}</Text>
+            <Text style={styles.itemWithDrawlSum}>{Consts.CURRENCY_KRW.toUpperCase()}</Text>
           </View>
 
           <View style={styles.profitGroup}>
-            <Text style={styles.itemWithDrawl}>{sum.withdraw}</Text>
-            <Text style={styles.itemWithDrawl}>{Consts.CURRENCY_KRW.toUpperCase()}</Text>
-          </View>
-
-          <View style={styles.profitGroup}>
-            <Text style={[styles.itemCurrency]}>{sum.endingBalance}</Text>
-            <Text style={[styles.itemCurrency]}>{Consts.CURRENCY_KRW.toUpperCase()}</Text>
+            <Text style={styles.itemBalanceSum}>{sum.endingBalance}</Text>
+            <Text style={styles.itemBalanceSum}>{Consts.CURRENCY_KRW.toUpperCase()}</Text>
           </View>
 
           <View style={styles.profitGroup}>
             <Text
-              style={this._checkDecrease(sum.increaseBalance) ? styles.decreaseChange : styles.increaseChange}>
+              style={this._checkDecrease(sum.increaseBalance) ? styles.decreaseSumChange : styles.increaseSumChange}>
               {sum.increaseBalance}
             </Text>
             <Text
-              style={this._checkDecrease(sum.increaseBalance) ? styles.decreaseChange : styles.increaseChange}>{Consts.CURRENCY_KRW.toUpperCase()}</Text>
+              style={this._checkDecrease(sum.increaseBalance) ? styles.decreaseSumChange : styles.increaseSumChange}>{Consts.CURRENCY_KRW.toUpperCase()}</Text>
           </View>
 
-          <View style={[styles.profitGroup, {marginRight: scale(10)}]}>
-            <Text
-              style={this._checkDecrease(sum.percentIncrease) ? styles.decreaseChange : styles.increaseChange}>{sum.percentIncrease}</Text>
-          </View>
+
         </View>
       )
     }
 
   }
 
-  _renderItem({ item }) {
-    const startBalance = this.getStartingBalanceByCoin(item);
-    const increase = this.getIncreaseBalanceByCoin(item);
-    const percent = this.getPercentIncreaseBalance(increase, startBalance) + '%';
+  _renderSumRight() {
+    const { sum } = this.state;
 
+    if (sum.deposit) {
+      return (
+        <View style={styles.itemContainer}>
+          <View style={[styles.profitRightGroup, { marginRight: scale(10) }]}>
+            <Text
+              style={this._checkDecrease(sum.percentIncrease) ? styles.decreaseSumChange : styles.increaseSumChange}>{sum.percentIncrease}</Text>
+          </View>
+        </View>
+
+      )
+    }
+  }
+
+  _renderItem({ item }) {
     return (
       <View style={styles.itemContainer}>
         <View style={styles.currencyGroup}>
-          <Text style={[styles.itemCurrency, { fontWeight: 'bold' }]}>{getCurrencyName(item.currency)}</Text>
+          <Text style={styles.itemCurrency}>{getCurrencyName(item.currency)}</Text>
         </View>
+      </View>
+    )
+  }
 
+  _renderItemCenter({ item }) {
+    const startBalance = this.getStartingBalanceByCoin(item);
+    const increase = this.getIncreaseBalanceByCoin(item);
+
+    return (
+      <View style={[styles.itemContainer]}>
         <View style={styles.profitGroup}>
-          <Text style={[styles.itemCurrency]}>{startBalance}</Text>
-          <Text style={[styles.itemCurrency]}>{getCurrencyName(item.currency)}</Text>
-
+          <Text style={[styles.itemDeposit]}>{startBalance}</Text>
+          <Text style={[styles.itemBalance]}>{getCurrencyName(item.currency)}</Text>
         </View>
 
         <View style={styles.profitGroup}>
@@ -250,8 +387,8 @@ class ProfitAndLossScreen extends BaseScreen {
         </View>
 
         <View style={styles.profitGroup}>
-          <Text style={[styles.itemCurrency]}>{formatCurrency(item.ending_balance, item.currency)}</Text>
-          <Text style={[styles.itemCurrency]}>{getCurrencyName(item.currency)}</Text>
+          <Text style={[styles.itemBalance]}>{formatCurrency(item.ending_balance, item.currency)}</Text>
+          <Text style={[styles.itemBalance]}>{getCurrencyName(item.currency)}</Text>
         </View>
 
         <View style={styles.profitGroup}>
@@ -262,8 +399,20 @@ class ProfitAndLossScreen extends BaseScreen {
           <Text
             style={this._checkDecrease(increase) ? styles.decreaseChange : styles.increaseChange}>{getCurrencyName(item.currency)}</Text>
         </View>
+        <View style={{width: scale(20)}}></View>
 
-        <View style={[styles.profitGroup, {marginRight: scale(10)}]}>
+      </View>
+    )
+  }
+
+  _renderItemRight({ item }) {
+    const startBalance = this.getStartingBalanceByCoin(item);
+    const increase = this.getIncreaseBalanceByCoin(item);
+    const percent = this.getPercentIncreaseBalance(increase, startBalance) + '%';
+
+    return (
+      <View style={styles.itemContainer}>
+        <View style={[styles.profitRightGroup, { marginRight: scale(10) }]}>
           <Text style={this._checkDecrease(percent) ? styles.decreaseChange : styles.increaseChange}>{percent}</Text>
         </View>
       </View>
@@ -287,15 +436,51 @@ class ProfitAndLossScreen extends BaseScreen {
           {this._renderButtonSeach()}
         </View>
 
-        <View>
-          <ScrollView horizontal={true} contentContainerStyle={{ flexDirection: 'column' }}>
+        <View style={{ flexDirection: 'row' }}>
+          <View style={{ flexDirection: 'column' }}>
             <HeaderProfitAndLoss titles={titles}/>
-            {this._renderSum()}
+            {this._renderSumLeft()}
             <FlatList data={transactions}
+                      onScroll={(event) => this._onLeftListScroll(event)}
+                      ref={elm => this.flatListLeft = elm}
+                      onMomentumScrollStart={() => this._handleLeftMomentumStart()}
+                      onMomentumScrollEnd={() => this._handleLeftMomentumEnd()}
+                      onTouchStart={()=> this._handleTouchStartLeft()}
+                      onTouchEnd={()=> this._handleTouchEndLeft()}
                       renderItem={this._renderItem.bind(this)}
               // onEndReached={this._handleLoadMore.bind(this)}
                       onEndThreshold={100}/>
+          </View>
+
+          <ScrollView horizontal={true} contentContainerStyle={{ flexDirection: 'column' }}>
+            <HeaderProfitCenter titles={titles}/>
+            {this._renderSumCenter()}
+            <FlatList data={transactions}
+                      onScroll={(event) => this._onCenterListScroll(event)}
+                      ref={elm => this.flatListCenter = elm}
+                      onMomentumScrollStart={() => this._handleCenterMomentumStart()}
+                      onMomentumScrollEnd={() => this._handleCenterMomentumEnd()}
+                      onTouchStart={()=> this._handleTouchStartCenter()}
+                      onTouchEnd={()=> this._handleTouchEndCenter()}
+                      renderItem={this._renderItemCenter.bind(this)}
+              // onEndReached={this._handleLoadMore.bind(this)}
+                      onEndThreshold={100}/>
           </ScrollView>
+
+          <View style={styles.profitRightContainer}>
+            <HeaderProfitRight titles={titles}/>
+            {this._renderSumRight()}
+            <FlatList data={transactions}
+                      onScroll={(event) => this._onRightListScroll(event)}
+                      ref={elm => this.flatListRight = elm}
+                      onMomentumScrollStart={() => this._handleRightMomentumStart()}
+                      onMomentumScrollEnd={() => this._handleRightMomentumEnd()}
+                      onTouchStart={()=> this._handleTouchStartRight()}
+                      onTouchEnd={()=> this._handleTouchEndRight()}
+                      renderItem={this._renderItemRight.bind(this)}
+              // onEndReached={this._handleLoadMore.bind(this)}
+                      onEndThreshold={100}/>
+          </View>
 
         </View>
       </View>
@@ -315,10 +500,12 @@ const styles = ScaledSheet.create({
     flexDirection: 'column',
     justifyContent: 'center',
     alignItems: 'center',
-    height: '25@s',
+    height: '22@s',
     margin: '6@s',
-    width: '35@s',
-    borderRadius: '4@s'
+    width: '40@s',
+    borderRadius: '2@s',
+    borderColor: '#000',
+    borderWidth: '0.6@s'
   },
   textSearch: {
     fontSize: '12@s',
@@ -326,32 +513,73 @@ const styles = ScaledSheet.create({
   },
   itemContainer: {
     flexDirection: 'row',
-    height: '50@s',
+    height: '40@s',
     borderBottomColor: CommonColors.separator,
     borderBottomWidth: '1@s',
   },
   itemCurrency: {
     color: CommonColors.mainText,
-    fontSize: '12@s'
+    fontSize: '12@s',
+    ...Fonts.OpenSans_Bold
   },
   itemDeposit: {
     color: CommonColors.increased,
-    fontSize: '12@s'
+    fontSize: '10@s',
+    ...Fonts.OpenSans
+  },
+  itemDepositSum: {
+    color: CommonColors.increased,
+    fontSize: '10@s',
+    ...Fonts.OpenSans_Bold
   },
   itemWithDrawl: {
     color: CommonColors.decreased,
-    fontSize: '12@s'
+    fontSize: '10@s',
+    ...Fonts.OpenSans
+  },
+  itemWithDrawlSum: {
+    color: CommonColors.decreased,
+    fontSize: '10@s',
+    ...Fonts.OpenSans_Bold
+  },
+  itemBalance: {
+    color: CommonColors.mainText,
+    fontSize: '10@s',
+    ...Fonts.OpenSans
+  },
+  itemBalanceSum: {
+    color: CommonColors.mainText,
+    fontSize: '10@s',
+    ...Fonts.OpenSans_Bold
   },
   increaseChange: {
     color: CommonColors.increased,
-    fontSize: '12@s'
+    fontSize: '10@s',
+    ...Fonts.OpenSans,
   },
   decreaseChange: {
     color: CommonColors.decreased,
-    fontSize: '12@s'
+    fontSize: '10@s',
+    ...Fonts.OpenSans,
+  },
+  decreaseSumChange: {
+    color: CommonColors.decreased,
+    fontSize: '10@s',
+    ...Fonts.OpenSans_Bold,
+  },
+  increaseSumChange: {
+    color: CommonColors.increased,
+    fontSize: '10@s',
+    ...Fonts.OpenSans_Bold,
   },
   profitGroup: {
-    width: '100@s',
+    width: '80@s',
+    flexDirection: 'column',
+    alignItems: 'flex-end',
+    justifyContent: 'center',
+  },
+  profitRightGroup: {
+    width: '50@s',
     flexDirection: 'column',
     alignItems: 'flex-end',
     justifyContent: 'center',
@@ -365,10 +593,16 @@ const styles = ScaledSheet.create({
   },
   viewDatePicker: {
     flexDirection: 'row',
+    height: '40@s',
     alignItems: 'center'
   },
   viewSymbol: {
     alignSelf: 'center',
-    marginLeft: scale(20)
+    marginLeft: '10@s'
+  },
+  profitRightContainer: {
+    flexDirection: 'column',
+    borderLeftWidth: '1@s',
+    borderLeftColor: CommonColors.separator
   }
 });

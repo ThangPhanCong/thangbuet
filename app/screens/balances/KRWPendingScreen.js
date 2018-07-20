@@ -1,13 +1,14 @@
 import React from 'react';
-import { Alert, ScrollView, Text, TouchableOpacity, View } from 'react-native'
+import { Alert, ScrollView, Text, TouchableOpacity, View, Image } from 'react-native'
 import BaseScreen from '../BaseScreen'
 
 import ScaledSheet from '../../libs/reactSizeMatter/ScaledSheet'
 import { CheckBox } from 'react-native-elements'
 import rf from '../../libs/RequestFactory'
 import I18n from '../../i18n/i18n'
-import { formatCurrency, } from '../../utils/Filters'
+import { formatCurrency, getCurrencyName } from '../../utils/Filters'
 import Modal from "react-native-modal"
+import { CommonColors, CommonSize, CommonStyles, Fonts } from '../../utils/CommonStyles'
 
 export default class KRWPendingScreen extends BaseScreen {
   constructor(props) {
@@ -76,20 +77,20 @@ export default class KRWPendingScreen extends BaseScreen {
         {isPending &&
           <ScrollView >
             <View style={styles.alignCenter}>
-              <Text style={{ fontWeight: 'bold' }}>{symbol.code.toUpperCase() + " " + I18n.t('deposit.title')}</Text>
+              <Text style={styles.title}>{getCurrencyName(symbol.code) + " " + I18n.t('deposit.title')}</Text>
             </View>
 
             <View style={[styles.alignCenter, styles.directionColumn, styles.containerMargin]}>
-              <View style={[styles.directionRow, styles.marginTopBottom10]}>
+              <View style={[styles.directionRow, styles.spaceRow]}>
                 <Text style={styles.leftView}>{I18n.t('deposit.pendingAccount')}</Text>
                 <View style={styles.rightView}>
-                  <Text style={[styles.rightContent, { fontWeight: 'bold' }]}> {formatCurrency(symbol.balance, this.currency)}
-                    <Text style={{ fontSize: 11 }}>{I18n.t('funds.currency')}</Text>
+                  <Text style={[styles.rightContent, styles.amount]}> {formatCurrency(symbol.balance, this.currency)}
+                    <Text style={styles.amountSymbol}>{I18n.t('funds.currency')}</Text>
                   </Text>
                 </View>
               </View>
 
-              <View style={[styles.directionRow, styles.marginTopBottom10]}>
+              <View style={[styles.directionRow, styles.spaceRow]}>
                 <Text style={styles.leftView}>{I18n.t('deposit.pendingAmount')}</Text>
                 <View style={styles.rightView}>
                   <Text style={styles.rightContent}>
@@ -98,7 +99,7 @@ export default class KRWPendingScreen extends BaseScreen {
                 </View>
               </View>
 
-              <View style={[styles.directionRow, styles.marginTopBottom10]}>
+              <View style={[styles.directionRow, styles.spaceRow]}>
                 <Text style={styles.leftView}>{I18n.t('deposit.pendingBankName')}</Text>
                 <View style={styles.rightView}>
                   <Text style={styles.rightContent}>
@@ -108,7 +109,7 @@ export default class KRWPendingScreen extends BaseScreen {
               </View>
 
               {/* //TODO check lable 입금할 계좌 */}
-              <View style={[styles.directionRow, styles.marginTopBottom10]}>
+              <View style={[styles.directionRow, styles.spaceRow]}>
                 <Text style={styles.leftView}>{I18n.t('deposit.pendingBankAccount')}</Text>
                 <View style={styles.rightView}>
                   <Text style={styles.rightContent}>
@@ -117,7 +118,7 @@ export default class KRWPendingScreen extends BaseScreen {
                 </View>
               </View>
 
-              <View style={[styles.directionRow, styles.marginTopBottom10]}>
+              <View style={[styles.directionRow, styles.spaceRow]}>
                 <Text style={styles.leftView}>{I18n.t('deposit.pendingAccountNote')}</Text>
                 <View style={styles.rightView}>
                   <Text style={styles.rightContent}>
@@ -126,10 +127,10 @@ export default class KRWPendingScreen extends BaseScreen {
                 </View>
               </View>
 
-              <View style={[styles.directionRow, styles.marginTopBottom10]}>
+              <View style={[styles.directionRow, styles.spaceRow]}>
                 <Text style={styles.leftView}>{I18n.t('deposit.pendingDepositCode')}</Text>
                 <View style={styles.rightView}>
-                  <Text style={[styles.rightContent, { color: 'red', fontWeight: 'bold' }]}>
+                  <Text style={[styles.rightContent, styles.depositCode]}>
                     {transaction.deposit_code}
                   </Text>
                 </View>
@@ -137,22 +138,27 @@ export default class KRWPendingScreen extends BaseScreen {
 
             </View>
             <TouchableOpacity
+              activeOpacity={1}
               onPress={() => this.setState({ checked: !this.state.checked })}
               style={styles.checkboxOutline}>
-              <CheckBox
-                containerStyle={{ backgroundColor: '#aaaaaa', borderWidth: 0 }}
-                checkedColor='blue'
-                uncheckedColor='blue'
-                size={15}
-                iconRight
-                checked={this.state.checked}
-                onPress={() => this.setState({ checked: !this.state.checked })} />
-              <TouchableOpacity style={{ marginLeft: -15 }}>
-                <Text style={{ color: 'blue' }}>{I18n.t('deposit.pendingNote')}</Text>
+              {this.state.checked ?
+                <Image
+                  resizeMode="contain"
+                  style={styles.iconLogo}
+                  source={require('../../../assets/balance/checked.png')} />
+                :
+                <Image
+                  resizeMode="contain"
+                  style={styles.iconLogo}
+                  source={require('../../../assets/balance/unchecked.png')} />
+              }
+              <TouchableOpacity>
+                <Text style={{ color: 'rgba(0, 112, 192, 1)' }}>{I18n.t('deposit.pendingNote')}</Text>
               </TouchableOpacity>
               <Text style={{}}>{I18n.t('deposit.pendingCheck')}</Text>
             </TouchableOpacity>
             <TouchableOpacity
+              activeOpacity={1}
               disabled={!this.state.checked}
               onPress={() => this.setState({ modalConfirm: true })}
               style={[styles.confirm, this.state.checked ? styles.enable : styles.disable]}>
@@ -166,25 +172,28 @@ export default class KRWPendingScreen extends BaseScreen {
           onBackdropPress={() => this.setState({ modalConfirm: false })}>
           <View style={styles.modalStyle}>
             <View style={styles.headerModal}>
-              <Text>{I18n.t('deposit.confirmTitle')}</Text>
+              <Text style={[styles.fontSize12, styles.modalText]}>{I18n.t('deposit.confirmTitle')}</Text>
             </View>
 
             <View style={styles.krwStyle}>
-              <Text style={{ marginRight: 10 }}>{I18n.t('deposit.amountToDeposit')}</Text>
-              <Text>{formatCurrency(transaction.amount, this.currency)}
-                <Text style={{ fontSize: 11 }}>{I18n.t('funds.currency')}</Text>
+              <Text style={[styles.fontSize12, styles.modalText, styles.marginRight10]}>{I18n.t('deposit.amountToDeposit')}</Text>
+              <Text style={[styles.fontSize12, styles.modalText, { ...Fonts.NanumGothic_Bold }]}>
+                {formatCurrency(transaction.amount, this.currency)}
+                <Text style={{ ...Fonts.NanumGothic_Regular }}>{I18n.t('funds.currency')}</Text>
               </Text>
             </View>
-            <Text style={{ marginTop: 10, marginBottom: 10 }}>{I18n.t('deposit.pendingConfirmContent')}</Text>
+            <Text style={[styles.fontSize12, styles.modalText, styles.marginBoth10]}>
+              {I18n.t('deposit.pendingConfirmContent')}
+            </Text>
             <View style={styles.modalAction}>
               <TouchableOpacity
                 onPress={() => this.setState({ modalConfirm: false })}
-                style={styles.note}>
+                style={[styles.modalConfirmBtn, styles.btnCancel]}>
                 <Text style={styles.textNote}>{I18n.t('deposit.actionCancel')}</Text>
               </TouchableOpacity>
               <TouchableOpacity
                 onPress={this._execute.bind(this)}
-                style={styles.confirmStyle}>
+                style={[styles.modalConfirmBtn, styles.btnAccept]}>
                 <Text style={styles.textConfirmStyle}>{I18n.t('deposit.actionConfirm')}</Text>
               </TouchableOpacity>
             </View>
@@ -200,50 +209,60 @@ export default class KRWPendingScreen extends BaseScreen {
 const styles = ScaledSheet.create({
   alignCenter: { alignItems: 'center', justifyContent: 'center' },
   directionColumn: { flexDirection: 'column', flex: 1 },
-  directionRow: { flexDirection: 'row' },
-  containerMargin: { marginTop: 10, marginLeft: 40, marginRight: 40 },
-  marginTopBottom10: { marginBottom: 10, marginTop: 10 },
-  leftView: { flex: 0.7 },
+  directionRow: { flexDirection: 'row', alignItems: 'flex-end' },
+  containerMargin: { marginTop: '10@s', marginLeft: '40@s', marginRight: '40@s' },
+  spaceRow: { marginBottom: '10@s', marginTop: '10@s' },
+  leftView: { flex: 0.7, ...Fonts.NanumGothic_Regular, fontSize: '12@s' },
   rightView: { flex: 1, alignContent: 'flex-end' },
-  rightContent: { flex: 1, alignSelf: 'flex-end' },
+  rightContent: { flex: 1, alignSelf: 'flex-end', ...Fonts.NanumGothic_Regular, fontSize: '12@s' },
   confirm: {
-    flexDirection: 'row', height: 45, marginTop: 20,
-    flex: 1, marginLeft: 20, marginRight: 20, justifyContent: 'center', alignItems: 'center',
+    flexDirection: 'row', height: '35@s', marginTop: '20@s', borderRadius: '4@s', borderColor: "rgba(0, 0, 0, 0.1)",
+    flex: 1, marginLeft: '40@s', marginRight: '40@s', justifyContent: 'center', alignItems: 'center',
   },
-  enable: { backgroundColor: '#e58d29' },
-  disable: { backgroundColor: '#aaaaaa' },
+  enable: { backgroundColor: 'rgba(237, 125, 49, 1)' },
+  disable: { backgroundColor: 'rgba(242, 242, 242, 1)' },
   textEnable: { color: 'white' },
   textDisbale: { color: 'black' },
   modalStyle: {
-    backgroundColor: "white",
-    justifyContent: "center",
-    alignItems: "center",
-    alignContent: 'center',
-    borderRadius: 4,
-    borderColor: "rgba(0, 0, 0, 0.1)"
+    backgroundColor: "white", justifyContent: "center", alignItems: "center",
+    alignContent: 'center', borderRadius: '4@s', borderColor: "rgba(0, 0, 0, 0.1)"
   },
   headerModal: {
-    borderBottomWidth: 1, borderColor: '#aaa', height: 50, width: '100%',
+    borderBottomWidth: '1@s', borderColor: 'rgba(235, 235, 235, 1)', height: '50@s', width: '100%',
     justifyContent: 'center', alignItems: 'center'
   },
   krwStyle: {
-    width: '100%', justifyContent: 'center',
-    alignItems: 'center', flexDirection: 'row',
-    marginBottom: 10, marginTop: 20
+    width: '100%', justifyContent: 'center', alignItems: 'flex-end', flexDirection: 'row',
+    marginBottom: '10@s', marginTop: '20@s'
   },
-  note: { width: '45%', justifyContent: 'center', backgroundColor: '#aaa', height: 45 },
+  note: { width: '45%', justifyContent: 'center', backgroundColor: '#aaa', height: '45@s' },
   modalAction: {
-    width: '70%', justifyContent: 'space-between',
-    alignItems: 'center', flexDirection: 'row',
-    marginBottom: 20, marginTop: 10
+    width: '70%', justifyContent: 'space-between', alignItems: 'center', flexDirection: 'row',
+    marginBottom: '20@s', marginTop: '10@s'
   },
   textNote: { color: 'white', textAlign: 'center' },
-  confirmStyle: { width: '45%', justifyContent: 'center', backgroundColor: 'blue', height: 45 },
+  confirmStyle: { width: '45%', justifyContent: 'center', backgroundColor: 'blue', height: '45@s' },
   textConfirmStyle: { color: 'white', textAlign: 'center' },
   checkboxOutline: {
-    marginTop: 20, backgroundColor: '#aaaaaa', height: 45, flexDirection: 'row',
-    flex: 1, marginLeft: 20, marginRight: 20, justifyContent: 'center', alignItems: 'center'
+    marginTop: '20@s', backgroundColor: 'rgba(242, 242, 242, 1)', height: '35@s', flexDirection: 'row',
+    flex: 1, marginLeft: '40@s', marginRight: '40@s', justifyContent: 'center', alignItems: 'center',
+    borderRadius: '4@s', borderColor: "rgba(0, 0, 0, 0.1)"
   },
   visible: { flex: 1 },
-  unvisible: { flex: 0 }
+  unvisible: { flex: 0 },
+  title: { ...Fonts.NotoSans_Bold, fontSize: '14@s', marginTop: '10@s' },
+  amount: { ...Fonts.OpenSans_Bold, fontSize: '16@s' },
+  amountSymbol: { fontSize: '10@s' },
+  depositCode: { color: 'red', ...Fonts.NanumSquareOTF_ExtraBold, fontSize: '16@s' },
+  iconLogo: { height: '15@s', width: '15@s', margin: '2@s', marginRight: '5@s' },
+  fontSize12: { fontSize: '12@s' },
+  modalText: { ...Fonts.NanumGothic_Regular, alignContent: 'flex-end' },
+  marginRight10: { marginRight: '10@s' },
+  modalConfirmBtn: {
+    width: '45%', justifyContent: 'center', height: '35@s',
+    borderColor: 'rgba(222, 227, 235, 1)', borderRadius: '4@s', borderWidth: '1@s'
+  },
+  modalConfirmText: { color: 'white', textAlign: 'center', ...Fonts.NanumGothic_Regular, fontSize: '12@s' },
+  btnCancel: { backgroundColor: 'rgba(127, 127, 127, 1)' },
+  btnAccept: { backgroundColor: 'rgba(0, 112, 192, 1)' }
 });

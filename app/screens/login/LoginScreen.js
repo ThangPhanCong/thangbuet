@@ -2,9 +2,10 @@ import React from 'react';
 import {
   Text,
   TextInput,
-  TouchableWithoutFeedback,
+  TouchableOpacity,
   View,
   Image,
+  StyleSheet,
   ImageBackground
 } from 'react-native';
 import { Icon } from 'react-native-elements'
@@ -15,7 +16,7 @@ import BaseScreen from '../BaseScreen';
 import LoginCommonStyle from './LoginCommonStyle'
 import ScaledSheet from '../../libs/reactSizeMatter/ScaledSheet';
 import { scale } from '../../libs/reactSizeMatter/scalingUtils';
-import { CommonSize, CommonStyles } from "../../utils/CommonStyles";
+import { CommonSize, CommonStyles, Fonts } from "../../utils/CommonStyles";
 
 export default class LoginScreen extends BaseScreen {
 
@@ -24,8 +25,12 @@ export default class LoginScreen extends BaseScreen {
     emailValidation: null,
     passwordEmpty: null,
     messageUnCorrect: null,
-    password: ''
+    otpValidation: null,
+    password: '',
+    otp: '',
+    checkOtp: false,
   }
+
 
   checkValidationLogin() {
     const { email, password } = this.state;
@@ -44,13 +49,14 @@ export default class LoginScreen extends BaseScreen {
     return reg.test(email);
   }
 
+
   async _onPressLogin() {
     try {
-      const { email, password } = this.state;
+      const { email, password, otp } = this.state;
       const emailLogical = this._checkEmail(email);
 
       if (emailLogical && password.length) {
-        let responseUser = await rf.getRequest('UserRequest').login(email, password);
+        let responseUser = await rf.getRequest('UserRequest').login(email, password, otp);
 
         AppPreferences.saveAccessToken(responseUser.access_token);
         window.GlobalSocket.connect();
@@ -59,14 +65,38 @@ export default class LoginScreen extends BaseScreen {
         this.checkValidationLogin();
       }
     } catch (err) {
-      this.setState({
-        emailValidation: null,
-        passwordEmpty: null,
-        messageUnCorrect: I18n.t('login.messageUnCorrect')
-      });
+      if (err.error == 'invalid_otp'){
+        if (!this.state.checkOtp){
+          this.setState({ checkOtp: true, emailValidation: null, passwordEmpty: null})
+        } else {
+          this.setState({ messageUnCorrect: I18n.t('login.otpUncorrect')})
+          setTimeout(() => this.setState({ messageUnCorrect: null }), 1000);
+        }
 
-      setTimeout(() => this.setState({ messageUnCorrect: null }), 1000);
-      console.log('err', err)
+      }
+      else {
+        this.setState({
+          emailValidation: null,
+          passwordEmpty: null,
+          messageUnCorrect: I18n.t('login.messageUnCorrect')
+        });
+
+        setTimeout(() => this.setState({ messageUnCorrect: null }), 1000);
+      }
+      console.log('err', err);
+
+
+    }
+
+  }
+
+  onBackButtonPressAndroid() {
+    if (this.state.checkOtp) {
+      this.setState({ checkOtp: false });
+      return true
+    }
+    else {
+      return super.onBackButtonPressAndroid()
     }
 
   }
@@ -77,9 +107,50 @@ export default class LoginScreen extends BaseScreen {
       password,
       emailValidation,
       passwordEmpty,
-      messageUnCorrect
+      messageUnCorrect,
+      otp,
+      checkOtp,
+      otpValidation
     } = this.state;
+    let rawInput1;
+    if (this.state.checkOtp) {
+      rawInput1 =
+        <View style={[styles.viewInput]}>
+          <TextInput
+            value={otp}
+            keyboardType= 'numeric'
+            placeholder={I18n.t('login.otp')}
+            // blurOnSubmit={false}
+            placeholderTextColor='#fff'
+            underlineColorAndroid='transparent'
+            autoCapitalize='none'
+            style={[styles.inputLogin, {flex: 1, textAlign: 'center' }]}
+            returnKeyType={"next"}
+            onChangeText={(text) => this.setState({ otp: text })}/>
+        </View>
+    } else {
+      rawInput1 =
+        <View style={styles.viewInput}>
+          <Image
+            resizeMode={'contain'}
+            style={styles.iconLogin}
+            source={require('../../../assets/emailLogin/email.png')}
+          />
+          <TextInput
+            value={email}
+            keyboardType='email-address'
+            placeholder={I18n.t('login.email')}
+            // blurOnSubmit={false}
+            placeholderTextColor='#fff'
+            underlineColorAndroid='transparent'
+            autoCapitalize='none'
+            style={[styles.inputLogin]}
+            returnKeyType={"next"}
+            onChangeText={(text) => this.setState({ email: text })}/>
+        </View>
 
+
+    }
     return (
       <View style={styles.screen}>
         <Image
@@ -92,25 +163,8 @@ export default class LoginScreen extends BaseScreen {
         </View>
 
         <View style={styles.rowFlexOne}/>
-        <View style={styles.viewInput}>
-          <Image
-            resizeMode={'contain'}
-            style={styles.iconLogin}
-            source={require('../../../assets/emailLogin/email.png')}
-          />
-          <TextInput
-            value={email}
-            keyboardType='email-address'
-            placeholder={I18n.t('login.email')}
-            // blurOnSubmit={false}
-            placeholderTextColor='#cfd0d1'
-            underlineColorAndroid='transparent'
-            autoCapitalize='none'
-            style={[styles.inputLogin]}
-            returnKeyType={"next"}
-            onChangeText={(text) => this.setState({ email: text })}/>
-        </View>
 
+        {rawInput1}
         <Text style={styles.emptyInforLogin}>{emailValidation}</Text>
 
         <View style={[styles.viewInput, styles.inputRowMarginTop]}>
@@ -123,7 +177,7 @@ export default class LoginScreen extends BaseScreen {
             style={[styles.inputLogin]}
             value={password}
             secureTextEntry={true}
-            placeholderTextColor='#cfd0d1'
+            placeholderTextColor='#fff'
             placeholder={I18n.t('login.password')}
             underlineColorAndroid='transparent'
             onChangeText={(text) => this.setState({ password: text })}/>
@@ -138,14 +192,13 @@ export default class LoginScreen extends BaseScreen {
             size={17}
             onPress={() => this._toggleShowPassWord()}/>
         </View>
-
         <Text style={styles.emptyInforLogin}>{passwordEmpty}</Text>
 
-        <TouchableWithoutFeedback onPress={this._onPressLogin.bind(this)}>
-          <View style={styles.viewButtonLogin}>
+        <TouchableOpacity onPress={this._onPressLogin.bind(this)} style={styles.viewButtonLogin}>
+          <View>
             <Text style={styles.textLogin}>{I18n.t('login.login')}</Text>
           </View>
-        </TouchableWithoutFeedback>
+        </TouchableOpacity>
 
         <Text style={styles.emptyInforLogin}>{messageUnCorrect}</Text>
 
@@ -179,7 +232,7 @@ const styles = ScaledSheet.create({
     textDecorationLine: 'underline',
   },
   inputRowMarginTop: {
-    marginTop: "14@s",
+    marginTop: "11@s",
   },
   showPassword: {
     backgroundColor: 'transparent',
@@ -193,34 +246,41 @@ const styles = ScaledSheet.create({
   },
   textLogo: {
     color: '#FFF',
-    fontSize: '35@s'
+    fontSize: '40@s',
+    ...Fonts.OpenSans_Bold
   },
   titleLogo: {
     color: '#FFF',
-    fontSize: '10@s'
+    fontSize: '10@s',
+    ...Fonts.NotoSans_Regular
   },
   inputLogin: {
     height: '40@s',
     color: '#FFF',
-    flex: 0.8,
+    flex: 1,
+    textAlign: 'center'
   },
   iconLogin: {
+    position: 'absolute',
     width: '15@s',
     marginBottom: '3@s',
     flex: 0.2,
     height: '15@s',
+    left: '22@s'
   },
   viewInput: {
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
     borderBottomColor: '#FFF',
-    borderBottomWidth: '0.5@s'
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    paddingLeft: '50@s',
+    paddingRight: '50@s'
   },
   viewButtonLogin: {
     // flex: 1,
     width: '100%',
-    marginTop: '30@s',
+    marginTop: '35@s',
     height: '43@s',
     backgroundColor: '#467b92',
     flexDirection: 'row',
@@ -230,7 +290,8 @@ const styles = ScaledSheet.create({
   },
   textLogin: {
     fontSize: '14@s',
-    color: '#FFF'
+    color: '#FFF',
+    ...Fonts.OpenSans_Light
   },
   emptyInforLogin: {
     alignSelf: 'flex-start',

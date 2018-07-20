@@ -13,7 +13,7 @@ import {
   createStackNavigator,
 } from 'react-navigation'
 import ScaledSheet from '../../libs/reactSizeMatter/ScaledSheet';
-import { CommonColors, CommonSize, CommonStyles } from '../../utils/CommonStyles';
+import { CommonColors, CommonSize, CommonStyles, Fonts } from '../../utils/CommonStyles';
 import I18n from '../../i18n/i18n';
 import rf from '../../libs/RequestFactory';
 import BaseScreen from '../BaseScreen'
@@ -191,7 +191,7 @@ export default class TradingOrderBookScreen extends BaseScreen {
   _renderQuantityAndSetting() {
     return (
       <View style={styles.quantityAndSettingGroup}>
-        <Text style={styles.quantityLabel}>{I18n.t('orderBook.quantity')}</Text>
+        <Text style={styles.headerLabel}>{I18n.t('orderBook.quantity')}</Text>
         <CurrencyInput
             value={this.state.quantity}
             precision={this.state.quantityPrecision}
@@ -201,12 +201,20 @@ export default class TradingOrderBookScreen extends BaseScreen {
             underlineColorAndroid='transparent'
             placeholderTextColor='#4E545E'/>
 
-        <Text>{I18n.t('orderBook.hand')}</Text>
-        <TextInput style={styles.input} value='-15'/>
+        <Text style={styles.headerLabel}>{I18n.t('orderBook.hand')}</Text>
+        <TextInput
+          style={[styles.input, {color: CommonColors.decreased}]}
+          value='-15'
+          editable={false}
+          underlineColorAndroid='transparent'/>
         <Text style={styles.percentText}>%</Text>
 
-        <Text>{I18n.t('orderBook.fence')}</Text>
-        <TextInput style={styles.input} value='15'/>
+        <Text style={styles.headerLabel}>{I18n.t('orderBook.fence')}</Text>
+        <TextInput
+          style={[styles.input, {color: CommonColors.increased}]}
+          value=' 15'
+          editable={false}
+          underlineColorAndroid='transparent'/>
         <Text style={styles.percentText}>%</Text>
 
         <TouchableOpacity onPress={this._openOrderBookSettingModal.bind(this)}>
@@ -228,31 +236,42 @@ const styles = ScaledSheet.create({
   quantityAndSettingGroup: {
     flexDirection: 'row',
     alignItems: 'center',
-    height: '30@s'
+    height: '37@vs',
+    paddingTop: '1@s',
+    paddingLeft: '10@s',
+    paddingRight: '10@s'
   },
-  quantityLabel: {
-    marginLeft: '10@s'
+  headerLabel: {
+    fontSize: '10@s',
+    ...Fonts.NotoSans
   },
   quantityInput: {
-    flex: 1
+    flex: 1,
+    marginLeft: '10@s',
+    marginRight: '15@s'
   },
   setting: {
-    width: '20@s'
+    width: '18@s'
   },
 
   input: {
     height: '25@s',
     paddingLeft: '5@s',
     paddingRight: '5@s',
+    paddingTop: 0,
+    paddingBottom: 0,
     marginLeft: '5@s',
     marginRight: '5@s',
     borderWidth: 1,
     borderColor: CommonColors.border,
     borderRadius: '3@s',
-    textAlign: 'right'
+    textAlign: 'right',
+    fontSize: '11@s',
+    ...Fonts.OpenSans
   },
   percentText: {
-    fontSize: '12@s',
-    marginRight: '10@s'
+    fontSize: '8@s',
+    marginRight: '10@s',
+    ...Fonts.OpenSans
   }
 });

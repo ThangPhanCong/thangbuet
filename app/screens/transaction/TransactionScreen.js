@@ -5,11 +5,12 @@ import BaseScreen from '../BaseScreen'
 import ScaledSheet from '../../libs/reactSizeMatter/ScaledSheet';
 import { TabBarTop, TabNavigator } from "react-navigation";
 import TransactionContainerScreen from "./TransactionContainerScreen";
-import { CommonColors, CommonStyles } from "../../utils/CommonStyles";
+import { CommonColors, CommonStyles, Fonts } from "../../utils/CommonStyles";
 import I18n from "../../i18n/i18n";
 import FundsHistoryScreen from "./FundsHistoryScreen";
 import ProfitAndLossScreen from "./ProfitAndLossScreen";
 import { scale } from "../../libs/reactSizeMatter/scalingUtils";
+import UIUtils from "../../utils/UIUtils";
 
 let TabBarNavigatorTransaction;
 
@@ -26,25 +27,25 @@ export default class TransactionScreen extends BaseScreen {
         OrderHistoryScreen: {
           screen: (props) => <TransactionContainerScreen {...props} title={I18n.t('transactions.orderHistoryTab')}/>,
           navigationOptions: () => ({
-            tabBarLabel: I18n.t('transactions.orderHistoryTab'),
+            tabBarLabel: (options) => UIUtils.renderTabItem(I18n.t('transactions.orderHistoryTab'), {fontSize: 14, ...options})
           })
         },
         OpenOrderScreen: {
           screen: (props) => <TransactionContainerScreen {...props} title={I18n.t('transactions.openOrderTab')}/>,
           navigationOptions: () => ({
-            tabBarLabel: I18n.t('transactions.openOrderTab'),
+            tabBarLabel: (options) => UIUtils.renderTabItem(I18n.t('transactions.openOrderTab'),{fontSize: 14, ...options})
           })
         },
         FundsHistory: {
           screen: (props) => <FundsHistoryScreen {...props} title={I18n.t('transactions.fundsHistoryTab')}/>,
           navigationOptions: () => ({
-            tabBarLabel: I18n.t('transactions.fundsHistoryTab'),
+            tabBarLabel: (options) => UIUtils.renderTabItem(I18n.t('transactions.fundsHistoryTab'), {fontSize: 14, ...options})
           })
         },
         ProfitScreen: {
           screen: (props) => <ProfitAndLossScreen {...props} title={I18n.t('transactions.profitLostTab')}/>,
           navigationOptions: () => ({
-            tabBarLabel: I18n.t('transactions.profitLostTab'),
+            tabBarLabel: (options) => UIUtils.renderTabItem(I18n.t('transactions.profitLostTab'), {fontSize: 14, ...options}, false)
           })
         }
       },
@@ -54,22 +55,7 @@ export default class TransactionScreen extends BaseScreen {
         }),
         tabBarComponent: TabBarTop,
         tabBarPosition: 'top',
-        tabBarOptions: {
-          upperCaseLabel: true,
-          activeTintColor: '#FFC000',
-          inactiveTintColor: '#D9D9D9',
-          style: {
-            backgroundColor: '#3B3838',
-          },
-          indicatorStyle: {
-            backgroundColor: '#FFC000'
-          },
-          labelStyle: {
-            fontSize: scale(12)
-          }
-        },
-        animationEnabled: false,
-        swipeEnabled: false
+        ...CommonStyles.tabOptions,
       }
     );
   }
@@ -105,7 +91,8 @@ const styles = ScaledSheet.create({
   },
   textHeader: {
     fontSize: '14@s',
-    color: CommonColors.mainText
+    color: CommonColors.mainText,
+    ...Fonts.NotoSans
   },
   imgBook: {
     marginLeft: '10@s',

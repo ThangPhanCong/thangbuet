@@ -9,9 +9,9 @@ import {
 
 import BaseScreen from '../../BaseScreen';
 import rf from '../../../libs/RequestFactory';
-import { CommonStyles } from '../../../utils/CommonStyles';
+import { CommonStyles, Fonts } from '../../../utils/CommonStyles';
 import I18n from '../../../i18n/i18n';
-
+import ScaledSheet from '../../../libs/reactSizeMatter/ScaledSheet';
 export default class ConnectionScreen extends BaseScreen {
 
   _page = 1;
@@ -180,7 +180,7 @@ export default class ConnectionScreen extends BaseScreen {
   }
 }
 
-const styles = StyleSheet.create({
+const styles = ScaledSheet.create({
   screen: {
     ...CommonStyles.screen
   },
@@ -188,18 +188,18 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   listItem: {
-    height: 64
+    height: '64@s'
   },
   listItemContainer: {
     flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
-    paddingLeft: 10,
-    paddingRight: 10
+    paddingLeft: '10@s',
+    paddingRight: '10@s'
   },
   separator: {
     flex: 1,
-    height: 1,
+    height: '1@s',
     backgroundColor: '#DEE3EB',
     opacity: 0.3
   },
@@ -221,19 +221,20 @@ const styles = StyleSheet.create({
   },
   normalHeader: {
     color: '#000',
-    fontSize: 13,
-    fontWeight: 'bold'
+    fontSize: '12@s',
+    ...Fonts.NanumGothic_Bold,
   },
   tabBar: {
     flexDirection: 'row',
     alignItems: 'center',
-    height: 36,
+    height: '36@s',
     backgroundColor: '#F8F9FB',
-    paddingLeft: 10,
-    paddingRight: 10,
+    paddingLeft: '10@s',
+    paddingRight: '10@s',
   },
   valueItem: {
-    fontSize: 13,
-    textAlign: 'center'
+    fontSize: '12@s',
+    textAlign: 'center',
+    ...Fonts.NanumGothic_Regular,
   }
 });

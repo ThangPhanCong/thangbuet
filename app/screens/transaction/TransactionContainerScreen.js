@@ -1,16 +1,16 @@
 import React, { Component } from 'react';
-import { FlatList, Text, View, TouchableWithoutFeedback, ScrollView } from "react-native";
+import { FlatList, Text, View, TouchableWithoutFeedback, ScrollView, Image } from "react-native";
 import rf from "../../libs/RequestFactory";
 import moment from "moment";
-import { scale } from "../../libs/reactSizeMatter/scalingUtils";
 import { getDayMonth, formatCurrency, getTime, getCurrencyName } from "../../utils/Filters";
 import { CommonColors, CommonStyles } from "../../utils/CommonStyles";
 import ScaledSheet from "../../libs/reactSizeMatter/ScaledSheet";
 import I18n from "../../i18n/i18n";
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { orderBy } from "lodash";
 import BitkoexDatePicker from "./common/BitkoexDatePicker";
 import HeaderTransaction from "./common/HeaderTransaction";
+import { Fonts } from "../../../app/utils/CommonStyles";
+import HeaderTransactionsRight from "./common/HeaderTransactionsRight";
 
 class TransactionContainerScreen extends Component {
   static SORT_FIELDS = {
@@ -29,8 +29,10 @@ class TransactionContainerScreen extends Component {
     start_date: moment(new Date()).subtract(1, 'months'),
     end_date: new Date(),
     sortField: TransactionContainerScreen.SORT_FIELDS.DATE,
-    sortDirection: TransactionContainerScreen.SORT_DIRECTION.DESC
+    sortDirection: TransactionContainerScreen.SORT_DIRECTION.DESC,
   }
+
+  firstScrollView = null;
 
 
   componentDidMount() {
@@ -168,14 +170,13 @@ class TransactionContainerScreen extends Component {
 
     return (
       sortField === field && sortDirection === TransactionContainerScreen.SORT_DIRECTION.ASC ?
-        <Icon
-          name='menu-up'
-          size={scale(20)}
-          color='#000'/> :
-        <Icon
-          name='menu-down'
-          size={scale(20)}
-          color='#000'/>
+        <Image
+          style={styles.iconSort}
+          source={require('../../../assets/sortAsc/asc.png')}/>
+        :
+        <Image
+          style={styles.iconSort}
+          source={require('../../../assets/sortDesc/desc.png')}/>
     )
   }
 
@@ -189,7 +190,7 @@ class TransactionContainerScreen extends Component {
   _renderStatusOrder(item) {
     return (
       <TouchableWithoutFeedback onPress={() => this._cancelTransaction(item)}>
-        <View style={styles.itemRight}>
+        <View style={styles.lastItemRightOrder}>
           <View style={styles.viewCancel}>
             <Text style={styles.textCancel}>{I18n.t('transactions.cancel')}</Text>
           </View>
@@ -199,8 +200,6 @@ class TransactionContainerScreen extends Component {
   }
 
   _renderItem({ item }) {
-    const { title } = this.props;
-
     return (
       <View style={styles.itemContainer}>
         <View style={styles.itemLeftContainer}>
@@ -210,46 +209,123 @@ class TransactionContainerScreen extends Component {
           </View>
 
           <View style={styles.coinPairContainer}>
-            <Text style={[styles.itemCoin, { fontWeight: 'bold' }]}>{getCurrencyName(item.coin)}</Text>
-            <Text style={[styles.itemCurrency, { fontWeight: 'bold' }]}>{' / ' + getCurrencyName(item.currency)}</Text>
+            <Text style={styles.itemCoin}>{getCurrencyName(item.coin)}</Text>
+            <Text style={styles.itemCurrency}>{' / ' + getCurrencyName(item.currency)}</Text>
           </View>
-        </View>
-
-        <View style={{ flexDirection: 'row' }}>
-          <View style={styles.itemRight}>
-            <Text style={styles.itemQuantity}>
-              {formatCurrency(item.quantity, item.coin)}
-            </Text>
-
-            <Text style={[styles.itemCoin]}>{getCurrencyName(item.coin)}</Text>
-          </View>
-
-          <View style={styles.itemRight}>
-            <Text style={styles.itemPrice}>{formatCurrency(item.price, item.currency)}</Text>
-            <Text style={styles.itemCurrency}>{getCurrencyName(item.currency)}</Text>
-          </View>
-
-          <View style={styles.itemRight}>
-            <Text style={styles.itemQuantityPrice}>{formatCurrency(item.price * item.quantity, item.currency)}</Text>
-            <Text style={styles.itemCurrency}>{getCurrencyName(item.currency)}</Text>
-          </View>
-
-          {title === I18n.t('transactions.openOrderTab') ? this._renderStatusOrder(item) :
-            <View style={[styles.itemRight, {marginRight: scale(10)}]}>
-              <Text style={styles.itemCoin}>
-                {formatCurrency(item.fee, item.coin)}
-              </Text>
-              <Text style={styles.itemCoin}>{getCurrencyName(item.coin)}</Text>
-            </View>}
         </View>
       </View>
     )
   }
 
+  _renderItemRight({ item }) {
+    const { title } = this.props;
+    const stylesQuantity = item.quantity.includes('-') ? styles.itemDecreaseQuantity : styles.itemIncreaseQuantity;
+
+    return (
+      <View style={styles.itemContainer}>
+        <View style={styles.itemRight}>
+          <Text style={stylesQuantity}>
+            {formatCurrency(item.quantity, item.coin)}
+          </Text>
+
+          <Text style={[styles.itemTransaction]}>{getCurrencyName(item.coin)}</Text>
+        </View>
+
+        <View style={styles.itemRight}>
+          <Text style={styles.itemPrice}>{formatCurrency(item.price, item.currency)}</Text>
+          <Text style={styles.itemTransaction}>{getCurrencyName(item.currency)}</Text>
+        </View>
+
+        <View style={styles.itemRight}>
+          <Text style={styles.itemQuantityPrice}>{formatCurrency(item.price * item.quantity, item.currency)}</Text>
+          <Text style={styles.itemTransaction}>{getCurrencyName(item.currency)}</Text>
+        </View>
+
+        {title === I18n.t('transactions.openOrderTab') ? this._renderStatusOrder(item) :
+          <View style={[styles.lastItemRight]}>
+            <Text style={styles.itemFee}>
+              {formatCurrency(item.fee, item.coin)}
+            </Text>
+            <Text style={styles.itemTransaction}>{getCurrencyName(item.coin)}</Text>
+          </View>}
+      </View>
+    )
+  }
+
+  _onLeftListScroll(event) {
+    if (this.firstScrollView === 'left') {
+      const y = event.nativeEvent.contentOffset.y;
+      this.flatListRight.scrollToOffset({
+        offset: y,
+      });
+    }
+  }
+
+  _onRightListScroll(event) {
+    if (this.firstScrollView === 'right') {
+      const y = event.nativeEvent.contentOffset.y;
+      this.flatListLeft.scrollToOffset({
+        offset: y,
+      });
+    }
+  }
+
+  _handleLeftMomentumEnd() {
+    if (this.firstScrollView === 'left') {
+      this.firstScrollView = null;
+    }
+  }
+
+  _handleLeftMomentumStart() {
+    if (this.firstScrollView === null) {
+      this.firstScrollView = 'left';
+    }
+  }
+
+  _handleRightMomentumStart() {
+    if (this.firstScrollView == null) {
+      this.firstScrollView = 'right';
+    }
+  }
+
+  _handleRightMomentumEnd() {
+    if (this.firstScrollView === 'right') {
+      this.firstScrollView = null;
+    }
+  }
+
+  _handleTouchStartLeft() {
+    if (this.firstScrollView === null) {
+      this.firstScrollView = 'left';
+    }
+  }
+
+  _handleTouchEndLeft() {
+    console.log("touch left end")
+    if (this.firstScrollView === 'left') {
+      this.firstScrollView = null;
+    }
+  }
+
+  _handleTouchStartRight() {
+    if (this.firstScrollView === null) {
+      this.firstScrollView = 'right';
+    }
+  }
+
+  _handleTouchEndRight() {
+    if (this.firstScrollView === 'right') {
+      this.firstScrollView = null;
+    }
+  }
+
   render() {
     const { transactions } = this.state;
+    const { title } = this.props;
+    const titleLast = title === I18n.t('transactions.openOrderTab') ? I18n.t('transactions.cancel') : I18n.t('transactions.fee');
+
     const titles = [I18n.t('transactions.amount'), I18n.t('transactions.orderPrice'),
-      I18n.t('transactions.excutedPrice'), I18n.t('transactions.fee')];
+      I18n.t('transactions.excutedPrice'), titleLast];
 
     return (
       <View style={styles.screen}>
@@ -261,18 +337,37 @@ class TransactionContainerScreen extends Component {
           {this._renderDatePicker('end_date')}
           {this._renderButtonSeach()}
         </View>
-
-        <View>
-          <ScrollView horizontal={true} contentContainerStyle={{ flexDirection: 'column' }}>
+        <View style={{ flexDirection: 'row' }}>
+          <View style={{ flexDirection: 'column' }}>
             <HeaderTransaction sortDate={() => this._onSortDate()}
-                               titles={titles}
                                sortPair={() => this._onSortPair()}
                                renderArrowDate={this._renderArrow(TransactionContainerScreen.SORT_FIELDS.DATE)}
                                renderArrowPair={this._renderArrow(TransactionContainerScreen.SORT_FIELDS.PAIR)}
             />
+
             <FlatList data={transactions}
+                      ref={elm => this.flatListLeft = elm}
+                      onScroll={(event) => this._onLeftListScroll(event)}
                       renderItem={this._renderItem.bind(this)}
                       onEndReached={this._handleLoadMore.bind(this)}
+                      onMomentumScrollStart={() => this._handleLeftMomentumStart()}
+                      onMomentumScrollEnd={() => this._handleLeftMomentumEnd()}
+                      onTouchStart={()=> this._handleTouchStartLeft()}
+                      onTouchEnd={()=> this._handleTouchEndLeft()}
+                      onEndThreshold={100}/>
+          </View>
+
+          <ScrollView horizontal={true} contentContainerStyle={{ flexDirection: 'column' }}>
+            <HeaderTransactionsRight titles={titles}/>
+            <FlatList data={transactions}
+                      ref={elm => this.flatListRight = elm}
+                      onScroll={(event) => this._onRightListScroll(event)}
+                      renderItem={this._renderItemRight.bind(this)}
+                      onEndReached={this._handleLoadMore.bind(this)}
+                      onMomentumScrollStart={() => this._handleRightMomentumStart()}
+                      onMomentumScrollEnd={() => this._handleRightMomentumEnd()}
+                      onTouchStart={()=> this._handleTouchStartRight()}
+                      onTouchEnd={()=> this._handleTouchEndRight()}
                       onEndThreshold={100}/>
           </ScrollView>
         </View>
@@ -290,7 +385,7 @@ const styles = ScaledSheet.create({
   },
   headerContainer: {
     flexDirection: 'row',
-    height: '50@s',
+    height: '40@s',
     backgroundColor: '#f8f9fb',
     alignItems: 'center',
     borderWidth: '1@s',
@@ -298,46 +393,72 @@ const styles = ScaledSheet.create({
   },
   itemContainer: {
     flexDirection: 'row',
-    height: '50@s',
+    height: '40@s',
     borderBottomColor: CommonColors.separator,
     borderBottomWidth: '1@s',
   },
   itemDayMonth: {
     color: CommonColors.mainText,
-    fontWeight: 'bold',
-    fontSize: '12@s'
+    fontSize: '12@s',
+    ...Fonts.OpenSans_Bold
   },
   itemTime: {
     color: CommonColors.mainText,
-    fontSize: '11@s'
+    fontSize: '11@s',
+    ...Fonts.OpenSans
   },
   itemCoin: {
     color: CommonColors.mainText,
-    fontSize: '13@s'
+    fontSize: '12@s',
+    ...Fonts.OpenSans_Bold
   },
   itemCurrency: {
     color: CommonColors.mainText,
-    fontSize: '13@s'
+    fontSize: '12@s',
+    ...Fonts.OpenSans_Bold
+  },
+  itemTransaction: {
+    color: CommonColors.mainText,
+    fontSize: '10@s',
+    ...Fonts.OpenSans
   },
   itemQuantity: {
-    fontSize: '12@s',
+    fontSize: '10@s',
+    ...Fonts.OpenSans
+  },
+  itemDecreaseQuantity: {
+    fontSize: '10@s',
+    color: CommonColors.decreased,
+    ...Fonts.OpenSans
+  },
+  itemIncreaseQuantity: {
+    fontSize: '10@s',
+    color: CommonColors.increased,
+    ...Fonts.OpenSans
   },
   itemPrice: {
     color: CommonColors.mainText,
-    fontSize: '12@s',
+    fontSize: '10@s',
+    ...Fonts.OpenSans
   },
   itemQuantityPrice: {
     color: CommonColors.mainText,
-    fontSize: '12@s',
+    fontSize: '10@s',
+    ...Fonts.OpenSans
+  },
+  itemFee: {
+    color: CommonColors.mainText,
+    fontSize: '10@s',
+    ...Fonts.OpenSans
   },
   itemLeftContainer: {
-    flex: 1,
+    width: '150@s',
     flexDirection: 'row',
     borderRightColor: CommonColors.separator,
     borderRightWidth: '1@s',
   },
   timeContainer: {
-    flex: 1,
+    width: '50@s',
     marginLeft: '2@s',
     justifyContent: 'center',
     alignItems: 'center',
@@ -345,8 +466,23 @@ const styles = ScaledSheet.create({
   },
   itemRight: {
     flexDirection: 'column',
-    width: '100@s',
+    width: '75@s',
     alignItems: 'flex-end',
+    justifyContent: 'center',
+  },
+  lastItemRight: {
+    flexDirection: 'column',
+    width: '50@s',
+    marginLeft: '10@s',
+    marginRight: '20@s',
+    alignItems: 'flex-end',
+    justifyContent: 'center',
+  },
+  lastItemRightOrder: {
+    flexDirection: 'column',
+    width: '70@s',
+    marginLeft: '10@s',
+    alignItems: 'center',
     justifyContent: 'center',
   },
   searchContainer: {
@@ -354,10 +490,12 @@ const styles = ScaledSheet.create({
     flexDirection: 'column',
     justifyContent: 'center',
     alignItems: 'center',
-    height: '25@s',
+    height: '22@s',
     margin: '6@s',
-    width: '35@s',
-    borderRadius: '4@s'
+    width: '40@s',
+    borderRadius: '2@s',
+    borderColor: '#000',
+    borderWidth: '0.6@s'
   },
   textSearch: {
     fontSize: '12@s',
@@ -380,27 +518,34 @@ const styles = ScaledSheet.create({
     width: '50@s',
     height: '25@s',
     marginRight: '5@s',
-    borderRadius: '5@s',
+    borderRadius: '3@s',
     alignItems: 'center',
     justifyContent: 'center'
   },
   textCancel: {
     fontSize: '12@s',
-    color: '#FFF'
+    color: '#FFF',
+    ...Fonts.OpenSans
   },
   coinPairContainer: {
-    flex: 1,
+    width: '100@s',
     flexDirection: 'row',
     alignItems: 'center',
-    marginLeft: '20@s',
-    marginRight: '20@s'
+    marginLeft: '10@s',
+    marginRight: '10@s'
   },
   viewDatePicker: {
     flexDirection: 'row',
-    alignItems: 'center'
+    height: '40@s',
+    alignItems: 'center',
   },
   viewSymbol: {
     alignSelf: 'center',
-    marginLeft: scale(20)
+    marginLeft: '10@s'
+  },
+  iconSort: {
+    marginTop: '10@s',
+    height: '20@s',
+    width: '20@s',
   }
 });

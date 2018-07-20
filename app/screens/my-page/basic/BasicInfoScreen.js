@@ -5,13 +5,15 @@ import {
   Text,
   TouchableHighlight,
   View,
-  FlatList
+  FlatList,
+  Image
 } from 'react-native';
 
 import BaseScreen from '../../BaseScreen';
 import I18n from '../../../i18n/i18n';
 import rf from '../../../libs/RequestFactory';
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import ScaledSheet from '../../../libs/reactSizeMatter/ScaledSheet';
+import { Fonts } from '../../../utils/CommonStyles';
 
 export default class BasicInfoScreen extends BaseScreen {
   _infoProps = [{
@@ -78,10 +80,10 @@ export default class BasicInfoScreen extends BaseScreen {
           </View>
 
           <View style={styles.iconGroup}>
-            <Icon name="chevron-right"
-              style={{alignSelf: 'flex-end'}}
-              size={PixelRatio.getPixelSizeForLayoutSize(14)}
-              color='#000' />
+            <Image
+              style={styles.iconArrow}
+              source={require('../../../../assets/myPage/basic/arrow.png')}
+            />
           </View>
         </View>
       </TouchableHighlight>
@@ -115,23 +117,25 @@ export default class BasicInfoScreen extends BaseScreen {
   }
 }
 
-const styles = StyleSheet.create({
+const styles = ScaledSheet.create({
   listView: {
     flex: 1,
   },
   listItem: {
-    height: 64
+    height: '64@s'
   },
   listItemContainer: {
     flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
-    paddingLeft: 20,
-    paddingRight: 20
+    paddingLeft: '20@s',
+    paddingRight: '20@s',
+    borderBottomWidth: 0.2,
+    borderBottomColor: '#C9C7C5'
   },
   separator: {
     flex: 1,
-    height: 1,
+    height: '1@s',
     backgroundColor: '#DEE3EB',
     opacity: 0.3
   },
@@ -140,14 +144,19 @@ const styles = StyleSheet.create({
     justifyContent: 'center'
   },
   valueGroup: {
-    flex: 3,
+    flex: 4,
     justifyContent: 'center'
   },
   iconGroup: {
-    flex: 1,
+    flex: 0.4,
     justifyContent: 'center'
   },
   text: {
-    fontSize: 14,
+    fontSize: '13@s',
+    ...Fonts.NanumGothic_Regular,
+  },
+  iconArrow: {
+    width: '12@s',
+    height: '18@s'
   }
 });

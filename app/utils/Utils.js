@@ -99,7 +99,8 @@ export default {
         return /^[0-9A-HJ-NP-Za-km-z]{26,35}$/.test(address);
       case "ltc":
         return /^[1-9A-HJ-NP-Za-km-z]{26,35}$/.test(address);
-
+      default:
+        return true;
     }
   },
 

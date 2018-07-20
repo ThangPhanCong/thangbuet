@@ -1,6 +1,5 @@
 import React from 'react';
 import {
-  StyleSheet,
   Text,
   TextInput,
   TouchableHighlight,
@@ -14,7 +13,7 @@ import { Card } from 'react-native-elements'
 import Modal from 'react-native-modal';
 import BaseScreen from '../../BaseScreen';
 import rf from '../../../libs/RequestFactory';
-import { CommonStyles } from '../../../utils/CommonStyles';
+import { CommonStyles, Fonts } from '../../../utils/CommonStyles';
 import Utils from '../../../utils/Utils';
 import I18n from '../../../i18n/i18n';
 import _ from 'lodash';
@@ -22,6 +21,8 @@ import Consts from '../../../utils/Consts';
 import TouchableTextHighlight from '../../../utils/TouchableTextHighlight';
 import ActionButton from 'react-native-action-button';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import ScaledSheet from '../../../libs/reactSizeMatter/ScaledSheet';
+import { scale } from '../../../libs/reactSizeMatter/scalingUtils';
 
 export default class WalletScreen extends BaseScreen {
 
@@ -74,7 +75,7 @@ export default class WalletScreen extends BaseScreen {
           elevation={5}
           shadowColor='#000'
           shadowOpacity={0.3}
-          shadowOffset={{width: 2, height: 1}}
+          shadowOffset={{ width: scale(2), height: scale(1) }}
           onPress={this._onShowAddNewWallet.bind(this)}/>
         {this._renderAddNewWalletModal()}
         {this._renderRemoveConfirmationModal()}
@@ -88,7 +89,7 @@ export default class WalletScreen extends BaseScreen {
         style={styles.listItem}
         underlayColor='#FFECED'
         onPress={() => this._onShowWalletEditor(item)}>
-        <View style = {styles.listItemContainer}>
+        <View style={styles.listItemContainer}>
           <View style={styles.coinGroup}>
             <Text style={styles.valueItem}>
               {Utils.getCurrencyName(item.coin)}
@@ -115,14 +116,14 @@ export default class WalletScreen extends BaseScreen {
 
           <View style={styles.removeGroup}>
             <TouchableTextHighlight
-                style={styles.withdrawButton}
-                onPress={() => this._onShowRemoveWalletConfirmation(item)}
-                underlayColor='#FF3300'
-                textStyle={styles.buttonTitle}
-                underlayTextColor='#FFF'
-                normalTextColor='#FF3300'
-                text={I18n.t('myPage.wallet.remove')}
-              />
+              style={styles.withdrawButton}
+              onPress={() => this._onShowRemoveWalletConfirmation(item)}
+              underlayColor='#FF3300'
+              textStyle={styles.buttonTitle}
+              underlayTextColor='#FFF'
+              normalTextColor='#FF3300'
+              text={I18n.t('myPage.wallet.remove')}
+            />
           </View>
         </View>
       </TouchableHighlight>
@@ -175,35 +176,32 @@ export default class WalletScreen extends BaseScreen {
         onBackdropPress={this._dismissAddNewWalletModal.bind(this)}>
         <Card
           style={styles.dialog}
-          containerStyle={{borderRadius: 5, padding: 0, marginStart: 30, marginEnd: 30}}>
-          <Text style={{fontSize: 13, marginTop: 16, marginBottom: 16, marginStart: 16, marginEnd: 16}}>
+          containerStyle={styles.cardNewWallet}>
+          <Text style={styles.titleNewWallet}>
             {I18n.t('myPage.wallet.addNewWalletHeader')}
           </Text>
-          <View style={{height: 1, backgroundColor: '#EBEBEB'}}/>
+          <View style={{ height: scale(1), backgroundColor: '#EBEBEB' }}/>
 
           <Text style={styles.addNewWalletTitle}>
             {I18n.t('myPage.wallet.coinType')}
           </Text>
-          <View style={styles.addNewWalletTextInput}>
-            <View style={{ position: 'absolute', right: 0, justifyContent: 'center', flex: 1, height: '100%'}}>
+          <View style={styles.viewModalDropDown}>
+            <View style={styles.menuDownNewWallet}>
               <Icon
                 name='menu-down'
-                size={22}
-                color= '#000'/>
+                color='#000'
+                style={styles.iconMenuDown}
+              />
             </View>
             <ModalDropdown
-              style={{flex: 1, justifyContent: 'center'}}
+              style={{ flex: 1, justifyContent: 'center' }}
               defaultValue=''
-              dropdownStyle={{
-                position: 'absolute',
-                marginTop: 20,
-                left: 0,
-                right: 65,
+              dropdownStyle={[styles.modalAddWalletDropDown, {
                 height: this._calculateModalHeight()
-              }}
-              textStyle={{marginStart: 6.5}}
-              dropdownTextStyle={{fontSize: 13}}
-              renderSeparator={() => <View style={{height: 0}}/>}
+              }]}
+              textStyle={styles.modalTextInput}
+              dropdownTextStyle={styles.textModalDropDown}
+              renderSeparator={() => <View style={{ height: 0 }}/>}
               options={this._generateOptionList()}
               onSelect={this._onCoinPickerSelect.bind(this)}/>
           </View>
@@ -212,16 +210,16 @@ export default class WalletScreen extends BaseScreen {
             {I18n.t('myPage.wallet.walletAddress')}
           </Text>
           <TextInput style={styles.addNewWalletTextInput}
-            value={this.state.newWalletParams.wallet_address}
-            underlineColorAndroid='transparent'
-            onChangeText={text =>
-              this.setState({
-                newWalletParams: {
-                  ...this.state.newWalletParams,
-                  wallet_address: text
-                }
-              })
-            }/>
+                     value={this.state.newWalletParams.wallet_address}
+                     underlineColorAndroid='transparent'
+                     onChangeText={text =>
+                       this.setState({
+                         newWalletParams: {
+                           ...this.state.newWalletParams,
+                           wallet_address: text
+                         }
+                       })
+                     }/>
 
           <Animated.View>
             {
@@ -231,16 +229,16 @@ export default class WalletScreen extends BaseScreen {
                   {I18n.t('myPage.wallet.destination')}
                 </Text>
                 <TextInput style={styles.addNewWalletTextInput}
-                  value={this.state.newWalletParams.tag}
-                  underlineColorAndroid='transparent'
-                  onChangeText={text => 
-                    this.setState({
-                      newWalletParams: {
-                        ...this.state.newWalletParams,
-                        tag: text
-                      }
-                    })
-                  }/>
+                           value={this.state.newWalletParams.tag}
+                           underlineColorAndroid='transparent'
+                           onChangeText={text =>
+                             this.setState({
+                               newWalletParams: {
+                                 ...this.state.newWalletParams,
+                                 tag: text
+                               }
+                             })
+                           }/>
               </View>
             }
           </Animated.View>
@@ -249,21 +247,21 @@ export default class WalletScreen extends BaseScreen {
             {I18n.t('myPage.wallet.walletName')}
           </Text>
           <TextInput style={styles.addNewWalletTextInput}
-            value={this.state.newWalletParams.wallet_name}
-            underlineColorAndroid='transparent'
-            onChangeText={text =>
-              this.setState({
-                newWalletParams: {
-                  ...this.state.newWalletParams,
-                  wallet_name: text
-                }
-              })
-            }/>
-          
+                     value={this.state.newWalletParams.wallet_name}
+                     underlineColorAndroid='transparent'
+                     onChangeText={text =>
+                       this.setState({
+                         newWalletParams: {
+                           ...this.state.newWalletParams,
+                           wallet_name: text
+                         }
+                       })
+                     }/>
+
           <TouchableOpacity
-            style={[styles.submitAddNewWallet, { marginTop: 20, marginBottom: 30 }]}
+            style={[styles.submitAddNewWallet, { marginTop: scale(20), marginBottom: scale(30) }]}
             onPress={this._onAddNewWallet.bind(this)}>
-            <Text style={{fontSize: 13, color: '#FFF'}}>
+            <Text style={styles.submitWallet}>
               {I18n.t('myPage.wallet.addNewWalletSubmit')}
             </Text>
           </TouchableOpacity>
@@ -285,9 +283,9 @@ export default class WalletScreen extends BaseScreen {
   _calculateModalHeight() {
     if (this._coinTypes.length == 0)
       return 39;
-    if (this._coinTypes.length > 5) 
+    if (this._coinTypes.length > 5)
       return 200;
-    
+
     return this._coinTypes.length * 39;
   }
 
@@ -301,15 +299,15 @@ export default class WalletScreen extends BaseScreen {
         onBackdropPress={this._dismissRemoveConfirmationModal.bind(this)}>
         <Card
           style={styles.dialog}
-          containerStyle={{borderRadius: 5, padding: 0, marginStart: 30, marginEnd: 30}}>
-          <Text style={[styles.addNewWalletTitle, {textAlign: 'center'}]}>
+          containerStyle={styles.cardContainer}>
+          <Text style={[styles.addNewWalletTitle, { textAlign: 'center' }]}>
             {I18n.t('myPage.wallet.removeConfirmDesc').format(this._selectedWallet.wallet_name)}
           </Text>
-          
+
           <TouchableOpacity
-            style={[styles.submitAddNewWallet, { marginTop: 20, marginBottom: 30 }]}
+            style={[styles.submitAddNewWallet, styles.removeWallet]}
             onPress={this._onRemove.bind(this)}>
-            <Text style={{fontSize: 13, color: '#FFF'}}>
+            <Text style={styles.submitWallet}>
               {I18n.t('myPage.wallet.removeConfirm')}
             </Text>
           </TouchableOpacity>
@@ -345,7 +343,7 @@ export default class WalletScreen extends BaseScreen {
   }
 
   _onShowAddNewWallet() {
-    this.setState({addNewWalletDialogVisible: true})
+    this.setState({ addNewWalletDialogVisible: true })
   }
 
   _onAddNewWallet() {
@@ -358,7 +356,7 @@ export default class WalletScreen extends BaseScreen {
 
   _onShowRemoveWalletConfirmation(wallet) {
     this._selectedWallet = wallet;
-    this.setState({removeWalletDialogVisible: true})
+    this.setState({ removeWalletDialogVisible: true })
   }
 
   _onRemove() {
@@ -374,14 +372,14 @@ export default class WalletScreen extends BaseScreen {
   }
 
   _dismissRemoveConfirmationModal() {
-    this.setState({removeWalletDialogVisible: false}, () => {
+    this.setState({ removeWalletDialogVisible: false }, () => {
       this._selectedWallet = {};
     })
   }
 
   _onCoinPickerSelect(index) {
     let selectedCoinType = this._coinTypes[index];
-    this.setState({selectedCoinType});
+    this.setState({ selectedCoinType });
   }
 
   async _loadWallets() {
@@ -405,7 +403,7 @@ export default class WalletScreen extends BaseScreen {
         isLoading: false
       })
     }
-    catch(err) {
+    catch (err) {
       console.log('WalletScreen._loadWallets', err);
       this.setState({
         isLoading: false
@@ -427,7 +425,7 @@ export default class WalletScreen extends BaseScreen {
         addNewWalletDialogVisible: false
       });
     }
-    catch(err) {
+    catch (err) {
       console.log('WalletScreen._addWallet', err);
     }
   }
@@ -440,7 +438,7 @@ export default class WalletScreen extends BaseScreen {
       this._selectedWallet = {};
       this.setState({ wallets, removeWalletDialogVisible: false })
     }
-    catch(err) {
+    catch (err) {
       console.log('WalletScreen._removeWallet', err);
     }
   }
@@ -450,13 +448,13 @@ export default class WalletScreen extends BaseScreen {
       let res = await rf.getRequest('MasterdataRequest').getAll();
       this._coinTypes = _.map(_.filter(res.coin_settings, ['currency', Consts.CURRENCY_KRW]), 'coin');
     }
-    catch(err) {
+    catch (err) {
       console.log('WalletScreen._getAvailableCoins', err);
     }
   }
 }
 
-const styles = StyleSheet.create({
+const styles = ScaledSheet.create({
   screen: {
     ...CommonStyles.screen
   },
@@ -464,14 +462,14 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   listItem: {
-    height: 64
+    height: '64@s'
   },
   listItemContainer: {
     flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
-    paddingLeft: 10,
-    paddingRight: 10
+    paddingLeft: '10@s',
+    paddingRight: '10@s'
   },
   separator: {
     flex: 1,
@@ -497,72 +495,151 @@ const styles = StyleSheet.create({
   },
   normalHeader: {
     color: '#000',
-    fontSize: 12,
-    fontWeight: 'bold'
+    fontSize: '13@s',
+    ...Fonts.NanumGothic_Bold,
   },
   tabBar: {
     flexDirection: 'row',
     alignItems: 'center',
-    height: 36,
+    height: '36@s',
     backgroundColor: '#F8F9FB',
-    paddingLeft: 10,
-    paddingRight: 10,
+    paddingLeft: '10@s',
+    paddingRight: '10@s',
   },
   valueItem: {
-    fontSize: 12,
-    textAlign: 'center'
+    fontSize: '12@s',
+    textAlign: 'center',
+    ...Fonts.NanumGothic_Regular,
   },
   buttonTitle: {
-    fontSize: 13,
-    marginStart: 15,
-    marginEnd: 15,
-    color: '#FF3300'
+    fontSize: '13@s',
+    marginStart: '15@s',
+    marginEnd: '15@s',
+    color: '#FF3300',
+    ...Fonts.NanumGothic_Regular,
   },
   withdrawButton: {
     alignItems: 'center',
     justifyContent: 'center',
     borderColor: '#FF3300',
-    borderWidth: 1,
-    borderRadius: 5,
-    height: 30
+    borderWidth: '1@s',
+    borderRadius: '5@s',
+    height: '30@s'
   },
   dialog: {
-    marginStart: 40,
-    marginEnd: 40,
+    marginStart: '40@s',
+    marginEnd: '40@s',
     backgroundColor: '#FFF'
   },
   submitAddNewWallet: {
-    marginTop: 30,
-    marginStart: 16,
-    marginEnd: 16,
-    height: 40,
+    marginTop: '30@s',
+    marginStart: '16@s',
+    marginEnd: '16@s',
+    height: '40@s',
     backgroundColor: '#0070C0',
-    borderRadius: 5,
+    borderRadius: '5@s',
     alignItems: 'center',
     justifyContent: 'center'
   },
   addNewWalletTitle: {
-    fontSize: 13,
-    marginTop: 16,
-    marginStart: 16,
-    marginEnd: 16
+    fontSize: '13@s',
+    marginTop: '16@s',
+    marginStart: '16@s',
+    marginEnd: '16@s',
+    ...Fonts.NanumGothic_Regular,
   },
   addNewWalletTextInput: {
-    marginTop: 2,
-    marginStart: 16,
-    marginEnd: 16,
-    height: 40,
+    marginTop: '2@s',
+    marginStart: '16@s',
+    marginEnd: '16@s',
+    height: '40@s',
     borderColor: '#D9D9D9',
-    borderRadius: 5,
-    borderWidth: 1
+    borderRadius: '5@s',
+    borderWidth: '1@s',
+    paddingLeft: '16@s',
+    paddingRight: '16@s'
   },
   picker: {
-    marginTop: 2,
-    marginStart: 16,
-    marginEnd: 16,
-    height: 40,
+    marginTop: '2@s',
+    marginStart: '16@s',
+    marginEnd: '16@s',
+    height: '40@s',
     borderColor: '#D9D9D9',
-    borderRadius: 5,
-    borderWidth: 1,
+    borderRadius: '5@s',
+    borderWidth: '1@s',
+  },
+  cardContainer: {
+    borderRadius: '5@s',
+    padding: 0,
+    marginStart: '30@s',
+    marginEnd: '30@s'
+  },
+  removeWallet: {
+    marginTop: '20@s',
+    marginBottom: '30@s'
+  },
+  cardNewWallet: {
+    borderRadius: '5@s',
+    padding: 0,
+    marginStart: '30@s',
+    marginEnd: '30@s',
+    elevation: '5@s',
+    shadowOpacity: 0.3,
+    shadowRadius: '6@s',
+  },
+  titleNewWallet: {
+    fontSize: '13@s',
+    marginTop: '16@s',
+    marginBottom: '16@s',
+    marginStart: '16@s',
+    marginEnd: '16@s',
+    ...Fonts.NanumGothic_Regular
+  },
+  menuDownNewWallet: {
+    position: 'absolute',
+    right: 0,
+    justifyContent: 'center',
+    flex: 1,
+    height: '100%'
+  },
+  submitWallet: {
+    fontSize: '13@s',
+    color: '#FFF',
+    ...Fonts.NanumGothic_Regular
+  },
+  iconMenuDown: {
+    paddingRight: '10@s',
+    fontSize: '28@s'
+  },
+  modalAddWalletDropDown: {
+    position: 'absolute',
+    marginTop: '20@s',
+    right: '65@s',
+    borderColor: '#D9D9D9',
+    borderRadius: '3@s',
+    borderWidth: '1@s',
+  },
+  viewModalDropDown: {
+    marginTop: '2@s',
+    marginStart: '15@s',
+    marginEnd: '16@s',
+    height: '40@s',
+    borderColor: '#D9D9D9',
+    borderRadius: '5@s',
+    borderWidth: '1@s'
+  },
+  textModalDropDown: {
+    fontSize: '13@s',
+    color: '#000',
+    textAlign: 'center',
+    borderBottomColor: '#D9D9D9',
+    borderBottomWidth: '1@s',
+    ...Fonts.NanumGothic_Regular,
+  },
+  modalTextInput: {
+    textAlign: 'center',
+    fontSize: '13@s',
+    color: '#000',
+    ...Fonts.NanumGothic_Regular,
   }
 });
