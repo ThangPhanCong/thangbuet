@@ -13,7 +13,7 @@ class BitkoexDatePicker extends Component {
         {
           showIcon ?
             <View style={styles.imgDate}>
-              <Image source={require('../../../../assets/dateIcon/date.png')}/>
+              <Image style={{width: scale(20), height: scale(19)}} source={require('../../../../assets/dateIcon/date.png')}/>
             </View> : null
         }
 

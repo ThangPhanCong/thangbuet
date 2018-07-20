@@ -110,7 +110,6 @@ export default TabNavigator(
     },
     animationEnabled: false,
     swipeEnabled: false,
-    initialRouteName: 'BalanceScreen',
-
+    initialRouteName: 'MarketSearchScreen',
   }
 );

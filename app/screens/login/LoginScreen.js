@@ -162,7 +162,7 @@ export default class LoginScreen extends BaseScreen {
           <Text style={styles.titleLogo}>{I18n.t('login.titleLogo')}</Text>
         </View>
 
-        <View style={styles.rowFlexOne}/>
+        {/*<View style={styles.rowFlexOne}/>*/}
 
         {rawInput1}
         <Text style={styles.emptyInforLogin}>{emailValidation}</Text>
@@ -232,7 +232,7 @@ const styles = ScaledSheet.create({
     textDecorationLine: 'underline',
   },
   inputRowMarginTop: {
-    marginTop: "11@s",
+    marginTop: "15@s",
   },
   showPassword: {
     backgroundColor: 'transparent',
@@ -242,7 +242,8 @@ const styles = ScaledSheet.create({
   viewLogo: {
     alignItems: 'center',
     marginTop: '120@s',
-    flexDirection: 'column'
+    flexDirection: 'column',
+    marginBottom: '40@s'
   },
   textLogo: {
     color: '#FFF',
@@ -258,7 +259,9 @@ const styles = ScaledSheet.create({
     height: '40@s',
     color: '#FFF',
     flex: 1,
-    textAlign: 'center'
+    textAlign: 'center',
+    fontSize: '14@s',
+    ...Fonts.OpenSans_Light
   },
   iconLogin: {
     position: 'absolute',
@@ -280,7 +283,7 @@ const styles = ScaledSheet.create({
   viewButtonLogin: {
     // flex: 1,
     width: '100%',
-    marginTop: '35@s',
+    marginTop: '37@s',
     height: '43@s',
     backgroundColor: '#467b92',
     flexDirection: 'row',
@@ -297,7 +300,9 @@ const styles = ScaledSheet.create({
     alignSelf: 'flex-start',
     color: 'red',
     fontSize: '12@s',
-    marginLeft: '18@s'
+    marginLeft: '18@s',
+    lineHeight: '22@s',
+    ...Fonts.NotoSans_Regular,
   },
   backgroundLogin: {
     position: 'absolute',

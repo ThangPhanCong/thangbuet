@@ -118,7 +118,7 @@ const styles = ScaledSheet.create({
   content: { flex: 1, flexDirection: "column" },
   iconLogo: { height: '20@s', width: '20@s', margin: '2@s', marginLeft: '15@s', },
   fontNotoSansRegular: { ...Fonts.NotoSans_Regular, fontSize: '14@s' },
-  fontNotoSansBold: { ...Fonts.NotoSans_Bold, fontSize: '14@s' },
+  fontNotoSansBold: { ...Fonts.NotoSans_Bold, fontSize: '14@s', marginLeft: '10@s' },
   logo: {
     height: '50@s', flexDirection: "row", alignItems: 'center', justifyContent: 'flex-start',
     borderBottomWidth: '1@s', borderColor: 'rgba(222, 227, 235, 1)'

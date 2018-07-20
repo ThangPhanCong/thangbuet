@@ -1,6 +1,5 @@
 import React from 'react';
 import {
-  StyleSheet,
   Text,
   TextInput,
   TouchableOpacity,
@@ -12,23 +11,12 @@ import {
   Keyboard
 } from 'react-native';
 import ScaledSheet from '../../../libs/reactSizeMatter/ScaledSheet';
-import { BoxShadow } from 'react-native-shadow';
 import BaseScreen from '../../BaseScreen'
 import { CommonStyles, Fonts } from '../../../utils/CommonStyles';
 import rf from '../../../libs/RequestFactory';
 import I18n from '../../../i18n/i18n';
 import _ from 'lodash';
-
-const shadowOpt = {
-  width: 155,
-  height: 155,
-  color: "#000",
-  opacity: 0.3,
-  border: 5,
-	radius: 5,
-	x: 0,
-	y: 0
-}
+import UIUtils from "../../../utils/UIUtils";
 
 export default class OTPVerifyScreen extends BaseScreen {
   _otpCode = '';
@@ -62,32 +50,20 @@ export default class OTPVerifyScreen extends BaseScreen {
           android: 200
         })}>
         <Text style={styles.textHeader}>
-          {I18n.t('myPage.security.verificationGuide')}
+          {I18n.t('myPage.security.verificationGuide1') + " "}
+          <Image
+            style={styles.iconAdd}
+            source={require('../../../../assets/myPage/security/add.png')}/>
+          <Text>
+            {" " + I18n.t('myPage.security.verificationGuide2')}
+          </Text>
         </Text>
         <View style={styles.qrcodeContainer}>
           {
-            Platform.select({
-              ios: (
-                <View style = {{flex: 1}}>
-                  {
-                    !_.isEmpty(this.state.qrCodeUrl) &&
-                    <Image
-                      style={{flex: 1}}
-                      source={{uri: this.state.qrCodeUrl}}/>
-                  }
-                </View>
-              ),
-              android: (
-                <BoxShadow setting={shadowOpt}>
-                  {
-                    !_.isEmpty(this.state.qrCodeUrl) &&
-                    <Image
-                      style={{flex: 1, padding: 10}}
-                      source={{uri: this.state.qrCodeUrl}}/>
-                  }
-                </BoxShadow>
-              )
-            })
+            !_.isEmpty(this.state.qrCodeUrl) &&
+            <Image
+              style={{flex: 1,}}
+              source={{uri: this.state.qrCodeUrl}}/>
           }
         </View>
         <View style={styles.functionContainer}>
@@ -125,6 +101,7 @@ export default class OTPVerifyScreen extends BaseScreen {
               </Text>
               <View style={styles.buttonContainer}>
                 <TextInput
+                  keyboardType= 'numeric'
                   style={styles.otpInput}
                   underlineColorAndroid='transparent'
                   onChangeText={this._onOTPTextChanged.bind(this)}
@@ -189,7 +166,7 @@ export default class OTPVerifyScreen extends BaseScreen {
       if (addOtpVerificationHandler) {
         addOtpVerificationHandler();
       }
-      
+
       this.navigate('OTPSecretCodeScreen', {
         secretCode: this._secretCode
       });
@@ -205,22 +182,24 @@ const styles = ScaledSheet.create({
     ...CommonStyles.screen
   },
   textHeader: {
-    marginTop: '30@s',
+    marginTop: '20@s',
     marginStart: '20@s',
     marginEnd: '20@s',
     textAlign: 'center',
     fontSize: '13@s',
-    ...Fonts.NanumGothic_Regular
+    lineHeight: '22@s',
+    ...Fonts.NanumGothic_Regular,
+    position: 'relative'
   },
   qrcodeContainer: {
-    marginTop: '10@s',
     marginBottom: '20@s',
     aspectRatio: 1,
-    width: '160@s',
+    width: '140@s',
+    height: '140@s',
     alignSelf: 'center',
-    shadowColor: '#000',
-    shadowOpacity: 0.3,
-    shadowRadius: '5@s'
+    padding: '3@s',
+    borderWidth: 0,
+    ...UIUtils.generatePopupShadow()
   },
   functionContainer: {
     marginStart: '40@s',
@@ -262,6 +241,14 @@ const styles = ScaledSheet.create({
     height: '40@s',
     borderRadius: '5@s',
     borderWidth: '1@s',
-    borderColor: '#BFBFBF'
+    borderColor: '#BFBFBF',
+    fontSize: '12@s',
+    paddingLeft: '16@s',
+    paddingRight: '16@s',
+    ...Fonts.NanumGothic_Regular
+  },
+  iconAdd: {
+    width: '35@s',
+    height: '35@s',
   }
 });
