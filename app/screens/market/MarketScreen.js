@@ -92,7 +92,7 @@ class MarketScreen extends BaseScreen {
     return (
       <TouchableHighlight
         style={styles.listItem}
-        onPress={() => this._onPressItem(item)}
+        onPressIn={() => this._onPressItem(item)}
         underlayColor='#FFECED'>
         <View style={styles.listItemContainer}>
           <View style={styles.nameGroup}>
