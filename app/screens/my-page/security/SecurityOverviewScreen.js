@@ -226,6 +226,7 @@ export default class SecurityOverviewScreen extends BaseScreen {
       <View style={styles.iconGroup}>
         <View style={styles.iconContainer}>
           <Image
+            style={styles.iconsInMain}
             resizeMode='contain'
             source={item.image}/>
         </View>
@@ -244,23 +245,23 @@ export default class SecurityOverviewScreen extends BaseScreen {
       }
     } else {
       console.log(this.state.info[item.propVerify])
-      if (this.state.info[item.propVerify]){
+      if (this.state.info[item.propVerify]) {
         disable = true
       }
     }
-      return (
-        <View style={styles.buttonGroup}>
-          <TouchableHighlight
-            style={this.state.info[item.propVerify] ? styles.activeButton : styles.inactiveButton}
-            onPress={onPressHandler}
-            disabled={disable}
-            underlayColor='#595959'>
-            <Text style={{ alignSelf: 'center', color: '#FFF' }}>
-              {this.state.info[item.propVerify] ? I18n.t('myPage.security.verified') : I18n.t('myPage.security.unverified')}
-            </Text>
-          </TouchableHighlight>
-        </View>
-      )
+    return (
+      <View style={styles.buttonGroup}>
+        <TouchableHighlight
+          style={this.state.info[item.propVerify] ? styles.activeButton : styles.inactiveButton}
+          onPress={onPressHandler}
+          disabled={disable}
+          underlayColor='#595959'>
+          <Text style={styles.buttonsInMain}>
+            {this.state.info[item.propVerify] ? I18n.t('myPage.security.verified') : I18n.t('myPage.security.unverified')}
+          </Text>
+        </TouchableHighlight>
+      </View>
+    )
   }
 
   _renderSubmitModal() {
@@ -1018,6 +1019,7 @@ const styles = ScaledSheet.create({
   },
   textModalDropDown: {
     fontSize: '13@s',
+    lineHeight: '22@s',
     color: '#000',
     textAlign: 'center',
     borderBottomColor: '#D9D9D9',
@@ -1030,5 +1032,11 @@ const styles = ScaledSheet.create({
     ...Fonts.NanumGothic_Regular,
   },
   existedPhoneButtonText:
-    { fontSize: '13@s', color: '#FFF', marginStart: '20@s', marginEnd: '20@s' }
+    { fontSize: '13@s', color: '#FFF', marginStart: '20@s', marginEnd: '20@s' },
+  buttonsInMain:
+    { alignSelf: 'center', color: '#FFF', fontSize: '13@s', ...Fonts.NanumGothic_Regular },
+  iconsInMain: {
+    width: '90%',
+    height: '90%'
+  }
 });

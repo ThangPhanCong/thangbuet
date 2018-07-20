@@ -352,8 +352,8 @@ class TransactionContainerScreen extends Component {
                       onEndReached={this._handleLoadMore.bind(this)}
                       onMomentumScrollStart={() => this._handleLeftMomentumStart()}
                       onMomentumScrollEnd={() => this._handleLeftMomentumEnd()}
-                      onTouchStart={()=> this._handleTouchStartLeft()}
-                      onTouchEnd={()=> this._handleTouchEndLeft()}
+                      onTouchStart={() => this._handleTouchStartLeft()}
+                      onTouchEnd={() => this._handleTouchEndLeft()}
                       onEndThreshold={100}/>
           </View>
 
@@ -366,8 +366,8 @@ class TransactionContainerScreen extends Component {
                       onEndReached={this._handleLoadMore.bind(this)}
                       onMomentumScrollStart={() => this._handleRightMomentumStart()}
                       onMomentumScrollEnd={() => this._handleRightMomentumEnd()}
-                      onTouchStart={()=> this._handleTouchStartRight()}
-                      onTouchEnd={()=> this._handleTouchEndRight()}
+                      onTouchStart={() => this._handleTouchStartRight()}
+                      onTouchEnd={() => this._handleTouchEndRight()}
                       onEndThreshold={100}/>
           </ScrollView>
         </View>

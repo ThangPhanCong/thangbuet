@@ -46,6 +46,7 @@ const styles = ScaledSheet.create({
     marginTop: '30@s',
     textAlign: 'center',
     fontSize: '13@s',
+    lineHeight: '22@s',
     ...Fonts.NanumGothic_Regular
   },
   recoveryCodeText: {

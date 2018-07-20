@@ -16,6 +16,7 @@ import { CommonStyles, Fonts } from '../../../utils/CommonStyles';
 import rf from '../../../libs/RequestFactory';
 import I18n from '../../../i18n/i18n';
 import _ from 'lodash';
+import UIUtils from "../../../utils/UIUtils";
 
 export default class OTPVerifyScreen extends BaseScreen {
   _otpCode = '';
@@ -100,6 +101,7 @@ export default class OTPVerifyScreen extends BaseScreen {
               </Text>
               <View style={styles.buttonContainer}>
                 <TextInput
+                  keyboardType= 'numeric'
                   style={styles.otpInput}
                   underlineColorAndroid='transparent'
                   onChangeText={this._onOTPTextChanged.bind(this)}
@@ -195,12 +197,9 @@ const styles = ScaledSheet.create({
     width: '140@s',
     height: '140@s',
     alignSelf: 'center',
-    shadowColor: '#000',
-    shadowOpacity: 0.3,
-    shadowRadius: '5@s',
     padding: '3@s',
     borderWidth: 0,
-    elevation: '5@s',
+    ...UIUtils.generatePopupShadow()
   },
   functionContainer: {
     marginStart: '40@s',
@@ -242,7 +241,11 @@ const styles = ScaledSheet.create({
     height: '40@s',
     borderRadius: '5@s',
     borderWidth: '1@s',
-    borderColor: '#BFBFBF'
+    borderColor: '#BFBFBF',
+    fontSize: '12@s',
+    paddingLeft: '16@s',
+    paddingRight: '16@s',
+    ...Fonts.NanumGothic_Regular
   },
   iconAdd: {
     width: '35@s',

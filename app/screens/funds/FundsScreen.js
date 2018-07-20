@@ -262,7 +262,7 @@ export default class FundsScreen extends BaseScreen {
           <SafeAreaView>
             <View style={{ alignContent: 'flex-end', justifyContent: 'flex-end', borderBottomWidth: 1 }}>
               <TouchableOpacity onPress={() => this.setState({ openHelp: false })}>
-                <Icon name="close" size={20}/>
+                <Icon name="close" size={scale(20)}/>
               </TouchableOpacity>
             </View>
             <View><Text>Help Content</Text></View>

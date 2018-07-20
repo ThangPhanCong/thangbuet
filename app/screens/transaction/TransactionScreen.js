@@ -95,7 +95,9 @@ const styles = ScaledSheet.create({
     ...Fonts.NotoSans
   },
   imgBook: {
-    marginLeft: '10@s',
+    width: '20@s',
+    height: '20@s',
+    marginLeft: '15@s',
     marginRight: '10@s',
   }
 

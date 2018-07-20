@@ -59,7 +59,7 @@ class MarketSearchScreen extends BaseScreen {
                             onPress={this._onFavoriteFilter.bind(this)}>
             <Icon
               name='star'
-              size={18}
+              size={scale(18)}
               color={this.state.isFavoriteFilter ? '#FFC000' : '#D9D9D9'}/>
           </TouchableOpacity>
           <Text style={styles.titleLeftView}>
@@ -291,7 +291,8 @@ const styles = ScaledSheet.create({
     alignSelf: 'flex-end',
     width: '10@s',
     height: '10@s',
-    margin: '5@s'
+    margin: '5@s',
+    marginRight: '8@s'
   },
   inputSearch: {
     flex: 1,
@@ -300,7 +301,8 @@ const styles = ScaledSheet.create({
     fontSize: '9@s',
     height: '30@s',
     borderColor: null,
-    alignSelf: 'center'
+    alignSelf: 'center',
+    ...Fonts.NanumGothic_Regular
   },
   listView: {
     flex: 1
