@@ -101,6 +101,8 @@ class MarketSearchScreen extends BaseScreen {
           <View
             style={[styles.searchResult, { width: this._searchInputWidth }]}>
             <FlatList
+              keyboardDismissMode='on-drag'
+              keyboardShouldPersistTaps='always'
               data={searchList}
               extraData={this.state}
               renderItem={this._renderItem.bind(this)}

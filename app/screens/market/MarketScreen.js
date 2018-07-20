@@ -76,6 +76,8 @@ class MarketScreen extends BaseScreen {
       <View style={styles.screen}>
         {this._renderHeader()}
         <FlatList
+          keyboardDismissMode='on-drag'
+          keyboardShouldPersistTaps='always'
           style={styles.listView}
           data={this.state.symbols}
           extraData={this.state}
