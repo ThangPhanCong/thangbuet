@@ -102,12 +102,12 @@ class WithdrawalKRWScreen extends BaseScreen {
 
   async _getSecurityLevel() {
     try {
-      const rpUser = await rf.getRequest('UserRequest').getCurrentUser()
-      let currentUser = { ...rpUser.data }
-      const { encodeAccount, decodeAccount } = this._getUserInfo(rpUser.data)
-      currentUser.encodeAccount = encodeAccount
-      currentUser.decodeAccount = decodeAccount
-      // console.log('currentUser', currentUser)
+      const rpUser = await rf.getRequest('UserRequest').getCurrentUser();
+      let currentUser = { ...rpUser.data };
+      const { encodeAccount, decodeAccount } = this._getUserInfo(rpUser.data);
+
+      currentUser.encodeAccount = encodeAccount;
+      currentUser.decodeAccount = decodeAccount;
 
       this.setState({ currentUser })
 
@@ -139,13 +139,16 @@ class WithdrawalKRWScreen extends BaseScreen {
       decodeAccount += currentUser.bank
     }
 
-    if (realAccount.length > 6) {
-      encodeAccount += " " + realAccount.substring(0, 3) + "***" + realAccount.substring(6, realAccount.length)
-    } else if (realAccount.length > 2) {
-      encodeAccount += " " + realAccount.substring(0, 3) + "***"
-    } else {
-      encodeAccount += " " + realAccount + "***"
+    if(realAccount) {
+      if (realAccount.length > 6) {
+        encodeAccount += " " + realAccount.substring(0, 3) + "***" + realAccount.substring(6, realAccount.length)
+      } else if (realAccount.length > 2) {
+        encodeAccount += " " + realAccount.substring(0, 3) + "***"
+      } else {
+        encodeAccount += " " + realAccount + "***"
+      }
     }
+
     decodeAccount += " " + realAccount
 
     if (currentUser.name && currentUser.name != null) {
