@@ -1,7 +1,7 @@
 export default {
   exit: {
     title: 'Thoát ứng dụng',
-    content: 'Bạn có muốn thoát ứng dụng không?',
+    content: 'Exit App',
     cancel: 'Không',
     ok: 'Thoát'
   },

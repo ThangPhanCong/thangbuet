@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, BackHandler, Alert, Platform } from "react-native";
+import { View, BackHandler, Alert, Platform, ToastAndroid } from "react-native";
 import I18n from '../i18n/i18n';
 
 export default class BaseScreen extends React.Component {
@@ -85,25 +85,17 @@ export default class BaseScreen extends React.Component {
   }
 
   onBackButtonPressAndroid() {
-    // console.log('this.props.navigation.', this.props.navigation.isFocused())
-    const mainScreens = ['HomeScreen', "favourite", "btc", "eth", "vnd", "TradesScreen", "BalanceScreen", 'AccountSettingScreen',
-      "LoginScreen"]
-    let index = mainScreens.indexOf(this.props.navigation.state.routeName)
-    // console.log('index, ', index)
+    const mainScreens = ['LoginScreen', 'MarketScreenKRW', 'MarketScreenBTC', 'MarketScreenETH']
+    let index = mainScreens.indexOf(this.props.navigation.state.routeName);
+
     if (this.props.navigation.isFocused && this.props.navigation.isFocused() && index != -1) {
-      Alert.alert(
-        I18n.t('exit.title'),
-        I18n.t('exit.content'), [{
-          text: I18n.t('exit.cancel'),
-          onPress: () => { },
-          style: 'cancel'
-        }, {
-          text: I18n.t('exit.ok'),
-          onPress: () => BackHandler.exitApp()
-        },], {
-          cancelable: false
-        }
-      )
+      ToastAndroid.showWithGravity(
+        I18n.t('exit.content'),
+        ToastAndroid.SHORT,
+        ToastAndroid.BOTTOM
+      );
+
+      BackHandler.addEventListener('hardwareBackPress', () => BackHandler.exitApp())
       return true
     } else {
       return false
