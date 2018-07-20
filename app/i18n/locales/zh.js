@@ -66,8 +66,8 @@ export default {
   login: {
     textLogo: 'BITKOEX',
     titleLogo: '디테일이 다르다. 거래가 편한 최고의 암호화폐 거래소',
-    email: 'Email',
-    password: 'Mật khẩu',
+    email: 'ID_EMAIL',
+    password: 'PASSWORD',
     login: 'LOGIN',
     otp: 'OTP CODE',
     register: 'Đăng ký',

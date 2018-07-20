@@ -110,5 +110,6 @@ export default TabNavigator(
     },
     animationEnabled: false,
     swipeEnabled: false,
+    initialRouteName: 'MarketSearchScreen',
   }
 );
