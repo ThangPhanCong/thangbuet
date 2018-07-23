@@ -22,7 +22,7 @@ import I18n from '../../i18n/i18n';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import MarketScreen from './MarketScreen';
 import rf from '../../libs/RequestFactory';
-import _ from 'lodash';
+import { each, isEmpty, filter } from 'lodash';
 import ScaledSheet from "../../libs/reactSizeMatter/ScaledSheet";
 import { scale } from "../../libs/reactSizeMatter/scalingUtils";
 
@@ -185,7 +185,7 @@ class MarketSearchScreen extends BaseScreen {
 
   _onFavoriteFilter() {
     this.setState({ isFavoriteFilter: !this.state.isFavoriteFilter }, () => {
-      _.each(Object.values(this._refs), marketScreen => {
+      each(Object.values(this._refs), marketScreen => {
         if (marketScreen.filterFavoriteChanged)
           marketScreen.filterFavoriteChanged(this.state.isFavoriteFilter);
       })
@@ -193,7 +193,7 @@ class MarketSearchScreen extends BaseScreen {
   }
 
   _onTabChanged(prevState, nextState, action) {
-    _.each(Object.values(this._refs), marketScreen => {
+    each(Object.values(this._refs), marketScreen => {
       if (marketScreen.setFavoriteFilter)
         marketScreen.setFavoriteFilter(this.state.isFavoriteFilter);
     })
@@ -208,7 +208,7 @@ class MarketSearchScreen extends BaseScreen {
   }
 
   _onTextChanged(searchText) {
-    if (_.isEmpty(searchText)) {
+    if (isEmpty(searchText)) {
       this.setState({
         searchList: [],
         searchListVisible: false
@@ -220,7 +220,7 @@ class MarketSearchScreen extends BaseScreen {
   }
 
   _onSearchFocus(event) {
-    if (_.isEmpty(this.state.searchList))
+    if (isEmpty(this.state.searchList))
       return;
 
     this.setState({
@@ -231,7 +231,7 @@ class MarketSearchScreen extends BaseScreen {
   async _searchList(searchText) {
     try {
       let symbolResponse = await rf.getRequest('MasterdataRequest').getAll();
-      let symbols = _.filter(symbolResponse.coin_settings, symbol => symbol.currency.includes(searchText) || symbol.coin.includes(searchText));
+      let symbols = filter(symbolResponse.coin_settings, symbol => symbol.currency.includes(searchText) || symbol.coin.includes(searchText));
       symbols.map(symbol => {
         symbol.coinPair = symbol.currency.toUpperCase() + '/' + symbol.coin.toUpperCase();
         return symbol;
