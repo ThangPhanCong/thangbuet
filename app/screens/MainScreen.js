@@ -105,8 +105,12 @@ export default TabNavigator(
       inactiveTintColor: 'gray',
       activeBackgroundColor: '#000',
       style: {
-        backgroundColor: '#131722'
+        backgroundColor: '#131722',
+        height: scale(40)
       },
+      labelStyle: {
+        fontSize: scale(11)
+      }
     },
     animationEnabled: false,
     swipeEnabled: false,
