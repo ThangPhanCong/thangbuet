@@ -347,6 +347,7 @@ class TransactionContainerScreen extends Component {
 
             <FlatList data={transactions}
                       ref={elm => this.flatListLeft = elm}
+                      keyExtractor={(item, index) => index.toString()}
                       onScroll={(event) => this._onLeftListScroll(event)}
                       renderItem={this._renderItem.bind(this)}
                       onEndReached={this._handleLoadMore.bind(this)}
@@ -361,6 +362,7 @@ class TransactionContainerScreen extends Component {
             <HeaderTransactionsRight titles={titles}/>
             <FlatList data={transactions}
                       ref={elm => this.flatListRight = elm}
+                      keyExtractor={(item, index) => index.toString()}
                       onScroll={(event) => this._onRightListScroll(event)}
                       renderItem={this._renderItemRight.bind(this)}
                       onEndReached={this._handleLoadMore.bind(this)}
