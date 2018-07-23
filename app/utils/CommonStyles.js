@@ -122,7 +122,7 @@ const CommonStyles = {
     flex: 1,
   },
   checkBox: {
-    checkedImage: (<Image source={require('../../assets/common/checkbox/checked.png')} />),
+    checkedImage: (<Image style={{width: scale(13), height: scale(13) }} source={require('../../assets/common/checkbox/checked.png')} />),
     unCheckedImage: (<Image source={require('../../assets/common/checkbox/unchecked.png')} />)
   },
   switch: {

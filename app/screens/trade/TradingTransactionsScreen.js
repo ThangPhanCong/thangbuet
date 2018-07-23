@@ -197,7 +197,7 @@ const styles = ScaledSheet.create({
     height: '28@s',
     alignItems: 'center',
     backgroundColor: '#F8F9FB',
-    borderBottomWidth: 1,
+    borderBottomWidth: '1@s',
     borderBottomColor: '#E4E8EF'
   },
   titleLabel: {

@@ -260,7 +260,7 @@ export default class FundsScreen extends BaseScreen {
           onRequestClose={() => {
           }}>
           <SafeAreaView>
-            <View style={{ alignContent: 'flex-end', justifyContent: 'flex-end', borderBottomWidth: 1 }}>
+            <View style={{ alignContent: 'flex-end', justifyContent: 'flex-end', borderBottomWidth: scale(1) }}>
               <TouchableOpacity onPress={() => this.setState({ openHelp: false })}>
                 <Icon name="close" size={scale(20)}/>
               </TouchableOpacity>
