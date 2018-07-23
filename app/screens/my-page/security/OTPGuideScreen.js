@@ -11,6 +11,7 @@ import LinearGradient from 'react-native-linear-gradient';
 import BaseScreen from '../../BaseScreen';
 import { CommonStyles, Fonts } from '../../../utils/CommonStyles';
 import I18n from '../../../i18n/i18n';
+import { scale } from '../../../libs/reactSizeMatter/scalingUtils';
 const GoogleAuthIcon = require('../../../../assets/common/googleAuthBig.png');
 const SmallAppleIcon = require('../../../../assets/common/appleSmall.png');
 const SmallAndroidIcon = require('../../../../assets/common/androidSmall.png');
@@ -27,6 +28,7 @@ export default class OTPGuideScreen extends BaseScreen {
         <View style={styles.googleAuthContainer}>
           <View style={{alignItems: 'flex-end', justifyContent: 'center', flex: 1.5}}>
             <Image
+              style={{width: scale(80), height: scale(80)}}
               source={GoogleAuthIcon}/>
           </View>
           <View style={styles.googleAuthInfo}>
@@ -38,7 +40,7 @@ export default class OTPGuideScreen extends BaseScreen {
               <View style={{flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
                 <View style={{flex: 2, flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
                   <Image
-                    style={{flex: 1, alignSelf: 'center'}}
+                    style={{flex: 1, alignSelf: 'center', width: scale(13), height: scale(15)}}
                     source={SmallAppleIcon}
                     resizeMode='contain'/>
                   <View style = {styles.storeInfoHorizontalSpace}/>
@@ -50,7 +52,7 @@ export default class OTPGuideScreen extends BaseScreen {
                 <View style = {styles.storeInfoHorizontalSpace}/>
                 <View style={{flex: 5, flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
                   <Image
-                    style={{flex: 1, alignSelf: 'center'}}
+                    style={{flex: 1, alignSelf: 'center', width: scale(15.5), height: scale(15)}}
                     source={SmallAppStoreIcon}
                     resizeMode='contain'/>
                   <View style = {styles.storeInfoHorizontalSpace}/>
@@ -64,7 +66,7 @@ export default class OTPGuideScreen extends BaseScreen {
               <View style={{flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
                 <View style={{flex: 2, flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
                   <Image
-                    style={{flex: 1, alignSelf: 'center'}}
+                    style={{flex: 1, alignSelf: 'center', width: scale(12.5), height: scale(15)}}
                     source={SmallAndroidIcon}
                     resizeMode='contain'/>
                   <View style = {styles.storeInfoHorizontalSpace}/>
@@ -76,7 +78,7 @@ export default class OTPGuideScreen extends BaseScreen {
                 <View style = {styles.storeInfoHorizontalSpace}/>
                 <View style={{flex: 5, flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
                   <Image
-                    style={{flex: 1, alignSelf: 'center'}}
+                    style={{flex: 1, alignSelf: 'center', width: scale(12.5), height: scale(15)}}
                     source={SmallPlayStoreIcon}
                     resizeMode='contain'/>
                   <View style = {styles.storeInfoHorizontalSpace}/>
@@ -93,7 +95,7 @@ export default class OTPGuideScreen extends BaseScreen {
         <TouchableOpacity
           style={styles.nextButton}
           onPress={this._onNext.bind(this)}>
-          <LinearGradient 
+          <LinearGradient
             style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}
             colors={['#75BB5D', '#76BB5E', '#77B960', '#78B861']}
             start={{x: 0.0, y: 1.0}} end={{x: 1.0, y: 1.0}}>

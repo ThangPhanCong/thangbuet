@@ -604,7 +604,7 @@ const styles = ScaledSheet.create({
     flexDirection: 'row', alignItems: 'center', justifyContent: 'center',
     borderWidth: '1@s', borderRadius: '4@s', borderColor: "rgba(0, 0, 0, 0.3)"
   },
-  amountText: { ...Fonts.NanumGothic_Regular, fontSize: '12@s' },
+  amountText: { ...Fonts.NanumGothic_Regular, fontSize: '12@s', marginRight: '10@s' },
   amountInput: { flex: 1, height: '30@s', textAlign: 'right', paddingRight: '5@s' },
   amountSymbol: {},
   amountActionInline: {
@@ -615,7 +615,7 @@ const styles = ScaledSheet.create({
     flexDirection: 'row', alignItems: 'center', justifyContent: 'center',
     borderWidth: '1@s', borderRadius: '4@s', borderColor: "rgba(0, 0, 0, 0.3)"
   },
-  accountInput: { flex: 1, height: '30@s', textAlign: 'right', opacity: 0.9, textAlignVertical: 'bottom', paddingTop: '8@s' },
+  accountInput: { flex: 1, height: '30@s', textAlign: 'right', opacity: 0.9 },
   actionBtn: {
     flex: 1, alignItems: 'center', height: '35@s', justifyContent: 'center',
     borderWidth: '1@s', borderRadius: '4@s', backgroundColor: 'rgba(0, 112, 192, 1)',
@@ -671,6 +671,6 @@ const styles = ScaledSheet.create({
   },
   optInput: { flex: 1, height: '30@s', textAlign: 'center', fontSize: '12@s', ...Fonts.NanumGothic_Regular },
   optError: { color: 'red', marginTop: '10@s', marginBottom: '10@s', fontSize: '12@s', textAlign: 'center', ...Fonts.NanumGothic_Regular },
-
+  fontNotoSansBold: { ...Fonts.NotoSans_Bold, fontSize: '14@s' },
 
 });

@@ -585,8 +585,8 @@ const styles = ScaledSheet.create({
     height: '30@s',
     textAlign: 'right',
     paddingRight: '5@s',
-    textAlignVertical: 'bottom',
-    lineHeight: '0.1@s'
+    fontSize: '13@s',
+    ...Fonts.NanumGothic_Regular
   },
   amountSymbol: { ...Fonts.NanumGothic_Regular, fontSize: '12@s', marginRight: '10@s' },
   amountMax: {
@@ -601,8 +601,10 @@ const styles = ScaledSheet.create({
     height: '30@s',
     textAlign: 'right',
     opacity: 0.7,
-    textAlignVertical: 'bottom',
-    lineHeight: '0.1@s'
+    paddingRight: '16@s',
+    paddingLeft: '16@s',
+    fontSize: '13@s',
+    ...Fonts.NanumGothic_Regular
   },
   tagWrapper: {
     flexDirection: 'row',
@@ -721,6 +723,6 @@ const styles = ScaledSheet.create({
     fontSize: '12@s',
     textAlign: 'center', ...Fonts.NanumGothic_Regular
   },
-
+  fontNotoSansBold: { ...Fonts.NotoSans_Bold, fontSize: '14@s' },
 
 });

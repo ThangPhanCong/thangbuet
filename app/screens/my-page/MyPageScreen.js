@@ -18,6 +18,7 @@ import RNRestart from 'react-native-restart';
 import AppPreferences from '../../utils/AppPreferences';
 import UIUtils from '../../utils/UIUtils';
 import ScaledSheet from '../../libs/reactSizeMatter/ScaledSheet';
+import { scale } from '../../libs/reactSizeMatter/scalingUtils';
 
 const TabBarNavigator = TabNavigator({
   BasicInfoScreen: {
@@ -67,7 +68,7 @@ export default class MyPageScreen extends BaseScreen {
     return (
       <View style={styles.header}>
         <Icon name="account"
-          size={28}
+          size={scale(28)}
           color='#000' />
         <Text style={styles.headerTitle}>
           MY PAGE

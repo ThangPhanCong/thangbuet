@@ -170,8 +170,8 @@ const styles = ScaledSheet.create({
   marginTop20: { marginTop: '20@s' },
   title: { ...Fonts.NotoSans_Bold, fontSize: '14@s' },
   QRcodeWrapper: { width: '90%', marginTop: '20@s' },
-  addressSpace: { margin: '20@s', marginBottom: '10@s' },
-  tagSpace: { margin: '5@s', marginBottom: '20@s', marginTop: '0@s' },
+  addressSpace: { margin: '20@s', marginBottom: '10@s', fontSize: '14@s', ...Fonts.NanumGothic_Regular, textAlign: 'center' },
+  tagSpace: { margin: '5@s', marginBottom: '20@s', marginTop: '0@s', fontSize: '14@s', ...Fonts.NanumGothic_Regular, textAlign: 'center' },
   actionWapper: { flexDirection: 'row', width: '70%', height: '35@s', justifyContent: 'center', alignItems: 'center' },
   actionCopy: {
     marginTop: '10@s', flex: 1, height: '35@s',
