@@ -32,6 +32,7 @@ class MarketSearchScreen extends BaseScreen {
   _refs = {};
 
   _searchInputWidth = 0;
+  _screenHeight = 0;
 
   constructor(props) {
     super(props);
@@ -45,7 +46,8 @@ class MarketSearchScreen extends BaseScreen {
 
   render() {
     return (
-      <SafeAreaView style={styles.screen}>
+      <SafeAreaView style={styles.screen}
+        onLayout={event => this._screenHeight = event.nativeEvent.layout.height}>
         {this._renderHeader()}
         <TabBarNavigator onNavigationStateChange={this._onTabChanged.bind(this)}/>
         {this._renderSearchList()}
@@ -98,7 +100,7 @@ class MarketSearchScreen extends BaseScreen {
           top: scale(50),
           left: 0,
           right: 0,
-          bottom: 0,
+          height: this._calculateSearchViewHeight()
         }}>
         <TouchableWithoutFeedback
           onPress={this._dismissSearchList.bind(this)}>
@@ -117,6 +119,10 @@ class MarketSearchScreen extends BaseScreen {
         </TouchableWithoutFeedback>
       </View>
     )
+  }
+
+  _calculateSearchViewHeight() {
+    return Math.min(this.state.searchList.length * scale(44), this._screenHeight - scale(50))
   }
 
   _renderItem({ item }) {
