@@ -6,9 +6,10 @@ import rf from '../../libs/RequestFactory'
 import I18n from '../../i18n/i18n'
 import { formatCurrency, getCurrencyName } from '../../utils/Filters'
 import { withNavigationFocus } from 'react-navigation'
-import { Icon, Divider } from 'react-native-elements'
+import { Divider } from 'react-native-elements'
 import Modal from "react-native-modal"
 import { Fonts } from '../../utils/CommonStyles'
+import { scale } from "../../libs/reactSizeMatter/scalingUtils";
 
 class WithdrawalKRWScreen extends BaseScreen {
   constructor(props) {
@@ -251,7 +252,7 @@ class WithdrawalKRWScreen extends BaseScreen {
                 </View>
               </View>
               <View style={[styles.line, styles.amount]}>
-                <Text style={[styles.amountText, styles.textInline]}>
+                <Text style={[styles.amountText, styles.textInline, { marginLeft: scale(10) }]}>
                   {I18n.t('withdrawal.request')}
                   <Text>({I18n.t('funds.currency')})</Text>
                 </Text>
@@ -273,7 +274,7 @@ class WithdrawalKRWScreen extends BaseScreen {
               </View>
 
               <View style={[styles.line, styles.amount]}>
-                <Text style={[styles.amountText, styles.textInline]}>{I18n.t('withdrawal.accountRegister')}</Text>
+                <Text style={[styles.amountText, styles.textInline, { marginLeft: scale(10) }]}>{I18n.t('withdrawal.accountRegister')}</Text>
                 <View style={styles.accountWrapper}>
                   <TextInput
                     editable={false}
@@ -566,7 +567,7 @@ const styles = ScaledSheet.create({
     justifyContent: 'center', alignItems: 'center', marginTop: '15@s', marginLeft: '40@s', marginRight: '40@s'
   },
   row: { flexDirection: 'row', alignItems: 'flex-end', marginBottom: '5@s' },
-  leftView: { flex: 0.9, fontSize: '12@s', ...Fonts.NanumGothic_Regular, paddingBottom: '3@s' },
+  leftView: { flex: 0.9, fontSize: '12@s', ...Fonts.NanumGothic_Regular, paddingBottom: '3@s', marginLeft: '10@s' },
   rightView: { flex: 1, alignItems: 'flex-end', justifyContent: 'flex-end' },
   rightContent: { flex: 1, alignSelf: 'flex-end', fontSize: '18@s', ...Fonts.OpenSans_Bold },
   symbol: { fontSize: '9@s' },
