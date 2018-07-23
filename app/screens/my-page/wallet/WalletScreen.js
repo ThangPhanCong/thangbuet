@@ -17,10 +17,9 @@ import rf from '../../../libs/RequestFactory';
 import { CommonStyles, Fonts } from '../../../utils/CommonStyles';
 import Utils from '../../../utils/Utils';
 import I18n from '../../../i18n/i18n';
-import _ from 'lodash';
+import { map, filter } from 'lodash';
 import Consts from '../../../utils/Consts';
 import TouchableTextHighlight from '../../../utils/TouchableTextHighlight';
-import ActionButton from 'react-native-action-button';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import ScaledSheet from '../../../libs/reactSizeMatter/ScaledSheet';
 import { scale } from '../../../libs/reactSizeMatter/scalingUtils';
@@ -276,7 +275,7 @@ export default class WalletScreen extends BaseScreen {
   }
 
   _generateOptionList() {
-    return _.map(this._coinTypes, e => {
+    return map(this._coinTypes, e => {
       let t = I18n.t(`currency.${e}.fullname`)
       if (t)
         return t + ' - ' + Utils.getCurrencyName(e);
@@ -438,7 +437,7 @@ export default class WalletScreen extends BaseScreen {
   async _removeWallet() {
     try {
       await rf.getRequest('UserRequest').deleteWithdrawallAddress(this._selectedWallet.id);
-      let wallets = _.filter(this.state.wallets, w => w === this._selectedWallet);
+      let wallets = filter(this.state.wallets, w => w === this._selectedWallet);
 
       this._selectedWallet = {};
       this.setState({ wallets, removeWalletDialogVisible: false })
@@ -451,7 +450,7 @@ export default class WalletScreen extends BaseScreen {
   async _getAvailableCoins() {
     try {
       let res = await rf.getRequest('MasterdataRequest').getAll();
-      this._coinTypes = _.map(_.filter(res.coin_settings, ['currency', Consts.CURRENCY_KRW]), 'coin');
+      this._coinTypes = map(filter(res.coin_settings, ['currency', Consts.CURRENCY_KRW]), 'coin');
     }
     catch (err) {
       console.log('WalletScreen._getAvailableCoins', err);

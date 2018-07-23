@@ -15,7 +15,7 @@ import BaseScreen from '../../BaseScreen'
 import { CommonStyles, Fonts } from '../../../utils/CommonStyles';
 import rf from '../../../libs/RequestFactory';
 import I18n from '../../../i18n/i18n';
-import _ from 'lodash';
+import { isEmpty } from 'lodash';
 import UIUtils from "../../../utils/UIUtils";
 
 export default class OTPVerifyScreen extends BaseScreen {
@@ -60,7 +60,7 @@ export default class OTPVerifyScreen extends BaseScreen {
         </Text>
         <View style={styles.qrcodeContainer}>
           {
-            !_.isEmpty(this.state.qrCodeUrl) &&
+            !isEmpty(this.state.qrCodeUrl) &&
             <Image
               style={{flex: 1,}}
               source={{uri: this.state.qrCodeUrl}}/>
@@ -133,7 +133,7 @@ export default class OTPVerifyScreen extends BaseScreen {
   }
 
   _onActiveOTP() {
-    if (_.isEmpty(this._otpCode)) {
+    if (isEmpty(this._otpCode)) {
       return;
     }
 
