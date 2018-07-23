@@ -18,7 +18,7 @@ import { Card } from 'react-native-elements';
 import BaseScreen from '../../BaseScreen';
 import rf from '../../../libs/RequestFactory';
 import I18n from '../../../i18n/i18n';
-import _ from 'lodash';
+import { map } from 'lodash';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import ScaledSheet from '../../../libs/reactSizeMatter/ScaledSheet';
 import { scale } from '../../../libs/reactSizeMatter/scalingUtils';
@@ -484,7 +484,7 @@ export default class SecurityOverviewScreen extends BaseScreen {
               textStyle={styles.textModal}
               dropdownTextStyle={styles.textModalDropDown}
               renderSeparator={() => <View style={{ height: 0 }}/>}
-              options={_.map(this._banks, 'name')}
+              options={map(this._banks, 'name')}
               onSelect={this._onBankPickerSelect.bind(this)}/>
           </View>
 
@@ -527,7 +527,7 @@ export default class SecurityOverviewScreen extends BaseScreen {
   }
 
   _renderBankItems() {
-    return _.map(this._banks, (bank, index) => (
+    return map(this._banks, (bank, index) => (
       <Option>
         {bank.name}
       </Option>

@@ -15,7 +15,7 @@ import { CommonColors, CommonStyles, Fonts } from '../../utils/CommonStyles';
 import { getCurrencyName, formatCurrency, formatPercent } from "../../utils/Filters";
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import rf from '../../libs/RequestFactory';
-import _ from 'lodash';
+import { filter, map, find, includes, orderBy, remove } from 'lodash';
 import I18n from '../../i18n/i18n';
 import ScaledSheet from "../../libs/reactSizeMatter/ScaledSheet";
 import { scale } from "../../libs/reactSizeMatter/scalingUtils";
@@ -115,7 +115,7 @@ class MarketScreen extends BaseScreen {
                 {I18n.t(`currency.${item.coin}.fullname`) || getCurrencyName(item.coin)}
                 {"\n"}
                 <Text style={styles.itemCoin}>
-                  {I18n.t(`currency.${item.coin}.fullname`) || getCurrencyName(item.coin)}
+                  {getCurrencyName(item.coin) + ' / ' + getCurrencyName(item.currency)}
                 </Text>
               </Text>
             </View>
@@ -223,10 +223,10 @@ class MarketScreen extends BaseScreen {
       return;
 
     this._isFavoriteFilter = value;
-    let favoriteKeys = _.map(this._favorites, 'coin_pair');
+    let favoriteKeys = map(this._favorites, 'coin_pair');
     let filterSymbols;
     if (this._isFavoriteFilter)
-      filterSymbols = _.filter(this._symbols, s => _.includes(favoriteKeys, s.favoriteKey));
+      filterSymbols = filter(this._symbols, s => includes(favoriteKeys, s.favoriteKey));
     else
       filterSymbols = this._symbols;
 
@@ -235,14 +235,18 @@ class MarketScreen extends BaseScreen {
 
   async _onEnableFavorite(item) {
     let currentFavorite = item.isFavorite;
-    let favorite = _.find(this._favorites, item => item.coin_pair === item.favoriteKey)
+    let favorite = find(this._favorites, i => i.coin_pair === item.favoriteKey);
 
     try {
       if (currentFavorite) {
         await rf.getRequest('FavoriteRequest').removeOne(favorite.id);
+        remove(this._favorites, i => i === favorite);
+        this.setState(this._updateSymbolsData(this._symbols, this._prices, this._favorites))
       }
       else {
-        await rf.getRequest('FavoriteRequest').createANewOne({ coinPair: item.favoriteKey });
+        let response = await rf.getRequest('FavoriteRequest').createANewOne({ coinPair: item.favoriteKey });
+        this._favorites.push(response.data);
+        this.setState(this._updateSymbolsData(this._symbols, this._prices, this._favorites))
       }
     }
     catch (err) {
@@ -287,7 +291,7 @@ class MarketScreen extends BaseScreen {
   async _getSymbols() {
     try {
       let symbolResponse = await rf.getRequest('MasterdataRequest').getAll();
-      let symbols = _.filter(symbolResponse.coin_settings, ['currency', this.props.currency]);
+      let symbols = filter(symbolResponse.coin_settings, ['currency', this.props.currency]);
       symbols.map(symbol => {
         symbol.key = symbol.currency + '_' + symbol.coin;
         symbol.favoriteKey = symbol.coin + '/' + symbol.currency;
@@ -365,9 +369,9 @@ class MarketScreen extends BaseScreen {
       this._updateSymbolData(symbols, currency, coin, prices[symbolKey]);
     }
 
-    let favoriteKeys = _.map(favorites, 'coin_pair');
-    symbols = _.map(symbols, s => {
-      s.isFavorite = _.includes(favoriteKeys, s.favoriteKey);
+    let favoriteKeys = map(favorites, 'coin_pair');
+    symbols = map(symbols, s => {
+      s.isFavorite = includes(favoriteKeys, s.favoriteKey);
       return s;
     });
 
@@ -377,7 +381,7 @@ class MarketScreen extends BaseScreen {
 
     let filterSymbols;
     if (this._isFavoriteFilter)
-      filterSymbols = _.filter(symbols, s => s.isFavorite);
+      filterSymbols = filter(symbols, s => s.isFavorite);
     else
       filterSymbols = symbols;
 
@@ -406,10 +410,10 @@ class MarketScreen extends BaseScreen {
 
   _changeSortField(sortField, sortDirection) {
     this._symbols = this._sortSymbols(sortField, sortDirection);
-    let favoriteKeys = _.map(this._favorites, 'coin_pair');
+    let favoriteKeys = map(this._favorites, 'coin_pair');
     let filterSymbols;
     if (this._isFavoriteFilter)
-      filterSymbols = _.filter(this._symbols, s => _.includes(favoriteKeys, s.favoriteKey));
+      filterSymbols = filter(this._symbols, s => includes(favoriteKeys, s.favoriteKey));
     else
       filterSymbols = this._symbols;
 
@@ -422,10 +426,10 @@ class MarketScreen extends BaseScreen {
 
   _sortSymbols(sortField, sortDirection) {
     if (sortField != MarketScreen.SORT_FIELDS.SYMBOL) {
-      return _.orderBy(this._symbols, (item) => parseFloat(item[sortField]), sortDirection);
+      return orderBy(this._symbols, (item) => parseFloat(item[sortField]), sortDirection);
     } else {
       const revertedDirection = this._revertSortDirection(sortDirection);
-      return _.orderBy(this._symbols, ['coin', 'currency'], [revertedDirection, revertedDirection]);
+      return orderBy(this._symbols, ['coin', 'currency'], [revertedDirection, revertedDirection]);
     }
   }
 }
