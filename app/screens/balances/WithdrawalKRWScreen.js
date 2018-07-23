@@ -6,9 +6,10 @@ import rf from '../../libs/RequestFactory'
 import I18n from '../../i18n/i18n'
 import { formatCurrency, getCurrencyName } from '../../utils/Filters'
 import { withNavigationFocus } from 'react-navigation'
-import { Icon, Divider } from 'react-native-elements'
+import { Divider } from 'react-native-elements'
 import Modal from "react-native-modal"
 import { Fonts } from '../../utils/CommonStyles'
+import { scale } from "../../libs/reactSizeMatter/scalingUtils";
 
 class WithdrawalKRWScreen extends BaseScreen {
   constructor(props) {
@@ -251,7 +252,7 @@ class WithdrawalKRWScreen extends BaseScreen {
                 </View>
               </View>
               <View style={[styles.line, styles.amount]}>
-                <Text style={[styles.amountText, styles.textInline]}>
+                <Text style={[styles.amountText, styles.textInline, { marginLeft: scale(10) }]}>
                   {I18n.t('withdrawal.request')}
                   <Text>({I18n.t('funds.currency')})</Text>
                 </Text>
@@ -273,14 +274,14 @@ class WithdrawalKRWScreen extends BaseScreen {
               </View>
 
               <View style={[styles.line, styles.amount]}>
-                <Text style={[styles.amountText, styles.textInline]}>{I18n.t('withdrawal.accountRegister')}</Text>
+                <Text style={[styles.amountText, styles.textInline, { marginLeft: scale(10) }]}>{I18n.t('withdrawal.accountRegister')}</Text>
                 <View style={styles.accountWrapper}>
                   <TextInput
                     editable={false}
                     value={this.state.currentUser.encodeAccount}
                     autoCorrect={false}
                     underlineColorAndroid='rgba(0, 0, 0, 0)'
-                    style={[styles.accountInput, styles.amountText]} />
+                    style={[styles.accountInput, styles.amountText, styles.inputDisabled]} />
                 </View>
               </View>
 
@@ -371,36 +372,36 @@ class WithdrawalKRWScreen extends BaseScreen {
 
                   <View style={styles.table}>
                     <Text style={[styles.tbRow, styles.tbContent]}>{I18n.t('withdrawal.row1Col1')}</Text>
-                    <Icon style={[styles.tbRow, styles.tbArrow]} type="feather" name="arrow-right" />
+                    <Image style={styles.arrowRight} source={require('../../../assets/arrowRight/arrowRight.png')}/>
                     <Text style={[styles.tbRow, styles.tbContent]}>{I18n.t('withdrawal.row1Col2')}</Text>
-                    <Icon style={[styles.tbRow, styles.tbArrow]} type="feather" name="arrow-right" />
+                    <Image style={styles.arrowRight} source={require('../../../assets/arrowRight/arrowRight.png')}/>
                     <Text style={[styles.tbRow, styles.tbContent]}>{I18n.t('withdrawal.row1Col3')}</Text>
                     <Text style={[styles.tbRow, styles.tbContent]}> {I18n.t('withdrawal.row1Col4')}</Text>
                   </View>
 
                   <View style={styles.table}>
                     <Text style={[styles.tbRow, styles.tbContent]}>{I18n.t('withdrawal.row2Col1')}</Text>
-                    <Icon style={[styles.tbRow, styles.tbArrow]} type="feather" name="arrow-right" />
+                    <Image style={styles.arrowRight} source={require('../../../assets/arrowRight/arrowRight.png')}/>
                     <Text style={[styles.tbRow, styles.tbContent]}>{I18n.t('withdrawal.row2Col2')}</Text>
-                    <Icon style={[styles.tbRow, styles.tbArrow]} type="feather" name="arrow-right" />
+                    <Image style={styles.arrowRight} source={require('../../../assets/arrowRight/arrowRight.png')}/>
                     <Text style={[styles.tbRow, styles.tbContent]}>{I18n.t('withdrawal.row2Col3')}</Text>
                     <Text style={[styles.tbRow, styles.tbContent]}> {I18n.t('withdrawal.row2Col4')}</Text>
                   </View>
 
                   <View style={styles.table}>
                     <Text style={[styles.tbRow, styles.tbContent]}>{I18n.t('withdrawal.row3Col1')}</Text>
-                    <Icon style={[styles.tbRow, styles.tbArrow]} type="feather" name="arrow-right" />
+                    <Image style={styles.arrowRight} source={require('../../../assets/arrowRight/arrowRight.png')}/>
                     <Text style={[styles.tbRow, styles.tbContent]}>{I18n.t('withdrawal.row3Col2')}</Text>
-                    <Icon style={[styles.tbRow, styles.tbArrow]} type="feather" name="arrow-right" />
+                    <Image style={styles.arrowRight} source={require('../../../assets/arrowRight/arrowRight.png')}/>
                     <Text style={[styles.tbRow, styles.tbContent]}>{I18n.t('withdrawal.row3Col3')}</Text>
                     <Text style={[styles.tbRow, styles.tbContent]}> {I18n.t('withdrawal.row3Col4')}</Text>
                   </View>
 
                   <View style={styles.table}>
                     <Text style={[styles.tbRow, styles.tbContent, styles.tbColor]}>{I18n.t('withdrawal.row4Col1')}</Text>
-                    <Icon style={[styles.tbRow, styles.tbArrow, styles.tbColor]} type="feather" name="arrow-right" />
+                    <Image style={styles.arrowRight} source={require('../../../assets/arrowRight/arrowRight.png')}/>
                     <Text style={[styles.tbRow, styles.tbContent, styles.tbColor]}>{I18n.t('withdrawal.row4Col2')}</Text>
-                    <Icon style={[styles.tbRow, styles.tbArrow, styles.tbColor]} type="feather" name="arrow-right" />
+                    <Image style={styles.arrowRight} source={require('../../../assets/arrowRight/arrowRight.png')}/>
                     <Text style={[styles.tbRow, styles.tbContent, styles.tbColor]}>{I18n.t('withdrawal.row4Col3')}</Text>
                     <Text style={[styles.tbRow, styles.tbContent, styles.tbColor]}> {I18n.t('withdrawal.row4Col4')}</Text>
                   </View>
@@ -483,7 +484,9 @@ class WithdrawalKRWScreen extends BaseScreen {
     return (
       <View style={[styles.modalStyle, { alignContent: 'center', justifyContent: 'center', }]}>
         <View style={styles.headerModalStyle}>
-          <Text style={styles.headerModalTitle}>{I18n.t('withdrawal.smsConfirmTitle')}</Text>
+          <Text style={styles.headerModalTitle}>
+            <Text style={styles.titleSMS}>{I18n.t('withdrawal.smsConfirmTitle')}</Text>
+            {I18n.t('withdrawal.smsConfirmTitle1')}</Text>
         </View>
 
         <Text style={styles.smsContent}>{I18n.t('withdrawal.smsContent')}</Text>
@@ -564,7 +567,7 @@ const styles = ScaledSheet.create({
     justifyContent: 'center', alignItems: 'center', marginTop: '15@s', marginLeft: '40@s', marginRight: '40@s'
   },
   row: { flexDirection: 'row', alignItems: 'flex-end', marginBottom: '5@s' },
-  leftView: { flex: 0.9, fontSize: '12@s', ...Fonts.NanumGothic_Regular, paddingBottom: '3@s' },
+  leftView: { flex: 0.9, fontSize: '12@s', ...Fonts.NanumGothic_Regular, paddingBottom: '3@s', marginLeft: '10@s' },
   rightView: { flex: 1, alignItems: 'flex-end', justifyContent: 'flex-end' },
   rightContent: { flex: 1, alignSelf: 'flex-end', fontSize: '18@s', ...Fonts.OpenSans_Bold },
   symbol: { fontSize: '9@s' },
@@ -590,6 +593,7 @@ const styles = ScaledSheet.create({
     justifyContent: 'center', alignItems: 'center'
   },
   headerModalTitle: { fontSize: '12@s', ...Fonts.NanumGothic_Regular },
+  titleSMS: { fontSize: '12@s', ...Fonts.OpenSans_Bold },
   modalActionStyle: {
     width: '100%', justifyContent: 'space-between', alignItems: 'center', flexDirection: 'row',
     marginBottom: '20@s', marginTop: '10@s'
@@ -604,7 +608,7 @@ const styles = ScaledSheet.create({
     flexDirection: 'row', alignItems: 'center', justifyContent: 'center',
     borderWidth: '1@s', borderRadius: '4@s', borderColor: "rgba(0, 0, 0, 0.3)"
   },
-  amountText: { ...Fonts.NanumGothic_Regular, fontSize: '12@s' },
+  amountText: { ...Fonts.NanumGothic_Regular, fontSize: '12@s', paddingRight: '10@s' },
   amountInput: { flex: 1, height: '30@s', textAlign: 'right', paddingRight: '5@s' },
   amountSymbol: {},
   amountActionInline: {
@@ -615,7 +619,7 @@ const styles = ScaledSheet.create({
     flexDirection: 'row', alignItems: 'center', justifyContent: 'center',
     borderWidth: '1@s', borderRadius: '4@s', borderColor: "rgba(0, 0, 0, 0.3)"
   },
-  accountInput: { flex: 1, height: '30@s', textAlign: 'right', opacity: 0.9, textAlignVertical: 'bottom', paddingTop: '8@s' },
+  accountInput: { flex: 1, height: '30@s', textAlign: 'right', opacity: 0.9 },
   actionBtn: {
     flex: 1, alignItems: 'center', height: '35@s', justifyContent: 'center',
     borderWidth: '1@s', borderRadius: '4@s', backgroundColor: 'rgba(0, 112, 192, 1)',
@@ -648,13 +652,15 @@ const styles = ScaledSheet.create({
   smsContent: { width: '80%', marginTop: '10@s', marginBottom: '10@s', textAlign: 'center', fontSize: '12@s', ...Fonts.NanumGothic_Regular },
   smsInputWrapper: {
     width: '80%', alignContent: 'center', justifyContent: 'center', flexDirection: 'row',
-    borderWidth: '1@s', borderRadius: '4@s', borderColor: "rgba(0, 0, 0, 0.1)",
     marginTop: '10@s', marginBottom: '10@s'
   },
-  smsInput: { flex: 1, height: '30@s', textAlign: 'center', fontSize: '12@s', ...Fonts.NanumGothic_Regular },
+  smsInput: {flex: 2, height: '30@s', textAlign: 'center', fontSize: '12@s', ...Fonts.NanumGothic_Regular, marginRight: '10@s',
+    borderWidth: '1@s', borderRadius: '4@s', borderColor: "rgba(0, 0, 0, 0.1)"
+  },
   smsConfirmBtn: {
+    flex: 1,
     justifyContent: 'center', backgroundColor: 'rgba(237, 125, 49, 1)', height: '30@s', borderWidth: '1@s',
-    borderColor: "rgba(237, 125, 49, 1)", borderTopRightRadius: '4@s', borderBottomRightRadius: '4@s', padding: '5@s'
+    borderColor: "rgba(237, 125, 49, 1)", borderRadius: '4@s', padding: '5@s'
   },
   smsConfirmText: { color: 'white', fontSize: '12@s', textAlign: 'center', ...Fonts.NanumGothic_Regular },
   smsError: { color: 'red', marginTop: '10@s', marginBottom: '10@s', fontSize: '12@s', textAlign: 'center', ...Fonts.NanumGothic_Regular },
@@ -671,6 +677,12 @@ const styles = ScaledSheet.create({
   },
   optInput: { flex: 1, height: '30@s', textAlign: 'center', fontSize: '12@s', ...Fonts.NanumGothic_Regular },
   optError: { color: 'red', marginTop: '10@s', marginBottom: '10@s', fontSize: '12@s', textAlign: 'center', ...Fonts.NanumGothic_Regular },
-
-
+  fontNotoSansBold: { ...Fonts.NotoSans_Bold, fontSize: '14@s' },
+  arrowRight: {
+    width: '20@s',
+    height: '20@s',
+  },
+  inputDisabled: {
+    backgroundColor: '#f2f2f2'
+  }
 });

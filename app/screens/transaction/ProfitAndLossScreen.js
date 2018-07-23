@@ -441,6 +441,7 @@ class ProfitAndLossScreen extends BaseScreen {
             <HeaderProfitAndLoss titles={titles}/>
             {this._renderSumLeft()}
             <FlatList data={transactions}
+                      keyExtractor={(item, index) => index.toString()}
                       onScroll={(event) => this._onLeftListScroll(event)}
                       ref={elm => this.flatListLeft = elm}
                       onMomentumScrollStart={() => this._handleLeftMomentumStart()}
@@ -456,6 +457,7 @@ class ProfitAndLossScreen extends BaseScreen {
             <HeaderProfitCenter titles={titles}/>
             {this._renderSumCenter()}
             <FlatList data={transactions}
+                      keyExtractor={(item, index) => index.toString()}
                       onScroll={(event) => this._onCenterListScroll(event)}
                       ref={elm => this.flatListCenter = elm}
                       onMomentumScrollStart={() => this._handleCenterMomentumStart()}
@@ -471,6 +473,7 @@ class ProfitAndLossScreen extends BaseScreen {
             <HeaderProfitRight titles={titles}/>
             {this._renderSumRight()}
             <FlatList data={transactions}
+                      keyExtractor={(item, index) => index.toString()}
                       onScroll={(event) => this._onRightListScroll(event)}
                       ref={elm => this.flatListRight = elm}
                       onMomentumScrollStart={() => this._handleRightMomentumStart()}

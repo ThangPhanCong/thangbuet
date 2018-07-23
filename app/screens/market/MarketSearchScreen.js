@@ -333,7 +333,7 @@ const styles = ScaledSheet.create({
   titleLeftView: {
     fontSize: '12@s',
     marginStart: '5@s',
-    ...Fonts.NotoSans
+    ...Fonts.NotoSans_Bold
   },
   searchViewContainer: {
     flex: 3,
