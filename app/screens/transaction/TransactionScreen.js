@@ -92,7 +92,7 @@ const styles = ScaledSheet.create({
   textHeader: {
     fontSize: '14@s',
     color: CommonColors.mainText,
-    ...Fonts.NotoSans
+    ...Fonts.NotoSans_Bold
   },
   imgBook: {
     width: '20@s',
