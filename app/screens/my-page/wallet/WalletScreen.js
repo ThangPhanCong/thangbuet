@@ -562,7 +562,9 @@ const styles = ScaledSheet.create({
     borderRadius: '5@s',
     borderWidth: '1@s',
     paddingLeft: '16@s',
-    paddingRight: '16@s'
+    paddingRight: '16@s',
+    fontSize: '13@s',
+    ...Fonts.NanumGothic_Regular
   },
   picker: {
     marginTop: '2@s',

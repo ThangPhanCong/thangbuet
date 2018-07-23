@@ -575,6 +575,7 @@ export default class SecurityOverviewScreen extends BaseScreen {
           </Text>
           <TextInput style={styles.bankAccountTextInput}
                      underlineColorAndroid='transparent'
+                     keyboardType='numeric'
                      onChangeText={text => this._passwordParams.otp = text}/>
 
           <TouchableOpacity
