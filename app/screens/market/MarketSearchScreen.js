@@ -12,6 +12,7 @@ import {
   Keyboard,
   Dimensions
 } from 'react-native';
+import { Card } from 'react-native-elements';
 import BaseScreen from '../BaseScreen';
 import { TabNavigator, TabBarTop } from 'react-navigation';
 import Consts from '../../utils/Consts';
@@ -25,6 +26,7 @@ import rf from '../../libs/RequestFactory';
 import { each, isEmpty, filter } from 'lodash';
 import ScaledSheet from "../../libs/reactSizeMatter/ScaledSheet";
 import { scale } from "../../libs/reactSizeMatter/scalingUtils";
+import Modal from 'react-native-modal';
 
 let TabBarNavigator;
 
@@ -39,7 +41,8 @@ class MarketSearchScreen extends BaseScreen {
     this.state = {
       searchList: [],
       searchListVisible: false,
-      isFavoriteFilter: false
+      isFavoriteFilter: false,
+      isShowComingSoon: false
     }
     TabBarNavigator = this._initTabNavigator();
   }
@@ -51,6 +54,7 @@ class MarketSearchScreen extends BaseScreen {
         {this._renderHeader()}
         <TabBarNavigator onNavigationStateChange={this._onTabChanged.bind(this)}/>
         {this._renderSearchList()}
+        {this._renderComingSoon()}
       </SafeAreaView>
     )
   }
@@ -176,12 +180,50 @@ class MarketSearchScreen extends BaseScreen {
       },
       {
         navigationOptions: ({ navigation }) => ({
-          gesturesEnabled: false
+          gesturesEnabled: false,
+          tabBarOnPress: ({previousScene, scene, jumpToIndex}) => {
+            console.log('onPress:', scene.route);
+            if (scene.index > 0) {
+              this.setState({
+                isShowComingSoon: true
+              })
+              return;
+            }
+
+            jumpToIndex(scene.index);
+          }
         }),
         tabBarComponent: TabBarTop,
         ...CommonStyles.tabOptions
       }
     );
+  }
+
+  _renderComingSoon() {
+    return (
+      <Modal
+        isVisible={this.state.isShowComingSoon}
+        avoidKeyboard={true}
+        useNativeDriver={true}
+        backdropColor='transparent'
+        onBackdropPress={() => this.setState({isShowComingSoon: false})}>
+        <Card
+          style={styles.dialog}
+          containerStyle={styles.cardContainer}>
+          <Text style={styles.comingSoonTitle}>
+            {I18n.t('common.comingSoon')}
+          </Text>
+          <View style={{ height: scale(1), backgroundColor: '#EBEBEB' }}/>
+          <TouchableOpacity
+            style={styles.comingSoonConfirmButton}
+            onPress={() => this.setState({isShowComingSoon: false})}>
+            <Text style={styles.comingSoonConfirmButtonText}>
+              {I18n.t('common.confirm')}
+            </Text>
+          </TouchableOpacity>
+        </Card>
+      </Modal>
+    )
   }
 
   _onPressItem(item) {
@@ -349,6 +391,40 @@ const styles = ScaledSheet.create({
     borderWidth: '1@s',
     backgroundColor: '#FFF',
     marginEnd: '16@s'
+  },
+  dialog: {
+    marginStart: '40@s',
+    marginEnd: '40@s',
+    backgroundColor: '#FFF'
+  },
+  cardContainer: {
+    borderRadius: '5@s',
+    padding: 0,
+    marginStart: '30@s',
+    marginEnd: '30@s'
+  },
+  comingSoonConfirmButtonText: {
+    fontSize: '13@s',
+    color: '#FFF',
+    ...Fonts.NanumGothic_Regular
+  },
+  comingSoonConfirmButton: {
+    marginTop: '10@s',
+    marginBottom: '10@s',
+    marginStart: '16@s',
+    marginEnd: '16@s',
+    height: '40@s',
+    backgroundColor: '#0070C0',
+    borderRadius: '5@s',
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
+  comingSoonTitle: {
+    marginTop: '20@s',
+    marginBottom: '20@s',
+    textAlign: 'center',
+    fontSize: '13@s',
+    ...Fonts.NanumGothic_Regular
   }
 });
 
