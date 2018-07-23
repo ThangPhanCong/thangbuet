@@ -371,36 +371,36 @@ class WithdrawalKRWScreen extends BaseScreen {
 
                   <View style={styles.table}>
                     <Text style={[styles.tbRow, styles.tbContent]}>{I18n.t('withdrawal.row1Col1')}</Text>
-                    <Icon style={[styles.tbRow, styles.tbArrow]} type="feather" name="arrow-right" />
+                    <Image style={styles.arrowRight} source={require('../../../assets/arrowRight/arrowRight.png')}/>
                     <Text style={[styles.tbRow, styles.tbContent]}>{I18n.t('withdrawal.row1Col2')}</Text>
-                    <Icon style={[styles.tbRow, styles.tbArrow]} type="feather" name="arrow-right" />
+                    <Image style={styles.arrowRight} source={require('../../../assets/arrowRight/arrowRight.png')}/>
                     <Text style={[styles.tbRow, styles.tbContent]}>{I18n.t('withdrawal.row1Col3')}</Text>
                     <Text style={[styles.tbRow, styles.tbContent]}> {I18n.t('withdrawal.row1Col4')}</Text>
                   </View>
 
                   <View style={styles.table}>
                     <Text style={[styles.tbRow, styles.tbContent]}>{I18n.t('withdrawal.row2Col1')}</Text>
-                    <Icon style={[styles.tbRow, styles.tbArrow]} type="feather" name="arrow-right" />
+                    <Image style={styles.arrowRight} source={require('../../../assets/arrowRight/arrowRight.png')}/>
                     <Text style={[styles.tbRow, styles.tbContent]}>{I18n.t('withdrawal.row2Col2')}</Text>
-                    <Icon style={[styles.tbRow, styles.tbArrow]} type="feather" name="arrow-right" />
+                    <Image style={styles.arrowRight} source={require('../../../assets/arrowRight/arrowRight.png')}/>
                     <Text style={[styles.tbRow, styles.tbContent]}>{I18n.t('withdrawal.row2Col3')}</Text>
                     <Text style={[styles.tbRow, styles.tbContent]}> {I18n.t('withdrawal.row2Col4')}</Text>
                   </View>
 
                   <View style={styles.table}>
                     <Text style={[styles.tbRow, styles.tbContent]}>{I18n.t('withdrawal.row3Col1')}</Text>
-                    <Icon style={[styles.tbRow, styles.tbArrow]} type="feather" name="arrow-right" />
+                    <Image style={styles.arrowRight} source={require('../../../assets/arrowRight/arrowRight.png')}/>
                     <Text style={[styles.tbRow, styles.tbContent]}>{I18n.t('withdrawal.row3Col2')}</Text>
-                    <Icon style={[styles.tbRow, styles.tbArrow]} type="feather" name="arrow-right" />
+                    <Image style={styles.arrowRight} source={require('../../../assets/arrowRight/arrowRight.png')}/>
                     <Text style={[styles.tbRow, styles.tbContent]}>{I18n.t('withdrawal.row3Col3')}</Text>
                     <Text style={[styles.tbRow, styles.tbContent]}> {I18n.t('withdrawal.row3Col4')}</Text>
                   </View>
 
                   <View style={styles.table}>
                     <Text style={[styles.tbRow, styles.tbContent, styles.tbColor]}>{I18n.t('withdrawal.row4Col1')}</Text>
-                    <Icon style={[styles.tbRow, styles.tbArrow, styles.tbColor]} type="feather" name="arrow-right" />
+                    <Image style={styles.arrowRight} source={require('../../../assets/arrowRight/arrowRight.png')}/>
                     <Text style={[styles.tbRow, styles.tbContent, styles.tbColor]}>{I18n.t('withdrawal.row4Col2')}</Text>
-                    <Icon style={[styles.tbRow, styles.tbArrow, styles.tbColor]} type="feather" name="arrow-right" />
+                    <Image style={styles.arrowRight} source={require('../../../assets/arrowRight/arrowRight.png')}/>
                     <Text style={[styles.tbRow, styles.tbContent, styles.tbColor]}>{I18n.t('withdrawal.row4Col3')}</Text>
                     <Text style={[styles.tbRow, styles.tbContent, styles.tbColor]}> {I18n.t('withdrawal.row4Col4')}</Text>
                   </View>
@@ -677,5 +677,8 @@ const styles = ScaledSheet.create({
   optInput: { flex: 1, height: '30@s', textAlign: 'center', fontSize: '12@s', ...Fonts.NanumGothic_Regular },
   optError: { color: 'red', marginTop: '10@s', marginBottom: '10@s', fontSize: '12@s', textAlign: 'center', ...Fonts.NanumGothic_Regular },
   fontNotoSansBold: { ...Fonts.NotoSans_Bold, fontSize: '14@s' },
-
+  arrowRight: {
+    width: '20@s',
+    height: '20@s',
+  }
 });
