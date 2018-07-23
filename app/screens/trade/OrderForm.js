@@ -474,6 +474,7 @@ export default class OrderForm extends BaseScreen {
     const inputBorderStyle = this._getInputBorderStyle(OrderForm.INPUT_QUANTITY);
     const caretBorderStyle = this._getCaretBorderStyle(OrderForm.INPUT_QUANTITY);
     const enableQuantity = this.state.enableQuantity;
+    const disabled = this._isMarketOrder() && this._isBuyOrder();
     return (
       <View style={styles.inputRow}>
         <Text style={styles.inputLabel}>{I18n.t('orderForm.quantity')}</Text>
@@ -489,7 +490,7 @@ export default class OrderForm extends BaseScreen {
             keyboardType='numeric'
             style={styles.inputText}
             underlineColorAndroid='transparent'/>
-            <TouchableWithoutFeedback onPress={this._openQuantityDropdown.bind(this)}>
+            <TouchableWithoutFeedback onPress={this._openQuantityDropdown.bind(this)} disabled={disabled}>
               <View style={[styles.caretButton, caretBorderStyle]}>
                 {this._renderCaretDownIcon()}
               </View>
@@ -558,7 +559,7 @@ export default class OrderForm extends BaseScreen {
             keyboardType='numeric'
             style={styles.inputText}
             underlineColorAndroid='transparent'/>
-            <TouchableWithoutFeedback onPress={this._openTotalDropdown.bind(this)}>
+            <TouchableWithoutFeedback onPress={this._openTotalDropdown.bind(this)} disabled={this._isMarketOrder()}>
               <View style={[styles.caretButton, caretBorderStyle]}>
                 {this._renderCaretDownIcon()}
               </View>
