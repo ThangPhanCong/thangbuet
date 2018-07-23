@@ -110,6 +110,7 @@ export default class OpenOrders extends BaseScreen {
           <Text style={styles.textMore}>{I18n.t('openOrder.textMore')}</Text>
         </View>
         <FlatList data={orders}
+                  keyExtractor={(item, index) => index.toString()}
                   renderItem={this._renderItem.bind(this)}
                   onEndReached={this._handleLoadMore.bind(this)}
                   ItemSeparatorComponent={this._renderSeparator}

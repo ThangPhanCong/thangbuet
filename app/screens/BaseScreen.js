@@ -18,7 +18,7 @@ export default class BaseScreen extends React.Component {
 
   navigate(screen, params) {
     const { navigate } = this.props.navigation;
-    navigate(screen, params)
+    navigate({routeName: screen, params: params, action: null, key: screen});
   }
 
   componentWillMount() {
