@@ -437,7 +437,7 @@ export default class WalletScreen extends BaseScreen {
   async _removeWallet() {
     try {
       await rf.getRequest('UserRequest').deleteWithdrawallAddress(this._selectedWallet.id);
-      let wallets = filter(this.state.wallets, w => w === this._selectedWallet);
+      let wallets = filter(this.state.wallets, w => w !== this._selectedWallet);
 
       this._selectedWallet = {};
       this.setState({ wallets, removeWalletDialogVisible: false })
