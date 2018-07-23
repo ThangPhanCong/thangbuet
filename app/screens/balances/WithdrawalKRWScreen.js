@@ -280,7 +280,7 @@ class WithdrawalKRWScreen extends BaseScreen {
                     value={this.state.currentUser.encodeAccount}
                     autoCorrect={false}
                     underlineColorAndroid='rgba(0, 0, 0, 0)'
-                    style={[styles.accountInput, styles.amountText]} />
+                    style={[styles.accountInput, styles.amountText, styles.inputDisabled]} />
                 </View>
               </View>
 
@@ -607,7 +607,7 @@ const styles = ScaledSheet.create({
     flexDirection: 'row', alignItems: 'center', justifyContent: 'center',
     borderWidth: '1@s', borderRadius: '4@s', borderColor: "rgba(0, 0, 0, 0.3)"
   },
-  amountText: { ...Fonts.NanumGothic_Regular, fontSize: '12@s', marginRight: '10@s' },
+  amountText: { ...Fonts.NanumGothic_Regular, fontSize: '12@s', paddingRight: '10@s' },
   amountInput: { flex: 1, height: '30@s', textAlign: 'right', paddingRight: '5@s' },
   amountSymbol: {},
   amountActionInline: {
@@ -680,5 +680,8 @@ const styles = ScaledSheet.create({
   arrowRight: {
     width: '20@s',
     height: '20@s',
+  },
+  inputDisabled: {
+    backgroundColor: '#f2f2f2'
   }
 });
