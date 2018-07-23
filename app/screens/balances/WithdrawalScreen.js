@@ -685,9 +685,9 @@ const styles = ScaledSheet.create({
     borderWidth: '1@s', borderRadius: '4@s', borderColor: "rgba(0, 0, 0, 0.1)",
     marginTop: '10@s', marginBottom: '10@s'
   },
-  smsInput: { flex: 1, height: '30@s', textAlign: 'center', fontSize: '12@s', ...Fonts.NanumGothic_Regular },
+  smsInput: { flex: 1, height: '35@s', textAlign: 'center', fontSize: '12@s', ...Fonts.NanumGothic_Regular },
   smsConfirmBtn: {
-    justifyContent: 'center', backgroundColor: 'rgba(237, 125, 49, 1)', height: '30@s', borderWidth: '1@s',
+    justifyContent: 'center', backgroundColor: 'rgba(237, 125, 49, 1)', height: '35@s', borderWidth: '1@s',
     borderColor: "rgba(237, 125, 49, 1)", borderTopRightRadius: '4@s', borderBottomRightRadius: '4@s', padding: '5@s'
   },
   smsConfirmText: { color: 'white', fontSize: '12@s', textAlign: 'center', ...Fonts.NanumGothic_Regular },
@@ -715,7 +715,7 @@ const styles = ScaledSheet.create({
     borderWidth: '1@s', borderRadius: '4@s', borderColor: "rgba(0, 0, 0, 0.1)",
     marginTop: '10@s', marginBottom: '10@s'
   },
-  optInput: { flex: 1, height: '30@s', textAlign: 'center', fontSize: '12@s', ...Fonts.NanumGothic_Regular },
+  optInput: { flex: 1, height: '35@s', textAlign: 'center', fontSize: '12@s', ...Fonts.NanumGothic_Regular },
   optError: {
     color: 'red',
     marginTop: '10@s',
