@@ -216,11 +216,11 @@ class MarketSearchScreen extends BaseScreen {
       return;
     }
 
-    this._searchList(searchText.toLowerCase());
+    this._searchList(searchText.toLowerCase().replace(/[^a-zA-Z]/g, ""));
   }
 
   _onSearchFocus(event) {
-    if (isEmpty(this.state.searchList))
+    if (isEmpty(this.state.searchList)) 
       return;
 
     this.setState({
@@ -231,11 +231,20 @@ class MarketSearchScreen extends BaseScreen {
   async _searchList(searchText) {
     try {
       let symbolResponse = await rf.getRequest('MasterdataRequest').getAll();
-      let symbols = filter(symbolResponse.coin_settings, symbol => symbol.currency.includes(searchText) || symbol.coin.includes(searchText));
-      symbols.map(symbol => {
-        symbol.coinPair = symbol.currency.toUpperCase() + '/' + symbol.coin.toUpperCase();
+      let rawSymbols = symbolResponse.coin_settings;
+      rawSymbols.map(symbol => {
+        symbol.coinPair = symbol.coin.toUpperCase() + '/' + symbol.currency.toUpperCase();
+        symbol.noSeparatorCoinPair = symbol.coin + symbol.currency;
+        symbol.reverseNoSeparatorCoinPair = symbol.currency + symbol.coin;
         return symbol;
       })
+      let symbols = filter(
+        rawSymbols,
+        symbol => symbol.currency.includes(searchText) ||
+                  symbol.coin.includes(searchText) ||
+                  symbol.noSeparatorCoinPair.includes(searchText) ||
+                  symbol.reverseNoSeparatorCoinPair.includes(searchText)
+      );
 
       this.setState({
         searchList: symbols,
