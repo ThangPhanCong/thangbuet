@@ -140,6 +140,8 @@ class WithdrawalScreen extends BaseScreen {
       errMsg = I18n.t('withdrawal.errMinium')
     } else if (amount > (daily.withdrawalLimit - daily.withdrawal)) {
       errMsg = I18n.t('withdrawal.errMaximum')
+    } else if (amount <= 0) {
+      errMsg = I18n.t('withdrawal.errMaximum')
     }
 
     //validate blockchain address
@@ -230,7 +232,8 @@ class WithdrawalScreen extends BaseScreen {
                   <Text style={styles.leftView}>{I18n.t('withdrawal.available')}</Text>
                   <View style={[styles.rightView, { flexDirection: 'row' }]}>
                     <Text style={[styles.rightContent, { marginLeft: scale(30) }]}>
-                      {formatCurrency(this.state.daily.withdrawalLimit - this.state.daily.withdrawal, this.currency)}
+                      {this.state.daily.withdrawalLimit - this.state.daily.withdrawal > 0 ?
+                        formatCurrency(this.state.daily.withdrawalLimit - this.state.daily.withdrawal, this.currency) : 0}
                     </Text>
                     <Text style={[styles.symbol, { marginBottom: scale(6) }]}>{getCurrencyName(this.currency)}</Text>
                   </View>
@@ -254,7 +257,9 @@ class WithdrawalScreen extends BaseScreen {
                   <Text style={styles.amountSymbol}>{getCurrencyName(this.currency)}</Text>
                   <TouchableOpacity
                     style={styles.amountMax}
-                    onPress={() => this.setState({ amount: this.state.daily.withdrawalLimit - this.state.daily.withdrawal })}>
+                    onPress={() => this.setState({
+                      amount: this.state.daily.withdrawalLimit - this.state.daily.withdrawal > 0 ? this.state.daily.withdrawalLimit - this.state.daily.withdrawal : 0
+                    })}>
                     <Text style={styles.amountText}>{I18n.t('withdrawal.maximum')}</Text>
                   </TouchableOpacity>
                 </View>

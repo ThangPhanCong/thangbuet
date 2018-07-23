@@ -58,7 +58,6 @@ class WithdrawalKRWScreen extends BaseScreen {
   async _getAuth() {
     try {
       const securityRes = await rf.getRequest('UserRequest').getSecuritySettings()
-      // console.log('securityRes', securityRes)
       this.setState({
         smsConfirm: securityRes.data.otp_verified == 0,
         otpConfirm: securityRes.data.otp_verified == 1,
@@ -86,7 +85,7 @@ class WithdrawalKRWScreen extends BaseScreen {
       const securityLevel = await this._getSecurityLevel()
 
       if (securityLevel < 4) {
-        return 0
+        return { daily_limit: 0, minium_withdrawal: 0 }
       }
 
       const rpSymbol = await rf.getRequest('MasterdataRequest').getAll();
@@ -139,7 +138,7 @@ class WithdrawalKRWScreen extends BaseScreen {
       decodeAccount += currentUser.bank
     }
 
-    if(realAccount) {
+    if (realAccount) {
       if (realAccount.length > 6) {
         encodeAccount += " " + realAccount.substring(0, 3) + "***" + realAccount.substring(6, realAccount.length)
       } else if (realAccount.length > 2) {
@@ -165,6 +164,8 @@ class WithdrawalKRWScreen extends BaseScreen {
     if (daily.minium > amount) {
       errMsg = I18n.t('withdrawal.errMinium')
     } else if (amount > (daily.withdrawalLimit - daily.withdrawalKrw)) {
+      errMsg = I18n.t('withdrawal.errMaximum')
+    } else if (amount <= 0) {
       errMsg = I18n.t('withdrawal.errMaximum')
     }
 
@@ -244,7 +245,8 @@ class WithdrawalKRWScreen extends BaseScreen {
                   <Text style={styles.leftView}>{I18n.t('withdrawal.available')}</Text>
                   <View style={styles.rightView}>
                     <Text style={styles.rightContent}>
-                      {formatCurrency(this.state.daily.withdrawalLimit - this.state.daily.withdrawalKrw, this.currency)}
+                      {this.state.daily.withdrawalLimit - this.state.daily.withdrawalKrw > 0 ?
+                        formatCurrency(this.state.daily.withdrawalLimit - this.state.daily.withdrawalKrw, this.currency) : 0}
                       <Text style={styles.symbol}>{I18n.t('funds.currency')}</Text>
                     </Text>
                   </View>
@@ -266,7 +268,10 @@ class WithdrawalKRWScreen extends BaseScreen {
                   <Text style={styles.amountText}>{getCurrencyName(this.currency)}</Text>
                   <TouchableOpacity
                     style={styles.amountActionInline}
-                    onPress={() => this.setState({ amount: this.state.daily.withdrawalLimit - this.state.daily.withdrawalKrw })}>
+                    onPress={() => this.setState({
+                      amount: this.state.daily.withdrawalLimit - this.state.daily.withdrawalKrw > 0 ?
+                        this.state.daily.withdrawalLimit - this.state.daily.withdrawalKrw : 0
+                    })}>
                     <Text style={styles.amountText}>{I18n.t('withdrawal.maximum')}</Text>
                   </TouchableOpacity>
                 </View>
