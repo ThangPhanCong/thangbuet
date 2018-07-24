@@ -7,7 +7,7 @@ import { Icon } from 'react-native-elements'
 import rf from '../../libs/RequestFactory'
 import I18n from '../../i18n/i18n'
 import AppConfig from '../../utils/AppConfig'
-import { formatCurrency, formatPercent, getCurrencyName } from '../../utils/Filters'
+import { formatCurrency, formatPercent, getCurrencyName, formatPercentSpace } from '../../utils/Filters'
 import { CommonColors, CommonSize, CommonStyles, Fonts } from '../../utils/CommonStyles'
 import { scale } from "../../libs/reactSizeMatter/scalingUtils"
 import Modal from "react-native-modal"
@@ -227,7 +227,7 @@ export default class FundsScreen extends BaseScreen {
                       styles.profitPercentFunds, styles.rowNumber,
                       symbol.yield === 0 ? styles.profitZero: symbol.yield > 0 ?  styles.profitIncreased : styles.profitDecreased
                     ]}>
-                      {symbol.code !== "krw" && formatPercent(symbol.yield)}
+                      {symbol.code !== "krw" && formatPercentSpace(symbol.yield)}
                     </Text>
                     <Text
                       style={[styles.valuationFunds,

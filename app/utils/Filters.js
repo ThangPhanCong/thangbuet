@@ -29,6 +29,14 @@ function formatPercent(value, onlyFormat) {
   if (onlyFormat) {
     return Numeral(value).format("0.00")
   } else {
+    return Numeral(value).format("0.00") + "%";
+  }
+};
+
+function formatPercentSpace(value, onlyFormat) {
+  if (onlyFormat) {
+    return Numeral(value).format("0.00")
+  } else {
     return Numeral(value).format("0.00") + " %";
   }
 };
@@ -59,5 +67,6 @@ export {
   getCurrencyName,
   getDateTime,
   getDayMonth,
-  getTime
+  getTime,
+  formatPercentSpace
 };
