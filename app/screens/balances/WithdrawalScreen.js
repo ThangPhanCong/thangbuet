@@ -19,7 +19,7 @@ class WithdrawalScreen extends BaseScreen {
       isComplete: false,
       amount: 0,
       blockchainAddress: '',
-      blockchainTag: '',
+      blockchainTag: null,
       daily: {},
       modalConfirm: false,
       amountConfirm: false,
@@ -140,6 +140,8 @@ class WithdrawalScreen extends BaseScreen {
       errMsg = I18n.t('withdrawal.errMinium')
     } else if (amount > (daily.withdrawalLimit - daily.withdrawal)) {
       errMsg = I18n.t('withdrawal.errMaximum')
+    } else if (amount <= 0) {
+      errMsg = I18n.t('withdrawal.errMaximum')
     }
 
     //validate blockchain address
@@ -172,15 +174,17 @@ class WithdrawalScreen extends BaseScreen {
       let params = {
         amount: this.state.amount * -1 + '',
         currency: this.currency,
-        destination_tag: this.state.blockchainTag,
         foreign_blockchain_address: this.state.blockchainAddress,
         otp: this.state.otpConfirm ? this.state.otp + '|' : '|' + this.state.otp
+      }
+      if (this.state.blockchainTag) {
+        params.destination_tag = this.state.blockchainTag
       }
       const withdrawalRes = await rf.getRequest('TransactionRequest').withdraw(params)
       this.setState({ optErr: false })
       this._loadData()
     } catch (err) {
-      console.log("_getWithdrawalKrw:", err)
+      console.log("_getWithdrawal:", err)
       this.setState({ optErr: true })
     }
   }
@@ -198,209 +202,212 @@ class WithdrawalScreen extends BaseScreen {
     return (
       <SafeAreaView style={styles.fullScreen}>
         {this.state.isComplete &&
-        <ScrollView style={styles.content}>
-          <View style={styles.logo}>
-            <Image
-              resizeMode="contain"
-              style={styles.iconLogo}
-              source={require('../../../assets/balance/logo_tab3.png')}/>
-            <Text style={[styles.fontNotoSansBold]}>
-              {I18n.t('balances.depositAndWithdrawal')}
-            </Text>
-          </View>
-
-          <View style={[styles.alignCenter, styles.marginTop20]}>
-            <View style={styles.alignCenter}>
-              <Text style={styles.title}>{getCurrencyName(symbol.code) + " " + I18n.t('withdrawal.title')}</Text>
+          <ScrollView style={styles.content}>
+            <View style={styles.logo}>
+              <Image
+                resizeMode="contain"
+                style={styles.iconLogo}
+                source={require('../../../assets/balance/logo_tab3.png')} />
+              <Text style={[styles.fontNotoSansBold]}>
+                {I18n.t('balances.depositAndWithdrawal')}
+              </Text>
             </View>
 
-            <View style={[styles.header, styles.line]}>
-              <View style={styles.row}>
-                <Text style={styles.leftView}>{I18n.t('withdrawal.balance')}</Text>
-                <View style={[styles.rightView, { flexDirection: 'row' }]}>
-                  <Text style={[styles.rightContent, { marginLeft: scale(30) }]}>
-                    {formatCurrency(symbol.balance, this.currency)}
-                  </Text>
-                  <Text style={[styles.symbol, { marginBottom: scale(6) }]}>{getCurrencyName(this.currency)}</Text>
+            <View style={[styles.alignCenter, styles.marginTop20]}>
+              <View style={styles.alignCenter}>
+                <Text style={styles.title}>{getCurrencyName(symbol.code) + " " + I18n.t('withdrawal.title')}</Text>
+              </View>
+
+              <View style={[styles.header, styles.line]}>
+                <View style={styles.row}>
+                  <Text style={styles.leftView}>{I18n.t('withdrawal.balance')}</Text>
+                  <View style={[styles.rightView, { flexDirection: 'row' }]}>
+                    <Text style={[styles.rightContent, { marginLeft: scale(30) }]}>
+                      {formatCurrency(symbol.balance, this.currency)}
+                    </Text>
+                    <Text style={[styles.symbol, { marginBottom: scale(6) }]}>{getCurrencyName(this.currency)}</Text>
+                  </View>
+                </View>
+                <View style={styles.row}>
+                  <Text style={styles.leftView}>{I18n.t('withdrawal.available')}</Text>
+                  <View style={[styles.rightView, { flexDirection: 'row' }]}>
+                    <Text style={[styles.rightContent, { marginLeft: scale(30) }]}>
+                      {this.state.daily.withdrawalLimit - this.state.daily.withdrawal > 0 ?
+                        formatCurrency(this.state.daily.withdrawalLimit - this.state.daily.withdrawal, this.currency) : 0}
+                    </Text>
+                    <Text style={[styles.symbol, { marginBottom: scale(6) }]}>{getCurrencyName(this.currency)}</Text>
+                  </View>
                 </View>
               </View>
-              <View style={styles.row}>
-                <Text style={styles.leftView}>{I18n.t('withdrawal.available')}</Text>
-                <View style={[styles.rightView, {flexDirection: 'row'}]}>
-                  <Text style={[styles.rightContent,  { marginLeft: scale(30) }]}>
-                    {formatCurrency(this.state.daily.withdrawalLimit - this.state.daily.withdrawal, this.currency)}
-                  </Text>
-                  <Text style={[styles.symbol, {marginBottom: scale(6)}]}>{getCurrencyName(this.currency)}</Text>
+
+              <View style={[styles.line, styles.amount]}>
+                <Text style={[styles.amountText, styles.textInline]}>
+                  {I18n.t('withdrawal.amountRequest', { "coinName": getCurrencyName(symbol.code) })}
+                </Text>
+                <View style={styles.amountWrapper}>
+                  <TextInput
+                    keyboardType='numeric'
+                    autoCorrect={false}
+                    underlineColorAndroid='transparent'
+                    value={formatCurrency(this.state.amount, this.currency)}
+                    onChangeText={(text) => {
+                      this.setState({ amount: parseFloat(text.split(',').join('')) })
+                    }}
+                    style={styles.amountInput} />
+                  <Text style={styles.amountSymbol}>{getCurrencyName(this.currency)}</Text>
+                  <TouchableOpacity
+                    style={styles.amountMax}
+                    onPress={() => this.setState({
+                      amount: this.state.daily.withdrawalLimit - this.state.daily.withdrawal > 0 ? this.state.daily.withdrawalLimit - this.state.daily.withdrawal : 0
+                    })}>
+                    <Text style={styles.amountText}>{I18n.t('withdrawal.maximum')}</Text>
+                  </TouchableOpacity>
                 </View>
               </View>
-            </View>
 
-            <View style={[styles.line, styles.amount]}>
-              <Text style={[styles.amountText, styles.textInline]}>
-                {I18n.t('withdrawal.amountRequest', { "coinName": getCurrencyName(symbol.code) })}
-              </Text>
-              <View style={styles.amountWrapper}>
-                <TextInput
-                  keyboardType='numeric'
-                  autoCorrect={false}
-                  underlineColorAndroid='transparent'
-                  value={formatCurrency(this.state.amount, this.currency)}
-                  onChangeText={(text) => {
-                    this.setState({ amount: parseFloat(text.split(',').join('')) })
-                  }}
-                  style={styles.amountInput}/>
-                <Text style={styles.amountSymbol}>{getCurrencyName(this.currency)}</Text>
-                <TouchableOpacity
-                  style={styles.amountMax}
-                  onPress={() => this.setState({ amount: this.state.daily.withdrawalLimit - this.state.daily.withdrawal })}>
-                  <Text style={styles.amountText}>{I18n.t('withdrawal.maximum')}</Text>
-                </TouchableOpacity>
-              </View>
-            </View>
-
-            <View style={[styles.line, styles.amount]}>
-              <Text style={[styles.amountText, styles.textInline]}>
-                {I18n.t('withdrawal.addressRequest', { "coinName": getCurrencyName(symbol.code) })}
-              </Text>
-              <View style={styles.addressWrapper}>
-                <TextInput
-                  value={this.state.blockchainAddress}
-                  onChangeText={(text) => {
-                    this.setState({ blockchainAddress: text })
-                  }}
-                  autoCorrect={false}
-                  underlineColorAndroid='transparent'
-                  style={styles.addressInput}/>
-              </View>
-            </View>
-
-            {symbol.code === 'xrp' &&
-            <View style={[styles.line, styles.amount]}>
-              <Text style={[styles.amountText, styles.textInline]}>{I18n.t('withdrawal.tagAddress')}</Text>
-              <View style={styles.tagWrapper}>
-                <TextInput
-                  value={this.state.blockchainTag}
-                  onChangeText={(text) => {
-                    this.setState({ blockchainTag: text })
-                  }}
-                  autoCorrect={false}
-                  underlineColorAndroid='transparent'
-                  style={styles.tagInput}/>
-              </View>
-            </View>
-            }
-
-            <TouchableOpacity
-              onPress={this._validateAmount.bind(this)}
-              style={[styles.alignCenter, styles.confirmBtn]}>
-              <Text style={styles.confirmText}>{I18n.t('withdrawal.coinBtn')}</Text>
-            </TouchableOpacity>
-          </View>
-
-          <Divider style={styles.divider}/>
-
-          <View style={styles.noteWrapper}>
-            <View style={styles.titleWrapper}>
-              <Text style={styles.headerNote}>{I18n.t('withdrawal.noteTitle')}</Text>
-            </View>
-
-            <View style={{ width: '100%', justifyContent: 'flex-start', alignItems: 'flex-start' }}>
-              <Text style={[styles.paragraph, styles.marginTop20]}>{'\u2022' + I18n.t('withdrawal.coinNote1')}</Text>
-              <Text style={styles.paragraph}>{'\u2022' + I18n.t('withdrawal.coinNote2')}</Text>
-              <Text style={styles.paragraph}>{'\u2022' + I18n.t('withdrawal.coinNote3')}</Text>
-              <Text style={styles.paragraph}>{'\u2022' + I18n.t('withdrawal.coinNote4')}</Text>
-              <Text style={styles.paragraph}>{'\u2022' + I18n.t('withdrawal.coinNote5')}
-                <Text style={styles.paragraphRed}>{I18n.t('withdrawal.coinNote5a')}</Text>
-                <Text style={styles.paragraph}>{I18n.t('withdrawal.coinNote5b')}</Text>
-              </Text>
-              <Text style={styles.paragraph}>{'\u2022' + I18n.t('withdrawal.coinNote6')}</Text>
-              <Text style={styles.paragraph}>{'\u2022' + I18n.t('withdrawal.coinNote7')}</Text>
-              <Text style={styles.paragraph}>{'\u2022' + I18n.t('withdrawal.coinNote8')}</Text>
-              <Text style={[styles.paragraph, styles.marginBottom20]}>{'\u2022' + I18n.t('withdrawal.coinNote9')}</Text>
-            </View>
-
-            <View style={styles.paragrahWapper}>
-              <Text style={styles.headerNote}>{I18n.t('withdrawal.coinNote12')}</Text>
-            </View>
-            <Text style={[styles.paragraph, styles.marginTop20]}>{I18n.t('withdrawal.coinNote10')}</Text>
-            <Text style={[styles.paragraph, styles.marginBottom20]}>{I18n.t('withdrawal.coinNote11')}</Text>
-
-            <View style={[styles.noteContainer, styles.tableSpace]}>
-              <View style={[styles.table, styles.tbHeader]}>
-                <Text style={[styles.tbRow, styles.tbContent]}>{I18n.t('withdrawal.tbTitleDepost')}</Text>
-                <Text style={[styles.tbRow, styles.tbArrow]}></Text>
-                <Text style={[styles.tbRow, styles.tbContent]}>{I18n.t('withdrawal.tbTitleTrades')}</Text>
-                <Text style={[styles.tbRow, styles.tbArrow]}></Text>
-                <Text style={[styles.tbRow, styles.tbContent]}>{I18n.t('withdrawal.tbtitleWithdrawal')}</Text>
-                <Text style={[styles.tbRow, styles.tbContent]}> {I18n.t('withdrawal.tbTitleLimit')}</Text>
+              <View style={[styles.line, styles.amount]}>
+                <Text style={[styles.amountText, styles.textInline]}>
+                  {I18n.t('withdrawal.addressRequest', { "coinName": getCurrencyName(symbol.code) })}
+                </Text>
+                <View style={styles.addressWrapper}>
+                  <TextInput
+                    value={this.state.blockchainAddress}
+                    onChangeText={(text) => {
+                      this.setState({ blockchainAddress: text })
+                    }}
+                    autoCorrect={false}
+                    underlineColorAndroid='transparent'
+                    style={styles.addressInput} />
+                </View>
               </View>
 
-              <View style={styles.table}>
-                <Text style={[styles.tbRow, styles.tbContent]}>{I18n.t('withdrawal.row1Col1')}</Text>
-                <Icon style={[styles.tbRow, styles.tbArrow]} type="feather" name="arrow-right"/>
-                <Text style={[styles.tbRow, styles.tbContent]}>{I18n.t('withdrawal.row1Col2')}</Text>
-                <Icon style={[styles.tbRow, styles.tbArrow]} type="feather" name="arrow-right"/>
-                <Text style={[styles.tbRow, styles.tbContent]}>{I18n.t('withdrawal.row1Col3')}</Text>
-                <Text style={[styles.tbRow, styles.tbContent]}> {I18n.t('withdrawal.row1Col4')}</Text>
-              </View>
-
-              <View style={styles.table}>
-                <Text style={[styles.tbRow, styles.tbContent]}>{I18n.t('withdrawal.row2Col1')}</Text>
-                <Icon style={[styles.tbRow, styles.tbArrow]} type="feather" name="arrow-right"/>
-                <Text style={[styles.tbRow, styles.tbContent]}>{I18n.t('withdrawal.row2Col2')}</Text>
-                <Icon style={[styles.tbRow, styles.tbArrow]} type="feather" name="arrow-right"/>
-                <Text style={[styles.tbRow, styles.tbContent]}>{I18n.t('withdrawal.row2Col3')}</Text>
-                <Text style={[styles.tbRow, styles.tbContent]}> {I18n.t('withdrawal.row2Col4')}</Text>
-              </View>
-
-              <View style={styles.table}>
-                <Text style={[styles.tbRow, styles.tbContent]}>{I18n.t('withdrawal.row3Col1')}</Text>
-                <Icon style={[styles.tbRow, styles.tbArrow]} type="feather" name="arrow-right"/>
-                <Text style={[styles.tbRow, styles.tbContent]}>{I18n.t('withdrawal.row3Col2')}</Text>
-                <Icon style={[styles.tbRow, styles.tbArrow]} type="feather" name="arrow-right"/>
-                <Text style={[styles.tbRow, styles.tbContent]}>{I18n.t('withdrawal.row3Col3')}</Text>
-                <Text style={[styles.tbRow, styles.tbContent]}> {I18n.t('withdrawal.row3Col4')}</Text>
-              </View>
-
-              <View style={styles.table}>
-                <Text style={[styles.tbRow, styles.tbContent, styles.tbColor]}>{I18n.t('withdrawal.row4Col1')}</Text>
-                <Icon style={[styles.tbRow, styles.tbArrow, styles.tbColor]} type="feather" name="arrow-right"/>
-                <Text style={[styles.tbRow, styles.tbContent, styles.tbColor]}>{I18n.t('withdrawal.row4Col2')}</Text>
-                <Icon style={[styles.tbRow, styles.tbArrow, styles.tbColor]} type="feather" name="arrow-right"/>
-                <Text style={[styles.tbRow, styles.tbContent, styles.tbColor]}>{I18n.t('withdrawal.row4Col3')}</Text>
-                <Text style={[styles.tbRow, styles.tbContent, styles.tbColor]}> {I18n.t('withdrawal.row4Col4')}</Text>
-              </View>
-
-            </View>
-          </View>
-
-          <Modal
-            isVisible={this.state.amountConfirm}
-            onModalHide={() => {
-              if (this.state.agree) {
-                this.setState({ modalConfirm: true })
+              {symbol.code === 'xrp' &&
+                <View style={[styles.line, styles.amount]}>
+                  <Text style={[styles.amountText, styles.textInline]}>{I18n.t('withdrawal.tagAddress')}</Text>
+                  <View style={styles.tagWrapper}>
+                    <TextInput
+                      value={this.state.blockchainTag}
+                      onChangeText={(text) => {
+                        this.setState({ blockchainTag: text })
+                      }}
+                      autoCorrect={false}
+                      underlineColorAndroid='transparent'
+                      style={styles.tagInput} />
+                  </View>
+                </View>
               }
-            }}
-            onBackdropPress={() => this.setState({ amountConfirm: false, agree: false })}>
-            {this._renderAmountContent()}
-          </Modal>
 
-          <Modal
-            isVisible={this.state.smsConfirm && this.state.modalConfirm}
-            onBackdropPress={() => this.setState({ modalConfirm: false, agree: false })}>
-            {this._renderSmsContent()}
-          </Modal>
+              <TouchableOpacity
+                onPress={this._validateAmount.bind(this)}
+                style={[styles.alignCenter, styles.confirmBtn]}>
+                <Text style={styles.confirmText}>{I18n.t('withdrawal.coinBtn')}</Text>
+              </TouchableOpacity>
+            </View>
 
-          <Modal
-            isVisible={this.state.otpConfirm && this.state.modalConfirm}
-            onModalHide={() => {
-              this.setState({ optErr: false, otp: '' })
-            }}
-            onBackdropPress={() => this.setState({ modalConfirm: false, agree: false })}>
-            {this._renderOtpContent()}
-          </Modal>
+            <Divider style={styles.divider} />
 
-        </ScrollView>
+            <View style={styles.noteWrapper}>
+              <View style={styles.titleWrapper}>
+                <Text style={styles.headerNote}>{I18n.t('withdrawal.noteTitle')}</Text>
+              </View>
+
+              <View style={{ width: '100%', justifyContent: 'flex-start', alignItems: 'flex-start' }}>
+                <Text style={[styles.paragraph, styles.marginTop20]}>{'\u2022' + I18n.t('withdrawal.coinNote1')}</Text>
+                <Text style={styles.paragraph}>{'\u2022' + I18n.t('withdrawal.coinNote2')}</Text>
+                <Text style={styles.paragraph}>{'\u2022' + I18n.t('withdrawal.coinNote3')}</Text>
+                <Text style={styles.paragraph}>{'\u2022' + I18n.t('withdrawal.coinNote4')}</Text>
+                <Text style={styles.paragraph}>{'\u2022' + I18n.t('withdrawal.coinNote5')}
+                  <Text style={styles.paragraphRed}>{I18n.t('withdrawal.coinNote5a')}</Text>
+                  <Text style={styles.paragraph}>{I18n.t('withdrawal.coinNote5b')}</Text>
+                </Text>
+                <Text style={styles.paragraph}>{'\u2022' + I18n.t('withdrawal.coinNote6')}</Text>
+                <Text style={styles.paragraph}>{'\u2022' + I18n.t('withdrawal.coinNote7')}</Text>
+                <Text style={styles.paragraph}>{'\u2022' + I18n.t('withdrawal.coinNote8')}</Text>
+                <Text style={[styles.paragraph, styles.marginBottom20]}>{'\u2022' + I18n.t('withdrawal.coinNote9')}</Text>
+              </View>
+
+              <View style={styles.paragrahWapper}>
+                <Text style={styles.headerNote}>{I18n.t('withdrawal.coinNote12')}</Text>
+              </View>
+              <Text style={[styles.paragraph, styles.marginTop20]}>{I18n.t('withdrawal.coinNote10')}</Text>
+              <Text style={[styles.paragraph, styles.marginBottom20]}>{I18n.t('withdrawal.coinNote11')}</Text>
+
+              <View style={[styles.noteContainer, styles.tableSpace]}>
+                <View style={[styles.table, styles.tbHeader]}>
+                  <Text style={[styles.tbRow, styles.tbContent]}>{I18n.t('withdrawal.tbTitleDepost')}</Text>
+                  <Text style={[styles.tbRow, styles.tbArrow]}></Text>
+                  <Text style={[styles.tbRow, styles.tbContent]}>{I18n.t('withdrawal.tbTitleTrades')}</Text>
+                  <Text style={[styles.tbRow, styles.tbArrow]}></Text>
+                  <Text style={[styles.tbRow, styles.tbContent]}>{I18n.t('withdrawal.tbtitleWithdrawal')}</Text>
+                  <Text style={[styles.tbRow, styles.tbContent]}> {I18n.t('withdrawal.tbTitleLimit')}</Text>
+                </View>
+
+                <View style={styles.table}>
+                  <Text style={[styles.tbRow, styles.tbContent]}>{I18n.t('withdrawal.row1Col1')}</Text>
+                  <Icon style={[styles.tbRow, styles.tbArrow]} type="feather" name="arrow-right" />
+                  <Text style={[styles.tbRow, styles.tbContent]}>{I18n.t('withdrawal.row1Col2')}</Text>
+                  <Icon style={[styles.tbRow, styles.tbArrow]} type="feather" name="arrow-right" />
+                  <Text style={[styles.tbRow, styles.tbContent]}>{I18n.t('withdrawal.row1Col3')}</Text>
+                  <Text style={[styles.tbRow, styles.tbContent]}> {I18n.t('withdrawal.row1Col4')}</Text>
+                </View>
+
+                <View style={styles.table}>
+                  <Text style={[styles.tbRow, styles.tbContent]}>{I18n.t('withdrawal.row2Col1')}</Text>
+                  <Icon style={[styles.tbRow, styles.tbArrow]} type="feather" name="arrow-right" />
+                  <Text style={[styles.tbRow, styles.tbContent]}>{I18n.t('withdrawal.row2Col2')}</Text>
+                  <Icon style={[styles.tbRow, styles.tbArrow]} type="feather" name="arrow-right" />
+                  <Text style={[styles.tbRow, styles.tbContent]}>{I18n.t('withdrawal.row2Col3')}</Text>
+                  <Text style={[styles.tbRow, styles.tbContent]}> {I18n.t('withdrawal.row2Col4')}</Text>
+                </View>
+
+                <View style={styles.table}>
+                  <Text style={[styles.tbRow, styles.tbContent]}>{I18n.t('withdrawal.row3Col1')}</Text>
+                  <Icon style={[styles.tbRow, styles.tbArrow]} type="feather" name="arrow-right" />
+                  <Text style={[styles.tbRow, styles.tbContent]}>{I18n.t('withdrawal.row3Col2')}</Text>
+                  <Icon style={[styles.tbRow, styles.tbArrow]} type="feather" name="arrow-right" />
+                  <Text style={[styles.tbRow, styles.tbContent]}>{I18n.t('withdrawal.row3Col3')}</Text>
+                  <Text style={[styles.tbRow, styles.tbContent]}> {I18n.t('withdrawal.row3Col4')}</Text>
+                </View>
+
+                <View style={styles.table}>
+                  <Text style={[styles.tbRow, styles.tbContent, styles.tbColor]}>{I18n.t('withdrawal.row4Col1')}</Text>
+                  <Icon style={[styles.tbRow, styles.tbArrow, styles.tbColor]} type="feather" name="arrow-right" />
+                  <Text style={[styles.tbRow, styles.tbContent, styles.tbColor]}>{I18n.t('withdrawal.row4Col2')}</Text>
+                  <Icon style={[styles.tbRow, styles.tbArrow, styles.tbColor]} type="feather" name="arrow-right" />
+                  <Text style={[styles.tbRow, styles.tbContent, styles.tbColor]}>{I18n.t('withdrawal.row4Col3')}</Text>
+                  <Text style={[styles.tbRow, styles.tbContent, styles.tbColor]}> {I18n.t('withdrawal.row4Col4')}</Text>
+                </View>
+
+              </View>
+            </View>
+
+            <Modal
+              isVisible={this.state.amountConfirm}
+              onModalHide={() => {
+                if (this.state.agree) {
+                  this.setState({ modalConfirm: true })
+                }
+              }}
+              onBackdropPress={() => this.setState({ amountConfirm: false, agree: false })}>
+              {this._renderAmountContent()}
+            </Modal>
+
+            <Modal
+              isVisible={this.state.smsConfirm && this.state.modalConfirm}
+              onBackdropPress={() => this.setState({ modalConfirm: false, agree: false })}>
+              {this._renderSmsContent()}
+            </Modal>
+
+            <Modal
+              isVisible={this.state.otpConfirm && this.state.modalConfirm}
+              onModalHide={() => {
+                this.setState({ optErr: false, otp: '' })
+              }}
+              onBackdropPress={() => this.setState({ modalConfirm: false, agree: false })}>
+              {this._renderOtpContent()}
+            </Modal>
+
+          </ScrollView>
         }
       </SafeAreaView>
     )
@@ -454,7 +461,7 @@ class WithdrawalScreen extends BaseScreen {
             keyboardType='numeric'
             value={this.state.otp}
             onChangeText={(text) => this.setState({ otp: text })}
-            style={styles.smsInput}/>
+            style={styles.smsInput} />
           <TouchableOpacity
             onPress={this._doRequestSmsOtp.bind(this)}
             style={styles.smsConfirmBtn}>
@@ -494,7 +501,7 @@ class WithdrawalScreen extends BaseScreen {
             keyboardType='numeric'
             value={this.state.otp}
             onChangeText={(text) => this.setState({ otp: text })}
-            style={styles.optInput}/>
+            style={styles.optInput} />
         </View>
         {
           this.state.optErr &&
@@ -685,9 +692,9 @@ const styles = ScaledSheet.create({
     borderWidth: '1@s', borderRadius: '4@s', borderColor: "rgba(0, 0, 0, 0.1)",
     marginTop: '10@s', marginBottom: '10@s'
   },
-  smsInput: { flex: 1, height: '30@s', textAlign: 'center', fontSize: '12@s', ...Fonts.NanumGothic_Regular },
+  smsInput: { flex: 1, height: '35@s', textAlign: 'center', fontSize: '12@s', ...Fonts.NanumGothic_Regular },
   smsConfirmBtn: {
-    justifyContent: 'center', backgroundColor: 'rgba(237, 125, 49, 1)', height: '30@s', borderWidth: '1@s',
+    justifyContent: 'center', backgroundColor: 'rgba(237, 125, 49, 1)', height: '35@s', borderWidth: '1@s',
     borderColor: "rgba(237, 125, 49, 1)", borderTopRightRadius: '4@s', borderBottomRightRadius: '4@s', padding: '5@s'
   },
   smsConfirmText: { color: 'white', fontSize: '12@s', textAlign: 'center', ...Fonts.NanumGothic_Regular },
@@ -715,7 +722,7 @@ const styles = ScaledSheet.create({
     borderWidth: '1@s', borderRadius: '4@s', borderColor: "rgba(0, 0, 0, 0.1)",
     marginTop: '10@s', marginBottom: '10@s'
   },
-  optInput: { flex: 1, height: '30@s', textAlign: 'center', fontSize: '12@s', ...Fonts.NanumGothic_Regular },
+  optInput: { flex: 1, height: '35@s', textAlign: 'center', fontSize: '12@s', ...Fonts.NanumGothic_Regular },
   optError: {
     color: 'red',
     marginTop: '10@s',
