@@ -26,16 +26,17 @@ export default class OpenOrders extends BaseScreen {
     this._loadData();
   }
 
-  async _loadData() {
+  async _loadData(clearData = false) {
     try {
       const { coin, currency } = this.props;
       const { page, orders } = this.state;
       const params = { coin, currency, page };
 
       const responseOrders = await rf.getRequest('OrderRequest').getOrdersPending(params);
+      const newOrders = clearData ? responseOrders.data.data : [...orders, ...responseOrders.data.data];
 
       this.setState({
-        orders: [...orders, ...responseOrders.data.data],
+        orders: newOrders,
         last_page: responseOrders.data.last_page
       });
     } catch (err) {
@@ -51,6 +52,22 @@ export default class OpenOrders extends BaseScreen {
     this.setState(state => ({ page: state.page + 1 }), () => this._loadData());
   }
 
+  getSocketEventHandlers() {
+    return {
+      OrderListUpdated: this._onOpenOrderUpdated.bind(this)
+    }
+  }
+
+  _onOpenOrderUpdated(data) {
+    const { currency } = this.props;
+
+    if (data.currency !== currency) {
+      return;
+    }
+
+    this._loadData(true);
+  }
+
   async _onCancelOrder() {
     try {
       const { ids } = this.state;
@@ -58,14 +75,13 @@ export default class OpenOrders extends BaseScreen {
       await Promise.all(ids.map(async (id) => {
         await rf.getRequest('OrderRequest').cancel(id);
       }));
-
       // for(let i = 0; i < ids.length; i++) {
       //   await rf.getRequest('OrderRequest').cancel(ids[i]);
       // }
       // ids.forEach(async id => await rf.getRequest('OrderRequest').cancel(id));
       const orderFilter = this.state.orders.filter((item) => !ids.includes(item.id));
 
-      this.setState({ orders: orderFilter })
+      this.setState({ orders: orderFilter });
     } catch (err) {
       console.log("CancelOrder._error:", err)
     }
