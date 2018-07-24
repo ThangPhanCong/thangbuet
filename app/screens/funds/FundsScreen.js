@@ -277,9 +277,9 @@ export default class FundsScreen extends BaseScreen {
 const styles = ScaledSheet.create({
   fullScreen: { flex: 1, backgroundColor: 'white' },
   content: { flex: 1, flexDirection: "column" },
-  header: { height: '80@s', flexDirection: "row", borderBottomWidth: '1@s', borderColor: 'rgba(222, 227, 235, 1)' },
+  header: { height: '100@s', flexDirection: "row", borderBottomWidth: '1@s', borderColor: 'rgba(222, 227, 235, 1)' },
   logo: { flex: 1, flexDirection: "row", alignItems: 'center', justifyContent: 'center' },
-  info: { flex: 2, flexDirection: "column", alignItems: 'center', justifyContent: 'center' },
+  info: { flex: 2, flexDirection: "column", alignItems: 'center', justifyContent: 'center', marginTop: '10@s' },
   infoRow: { flexDirection: "row", alignItems: 'center', justifyContent: 'center' },
   infoRowLeft: { flex: 1 },
   infoRowRight: { flex: 1.5, textAlign: 'right', marginRight: '5@s' },
