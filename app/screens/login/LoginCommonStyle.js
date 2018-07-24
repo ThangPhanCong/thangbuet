@@ -58,7 +58,7 @@ const LoginCommonStyle = {
     fontSize: "15@s",
     paddingLeft: "10@s",
     backgroundColor: CommonColors.textInputBgColor,
-    borderWidth: 1,
+    borderWidth: '1@s',
     borderColor: '#1c202c'
   },
   seperator: {

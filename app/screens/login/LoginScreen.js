@@ -182,15 +182,6 @@ export default class LoginScreen extends BaseScreen {
             underlineColorAndroid='transparent'
             onChangeText={(text) => this.setState({ password: text })}/>
 
-
-          <Icon
-            //name={this.state.iconName}
-            type='font-awesome'
-            color='#cfd0d1'
-            //containerStyle={styles.showPassword}
-            underlayColor='transparent'
-            size={17}
-            onPress={() => this._toggleShowPassWord()}/>
         </View>
         <Text style={styles.emptyInforLogin}>{passwordEmpty}</Text>
 
