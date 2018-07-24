@@ -377,7 +377,7 @@ export default class SecurityOverviewScreen extends BaseScreen {
           <TouchableOpacity
             style={[styles.submitCancelOtpButton, { marginTop: scale(20), marginBottom: scale(30) }]}
             onPress={this._dismissInitVerificationModal.bind(this)}>
-            <Text style={{ fontSize: 13, color: '#FFF', ...Fonts.NanumGothic_Regular }}>
+            <Text style={{ fontSize: scale(13), color: '#FFF', ...Fonts.NanumGothic_Regular }}>
               {I18n.t('myPage.security.cancelOtpSubmit')}
             </Text>
           </TouchableOpacity>

@@ -210,7 +210,8 @@ export default class TradingScreen extends BaseScreen {
               <Icon name='triangle-down' type='entypo' size={scale(15)}/>
             </View>
             <Text style={styles.coin}>{this._getCurrencyName(this._getCoin())}</Text>
-            <Text style={CommonStyles.currency}>{' / ' + getCurrencyName(this._getCurrency())}</Text>
+            <Text style={styles.currency}>{' /' +
+            '' + getCurrencyName(this._getCurrency())}</Text>
           </TouchableOpacity>
           <View style={[styles.headerContent, priceData.price ? {} : {opacity: 0}]}>
             <Text style={[styles.price, {color: priceColor}]}>{formatCurrency(priceData.price, this._getCurrency)}</Text>
