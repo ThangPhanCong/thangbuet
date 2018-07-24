@@ -213,7 +213,10 @@ class WithdrawalKRWScreen extends BaseScreen {
 
   render() {
     const { navigation } = this.props;
-    const symbol = navigation.getParam('symbol', {})
+    const { currentUser } = this.state;
+    const symbol = navigation.getParam('symbol', {});
+    const valueInputDisabled =  currentUser ?  currentUser.bank + ' ' + currentUser.real_account_no + ' ' + currentUser.name: '';
+
     return (
       <SafeAreaView style={styles.fullScreen}>
         {this.state.isComplete &&
@@ -238,8 +241,8 @@ class WithdrawalKRWScreen extends BaseScreen {
                   <View style={styles.rightView}>
                     <Text style={styles.rightContent}>
                       {formatCurrency(symbol.balance, this.currency)}
-                      <Text style={styles.symbol}>{I18n.t('funds.currency')}</Text>
                     </Text>
+                    <Text style={styles.symbol}>{I18n.t('funds.currency')}</Text>
                   </View>
                 </View>
                 <View style={styles.row}>
@@ -248,8 +251,8 @@ class WithdrawalKRWScreen extends BaseScreen {
                     <Text style={styles.rightContent}>
                       {this.state.daily.withdrawalLimit - this.state.daily.withdrawalKrw > 0 ?
                         formatCurrency(this.state.daily.withdrawalLimit - this.state.daily.withdrawalKrw, this.currency) : 0}
-                      <Text style={styles.symbol}>{I18n.t('funds.currency')}</Text>
                     </Text>
+                    <Text style={styles.symbol}>{I18n.t('funds.currency')}</Text>
                   </View>
                 </View>
               </View>
@@ -283,7 +286,7 @@ class WithdrawalKRWScreen extends BaseScreen {
                 <View style={styles.accountWrapper}>
                   <TextInput
                     editable={false}
-                    value={this.state.currentUser.encodeAccount}
+                    value={valueInputDisabled}
                     autoCorrect={false}
                     underlineColorAndroid='rgba(0, 0, 0, 0)'
                     style={[styles.accountInput, styles.amountText, styles.inputDisabled]} />
@@ -350,7 +353,7 @@ class WithdrawalKRWScreen extends BaseScreen {
                 </View>
 
                 <View style={styles.noteWrapperMore}>
-                  <Text style={styles.titleMore}>{I18n.t('withdrawal.noteTitle')}</Text>
+                  <Text style={styles.titleMore}>{I18n.t('withdrawal.noteTitle2')}</Text>
                 </View>
 
                 <View style={styles.noteContainer}>
@@ -456,17 +459,25 @@ class WithdrawalKRWScreen extends BaseScreen {
           <Text style={styles.modalLine}>
             {'\u2022' + I18n.t('withdrawal.amountNumber')}
           </Text>
-          <Text style={[styles.lineSpace, styles.modalAmount]}>
-            {formatCurrency(this.state.amount, this.currency)}
-            <Text>{getCurrencyName(this.currency)}</Text>
-          </Text>
+
+          <View style={{flexDirection: 'row'}}>
+            <Text style={[styles.lineSpace, styles.modalAmount]}>
+              {formatCurrency(this.state.amount, this.currency)}
+            </Text>
+            <Text>{' ' + getCurrencyName(this.currency)}</Text>
+          </View>
+
           <Text style={styles.modalLine}>
             {'\u2022' + I18n.t('withdrawal.amountAccount')}
           </Text>
           <Text style={styles.lineSpace}>
             {this.state.currentUser.decodeAccount}
           </Text>
-          <Text style={styles.messageSpace}>{I18n.t('withdrawal.amountMessage')}</Text>
+
+          <View style={{flexDirection: 'row'}}>
+            <Text style={[styles.messageSpace, {...Fonts.NanumGothic_Regular_Bold}]}>{I18n.t('withdrawal.amountMessage')}</Text>
+            <Text style={styles.messageSpace}>{I18n.t('withdrawal.amountMessage1')}</Text>
+          </View>
 
           <View style={styles.modalActionStyle}>
             <TouchableOpacity
@@ -573,9 +584,9 @@ const styles = ScaledSheet.create({
   },
   row: { flexDirection: 'row', alignItems: 'flex-end', marginBottom: '5@s' },
   leftView: { flex: 0.9, fontSize: '12@s', ...Fonts.NanumGothic_Regular, paddingBottom: '3@s', marginLeft: '10@s' },
-  rightView: { flex: 1, alignItems: 'flex-end', justifyContent: 'flex-end' },
+  rightView: { flex: 1, alignItems: 'flex-end', justifyContent: 'flex-end', flexDirection: 'row' },
   rightContent: { flex: 1, alignSelf: 'flex-end', fontSize: '18@s', ...Fonts.OpenSans_Bold },
-  symbol: { fontSize: '9@s' },
+  symbol: { fontSize: '9@s', marginBottom: '4@s' },
   amount: {
     flexDirection: 'column', flex: 1, alignItems: 'flex-start', justifyContent: 'center'
   },
@@ -647,8 +658,8 @@ const styles = ScaledSheet.create({
   notephra: { marginTop: '20@s' },
   noteTableSpace: { marginTop: '20@s', paddingBottom: '50@s' },
   tbHeader: { backgroundColor: 'rgba(228, 238, 248, 1)', borderTopWidth: '1@s', },
-  modalLine: { marginTop: '10@s', marginBottom: '3@s', ...Fonts.OpenSans_Bold, fontSize: '12@s' },
-  lineSpace: { marginBottom: '10@s' },
+  modalLine: { marginTop: '10@s', marginBottom: '3@s', ...Fonts.OpenSans, fontSize: '12@s' },
+  lineSpace: { marginBottom: '10@s', fontSize: '11@s' },
   messageSpace: { marginBottom: '10@s', marginTop: '10@s' },
   modalAmount: { ...Fonts.OpenSans_Bold, fontSize: '11@s' },
   modalCancelBtn: { width: '45%', justifyContent: 'center', backgroundColor: 'rgba(127, 127, 127, 1)', height: '30@s', borderRadius: '4@s' },
@@ -688,6 +699,7 @@ const styles = ScaledSheet.create({
     height: '20@s',
   },
   inputDisabled: {
-    backgroundColor: '#f2f2f2'
+    backgroundColor: '#f2f2f2',
+    color: '#595959'
   }
 });

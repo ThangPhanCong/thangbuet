@@ -239,7 +239,7 @@
     "currency": "KRW"
   },
   "deposit": {
-    "title": "입금",
+    "title": "출금",
     "account": "계좌잔액",
     "amount": "입금신청금액",
     "currency": "w",
@@ -372,6 +372,7 @@
     "accountRegister": "등록된 입출금 계좌",
     "confirm": "출금 신청",
     "noteTitle": "출금시 주의 사항",
+    "noteTitle2": "암호 화폐 출금(송금) 제한",
     "noteLine1": "KRW 출금은 신청 후 약 10분 이내로 반영됩니다.",
     "noteLine2": "출금은 기존에 등록된 고객 명의의 계좌로만 가능합니다.",
     "noteLine3": " 은행 시스템 점검 시간 동안에는 KRW 입출금이 불가능합니다.",
@@ -406,7 +407,8 @@
     "amountConfirmTitle": "출금(송금) 신청 확인",
     "amountNumber": "출금(송금) 신청 금액",
     "amountAccount": "출금(송금)할 계좌",
-    "amountMessage": "출금(송금) 신청이 접수 되었습니다.",
+    "amountMessage": "출금(송금) 신청이 ",
+    "amountMessage1": "접수 되었습니다.",
     "amountCancel": "취소",
     "amountAccept": "확인",
     "smsConfirmTitle": "SMS ",
