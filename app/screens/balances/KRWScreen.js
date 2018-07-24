@@ -9,6 +9,7 @@ import { formatCurrency, getCurrencyName } from '../../utils/Filters'
 import Modal from "react-native-modal"
 import { CommonColors, CommonSize, CommonStyles, Fonts } from '../../utils/CommonStyles'
 import { scale } from '../../libs/reactSizeMatter/scalingUtils';
+import Consts from "../../utils/Consts";
 
 export default class KRWScreen extends BaseScreen {
   constructor(props) {
@@ -85,7 +86,10 @@ export default class KRWScreen extends BaseScreen {
   }
 
   render() {
-    const { symbol, isPending } = this.props
+    const { symbol, isPending } = this.props;
+    const { amount } = this.state;
+    const amountValue = amount !== 0 ? formatCurrency(amount, Consts.CURRENCY_KRW, '0') : '';
+
     return (
       <View style={!isPending ? styles.visible : styles.unvisible}>
         {!isPending &&
@@ -108,18 +112,10 @@ export default class KRWScreen extends BaseScreen {
                 <View style={styles.amountWrapper}>
                   <TextInput
                     style={styles.inputAmount}
-                    value={this.state.amount != 0 ? this.state.amount.toString() : ''}
+                    value={amountValue}
                     onChangeText={(text) => {
-                      if (!text || text === '' || isNaN(text)) {
-                        text = '0'
-                      }
-                      this.setState({ amount: parseFloat(text) })
+                      this.setState({ amount: text })
                     }}
-                    // value={formatCurrency(this.state.amount, this.currency)}
-                    // onChangeText={(text) => {
-                    //   this.setState({ amount: parseFloat(text.split(',').join('')) })
-                    // }}
-
                     keyboardType='numeric'
                     underlineColorAndroid='rgba(0, 0, 0, 0)'
                     autoCorrect={false} />
@@ -151,11 +147,11 @@ export default class KRWScreen extends BaseScreen {
             </TouchableOpacity>
             <TouchableHighlight
               underlayColor='#BFBFBF'
-              disabled={!(this.state.checked && this.state.amount > 0)}
+              disabled={!(this.state.checked && parseFloat(amount) > 0)}
               onPress={this._doDeposit.bind(this)}
               style={[
                 styles.buttonStyle,
-                this.state.checked && this.state.amount > 0 ?
+                this.state.checked && parseFloat(amount) > 0 ?
                   { backgroundColor: 'rgba(0, 112, 191, 1)' } : { backgroundColor: 'rgba(191, 191, 191, 1)' }
               ]}>
               <Text style={[{ color: 'rgba(255, 255, 255, 1)', ...Fonts.NanumGothic_Regular }, styles.fontSize12]}>
@@ -313,7 +309,7 @@ const styles = ScaledSheet.create({
   numberRight: {
     ...Fonts.OpenSans_Bold, fontSize: '16@s'
   },
-  symbol: { fontSize: '10@s' },
+  symbol: { fontSize: '10@s', fontWeight: 'bold', ...Fonts.OpenSans },
   rowItem: {
     flexDirection: 'row', flex: 1, justifyContent: 'center',
     alignItems: 'center', marginTop: '10@s'

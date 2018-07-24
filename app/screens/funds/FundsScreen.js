@@ -7,7 +7,7 @@ import { Icon } from 'react-native-elements'
 import rf from '../../libs/RequestFactory'
 import I18n from '../../i18n/i18n'
 import AppConfig from '../../utils/AppConfig'
-import { formatCurrency, formatPercent, getCurrencyName } from '../../utils/Filters'
+import { formatCurrency, formatPercent, getCurrencyName, formatPercentSpace } from '../../utils/Filters'
 import { CommonColors, CommonSize, CommonStyles, Fonts } from '../../utils/CommonStyles'
 import { scale } from "../../libs/reactSizeMatter/scalingUtils"
 import Modal from "react-native-modal"
@@ -224,16 +224,16 @@ export default class FundsScreen extends BaseScreen {
                       {symbol.code !== 'krw' && parseFloat(symbol.balance)}
                     </Text>
                     <Text style={[
-                      { flex: 0.5, fontWeight: 'bold' }, styles.rowNumber,
-                      symbol.yield > 0 ? { color: 'red' } : { color: 'blue' }
+                      styles.profitPercentFunds, styles.rowNumber,
+                      symbol.yield === 0 ? styles.profitZero: symbol.yield > 0 ?  styles.profitIncreased : styles.profitDecreased
                     ]}>
-                      {symbol.code !== "krw" && formatPercent(symbol.yield)}
+                      {symbol.code !== "krw" && formatPercentSpace(symbol.yield)}
                     </Text>
                     <Text
-                      style={[{ flex: 1, fontWeight: 'bold' },
-                      styles.marginRight10, styles.rowNumber,
-                      symbol.yield > 0 ? { color: 'red' } : { color: 'blue' },
-                      symbol.code === 'krw' ? { color: 'black' } : {}]}>
+                      style={[styles.valuationFunds,
+                        styles.marginRight10, styles.rowNumber,
+                        symbol.yield === 0 ? styles.profitZero: symbol.yield > 0 ?  styles.profitIncreased : styles.profitDecreased,
+                        symbol.code === 'krw' ? { color: 'black' } : {}]}>
                       {formatCurrency(parseFloat(symbol.balance * symbol.price), this.currency)}
                     </Text>
                   </View>
@@ -289,9 +289,9 @@ export default class FundsScreen extends BaseScreen {
 const styles = ScaledSheet.create({
   fullScreen: { flex: 1, backgroundColor: 'white' },
   content: { flex: 1, flexDirection: "column" },
-  header: { height: '80@s', flexDirection: "row", borderBottomWidth: '1@s', borderColor: 'rgba(222, 227, 235, 1)' },
+  header: { height: '100@s', flexDirection: "row", borderBottomWidth: '1@s', borderColor: 'rgba(222, 227, 235, 1)' },
   logo: { flex: 1, flexDirection: "row", alignItems: 'center', justifyContent: 'center' },
-  info: { flex: 2, flexDirection: "column", alignItems: 'center', justifyContent: 'center' },
+  info: { flex: 2, flexDirection: "column", alignItems: 'center', justifyContent: 'center', marginTop: '10@s' },
   infoRow: { flexDirection: "row", alignItems: 'center', justifyContent: 'center' },
   infoRowLeft: { flex: 1 },
   infoRowRight: { flex: 1.5, textAlign: 'right', marginRight: '5@s' },
@@ -321,8 +321,8 @@ const styles = ScaledSheet.create({
     alignItems: 'center', justifyContent: 'center', borderTopWidth: '1@s',
     borderColor: 'rgba(222, 227, 235, 1)'
   },
-  footerTotalField: { fontWeight: 'bold', textAlign: 'left', marginLeft: '30@s', fontSize: '14@s' },
-  footerNumer: { fontWeight: 'bold', color: 'red', textAlign: 'right', fontSize: '14@s' },
+  footerTotalField: { fontWeight: 'bold', textAlign: 'left', marginLeft: '30@s', fontSize: '14@s', ...Fonts.OpenSans },
+  footerNumer: { fontWeight: 'bold', color: 'red', textAlign: 'right', fontSize: '14@s', ...Fonts.OpenSans },
   footerYield: { marginRight: '8@s' },
   headerSize14: { fontSize: '14@s' },
   iconHelp: { marginBottom: scale(20), flex: 1, alignItems: 'flex-start' },
@@ -348,4 +348,25 @@ const styles = ScaledSheet.create({
     margin: '20@s', borderRadius: '4@s',
   },
   executeBtnText: { color: 'white', fontSize: '12@s', textAlign: 'center', ...Fonts.NanumGothic_Regular },
+  profitPercentFunds: {
+    flex: 0.5,
+    fontSize: '12@s',
+    ...Fonts.OpenSans,
+    fontWeight: 'bold'
+  },
+  profitDecreased: {
+    color: CommonColors.decreased
+  },
+  profitIncreased: {
+    color: CommonColors.increased
+  },
+  profitZero: {
+    ...Fonts.OpenSans
+  },
+  valuationFunds: {
+    flex: 1,
+    fontSize: '12@s',
+    ...Fonts.OpenSans,
+    fontWeight: 'bold'
+  }
 })
