@@ -313,7 +313,7 @@ const styles = ScaledSheet.create({
   iconLogo: { height: '20@s', width: '20@s', margin: '2@s' },
   tableHeaderText: { ...Fonts.NotoSans_Regular, fontSize: '12@s', textAlign: 'right' },
   iconRow: { width: '20@s', height: '20@s', marginRight: '8@s', marginLeft: '8@s' },
-  rowCoinName: { ...Fonts.OpenSans, fontWeight: 'bold', fontSize: '12@s', textAlign: 'left' },
+  rowCoinName: { ...Fonts.OpenSans_Bold, fontSize: '12@s', textAlign: 'left' },
   rowNumber: { ...Fonts.OpenSans, fontSize: '12@s', textAlign: 'right' },
   marginRight10: { marginRight: '10@s' },
   footer: {
@@ -321,8 +321,8 @@ const styles = ScaledSheet.create({
     alignItems: 'center', justifyContent: 'center', borderTopWidth: '1@s',
     borderColor: 'rgba(222, 227, 235, 1)'
   },
-  footerTotalField: { fontWeight: 'bold', textAlign: 'left', marginLeft: '30@s', fontSize: '14@s', ...Fonts.OpenSans },
-  footerNumer: { fontWeight: 'bold', color: 'red', textAlign: 'right', fontSize: '14@s', ...Fonts.OpenSans },
+  footerTotalField: { textAlign: 'left', marginLeft: '30@s', fontSize: '14@s', ...Fonts.OpenSans_Bold },
+  footerNumer: { color: 'red', textAlign: 'right', fontSize: '14@s', ...Fonts.OpenSans_Bold },
   footerYield: { marginRight: '8@s' },
   headerSize14: { fontSize: '14@s' },
   iconHelp: { marginBottom: scale(20), flex: 1, alignItems: 'flex-start' },
@@ -351,8 +351,7 @@ const styles = ScaledSheet.create({
   profitPercentFunds: {
     flex: 0.5,
     fontSize: '12@s',
-    ...Fonts.OpenSans,
-    fontWeight: 'bold'
+    ...Fonts.OpenSans_Bold
   },
   profitDecreased: {
     color: CommonColors.decreased
@@ -366,7 +365,6 @@ const styles = ScaledSheet.create({
   valuationFunds: {
     flex: 1,
     fontSize: '12@s',
-    ...Fonts.OpenSans,
-    fontWeight: 'bold'
+    ...Fonts.OpenSans_Bold
   }
 })
