@@ -313,7 +313,7 @@ const styles = ScaledSheet.create({
   numberRight: {
     ...Fonts.OpenSans_Bold, fontSize: '16@s'
   },
-  symbol: { fontSize: '10@s' },
+  symbol: { fontSize: '10@s', fontWeight: 'bold', ...Fonts.OpenSans },
   rowItem: {
     flexDirection: 'row', flex: 1, justifyContent: 'center',
     alignItems: 'center', marginTop: '10@s'
