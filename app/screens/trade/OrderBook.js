@@ -781,7 +781,7 @@ const styles = ScaledSheet.create({
     ...cellText,
     textAlign: 'right',
     fontSize: '13@s',
-    ...Fonts.OpensSans
+    ...Fonts.OpenSans
   },
   sellPercent: {
     position: 'absolute',
@@ -798,7 +798,7 @@ const styles = ScaledSheet.create({
     textAlign: 'right',
     color: '#000',
     fontSize: '13@s',
-    ...Fonts.OpensSans
+    ...Fonts.OpenSans
   },
   priceCell: {
     flex: 1,
@@ -808,7 +808,7 @@ const styles = ScaledSheet.create({
     ...cellText,
     textAlign: 'center',
     fontSize: '13@s',
-    ...Fonts.OpensSans
+    ...Fonts.OpenSans
   },
   userBuyQuantityCell: {
     flex: 0.9,
@@ -855,11 +855,11 @@ const styles = ScaledSheet.create({
     ...cellText,
     textAlign: 'center',
     fontSize: '13.5@s',
-    ...Fonts.OpensSans
+    ...Fonts.OpenSans
   },
   smallQuantityText: {
     ...cellText,
     fontSize: '12@s',
-    ...Fonts.OpensSans
+    ...Fonts.OpenSans
   }
 });
