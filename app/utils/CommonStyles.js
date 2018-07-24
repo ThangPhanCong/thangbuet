@@ -64,6 +64,10 @@ const androidFonts = {
   NanumGothic_Regular: {
     fontFamily: 'NanumGothic-Regular'
   },
+  NanumGothic_Regular_Bold: {
+    fontFamily: 'NanumGothic-Regular',
+    fontWeight: 'bold'
+  },
   NanumGothic_Bold: {
     fontFamily: 'NanumGothic-Bold'
   },
@@ -122,8 +126,10 @@ const CommonStyles = {
     flex: 1,
   },
   checkBox: {
-    checkedImage: (<Image style={{width: scale(13), height: scale(13) }} source={require('../../assets/common/checkbox/checked.png')} />),
-    unCheckedImage: (<Image style={{width: scale(13), height: scale(13) }} source={require('../../assets/common/checkbox/unchecked.png')} />)
+    checkedImage: (<Image style={{ width: scale(13), height: scale(13) }}
+                          source={require('../../assets/common/checkbox/checked.png')}/>),
+    unCheckedImage: (<Image style={{ width: scale(13), height: scale(13) }}
+                            source={require('../../assets/common/checkbox/unchecked.png')}/>)
   },
   switch: {
     activeText: 'ON',
