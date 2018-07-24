@@ -41,7 +41,7 @@ const TradeTabs = TabNavigator(
       })
     },
     OrderBook: {
-      screen:  props => <TradingOrderBookScreen {...props}/>,
+      screen: props => <TradingOrderBookScreen {...props}/>,
       navigationOptions: () => ({
         tabBarLabel: (options) => UIUtils.renderTabItem(I18n.t('tradeScreen.order'), options)
       })
@@ -187,7 +187,7 @@ export default class TradingScreen extends BaseScreen {
               currency: this._getCurrency()
             }}/>
           {this._renderSymbolSelector()}
-        {this._renderTypeDropdown()}
+          {this._renderTypeDropdown()}
         </View>
       </SafeAreaView>
     );
@@ -210,18 +210,18 @@ export default class TradingScreen extends BaseScreen {
               <Icon name='triangle-down' type='entypo' size={scale(15)}/>
             </View>
             <Text style={styles.coin}>{this._getCurrencyName(this._getCoin())}</Text>
-            <Text style={styles.currency}>{' /' +
-            '' + getCurrencyName(this._getCurrency())}</Text>
+            <Text style={styles.currency}>{' /' + getCurrencyName(this._getCurrency())}</Text>
           </TouchableOpacity>
-          <View style={[styles.headerContent, priceData.price ? {} : {opacity: 0}]}>
-            <Text style={[styles.price, {color: priceColor}]}>{formatCurrency(priceData.price, this._getCurrency)}</Text>
+          <View style={[styles.headerContent, priceData.price ? {} : { opacity: 0 }]}>
+            <Text
+              style={[styles.price, { color: priceColor }]}>{formatCurrency(priceData.price, this._getCurrency)}</Text>
             <Icon
               name={priceData.change >= 0 ? 'triangle-up' : 'triangle-down'}
               type='entypo'
               color={priceColor}
               size={scale(16)}
               containerStyle={styles.changeIndicator}/>
-            <Text style={[styles.pricePercent, {color: priceColor}]}>{formatPercent(priceData.change)}</Text>
+            <Text style={[styles.pricePercent, { color: priceColor }]}>{formatPercent(priceData.change)}</Text>
           </View>
         </View>
         <View style={styles.headerRight}>
@@ -238,8 +238,8 @@ export default class TradingScreen extends BaseScreen {
               color='#000'
               size={scale(13)}
               containerStyle={styles.helpIcon}/>
-            <Text style={[styles.profit, {color: profitColor}]}>{Numeral(profit).format("0.00")}</Text>
-            <Text style={[styles.balanceCurrency, {color: profitColor}]}>%</Text>
+            <Text style={[styles.profit, { color: profitColor }]}>{Numeral(profit).format("0.00")}</Text>
+            <Text style={[styles.balanceCurrency, { color: profitColor }]}>%</Text>
           </View>
         </View>
       </View>
@@ -278,7 +278,7 @@ export default class TradingScreen extends BaseScreen {
         onBackButtonPress={this._closeSymbolSelector.bind(this)}
         onBackdropPress={this._closeSymbolSelector.bind(this)}>
         <View style={styles.popup}>
-          <List containerStyle={styles.coinList} >
+          <List containerStyle={styles.coinList}>
             <FlatList
               data={this.state.symbols}
               keyExtractor={item => item.key + "_" + item.id}
@@ -292,7 +292,7 @@ export default class TradingScreen extends BaseScreen {
                   titleStyle={styles.itemText}
                   containerStyle={styles.item}
                   underlayColor='#6C6C6C'/>
-              )} />
+              )}/>
           </List>
         </View>
       </Modal>
