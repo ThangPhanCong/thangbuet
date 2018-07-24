@@ -43,13 +43,13 @@ const TradeTabs = TabNavigator(
     OrderBook: {
       screen: props => <TradingOrderBookScreen {...props}/>,
       navigationOptions: () => ({
-        tabBarLabel: (options) => UIUtils.renderTabItem(I18n.t('tradeScreen.order'), options)
+        tabBarLabel: (options) => UIUtils.renderTabItem(I18n.t('tradeScreen.orderBook'), options)
       })
     },
     Chart: {
       screen: TradingChartScreen,
       navigationOptions: () => ({
-        tabBarLabel: (options) => UIUtils.renderTabItem(I18n.t('tradeScreen.orderBook'), options)
+        tabBarLabel: (options) => UIUtils.renderTabItem(I18n.t('tradeScreen.chart'), options)
       })
     },
     Transaction: {
