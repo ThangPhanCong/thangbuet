@@ -215,7 +215,7 @@ class WithdrawalKRWScreen extends BaseScreen {
     const { navigation } = this.props;
     const { currentUser } = this.state;
     const symbol = navigation.getParam('symbol', {});
-    const valueInputDisabled =  currentUser ?  currentUser.bank + ' ' + currentUser.real_account_no + ' ' + currentUser.name: '';
+    const valueInputDisabled =  currentUser ?  (currentUser.bank || '') + ' ' + (currentUser.real_account_no || '') + ' ' + currentUser.name: '';
 
     return (
       <SafeAreaView style={styles.fullScreen}>
