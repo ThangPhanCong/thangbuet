@@ -33,6 +33,14 @@ function formatPercent(value, onlyFormat) {
   }
 };
 
+function formatPercentSpace(value, onlyFormat) {
+  if (onlyFormat) {
+    return Numeral(value).format("0.00")
+  } else {
+    return Numeral(value).format("0.00") + " %";
+  }
+};
+
 function getCurrencyName(value) {
   if (value == 'wbc') {
     return 'WWW';
@@ -59,5 +67,6 @@ export {
   getCurrencyName,
   getDateTime,
   getDayMonth,
-  getTime
+  getTime,
+  formatPercentSpace
 };

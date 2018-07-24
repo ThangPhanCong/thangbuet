@@ -90,7 +90,7 @@ export default class TradingTransactionsScreen extends BaseScreen {
     let transactions = this.state.transactions;
     transactions.splice(0, 0, newItem);
     if (transactions.length > this._getMaxTransactionCount()) {
-      transactions = transactions.slice(0, _getMaxTransactionCount());
+      transactions = transactions.slice(0, this._getMaxTransactionCount());
     }
     this.setState({ transactions: transactions });
   }

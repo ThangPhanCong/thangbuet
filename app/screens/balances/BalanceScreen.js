@@ -262,8 +262,8 @@ const styles = ScaledSheet.create({
     paddingLeft: '15@s', paddingRight: '15@s'
   },
   btnRow: {
-    height: '25@s', margin: '5@s', backgroundColor: 'rgba(222, 227, 235, 1)',
+    height: '25@s', margin: '5@s', backgroundColor: '#f8f9fb',
     justifyContent: 'center', alignItems: 'center', borderWidth: '1@s', borderRadius: '3@s',
-    borderColor: 'rgba(222, 227, 235, 0.1)'
+    borderColor: '#dee3eb'
   },
 });
