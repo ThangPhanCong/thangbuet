@@ -21,39 +21,32 @@ export default class OpenOrders extends BaseScreen {
     };
   }
 
-  _loading = false;
-
   componentDidMount() {
     super.componentDidMount();
     this._loadData();
   }
 
-  async _loadData() {
+  async _loadData(clearData = false) {
     try {
       const { coin, currency } = this.props;
       const { page, orders } = this.state;
       const params = { coin, currency, page };
 
-      this._loading = true;
       const responseOrders = await rf.getRequest('OrderRequest').getOrdersPending(params);
 
+      let newOrders = [];
+      if (clearData) {
+        newOrders = responseOrders.data.dat;
+      } else {
+        newOrders = [...orders, ...responseOrders.data.data];
+      }
       this.setState({
-        orders: [...orders, ...responseOrders.data.data],
+        orders: newOrders,
         last_page: responseOrders.data.last_page
       });
     } catch (err) {
       console.log("OpenOrderRequest._error:", err)
     }
-  }
-
-  async _onRefresh() {
-    if (this._loading) {
-      this.setState({ page: 1, orders: [] }, () => {
-        this._loadData();
-      })
-    }
-
-    this._loading = true;
   }
 
   _handleLoadMore = () => {
@@ -77,14 +70,12 @@ export default class OpenOrders extends BaseScreen {
       return;
     }
 
-    this._onRefresh();
+    this._loadData(true);
   }
 
   async _onCancelOrder() {
     try {
       const { ids } = this.state;
-
-      this._loading = false;
 
       await Promise.all(ids.map(async (id) => {
         await rf.getRequest('OrderRequest').cancel(id);
