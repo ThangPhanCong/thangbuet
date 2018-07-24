@@ -12,6 +12,7 @@ import {
   Keyboard,
   Dimensions
 } from 'react-native';
+import { Card } from 'react-native-elements';
 import BaseScreen from '../BaseScreen';
 import { TabNavigator, TabBarTop } from 'react-navigation';
 import Consts from '../../utils/Consts';
@@ -22,9 +23,10 @@ import I18n from '../../i18n/i18n';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import MarketScreen from './MarketScreen';
 import rf from '../../libs/RequestFactory';
-import _ from 'lodash';
+import { each, isEmpty, filter } from 'lodash';
 import ScaledSheet from "../../libs/reactSizeMatter/ScaledSheet";
 import { scale } from "../../libs/reactSizeMatter/scalingUtils";
+import Modal from 'react-native-modal';
 
 let TabBarNavigator;
 
@@ -32,23 +34,27 @@ class MarketSearchScreen extends BaseScreen {
   _refs = {};
 
   _searchInputWidth = 0;
+  _screenHeight = 0;
 
   constructor(props) {
     super(props);
     this.state = {
       searchList: [],
       searchListVisible: false,
-      isFavoriteFilter: false
+      isFavoriteFilter: false,
+      isShowComingSoon: false
     }
     TabBarNavigator = this._initTabNavigator();
   }
 
   render() {
     return (
-      <SafeAreaView style={styles.screen}>
+      <SafeAreaView style={styles.screen}
+        onLayout={event => this._screenHeight = event.nativeEvent.layout.height}>
         {this._renderHeader()}
         <TabBarNavigator onNavigationStateChange={this._onTabChanged.bind(this)}/>
         {this._renderSearchList()}
+        {this._renderComingSoon()}
       </SafeAreaView>
     )
   }
@@ -98,7 +104,7 @@ class MarketSearchScreen extends BaseScreen {
           top: scale(50),
           left: 0,
           right: 0,
-          bottom: 0,
+          height: this._calculateSearchViewHeight()
         }}>
         <TouchableWithoutFeedback
           onPress={this._dismissSearchList.bind(this)}>
@@ -117,6 +123,10 @@ class MarketSearchScreen extends BaseScreen {
         </TouchableWithoutFeedback>
       </View>
     )
+  }
+
+  _calculateSearchViewHeight() {
+    return Math.min(this.state.searchList.length * scale(44), this._screenHeight - scale(50))
   }
 
   _renderItem({ item }) {
@@ -170,12 +180,50 @@ class MarketSearchScreen extends BaseScreen {
       },
       {
         navigationOptions: ({ navigation }) => ({
-          gesturesEnabled: false
+          gesturesEnabled: false,
+          tabBarOnPress: ({previousScene, scene, jumpToIndex}) => {
+            console.log('onPress:', scene.route);
+            if (scene.index > 0) {
+              this.setState({
+                isShowComingSoon: true
+              })
+              return;
+            }
+
+            jumpToIndex(scene.index);
+          }
         }),
         tabBarComponent: TabBarTop,
         ...CommonStyles.tabOptions
       }
     );
+  }
+
+  _renderComingSoon() {
+    return (
+      <Modal
+        isVisible={this.state.isShowComingSoon}
+        avoidKeyboard={true}
+        useNativeDriver={true}
+        backdropColor='transparent'
+        onBackdropPress={() => this.setState({isShowComingSoon: false})}>
+        <Card
+          style={styles.dialog}
+          containerStyle={styles.cardContainer}>
+          <Text style={styles.comingSoonTitle}>
+            {I18n.t('common.comingSoon')}
+          </Text>
+          <View style={{ height: scale(1), backgroundColor: '#EBEBEB' }}/>
+          <TouchableOpacity
+            style={styles.comingSoonConfirmButton}
+            onPress={() => this.setState({isShowComingSoon: false})}>
+            <Text style={styles.comingSoonConfirmButtonText}>
+              {I18n.t('common.confirm')}
+            </Text>
+          </TouchableOpacity>
+        </Card>
+      </Modal>
+    )
   }
 
   _onPressItem(item) {
@@ -185,7 +233,7 @@ class MarketSearchScreen extends BaseScreen {
 
   _onFavoriteFilter() {
     this.setState({ isFavoriteFilter: !this.state.isFavoriteFilter }, () => {
-      _.each(Object.values(this._refs), marketScreen => {
+      each(Object.values(this._refs), marketScreen => {
         if (marketScreen.filterFavoriteChanged)
           marketScreen.filterFavoriteChanged(this.state.isFavoriteFilter);
       })
@@ -193,7 +241,7 @@ class MarketSearchScreen extends BaseScreen {
   }
 
   _onTabChanged(prevState, nextState, action) {
-    _.each(Object.values(this._refs), marketScreen => {
+    each(Object.values(this._refs), marketScreen => {
       if (marketScreen.setFavoriteFilter)
         marketScreen.setFavoriteFilter(this.state.isFavoriteFilter);
     })
@@ -208,7 +256,7 @@ class MarketSearchScreen extends BaseScreen {
   }
 
   _onTextChanged(searchText) {
-    if (_.isEmpty(searchText)) {
+    if (isEmpty(searchText)) {
       this.setState({
         searchList: [],
         searchListVisible: false
@@ -216,11 +264,11 @@ class MarketSearchScreen extends BaseScreen {
       return;
     }
 
-    this._searchList(searchText.toLowerCase());
+    this._searchList(searchText.toLowerCase().replace(/[^a-zA-Z]/g, ""));
   }
 
   _onSearchFocus(event) {
-    if (_.isEmpty(this.state.searchList))
+    if (isEmpty(this.state.searchList)) 
       return;
 
     this.setState({
@@ -231,11 +279,20 @@ class MarketSearchScreen extends BaseScreen {
   async _searchList(searchText) {
     try {
       let symbolResponse = await rf.getRequest('MasterdataRequest').getAll();
-      let symbols = _.filter(symbolResponse.coin_settings, symbol => symbol.currency.includes(searchText) || symbol.coin.includes(searchText));
-      symbols.map(symbol => {
-        symbol.coinPair = symbol.currency.toUpperCase() + '/' + symbol.coin.toUpperCase();
+      let rawSymbols = symbolResponse.coin_settings;
+      rawSymbols.map(symbol => {
+        symbol.coinPair = symbol.coin.toUpperCase() + '/' + symbol.currency.toUpperCase();
+        symbol.noSeparatorCoinPair = symbol.coin + symbol.currency;
+        symbol.reverseNoSeparatorCoinPair = symbol.currency + symbol.coin;
         return symbol;
       })
+      let symbols = filter(
+        rawSymbols,
+        symbol => symbol.currency.includes(searchText) ||
+                  symbol.coin.includes(searchText) ||
+                  symbol.noSeparatorCoinPair.includes(searchText) ||
+                  symbol.reverseNoSeparatorCoinPair.includes(searchText)
+      );
 
       this.setState({
         searchList: symbols,
@@ -276,7 +333,7 @@ const styles = ScaledSheet.create({
   titleLeftView: {
     fontSize: '12@s',
     marginStart: '5@s',
-    ...Fonts.NotoSans
+    ...Fonts.NotoSans_Bold
   },
   searchViewContainer: {
     flex: 3,
@@ -334,6 +391,40 @@ const styles = ScaledSheet.create({
     borderWidth: '1@s',
     backgroundColor: '#FFF',
     marginEnd: '16@s'
+  },
+  dialog: {
+    marginStart: '40@s',
+    marginEnd: '40@s',
+    backgroundColor: '#FFF'
+  },
+  cardContainer: {
+    borderRadius: '5@s',
+    padding: 0,
+    marginStart: '30@s',
+    marginEnd: '30@s'
+  },
+  comingSoonConfirmButtonText: {
+    fontSize: '13@s',
+    color: '#FFF',
+    ...Fonts.NanumGothic_Regular
+  },
+  comingSoonConfirmButton: {
+    marginTop: '10@s',
+    marginBottom: '10@s',
+    marginStart: '16@s',
+    marginEnd: '16@s',
+    height: '40@s',
+    backgroundColor: '#0070C0',
+    borderRadius: '5@s',
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
+  comingSoonTitle: {
+    marginTop: '20@s',
+    marginBottom: '20@s',
+    textAlign: 'center',
+    fontSize: '13@s',
+    ...Fonts.NanumGothic_Regular
   }
 });
 

@@ -320,7 +320,7 @@ const styles = ScaledSheet.create({
   },
   inputAmount: {
     flex: 1, textAlign: 'right', height: '30@s',
-    textAlignVertical: 'bottom', lineHeight: '0.1@s', paddingTop: '5@s',
+    paddingTop: '5@s', fontSize: '13@s', ...Fonts.NanumGothic_Regular
   },
   inlineSymbol: {
     fontSize: '10@s', ...Fonts.NanumGothic_Regular, textAlignVertical: 'center',
@@ -377,7 +377,7 @@ const styles = ScaledSheet.create({
   iconWon: {
     width: '23@s',
     height: '23@s',
-    marginTop: '2@s',
+    marginTop: '5@s',
     marginRight: '7@s',
   },
   note5Phone: {

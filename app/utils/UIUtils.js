@@ -7,6 +7,8 @@ export default class UIUtils {
 
   static renderTabItem(text, options, renderSeparator = true) {
     const textColor = options.focused ? CommonColors.tabActive : CommonColors.tabInactive;
+    const fontTab = options.focused ? Fonts.NotoSans_Bold : Fonts.NotoSans;
+
     const tabStyle = {
       flex: 1,
       height: scale(32),
@@ -19,7 +21,7 @@ export default class UIUtils {
       color: textColor,
       textAlign: 'center',
       fontSize: scale(options.fontSize || 16),
-      ...Fonts.NotoSans
+      ...fontTab
     };
     const separatorStyle = {
       width: 1,

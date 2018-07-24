@@ -180,7 +180,7 @@ export default class OrderForm extends BaseScreen {
     const prices = response.data;
     const key = Utils.getPriceKey(this._getCurrency(), this._getCoin());
     if (prices[key] && !this.state.price) {
-      this.setState({ price : prices[key].price });
+      this.setState({ price: prices[key].price });
     }
   }
 
@@ -198,8 +198,13 @@ export default class OrderForm extends BaseScreen {
     return type == Consts.ORDER_TYPE_MARKET || type == Consts.ORDER_TYPE_STOP_MARKET;
   }
 
+  _isStopMarketOrder() {
+    const type = this.state.type;
+    return type == Consts.ORDER_TYPE_STOP_MARKET;
+  }
+
   _onPriceChanged(price) {
-    const {type, quantity, total, enableQuantity} = this.state;
+    const { type, quantity, total, enableQuantity } = this.state;
 
     let newState = { price, enableQuantity };
     if (type == Consts.ORDER_TYPE_LIMIT) {
@@ -228,7 +233,7 @@ export default class OrderForm extends BaseScreen {
   }
 
   _getMaskInputValue(formatted, extracted) {
-   return extracted;
+    return extracted;
   }
 
   _onStopChanged(formatted, extracted) {
@@ -248,7 +253,7 @@ export default class OrderForm extends BaseScreen {
   }
 
   _onTotalChanged(formatted, extracted) {
-    const {type, price, enableQuantity} = this.state;
+    const { type, price, enableQuantity } = this.state;
     let total = this._getMaskInputValue(formatted, extracted);
 
     let newState = { total };
@@ -310,13 +315,14 @@ export default class OrderForm extends BaseScreen {
   async _sendOrderRequest(data) {
     try {
       await rf.getRequest('OrderRequest').createANewOne(data);
-    } catch(error) {
+    } catch (error) {
       if (!error.errors) {
         this._showError(I18n.t('common.message.network_error'));
       } else {
         this._showError(error.message);
       }
-    };
+    }
+    ;
   }
 
   _showError(message) {
@@ -376,7 +382,7 @@ export default class OrderForm extends BaseScreen {
   }
 
   _openTypeMenu() {
-    const items= this.types.map(item => item.label + ' ' + I18n.t('orderForm.order'));
+    const items = this.types.map(item => item.label + ' ' + I18n.t('orderForm.order'));
     const options = {
       sourceView: this._typeRef,
       onSelectItem: this._onTypeSelected.bind(this),
@@ -425,10 +431,10 @@ export default class OrderForm extends BaseScreen {
             precision={this.pricePrecision}
             editable={!this._isMarketOrder()}
             onChangeText={(formatted, extracted) => this._onPriceChanged(this._getMaskInputValue(formatted, extracted))}
-            onFocus={() => this.setState({focusedInput: OrderForm.INPUT_PRICE})}
-            onBlur={() => this.setState({focusedInput: undefined})}
+            onFocus={() => this.setState({ focusedInput: OrderForm.INPUT_PRICE })}
+            onBlur={() => this.setState({ focusedInput: undefined })}
             keyboardType='numeric'
-            style={[styles.inputText, {textAlign: 'center'}]}
+            style={[styles.inputText, { textAlign: 'center' }]}
             underlineColorAndroid='transparent'/>
         </View>
       </View>
@@ -436,7 +442,7 @@ export default class OrderForm extends BaseScreen {
   }
 
   _getInputBorderStyle(input) {
-    return this.state.focusedInput == input ? { borderColor: focusedBorderColor} : {};
+    return this.state.focusedInput == input ? { borderColor: focusedBorderColor } : {};
   }
 
   _getCaretBorderStyle(input) {
@@ -460,10 +466,10 @@ export default class OrderForm extends BaseScreen {
             value={this.state.stop}
             precision={this.pricePrecision}
             onChangeText={this._onStopChanged.bind(this)}
-            onFocus={() => this.setState({focusedInput: OrderForm.INPUT_STOP})}
-            onBlur={() => this.setState({focusedInput: undefined})}
+            onFocus={() => this.setState({ focusedInput: OrderForm.INPUT_STOP })}
+            onBlur={() => this.setState({ focusedInput: undefined })}
             keyboardType='numeric'
-            style={[styles.inputText, {textAlign: 'center'}]}
+            style={[styles.inputText, { textAlign: 'center' }]}
             underlineColorAndroid='transparent'/>
         </View>
       </View>
@@ -474,26 +480,28 @@ export default class OrderForm extends BaseScreen {
     const inputBorderStyle = this._getInputBorderStyle(OrderForm.INPUT_QUANTITY);
     const caretBorderStyle = this._getCaretBorderStyle(OrderForm.INPUT_QUANTITY);
     const enableQuantity = this.state.enableQuantity;
+    const disabled = this._isMarketOrder() && this._isBuyOrder() && !this._isStopMarketOrder();
     return (
       <View style={styles.inputRow}>
         <Text style={styles.inputLabel}>{I18n.t('orderForm.quantity')}</Text>
-        <View style={[styles.inputValue, {borderRightWidth: 0}, !enableQuantity ? styles.disabled : {}, inputBorderStyle]}>
+        <View
+          style={[styles.inputValue, { borderRightWidth: 0 }, !enableQuantity ? styles.disabled : {}, inputBorderStyle]}>
           <View ref={ref => this._quantityRef = ref} style={styles.quantityDropdownAnchor}/>
           <CurrencyInput
             refInput={ref => this._quantityInput = ref}
             value={this.state.quantity}
             precision={this.quantityPrecision}
             onChangeText={this._onQuantityChanged.bind(this)}
-            onFocus={() => this.setState({enableQuantity: true, focusedInput: OrderForm.INPUT_QUANTITY})}
-            onBlur={() => this.setState({focusedInput: undefined})}
+            onFocus={() => this.setState({ enableQuantity: true, focusedInput: OrderForm.INPUT_QUANTITY })}
+            onBlur={() => this.setState({ focusedInput: undefined })}
             keyboardType='numeric'
             style={styles.inputText}
             underlineColorAndroid='transparent'/>
-            <TouchableWithoutFeedback onPress={this._openQuantityDropdown.bind(this)}>
-              <View style={[styles.caretButton, caretBorderStyle]}>
-                {this._renderCaretDownIcon()}
-              </View>
-            </TouchableWithoutFeedback>
+          <TouchableWithoutFeedback onPress={this._openQuantityDropdown.bind(this)} disabled={disabled}>
+            <View style={[styles.caretButton, caretBorderStyle]}>
+              {this._renderCaretDownIcon()}
+            </View>
+          </TouchableWithoutFeedback>
         </View>
       </View>
     );
@@ -502,7 +510,7 @@ export default class OrderForm extends BaseScreen {
   _openQuantityDropdown() {
     Keyboard.dismiss();
     let items = [];
-    for (let i = 100; i > 0; i-= 10) {
+    for (let i = 100; i > 0; i -= 10) {
       items.push(i + '%');
     }
     const options = {
@@ -543,7 +551,7 @@ export default class OrderForm extends BaseScreen {
         <Text style={styles.inputLabel}>{I18n.t('orderForm.total')}</Text>
         <View style={[
           styles.inputValue,
-          {borderRightWidth: 0},
+          { borderRightWidth: 0 },
           enableQuantity || this._isMarketOrder() ? styles.disabled : {},
           inputBorderStyle]}>
           <View ref={ref => this._totalRef = ref} style={styles.quantityDropdownAnchor}/>
@@ -553,16 +561,16 @@ export default class OrderForm extends BaseScreen {
             precision={this.pricePrecision}
             editable={!this._isMarketOrder()}
             onChangeText={this._onTotalChanged.bind(this)}
-            onFocus={() => this.setState({enableQuantity: false, focusedInput: OrderForm.INPUT_TOTAL})}
-            onBlur={() => this.setState({focusedInput: undefined})}
+            onFocus={() => this.setState({ enableQuantity: false, focusedInput: OrderForm.INPUT_TOTAL })}
+            onBlur={() => this.setState({ focusedInput: undefined })}
             keyboardType='numeric'
             style={styles.inputText}
             underlineColorAndroid='transparent'/>
-            <TouchableWithoutFeedback onPress={this._openTotalDropdown.bind(this)}>
-              <View style={[styles.caretButton, caretBorderStyle]}>
-                {this._renderCaretDownIcon()}
-              </View>
-            </TouchableWithoutFeedback>
+          <TouchableWithoutFeedback onPress={this._openTotalDropdown.bind(this)} disabled={this._isMarketOrder()}>
+            <View style={[styles.caretButton, caretBorderStyle]}>
+              {this._renderCaretDownIcon()}
+            </View>
+          </TouchableWithoutFeedback>
         </View>
       </View>
     );
@@ -574,7 +582,7 @@ export default class OrderForm extends BaseScreen {
     for (let item of this.prefillAmounts) {
       items.push(item / 10000 + I18n.t('orderForm.tenThousand'));
     }
-    for (let i = 100; i > 0; i-= 10) {
+    for (let i = 100; i > 0; i -= 10) {
       items.push(i + '%');
     }
     const options = {
@@ -747,7 +755,7 @@ export default class OrderForm extends BaseScreen {
           onPress={this._onPressSubmit.bind(this)}>
           <Text style={styles.submitText}>
             {getCurrencyName(this._getCoin()) + ' / ' + getCurrencyName(this._getCurrency())
-              + ' ' + this._getOrderTypeText() + ' ' + this._getTradeTypeText()}
+            + ' ' + this._getOrderTypeText() + ' ' + this._getTradeTypeText()}
           </Text>
         </TouchableOpacity>
       </View>

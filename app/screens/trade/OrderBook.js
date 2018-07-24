@@ -670,7 +670,7 @@ export default class OrderBook extends BaseScreen {
 
 const fontSize = scale(12);
 const borderColor = '#D9D9D9';
-const borderWidth = 1;
+const borderWidth = scale(1);
 const sellCellBorder = {
   borderTopWidth: borderWidth,
   borderLeftWidth: borderWidth,
@@ -681,7 +681,7 @@ const cellText = {
   marginLeft: scale(5),
   marginRight: scale(5)
 };
-const selectedBorderWidth = 2;
+const selectedBorderWidth = scale(2);
 const selectedBotderColor = '#F00';
 const extendedStyles = {
   topBorder: {

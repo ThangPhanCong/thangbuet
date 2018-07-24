@@ -370,7 +370,8 @@ const styles = ScaledSheet.create({
     color: '#000'
   },
   checkBox: {
-    width: '42@s'
+    width: '44@s',
+    paddingLeft: '2@s'
   },
 
   footer: {
@@ -391,6 +392,8 @@ const styles = ScaledSheet.create({
     backgroundColor: '#007AC5'
   },
   updateButtonText: {
-    color: '#FFF'
+    color: '#FFF',
+    fontSize: '10@s',
+    ...Fonts.NanumGothic_Regular
   }
 });

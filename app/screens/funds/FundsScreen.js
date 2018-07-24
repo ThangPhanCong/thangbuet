@@ -255,11 +255,16 @@ export default class FundsScreen extends BaseScreen {
         </View>
 
         <Modal
-          isVisible={this.state.openHelp}
-          onBackdropPress={() => this.setState({ openHelp: false })}>
-          <View style={styles.modalStyle}>
-            <View style={styles.headerModalStyle}>
-              <Text style={styles.headerModalTitle}>{I18n.t('funds.helpTitle')}</Text>
+          animationType="slide"
+          transparent={false}
+          visible={this.state.openHelp}
+          onRequestClose={() => {
+          }}>
+          <SafeAreaView>
+            <View style={{ alignContent: 'flex-end', justifyContent: 'flex-end', borderBottomWidth: scale(1) }}>
+              <TouchableOpacity onPress={() => this.setState({ openHelp: false })}>
+                <Icon name="close" size={scale(20)} />
+              </TouchableOpacity>
             </View>
             <Text style={styles.modalLine}>{I18n.t('funds.help1')}</Text>
             <Text style={styles.modalLine}>{I18n.t('funds.help2')}</Text>
@@ -273,7 +278,7 @@ export default class FundsScreen extends BaseScreen {
               style={styles.executeBtn}>
               <Text style={styles.executeBtnText}>{I18n.t('funds.helpBtn')}</Text>
             </TouchableOpacity>
-          </View>
+          </SafeAreaView>
         </Modal>
 
       </SafeAreaView>
