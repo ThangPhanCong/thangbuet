@@ -106,9 +106,9 @@ export default class OrderBookSettingModal extends BaseScreen {
       coin: this._getCoin(),
       ...settings
     }
+    this.setModalVisible(false);
     const response = await rf.getRequest('UserRequest').updateOrderBookSettings(params);
     this.notify(Events.ORDER_BOOK_SETTINGS_UPDATED, response.data);
-    this.setModalVisible(false);
   }
 
   _convertSettingsToState(settings) {
