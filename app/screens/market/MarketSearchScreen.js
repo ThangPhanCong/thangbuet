@@ -401,9 +401,12 @@ const styles = ScaledSheet.create({
     borderRadius: '5@s',
     padding: 0,
     marginStart: '30@s',
-    marginEnd: '30@s'
+    marginEnd: '30@s',
+    ...UIUtils.generatePopupShadow()
   },
   comingSoonConfirmButtonText: {
+    marginStart: '30@s',
+    marginEnd: '30@s',
     fontSize: '13@s',
     color: '#FFF',
     ...Fonts.NanumGothic_Regular
@@ -411,13 +414,12 @@ const styles = ScaledSheet.create({
   comingSoonConfirmButton: {
     marginTop: '10@s',
     marginBottom: '10@s',
-    marginStart: '16@s',
-    marginEnd: '16@s',
     height: '40@s',
     backgroundColor: '#0070C0',
     borderRadius: '5@s',
     alignItems: 'center',
-    justifyContent: 'center'
+    justifyContent: 'center',
+    alignSelf: 'center'
   },
   comingSoonTitle: {
     marginTop: '20@s',
