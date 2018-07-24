@@ -33,13 +33,8 @@ export default class OpenOrders extends BaseScreen {
       const params = { coin, currency, page };
 
       const responseOrders = await rf.getRequest('OrderRequest').getOrdersPending(params);
+      const newOrders = clearData ? responseOrders.data.data : [...orders, ...responseOrders.data.data];
 
-      let newOrders = [];
-      if (clearData) {
-        newOrders = responseOrders.data.dat;
-      } else {
-        newOrders = [...orders, ...responseOrders.data.data];
-      }
       this.setState({
         orders: newOrders,
         last_page: responseOrders.data.last_page
