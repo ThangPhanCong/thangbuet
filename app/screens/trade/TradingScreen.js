@@ -210,7 +210,7 @@ export default class TradingScreen extends BaseScreen {
               <Icon name='triangle-down' type='entypo' size={scale(15)}/>
             </View>
             <Text style={styles.coin}>{this._getCurrencyName(this._getCoin())}</Text>
-            <Text style={styles.currency}>{' /' + getCurrencyName(this._getCurrency())}</Text>
+            <Text style={styles.currency}>{' / ' + getCurrencyName(this._getCurrency())}</Text>
           </TouchableOpacity>
           <View style={[styles.headerContent, priceData.price ? {} : { opacity: 0 }]}>
             <Text
@@ -228,7 +228,7 @@ export default class TradingScreen extends BaseScreen {
           <View style={styles.headerContent}>
             <Text style={styles.balanceLabel}>{I18n.t('tradeScreen.balance')}</Text>
             <Text style={styles.balance}>{formatCurrency(balanceData.balance, this._getCoin())}</Text>
-            <Text style={styles.balanceCurrency}>{getCurrencyName(this._getCurrency())}</Text>
+            <Text style={styles.balanceCurrency}>{getCurrencyName(this._getCoin())}</Text>
           </View>
           <View style={styles.headerContent}>
             <Text style={styles.balanceLabel}>{I18n.t('tradeScreen.profit')}</Text>
@@ -356,7 +356,7 @@ const styles = ScaledSheet.create({
   },
   currency: {
     fontSize: '16@s',
-    ...Fonts.OpenSan_Bold
+    ...Fonts.OpenSans_Bold
   },
   price: {
     fontSize: '20@s',
