@@ -342,7 +342,7 @@ const styles = ScaledSheet.create({
     margin: '6@s',
     width: '40@s',
     borderRadius: '2@s',
-    borderColor: '#000',
+    borderColor: '#bfbfbf',
     borderWidth: '0.6@s'
   },
   textSearch: {
