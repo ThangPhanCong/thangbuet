@@ -82,8 +82,9 @@ export default class OpenOrders extends BaseScreen {
 
   async _onCancelOrder() {
     try {
-      this._loading = false;
       const { ids } = this.state;
+
+      this._loading = false;
 
       await Promise.all(ids.map(async (id) => {
         await rf.getRequest('OrderRequest').cancel(id);
