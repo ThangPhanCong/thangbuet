@@ -79,11 +79,11 @@
     "register": "Đăng ký",
     "forgotText": "Quên mật khẩu?",
     "questionRegister": "Bạn không có tài khoản?",
-    "emailEmpty": "Email not empty",
-    "passwordEmpty": "Password not empty",
-    "otpUncorrect": "Otp code is not correct",
+    "emailEmpty": "email 입력하세요.",
+    "passwordEmpty": "비밀번호를 입력하세요.",
+    "otpUncorrect": "Google Authentication code is invalid.",
     "emailValidation": "Email is not in the correct format",
-    "messageUnCorrect": "Email or Password not correct",
+    "messageUnCorrect": "아이디/비밀번호가 올바르지 않습니다.",
     "registerForm": {
       "referralID": "Mã giới thiệu( không bắt buộc)",
       "textAcceptterm": "Bạn đồng ý",
@@ -209,7 +209,15 @@
     "profitAndLoss": "손익",
     "valuation": "평가액",
     "total": "TOTAL",
-    "percent": " %"
+    "percent": "%",
+    "help1": "1. KRW 환산 평가액을 기준으로 합니다.",
+    "help2": "2. BTC, ETH 마켓에서도 1번 기준이 공통 적용됩니다.",
+    "help3": "3. 입출금의 경우 입출금 처리된 시점의 KRW 현재가를 기준으로 입금은 '매수', 출금은 '매도'로 간주합니다.",
+    "help4": "4. 수익률 = (현재 평가액 - 총매수액) ÷ 총매수액 × 100",
+    "help5": "5. 매도한 자산은 계산에 포함되지 않습니다. 현재 보유하고 있는 자산만을 대상으로 합니다.",
+    "help6": "6. 이 수익률은 절대적인 투자 성과를 보여주는 수익률이 아닙니다. 투자시 참조용으로 사용하시 바랍니다.`",
+    "helpTitle": "수익률",
+    "helpBtn": "확인"
   },
   "balances": {
     "coin": "코인",
