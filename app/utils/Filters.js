@@ -29,7 +29,7 @@ function formatPercent(value, onlyFormat) {
   if (onlyFormat) {
     return Numeral(value).format("0.00")
   } else {
-    return Numeral(value).format("0.00") + "%";
+    return Numeral(value).format("0.00") + " %";
   }
 };
 

@@ -223,15 +223,15 @@ export default class FundsScreen extends BaseScreen {
                       {symbol.code !== 'krw' && parseFloat(symbol.balance)}
                     </Text>
                     <Text style={[
-                      { flex: 0.5, fontWeight: 'bold' }, styles.rowNumber,
-                      symbol.yield > 0 ? { color: 'red' } : { color: 'blue' }
+                      styles.profitPercentFunds, styles.rowNumber,
+                      symbol.yield === 0 ? styles.profitZero: symbol.yield > 0 ?  styles.profitIncreased : styles.profitDecreased
                     ]}>
                       {symbol.code !== "krw" && formatPercent(symbol.yield)}
                     </Text>
                     <Text
-                      style={[{ flex: 1, fontWeight: 'bold' },
+                      style={[styles.valuationFunds,
                         styles.marginRight10, styles.rowNumber,
-                        symbol.yield > 0 ? { color: 'red' } : { color: 'blue' },
+                        symbol.yield === 0 ? styles.profitZero: symbol.yield > 0 ?  styles.profitIncreased : styles.profitDecreased,
                         symbol.code === 'krw' ? { color: 'black' } : {}]}>
                       {formatCurrency(parseFloat(symbol.balance * symbol.price), this.currency)}
                     </Text>
@@ -309,9 +309,30 @@ const styles = ScaledSheet.create({
     alignItems: 'center', justifyContent: 'center', borderTopWidth: '1@s',
     borderColor: 'rgba(222, 227, 235, 1)'
   },
-  footerTotalField: { fontWeight: 'bold', textAlign: 'left', marginLeft: '30@s', fontSize: '14@s' },
-  footerNumer: { fontWeight: 'bold', color: 'red', textAlign: 'right', fontSize: '14@s' },
+  footerTotalField: { fontWeight: 'bold', textAlign: 'left', marginLeft: '30@s', fontSize: '14@s', ...Fonts.OpenSans },
+  footerNumer: { fontWeight: 'bold', color: 'red', textAlign: 'right', fontSize: '14@s', ...Fonts.OpenSans },
   footerYield: { marginRight: '8@s' },
   headerSize14: { fontSize: '14@s' },
-  iconHelp: { marginBottom: scale(20), flex: 1, alignItems: 'flex-start'}
+  iconHelp: { marginBottom: scale(20), flex: 1, alignItems: 'flex-start'},
+  profitPercentFunds: {
+    flex: 0.5,
+    fontSize: '12@s',
+    ...Fonts.OpenSans,
+    fontWeight: 'bold'
+  },
+  profitDecreased: {
+    color: CommonColors.decreased
+  },
+  profitIncreased: {
+    color: CommonColors.increased
+  },
+  profitZero: {
+    ...Fonts.OpenSans
+  },
+  valuationFunds: {
+    flex: 1,
+    fontSize: '12@s',
+    ...Fonts.OpenSans,
+    fontWeight: 'bold'
+  }
 })
