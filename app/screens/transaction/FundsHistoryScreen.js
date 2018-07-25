@@ -220,7 +220,7 @@ class FundsHistoryScreen extends Component {
   }
 
   _renderItem({ item }) {
-    const pardeDayMonth = moment(item.transaction_date).format('MM-DD');
+    const pardeDayMonth = moment(item.transaction_date).format('MM.DD');
 
     return (
       <View style={styles.itemContainer}>
@@ -241,7 +241,7 @@ class FundsHistoryScreen extends Component {
   }
 
   _renderItemRight({ item }) {
-    const truntCateAddress = item.foreign_blockchain_address.substr(0, 11) + "...";
+    const truntCateAddress = item.foreign_blockchain_address ? (item.foreign_blockchain_address.substr(0, 11) + "...") : '';
     const stylesQuantity = item.amount.includes('-') ? styles.itemDecreaseQuantity : styles.itemIncreaseQuantity;
 
     return (
@@ -296,6 +296,7 @@ class FundsHistoryScreen extends Component {
             />
             <FlatList data={transactions}
                       ref={elm => this.flatListLeft = elm}
+                      keyExtractor={(item, index) => index.toString()}
                       onScroll={(event) => this._onLeftListScroll(event)}
                       onMomentumScrollStart={() => this._handleLeftMomentumStart()}
                       onMomentumScrollEnd={() => this._handleLeftMomentumEnd()}
@@ -310,6 +311,7 @@ class FundsHistoryScreen extends Component {
             <HeaderFundsRight titles={titles}/>
             <FlatList data={transactions}
                       ref={elm => this.flatListRight = elm}
+                      keyExtractor={(item, index) => index.toString()}
                       onScroll={(event) => this._onRightListScroll(event)}
                       onMomentumScrollStart={() => this._handleRightMomentumStart()}
                       onMomentumScrollEnd={() => this._handleRightMomentumEnd()}
