@@ -273,6 +273,7 @@ const styles = ScaledSheet.create({
   currencyConfirm: {
     fontSize: '12@s',
     ...Fonts.NanumGothic_Regular,
+  },
   pendingNote: {
     fontSize: '11@s', ...Fonts.NanumGothic_Bold, textDecorationLine: 'underline'
   }
