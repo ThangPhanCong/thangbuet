@@ -214,10 +214,17 @@ class TransactionContainerScreen extends BaseScreen {
   }
 
   async _cancelTransaction(item) {
-    await rf.getRequest('OrderRequest').cancel(item.id);
-    this.setState({ page: 1, transactions: [] }, () => {
-      this._loadData();
-    })
+    try {
+      const { transactions } = this.state;
+
+      await rf.getRequest('OrderRequest').cancel(item.id);
+      const newTransactions = transactions.filter(tr => tr.id !== item.id) ;
+
+      this.setState({transactions: newTransactions});
+    } catch (err) {
+      console.log("CancelTransaction._error:", err)
+    }
+
   }
 
   _renderStatusOrder(item) {
