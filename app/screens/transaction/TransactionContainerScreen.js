@@ -81,7 +81,7 @@ class TransactionContainerScreen extends BaseScreen {
 
       if (typeScreen === TransactionContainerScreen.TYPE_SCREEN.OPEN_ORDER) {
         params = {
-          page,
+          page: clearData ? 1 : page,
           limit: 20,
           start_date: parseStartDate,
           currency: 'krw',
@@ -90,7 +90,7 @@ class TransactionContainerScreen extends BaseScreen {
         responseTransaction = await rf.getRequest('OrderRequest').getOrdersPending(params);
       } else {
         params = {
-          page,
+          page: clearData ? 1 : page,
           limit: 20,
           is_all_order: true,
           start_date: parseStartDate,
@@ -218,6 +218,7 @@ class TransactionContainerScreen extends BaseScreen {
       const { transactions } = this.state;
 
       await rf.getRequest('OrderRequest').cancel(item.id);
+      console.log("cancel xong")
       const newTransactions = transactions.filter(tr => tr.id !== item.id) ;
 
       this.setState({transactions: newTransactions});
