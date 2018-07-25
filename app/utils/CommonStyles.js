@@ -66,7 +66,8 @@ const androidFonts = {
     fontFamily: 'NanumGothic-Regular'
   },
   NanumGothic_Bold: {
-    fontFamily: 'NanumGothic-Bold'
+    fontFamily: 'NanumGothic-Regular',
+    fontWeight: 'bold'
   },
   Roboto: {
     fontFamily: 'Roboto-Regular'
