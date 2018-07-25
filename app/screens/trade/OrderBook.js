@@ -1,7 +1,6 @@
 import React from 'react';
 import {
-  Button,
-  PixelRatio,
+  Dimensions,
   ScrollView,
   StyleSheet,
   Text,
@@ -14,7 +13,7 @@ import {
 import LinearGradient from 'react-native-linear-gradient';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import ScaledSheet from '../../libs/reactSizeMatter/ScaledSheet';
-import { scale } from '../../libs/reactSizeMatter/scalingUtils';
+import { scale, verticalScale } from '../../libs/reactSizeMatter/scalingUtils';
 import _ from 'lodash';
 import Numeral from '../../libs/numeral';
 import BigNumber from 'bignumber.js';
@@ -22,6 +21,7 @@ import rf from '../../libs/RequestFactory';
 import Consts from '../../utils/Consts';
 import I18n from '../../i18n/i18n';
 import Utils from '../../utils/Utils';
+import UIUtils from '../../utils/UIUtils';
 import BaseScreen from '../BaseScreen';
 import { CommonColors, CommonSize, CommonStyles, Fonts } from '../../utils/CommonStyles';
 import { formatCurrency, formatPercent } from '../../utils/Filters';
@@ -40,18 +40,21 @@ export default class OrderBook extends BaseScreen {
 
   constructor(props) {
     super(props);
+
+    let emptyOrderBook = [];
+    for (let i = 0; i < this._getOrderBookSize(); i++) {
+      emptyOrderBook.push({price: 0, quantity: 0});
+    }
     this.state = {
       firstPriceGroup: 0,
       secondPriceGroup: 0,
       quantityPrecision: 4,
       krwPrice: 0,
-      buyOrderBook: [],
-      sellOrderBook: [],
+      buyOrderBook: emptyOrderBook,
+      sellOrderBook: emptyOrderBook,
 
       priceSetting: { digits: 4 },
-
       currencyPrice: 1,
-
       highlightCells: []
     };
 
@@ -61,14 +64,30 @@ export default class OrderBook extends BaseScreen {
     this.currentPrice = undefined;
     this.yesterdayPrice = undefined;
     this.priceSetting = undefined;
+    this.pricePrecision = 0;
     this.quantityPrecision = undefined;
     this.settings = {};
+
+    this._scrollView = undefined;
   }
 
   async componentWillMount() {
     super.componentWillMount();
-    this._updateOrderBook()
+    this._updateOrderBook();
     this._loadData();
+  }
+
+  componentDidMount() {
+    super.componentDidMount();
+    setTimeout(() => {
+      // scroll to middle
+      this._scrollView && this._scrollView.scrollTo({
+        x: 0,
+        y: 0.4 * this._getOrderBookHeight(),
+        animated: false
+      });
+    }, 100);
+
   }
 
   getSocketEventHandlers() {
@@ -338,10 +357,7 @@ export default class OrderBook extends BaseScreen {
   }
 
   _getOrderBookSize() {
-    let sizes = {};
-    sizes[OrderBook.TYPE_FULL] = 5;
-    sizes[OrderBook.TYPE_SMALL] = 5;
-    return sizes[this.props.type] || 5;
+    return 9;
   }
 
   _getMiddlePrice(orderBook, currentPrice, tickerSize) {
@@ -419,6 +435,15 @@ export default class OrderBook extends BaseScreen {
     }
   }
 
+  _getOrderBookHeight() {
+    const mainTabBarHeight = scale(40);
+    const headerHeight = verticalScale(90);
+    const tabheight = scale(37);
+    const toolbarHeight = verticalScale(38);
+    const { height } = Dimensions.get('window');
+    return height - UIUtils.getStatusBarHeight() - mainTabBarHeight - headerHeight - tabheight - toolbarHeight;
+  }
+
   render() {
     switch (this.props.type) {
       case OrderBook.TYPE_FULL:
@@ -434,16 +459,20 @@ export default class OrderBook extends BaseScreen {
     return (
       <View style={styles.screen}>
         {this._renderHeader()}
-        <View style={styles.sellGroup}>
-          {this.state.sellOrderBook.map((item, index) => {
-            return this._renderSellRow(item, index, index == this.state.sellOrderBook.length - 1);
-          })}
-        </View>
-        <View style={styles.buyGroup}>
-          {this.state.buyOrderBook.map((item, index) => {
-            return this._renderBuyRow(item, index);
-          })}
-        </View>
+        <ScrollView ref={ref => this._scrollView = ref} style={styles.screen} showsVerticalScrollIndicator={false}>
+          <View style={{width: '100%', height: 1.8 * this._getOrderBookHeight()}}>
+            <View style={styles.sellGroup}>
+              {this.state.sellOrderBook.map((item, index) => {
+                return this._renderSellRow(item, index, index == this.state.sellOrderBook.length - 1);
+              })}
+            </View>
+            <View style={styles.buyGroup}>
+              {this.state.buyOrderBook.map((item, index) => {
+                return this._renderBuyRow(item, index);
+              })}
+            </View>
+          </View>
+        </ScrollView>
       </View>
     );
   }
@@ -598,18 +627,20 @@ export default class OrderBook extends BaseScreen {
 
   _renderSmallOrderBook() {
     return (
-      <View style={styles.screen}>
-        <View style={styles.sellGroup}>
-          {this.state.sellOrderBook.map((item, index) => {
-            return this._renderSmallSellRow(item, index);
-          })}
+      <ScrollView ref={ref => this._scrollView = ref} style={styles.screen} showsVerticalScrollIndicator={false}>
+        <View style={{width: '100%', height: 1.8 * this._getOrderBookHeight()}}>
+          <View style={styles.sellGroup}>
+            {this.state.sellOrderBook.map((item, index) => {
+              return this._renderSmallSellRow(item, index);
+            })}
+          </View>
+          <View style={styles.buyGroup}>
+            {this.state.buyOrderBook.map((item, index) => {
+              return this._renderSmallBuyRow(item, index);
+            })}
+          </View>
         </View>
-        <View style={styles.buyGroup}>
-          {this.state.buyOrderBook.map((item, index) => {
-            return this._renderSmallBuyRow(item, index);
-          })}
-        </View>
-      </View>
+      </ScrollView>
     );
   }
 
