@@ -1,9 +1,27 @@
 import React from 'react';
-import { Platform, StyleSheet, Text, View } from 'react-native';
+import { Platform, StatusBar, StyleSheet, Text, View } from 'react-native';
 import { scale } from '../libs/reactSizeMatter/scalingUtils';
 import { CommonColors, CommonStyles, Fonts } from './CommonStyles';
 
 export default class UIUtils {
+
+  static isIphoneX() {
+    const dimen = Dimensions.get('window');
+    return (
+      Platform.OS === 'ios' &&
+      !Platform.isPad &&
+      !Platform.isTVOS &&
+      (dimen.height === 812 || dimen.width === 812)
+    );
+  }
+
+  static getStatusBarHeight() {
+    if (Platform.OS === 'ios') {
+        return UIUtils.isIphoneX() ? scale(44) : scale(20);
+    }
+
+    return StatusBar.currentHeight;
+  }
 
   static renderTabItem(text, options, renderSeparator = true) {
     const textColor = options.focused ? CommonColors.tabActive : CommonColors.tabInactive;
