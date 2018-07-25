@@ -53,7 +53,7 @@ export default class MasterdataRequest extends BaseRequest {
   }
 
   async downloadTranslationsIfNeed(masterdata) {
-    if (__DEV__) {
+    if (AppConfig.dev()) {
       return; // always use local data in dev environment
     }
     const mobileSettings = masterdata['mobile_settings'];
