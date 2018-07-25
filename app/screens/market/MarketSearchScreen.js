@@ -323,16 +323,21 @@ const styles = ScaledSheet.create({
     height: '60@s',
     flexDirection: 'row'
   },
-  favoriteButton: {},
+  favoriteButton: {
+    width: '40@s',
+    height: '40@s',
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
   leftView: {
-    marginStart: '16@s',
+    marginStart: '8@s',
     flex: 1,
     alignItems: 'center',
     flexDirection: 'row'
   },
   titleLeftView: {
+    marginStart: -scale(5),
     fontSize: '12@s',
-    marginStart: '5@s',
     ...Fonts.NotoSans_Bold
   },
   searchViewContainer: {
