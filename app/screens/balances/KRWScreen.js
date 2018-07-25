@@ -231,7 +231,7 @@ export default class KRWScreen extends BaseScreen {
 
             <View style={styles.rowWrapper}>
               <Text style={[styles.fontSize12, styles.modalText, styles.marginRight10]}>{I18n.t('deposit.amountToDeposit')}</Text>
-              <Text style={[styles.modalText, {fontSize: scale(14), paddingBottom: scale(2), ...Fonts.NanumGothic_Regular_Bold }]}>
+              <Text style={[styles.modalText, {fontSize: scale(14), paddingBottom: scale(2), ...Fonts.NanumGothic_Bold }]}>
                 {formatCurrency(this.state.amount, this.currency) + " "}
               </Text>
               <Text style={[styles.fontSize12, styles.modalText, { ...Fonts.NanumGothic_Regular }]}>{I18n.t('funds.currency')}</Text>
