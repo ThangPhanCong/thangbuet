@@ -10,7 +10,7 @@ export default class UserRequest extends BaseModelRequest {
   login(email, password, otp = '') {
     let params = {
       grant_type: 'password',
-      client_id: '1',
+      client_id: AppConfig.getClientId(),
       client_secret: AppConfig.getClientSecret(),
       username: email,
       password: password,
