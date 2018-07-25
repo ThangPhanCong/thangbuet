@@ -167,8 +167,9 @@ class MarketScreen extends BaseScreen {
             <Text style={styles.normalHeader}>
               {I18n.t('marketList.price')}
             </Text>
-
-            {this._renderArrow(MarketScreen.SORT_FIELDS.PRICE)}
+            <View style={{justifyContent: 'center', alignItems: 'center'}}>
+              {this._renderArrow(MarketScreen.SORT_FIELDS.PRICE)}
+            </View>
           </View>
         </TouchableWithoutFeedback>
 
@@ -177,8 +178,9 @@ class MarketScreen extends BaseScreen {
             <Text style={styles.normalHeader}>
               {I18n.t('marketList.change')}
             </Text>
-
+            <View style={{justifyContent: 'center', alignItems: 'center'}}>
             {this._renderArrow(MarketScreen.SORT_FIELDS.CHANGE)}
+          </View>
           </View>
         </TouchableWithoutFeedback>
 
@@ -187,8 +189,9 @@ class MarketScreen extends BaseScreen {
             <Text style={styles.normalHeader}>
               {I18n.t('marketList.volume')}
             </Text>
-
+            <View style={{justifyContent: 'center', alignItems: 'center'}}>
             {this._renderArrow(MarketScreen.SORT_FIELDS.VOLUME)}
+          </View>
           </View>
         </TouchableWithoutFeedback>
       </View>
@@ -508,9 +511,9 @@ const styles = ScaledSheet.create({
     borderBottomWidth: '1@s'
   },
   iconSort: {
-    marginTop: '6@s',
-    height: '20@s',
-    width: '20@s',
+    marginTop: '3@s',
+    height: '16@s',
+    width: '16@s',
   },
   negativeText: {
     fontSize: '12@s',
