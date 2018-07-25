@@ -276,7 +276,7 @@
     "confirm": "입금신청확인",
     "confirmTitle": "입금 신청 취소 확인",
     "amountToDeposit": "입금 신청 금액",
-    "confirmContent": "위와같이입금을신청하시겠습니까?",
+    "confirmContent": "위와 같이 입금을 신청하시겠습니까?",
     "actionConfirm": "확인",
     "actionCancel": "취소",
     "successMessage": "입금 신청이 접수되었습니다. 신청이 처리될 때까지 잠시 기다려주세요.",

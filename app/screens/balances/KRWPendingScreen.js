@@ -196,7 +196,7 @@ export default class KRWPendingScreen extends BaseScreen {
               <TouchableOpacity
                 onPress={this._execute.bind(this)}
                 style={[styles.modalConfirmBtn, styles.btnAccept]}>
-                <Text style={styles.textConfirmStyle}>{I18n.t('deposit.actionConfirm')}</Text>
+                <Text style={styles.textNote}>{I18n.t('deposit.actionConfirm')}</Text>
               </TouchableOpacity>
             </View>
           </View>
@@ -242,9 +242,8 @@ const styles = ScaledSheet.create({
     width: '70%', justifyContent: 'space-between', alignItems: 'center', flexDirection: 'row',
     marginBottom: '20@s', marginTop: '10@s'
   },
-  textNote: { color: 'white', textAlign: 'center' },
+  textNote: { color: 'white', textAlign: 'center', fontSize: '12@s', ...Fonts.NanumGothic_Regular },
   confirmStyle: { width: '45%', justifyContent: 'center', backgroundColor: 'blue', height: '45@s' },
-  textConfirmStyle: { color: 'white', textAlign: 'center' },
   checkboxOutline: {
     marginTop: '20@s', backgroundColor: 'rgba(242, 242, 242, 1)', height: '35@s', flexDirection: 'row',
     flex: 1, marginLeft: '40@s', marginRight: '40@s', justifyContent: 'center', alignItems: 'center',
