@@ -233,10 +233,10 @@ export default class KRWScreen extends BaseScreen {
 
             <View style={styles.rowWrapper}>
               <Text style={[styles.fontSize12, styles.modalText, styles.marginRight10]}>{I18n.t('deposit.amountToDeposit')}</Text>
-              <Text style={[styles.fontSize12, styles.modalText, { ...Fonts.NanumGothic_Bold }]}>
-                {formatCurrency(this.state.amount, this.currency)}
-                <Text style={{ ...Fonts.NanumGothic_Regular }}>{I18n.t('funds.currency')}</Text>
+              <Text style={[styles.modalText, {fontSize: scale(14), paddingBottom: scale(2), ...Fonts.NanumGothic_Bold }]}>
+                {formatCurrency(this.state.amount, this.currency) + " "}
               </Text>
+              <Text style={[styles.fontSize12, styles.modalText, { ...Fonts.NanumGothic_Regular }]}>{I18n.t('funds.currency')}</Text>
             </View>
             <Text style={[styles.fontSize12, styles.modalText, styles.marginBoth10]}>
               {I18n.t('deposit.confirmContent')}
@@ -350,7 +350,7 @@ const styles = ScaledSheet.create({
   fontSize12: { fontSize: '12@s' },
   modalText: { ...Fonts.NanumGothic_Regular, alignContent: 'flex-end' },
   rowWrapper: {
-    width: '100%', justifyContent: 'center', alignItems: 'flex-end', flexDirection: 'row',
+    width: '100%', justifyContent: 'center', alignItems: 'center', flexDirection: 'row',
     marginBottom: '10@s', marginTop: '20@s'
   },
   marginRight10: { marginRight: '10@s' },

@@ -100,7 +100,7 @@ class MarketScreen extends BaseScreen {
         underlayColor='#FFECED'>
         <View style={styles.listItemContainer}>
           <View style={styles.nameGroup}>
-            <TouchableOpacity style={{ alignItems: 'center', justifyContent: 'center' }}
+            <TouchableOpacity style={styles.favoriteButton}
                               onPress={() => this._onEnableFavorite(item)}>
               <Icon
                 name='star'
@@ -108,9 +108,7 @@ class MarketScreen extends BaseScreen {
                 color={item.isFavorite ? '#FFC000' : '#D9D9D9'}/>
             </TouchableOpacity>
 
-            <View style={styles.spacePairName}/>
-
-            <View style={{ flexDirection: 'column' }}>
+            <View style={{ marginStart: -scale(3), flexDirection: 'column' }}>
               <Text style={styles.itemFirstCoin}>
                 {I18n.t(`currency.${item.coin}.fullname`) || getCurrencyName(item.coin)}
                 {"\n"}
@@ -158,7 +156,9 @@ class MarketScreen extends BaseScreen {
             <Text style={styles.normalHeader}>
               {I18n.t('marketList.symbol')}
             </Text>
-            {this._renderArrow(MarketScreen.SORT_FIELDS.SYMBOL)}
+            <View style={{justifyContent: 'center', alignItems: 'center'}}>
+              {this._renderArrow(MarketScreen.SORT_FIELDS.SYMBOL)}
+            </View>
           </View>
         </TouchableWithoutFeedback>
 
@@ -167,22 +167,20 @@ class MarketScreen extends BaseScreen {
             <Text style={styles.normalHeader}>
               {I18n.t('marketList.price')}
             </Text>
-
-            {this._renderArrow(MarketScreen.SORT_FIELDS.PRICE)}
+            <View style={{justifyContent: 'center', alignItems: 'center'}}>
+              {this._renderArrow(MarketScreen.SORT_FIELDS.PRICE)}
+            </View>
           </View>
         </TouchableWithoutFeedback>
 
         <TouchableWithoutFeedback onPress={() => this._onSortField(MarketScreen.SORT_FIELDS.CHANGE)}>
           <View style={styles.changeHeader}>
-            <View style={{ flex: 1 }}>
-              <Text style={styles.normalHeader}>
-                {I18n.t('marketList.change')}
-              </Text>
-            </View>
-
-            <View style={{ flex: 2 }}>
-              {this._renderArrow(MarketScreen.SORT_FIELDS.CHANGE)}
-            </View>
+            <Text style={styles.normalHeader}>
+              {I18n.t('marketList.change')}
+            </Text>
+            <View style={{justifyContent: 'center', alignItems: 'center'}}>
+            {this._renderArrow(MarketScreen.SORT_FIELDS.CHANGE)}
+          </View>
           </View>
         </TouchableWithoutFeedback>
 
@@ -191,8 +189,9 @@ class MarketScreen extends BaseScreen {
             <Text style={styles.normalHeader}>
               {I18n.t('marketList.volume')}
             </Text>
-
+            <View style={{justifyContent: 'center', alignItems: 'center'}}>
             {this._renderArrow(MarketScreen.SORT_FIELDS.VOLUME)}
+          </View>
           </View>
         </TouchableWithoutFeedback>
       </View>
@@ -440,6 +439,12 @@ const styles = ScaledSheet.create({
   screen: {
     ...CommonStyles.screen
   },
+  favoriteButton: {
+    width: '30@s',
+    height: '30@s',
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
   listView: {
     flex: 1,
   },
@@ -450,7 +455,6 @@ const styles = ScaledSheet.create({
     flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
-    paddingLeft: '10@s',
     paddingRight: '10@s'
   },
   separator: {
@@ -462,9 +466,6 @@ const styles = ScaledSheet.create({
     flex: 3,
     flexDirection: 'row',
     alignItems: 'center'
-  },
-  spacePairName: {
-    width: '3@s'
   },
   itemFirstCoin: {
     fontSize: '12@s',
@@ -506,11 +507,13 @@ const styles = ScaledSheet.create({
     backgroundColor: '#F8F9FB',
     paddingLeft: '10@s',
     paddingRight: '10@s',
+    borderColor: CommonColors.separator,
+    borderBottomWidth: '1@s'
   },
   iconSort: {
-    marginTop: '6@s',
-    height: '20@s',
-    width: '20@s',
+    marginTop: '3@s',
+    height: '16@s',
+    width: '16@s',
   },
   negativeText: {
     fontSize: '12@s',
@@ -539,8 +542,8 @@ const styles = ScaledSheet.create({
   },
   changeHeader: {
     flex: 2,
-    alignItems: 'flex-end',
-    flexDirection: 'column'
+    justifyContent: 'flex-end',
+    flexDirection: 'row'
   },
   symbolHeader: {
     flex: 3,
