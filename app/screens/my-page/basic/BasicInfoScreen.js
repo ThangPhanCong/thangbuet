@@ -25,7 +25,7 @@ export default class BasicInfoScreen extends BaseScreen {
     locale: I18n.t('myPage.basic.feeLevel'),
     prefix: 'Level '
   }, {
-    prop: 'id',
+    prop: 'email',
     locale: I18n.t('myPage.basic.id'),
     prefix: ''
   }, {
