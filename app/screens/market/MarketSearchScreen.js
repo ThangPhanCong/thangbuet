@@ -369,7 +369,7 @@ const styles = ScaledSheet.create({
     color: '#000',
     textAlign: 'center',
     fontSize: '9@s',
-    height: '30@s',
+    height: '36@s',
     borderColor: null,
     alignSelf: 'center',
     ...Fonts.NanumGothic_Regular
