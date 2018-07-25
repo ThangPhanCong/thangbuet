@@ -15,6 +15,11 @@ import BaseScreen from "../BaseScreen";
 import Consts from "../../utils/Consts";
 
 class TransactionContainerScreen extends BaseScreen {
+  static TYPE_SCREEN = {
+    ORDER_HISTORY: 'order',
+    OPEN_ORDER: 'open_order',
+  };
+
   static SORT_FIELDS = {
     DATE: 'date',
     PAIR: 'coin'
@@ -49,11 +54,7 @@ class TransactionContainerScreen extends BaseScreen {
     }
   }
 
-  OrderListUpdated(data) {
-    if (data.currency !== Consts.CURRENCY_KRW) {
-      return;
-    }
-
+  OrderListUpdated() {
     this._loadData(true)
   }
 
@@ -72,13 +73,13 @@ class TransactionContainerScreen extends BaseScreen {
   async _loadData(clearData = false) {
     try {
       const { page, start_date, end_date, transactions } = this.state;
-      const { title } = this.props;
+      const { typeScreen } = this.props;
       const parseStartDate = moment(start_date).format('x');
       const parseEndDate = moment(end_date).format('x');
       let responseTransaction = {}, params = {};
 
 
-      if (title === I18n.t('transactions.openOrderTab')) {
+      if (typeScreen === TransactionContainerScreen.TYPE_SCREEN.OPEN_ORDER) {
         params = {
           page,
           limit: 20,
@@ -250,7 +251,7 @@ class TransactionContainerScreen extends BaseScreen {
   }
 
   _renderItemRight({ item }) {
-    const { title } = this.props;
+    const { typeScreen } = this.props;
     const stylesQuantity = item.quantity.includes('-') ? styles.itemDecreaseQuantity : styles.itemIncreaseQuantity;
 
     return (
@@ -273,7 +274,7 @@ class TransactionContainerScreen extends BaseScreen {
           <Text style={styles.itemTransaction}>{getCurrencyName(item.currency)}</Text>
         </View>
 
-        {title === I18n.t('transactions.openOrderTab') ? this._renderStatusOrder(item) :
+        {typeScreen === TransactionContainerScreen.TYPE_SCREEN.OPEN_ORDER ? this._renderStatusOrder(item) :
           <View style={[styles.lastItemRight]}>
             <Text style={styles.itemFee}>
               {formatCurrency(item.fee, item.coin)}
@@ -353,8 +354,8 @@ class TransactionContainerScreen extends BaseScreen {
 
   render() {
     const { transactions } = this.state;
-    const { title } = this.props;
-    const titleLast = title === I18n.t('transactions.openOrderTab') ? I18n.t('transactions.cancel') : I18n.t('transactions.fee');
+    const { typeScreen } = this.props;
+    const titleLast = typeScreen === TransactionContainerScreen.TYPE_SCREEN.OPEN_ORDER ? I18n.t('transactions.cancel') : I18n.t('transactions.fee');
 
     const titles = [I18n.t('transactions.amount'), I18n.t('transactions.orderPrice'),
       I18n.t('transactions.excutedPrice'), titleLast];

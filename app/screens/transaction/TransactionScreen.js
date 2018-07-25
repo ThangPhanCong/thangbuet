@@ -15,6 +15,10 @@ import UIUtils from "../../utils/UIUtils";
 let TabBarNavigatorTransaction;
 
 export default class TransactionScreen extends BaseScreen {
+  static TYPE_SCREEN = {
+    ORDER_HISTORY: 'order',
+    OPEN_ORDER: 'open_order',
+  };
 
   constructor(props) {
     super(props);
@@ -25,13 +29,13 @@ export default class TransactionScreen extends BaseScreen {
     return TabNavigator(
       {
         OrderHistoryScreen: {
-          screen: (props) => <TransactionContainerScreen {...props} title={I18n.t('transactions.orderHistoryTab')}/>,
+          screen: (props) => <TransactionContainerScreen {...props} typeScreen={TransactionScreen.TYPE_SCREEN.ORDER_HISTORY}/>,
           navigationOptions: () => ({
             tabBarLabel: (options) => UIUtils.renderTabItem(I18n.t('transactions.orderHistoryTab'), {fontSize: 14, ...options})
           })
         },
         OpenOrderScreen: {
-          screen: (props) => <TransactionContainerScreen {...props} title={I18n.t('transactions.openOrderTab')}/>,
+          screen: (props) => <TransactionContainerScreen {...props} typeScreen={TransactionScreen.TYPE_SCREEN.OPEN_ORDER}/>,
           navigationOptions: () => ({
             tabBarLabel: (options) => UIUtils.renderTabItem(I18n.t('transactions.openOrderTab'),{fontSize: 14, ...options})
           })
