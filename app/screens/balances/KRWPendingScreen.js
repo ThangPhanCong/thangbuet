@@ -9,6 +9,7 @@ import I18n from '../../i18n/i18n'
 import { formatCurrency, getCurrencyName } from '../../utils/Filters'
 import Modal from "react-native-modal"
 import { CommonColors, CommonSize, CommonStyles, Fonts } from '../../utils/CommonStyles'
+import { scale } from "../../libs/reactSizeMatter/scalingUtils";
 
 export default class KRWPendingScreen extends BaseScreen {
   constructor(props) {
@@ -153,9 +154,9 @@ export default class KRWPendingScreen extends BaseScreen {
                   source={require('../../../assets/balance/unchecked.png')} />
               }
               <TouchableOpacity>
-                <Text style={{ color: 'rgba(0, 112, 192, 1)' }}>{I18n.t('deposit.pendingNote')}</Text>
+                <Text style={[{ color: 'rgba(0, 112, 192, 1)' }, styles.pendingNote]}>{I18n.t('deposit.pendingNote')}</Text>
               </TouchableOpacity>
-              <Text style={{}}>{I18n.t('deposit.pendingCheck')}</Text>
+              <Text style={{fontSize: scale(11), ...Fonts.NanumGothic_Regular}}>{I18n.t('deposit.pendingCheck')}</Text>
             </TouchableOpacity>
             <TouchableOpacity
               activeOpacity={1}
@@ -221,8 +222,8 @@ const styles = ScaledSheet.create({
   },
   enable: { backgroundColor: 'rgba(237, 125, 49, 1)' },
   disable: { backgroundColor: 'rgba(242, 242, 242, 1)' },
-  textEnable: { color: 'white' },
-  textDisbale: { color: 'black' },
+  textEnable: { color: 'white', fontSize: '11@s', ...Fonts.NanumGothic_Regular },
+  textDisbale: { color: 'black', fontSize: '11@s', ...Fonts.NanumGothic_Regular },
   modalStyle: {
     backgroundColor: "white", justifyContent: "center", alignItems: "center",
     alignContent: 'center', borderRadius: '4@s', borderColor: "rgba(0, 0, 0, 0.1)"
@@ -264,5 +265,8 @@ const styles = ScaledSheet.create({
   },
   modalConfirmText: { color: 'white', textAlign: 'center', ...Fonts.NanumGothic_Regular, fontSize: '12@s' },
   btnCancel: { backgroundColor: 'rgba(127, 127, 127, 1)' },
-  btnAccept: { backgroundColor: 'rgba(0, 112, 192, 1)' }
+  btnAccept: { backgroundColor: 'rgba(0, 112, 192, 1)' },
+  pendingNote: {
+    fontSize: '11@s', ...Fonts.NanumGothic_Bold, textDecorationLine: 'underline'
+  }
 });
