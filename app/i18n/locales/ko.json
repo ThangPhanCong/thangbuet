@@ -458,7 +458,7 @@
     },
     "security": {
       "verified": "인증 완료",
-      "unverified": "인증하기",
+      "unverified": "변경하기",
       "cancelOTP": "사용 중단하기",
       "notAllowed": "미인증",
       "otpGuide": "안전한 거래를 위해 구글 OTP 인증을 사용하세요.\nAPP을 다운로드&설치하고 'NEXT'를 누르세요",
@@ -514,7 +514,7 @@
     },
     "wallet": {
       "coin": "코인",
-      "walletName": "지갑 이름(별칭)",
+      "walletName": "지급 이름",
       "withdraw": "출금",
       "remove": "삭제",
       "addNewWalletHeader": "출금 주소 등록",
@@ -522,7 +522,7 @@
       "walletAddress": "지갑 주소",
       "destination": "데스티네이션",
       "addNewWalletSubmit": "입출금 계좌 등록",
-      "removeConfirmDesc": "'{0}' 을 삭제하시겠습니까",
+      "removeConfirmDesc": "'{0}' 을 삭제하시겠습니까?",
       "removeConfirm": "확인"
     },
     "logout": "로그아웃"

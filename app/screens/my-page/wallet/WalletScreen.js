@@ -88,6 +88,7 @@ export default class WalletScreen extends BaseScreen {
   }
 
   _renderItem({ item }) {
+    console.log("ok item:", item)
     return (
       <TouchableHighlight
         style={styles.listItem}
@@ -96,7 +97,7 @@ export default class WalletScreen extends BaseScreen {
         <View style={styles.listItemContainer}>
           <View style={styles.coinGroup}>
             <Text style={styles.valueItem}>
-              {Utils.getCurrencyName(item.coin)}
+              {I18n.t(`currency.${item.coin}.shortname`)}
             </Text>
           </View>
 
