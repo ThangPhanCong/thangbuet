@@ -222,10 +222,10 @@ class WithdrawalScreen extends BaseScreen {
                 <View style={styles.row}>
                   <Text style={styles.leftView}>{I18n.t('withdrawal.balance')}</Text>
                   <View style={[styles.rightView, { flexDirection: 'row' }]}>
-                    <Text style={[styles.rightContent, { marginLeft: scale(30) }]}>
+                    <Text style={[styles.rightContent]}>
                       {formatCurrency(symbol.balance, this.currency)}
                     </Text>
-                    <Text style={[styles.symbol, { marginBottom: scale(6) }]}>{getCurrencyName(this.currency)}</Text>
+                    <Text style={[styles.symbol]}>{getCurrencyName(this.currency)}</Text>
                   </View>
                 </View>
                 <View style={styles.row}>
@@ -235,7 +235,7 @@ class WithdrawalScreen extends BaseScreen {
                       {this.state.daily.withdrawalLimit - this.state.daily.withdrawal > 0 ?
                         formatCurrency(this.state.daily.withdrawalLimit - this.state.daily.withdrawal, this.currency) : 0}
                     </Text>
-                    <Text style={[styles.symbol, { marginBottom: scale(6) }]}>{getCurrencyName(this.currency)}</Text>
+                    <Text style={[styles.symbol]}>{getCurrencyName(this.currency)}</Text>
                   </View>
                 </View>
               </View>
@@ -420,14 +420,22 @@ class WithdrawalScreen extends BaseScreen {
         <View style={styles.headerModalStyle}>
           <Text style={styles.headerModalTitle}>{I18n.t('withdrawal.amountConfirmTitle')}</Text>
         </View>
-        <Text style={styles.modalLine}>
-          {formatCurrency(this.state.amount, this.currency)}
+
+        <View style={styles.titleAmountGroup}>
+          <Text style={[styles.amoutTitleModal]}>
+            {formatCurrency(this.state.amount, this.currency)}
+          </Text>
           <Text style={styles.modalLineSymbol}>{getCurrencyName(this.currency)}</Text>
-        </Text>
-        <Text style={[styles.modalLine, styles.addressText]}>
+        </View>
+
+        <Text style={styles.addressText}>
           {symbol.blockchain_address}
         </Text>
-        <Text style={styles.messageSpace}>{I18n.t('withdrawal.amountMessage')}</Text>
+
+        <View style={{flexDirection: 'row'}}>
+          <Text style={styles.messageSpace}>{I18n.t('withdrawal.amountMessage')}</Text>
+          <Text style={styles.messageSpace1}>{I18n.t('withdrawal.amountMessage1')}</Text>
+        </View>
 
         <View style={styles.modalActionStyle}>
           <TouchableOpacity
@@ -556,8 +564,8 @@ const styles = ScaledSheet.create({
   },
   row: { flexDirection: 'row', alignItems: 'flex-end', marginBottom: '5@s' },
   leftView: { flex: 0.9, fontSize: '12@s', ...Fonts.NanumGothic_Regular, paddingBottom: '3@s' },
-  rightView: { flex: 1, alignItems: 'flex-end', justifyContent: 'flex-end' },
-  rightContent: { flex: 1, alignSelf: 'flex-end', fontSize: '18@s', ...Fonts.OpenSans_Bold },
+  rightView: { flex: 3, alignItems: 'center', justifyContent: 'flex-end', flexDirection: 'row' },
+  rightContent: { flex: 1, textAlign: 'right', fontSize: '18@s', ...Fonts.OpenSans_Bold, marginRight: '10@s' },
   symbol: { fontSize: '9@s' },
   amount: {
     flexDirection: 'column', flex: 1, alignItems: 'flex-start', justifyContent: 'center'
@@ -595,9 +603,10 @@ const styles = ScaledSheet.create({
     fontSize: '13@s',
     ...Fonts.NanumGothic_Regular
   },
-  amountSymbol: { ...Fonts.NanumGothic_Regular, fontSize: '12@s', marginRight: '10@s' },
+  amountSymbol: { ...Fonts.NanumGothic_Regular, fontSize: '12@s', marginRight: '10@s', marginBottom: '2@s' },
   amountMax: {
-    borderLeftWidth: '1@s', borderColor: "rgba(0, 0, 0, 0.3)", height: '30@s', justifyContent: 'center', padding: '5@s'
+    borderLeftWidth: '1@s', borderColor: "rgba(0, 0, 0, 0.3)", height: '30@s', justifyContent: 'center', padding: '5@s',
+    backgroundColor: '#fafafa'
   },
   addressWrapper: {
     flexDirection: 'row', alignItems: 'center', justifyContent: 'center',
@@ -661,9 +670,11 @@ const styles = ScaledSheet.create({
   headerModalTitle: { fontSize: '12@s', ...Fonts.NanumGothic_Regular },
   modalLine: { marginTop: '10@s', marginBottom: '3@s', ...Fonts.OpenSans_Bold, fontSize: '12@s' },
   modalLineSymbol: { ...Fonts.OpenSans, fontSize: '12@s' },
-  addressText: { fontSize: '11@s' },
+  amoutTitleModal: { ...Fonts.OpenSans_Bold, fontSize: '12@s', marginRight: '3@s' },
+  addressText: { fontSize: '11@s', marginTop: '10@s', marginBottom: '3@s', ...Fonts.OpenSans },
   tagText: { ...Fonts.NanumGothic_Regular, fontSize: '12@s' },
-  messageSpace: { marginBottom: '10@s', marginTop: '10@s' },
+  messageSpace: { marginBottom: '10@s', marginTop: '10@s', fontSize: '12@s', ...Fonts.NanumGothic_Regular_Bold },
+  messageSpace1: { marginBottom: '12@s', marginTop: '12@s', fontSize: '12@s', ...Fonts.NanumGothic_Regular },
   cancelBtn: {
     width: '45%',
     justifyContent: 'center',
@@ -731,5 +742,5 @@ const styles = ScaledSheet.create({
     textAlign: 'center', ...Fonts.NanumGothic_Regular
   },
   fontNotoSansBold: { ...Fonts.NotoSans_Bold, fontSize: '14@s' },
-
+  titleAmountGroup: {flexDirection: 'row', marginTop: '20@s'}
 });
