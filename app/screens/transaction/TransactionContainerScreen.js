@@ -11,8 +11,10 @@ import BitkoexDatePicker from "./common/BitkoexDatePicker";
 import HeaderTransaction from "./common/HeaderTransaction";
 import { Fonts } from "../../../app/utils/CommonStyles";
 import HeaderTransactionsRight from "./common/HeaderTransactionsRight";
+import BaseScreen from "../BaseScreen";
+import Consts from "../../utils/Consts";
 
-class TransactionContainerScreen extends Component {
+class TransactionContainerScreen extends BaseScreen {
   static SORT_FIELDS = {
     DATE: 'date',
     PAIR: 'coin'
@@ -36,10 +38,38 @@ class TransactionContainerScreen extends Component {
 
 
   componentDidMount() {
+    super.componentDidMount();
     this._loadData();
   }
 
-  async _loadData() {
+  getSocketEventHandlers() {
+    return {
+      PricesUpdated: this.onPricesUpdated.bind(this),
+      OrderListUpdated: this.OrderListUpdated.bind(this)
+    }
+  }
+
+  OrderListUpdated(data) {
+    if (data.currency !== Consts.CURRENCY_KRW) {
+      return;
+    }
+
+    this._loadData(true)
+  }
+
+  onPricesUpdated(prices) {
+    const { transactions } = this.state;
+
+    transactions.forEach(item => {
+      if(prices[`${item.currency}_${item.coin}`]) {
+          item.price = prices[`${item.currency}_${item.coin}`].price;
+      }
+    });
+
+    this.setState({transactions});
+  }
+
+  async _loadData(clearData = false) {
     try {
       const { page, start_date, end_date, transactions } = this.state;
       const { title } = this.props;
@@ -68,8 +98,10 @@ class TransactionContainerScreen extends Component {
         responseTransaction = await rf.getRequest('OrderRequest').getOrderHistory(params);
       }
 
+      const newTransactions = clearData ? responseTransaction.data.data : [...transactions, ...responseTransaction.data.data];
+
       this.setState({
-        transactions: [...transactions, ...responseTransaction.data.data],
+        transactions: newTransactions,
       })
     } catch (err) {
       console.log('OrderRequest._error:', err)
