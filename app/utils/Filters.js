@@ -53,7 +53,7 @@ function getDateTime(timestamp) {
 };
 
 function getDayMonth(timestamp) {
-  return moment(timestamp, 'x').format('DD.MM');
+  return moment(timestamp, 'x').format('MM.DD');
 };
 
 function getTime(timestamp) {

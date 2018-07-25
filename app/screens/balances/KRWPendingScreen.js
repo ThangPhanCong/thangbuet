@@ -180,11 +180,12 @@ export default class KRWPendingScreen extends BaseScreen {
               <Text style={[styles.fontSize12, styles.modalText, styles.marginRight10]}>{I18n.t('deposit.amountToDeposit')}</Text>
               <Text style={[styles.fontSize12, styles.modalText, { ...Fonts.NanumGothic_Bold }]}>
                 {formatCurrency(transaction.amount, this.currency)}
-                <Text style={{ ...Fonts.NanumGothic_Regular }}>{I18n.t('funds.currency')}</Text>
               </Text>
+              <Text style={styles.currencyConfirm}>{' ' + I18n.t('funds.currency')}</Text>
             </View>
             <Text style={[styles.fontSize12, styles.modalText, styles.marginBoth10]}>
-              {I18n.t('deposit.pendingConfirmContent')}
+              <Text style={styles.pendingConfirmBold}>{I18n.t('deposit.pendingConfirmContent')}</Text>
+              {I18n.t('deposit.pendingConfirmContent1')}
             </Text>
             <View style={styles.modalAction}>
               <TouchableOpacity
@@ -266,6 +267,12 @@ const styles = ScaledSheet.create({
   modalConfirmText: { color: 'white', textAlign: 'center', ...Fonts.NanumGothic_Regular, fontSize: '12@s' },
   btnCancel: { backgroundColor: 'rgba(127, 127, 127, 1)' },
   btnAccept: { backgroundColor: 'rgba(0, 112, 192, 1)' },
+  pendingConfirmBold: {
+    ...Fonts.NanumGothic_Bold
+  },
+  currencyConfirm: {
+    fontSize: '12@s',
+    ...Fonts.NanumGothic_Regular,
   pendingNote: {
     fontSize: '11@s', ...Fonts.NanumGothic_Bold, textDecorationLine: 'underline'
   }

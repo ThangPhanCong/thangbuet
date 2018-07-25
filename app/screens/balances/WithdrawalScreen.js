@@ -222,10 +222,10 @@ class WithdrawalScreen extends BaseScreen {
                 <View style={styles.row}>
                   <Text style={styles.leftView}>{I18n.t('withdrawal.balance')}</Text>
                   <View style={[styles.rightView, { flexDirection: 'row' }]}>
-                    <Text style={[styles.rightContent, { marginLeft: scale(30) }]}>
+                    <Text style={[styles.rightContent]}>
                       {formatCurrency(symbol.balance, this.currency)}
                     </Text>
-                    <Text style={[styles.symbol, { marginBottom: scale(6) }]}>{getCurrencyName(this.currency)}</Text>
+                    <Text style={[styles.symbol]}>{getCurrencyName(this.currency)}</Text>
                   </View>
                 </View>
                 <View style={styles.row}>
@@ -235,13 +235,13 @@ class WithdrawalScreen extends BaseScreen {
                       {this.state.daily.withdrawalLimit - this.state.daily.withdrawal > 0 ?
                         formatCurrency(this.state.daily.withdrawalLimit - this.state.daily.withdrawal, this.currency) : 0}
                     </Text>
-                    <Text style={[styles.symbol, { marginBottom: scale(6) }]}>{getCurrencyName(this.currency)}</Text>
+                    <Text style={[styles.symbol]}>{getCurrencyName(this.currency)}</Text>
                   </View>
                 </View>
               </View>
 
               <View style={[styles.line, styles.amount]}>
-                <Text style={[styles.amountText, styles.textInline]}>
+                <Text style={[styles.amountText, styles.textInline, { marginLeft: scale(10) }]}>
                   {I18n.t('withdrawal.amountRequest', { "coinName": getCurrencyName(symbol.code) })}
                 </Text>
                 <View style={styles.amountWrapper}>
@@ -266,7 +266,7 @@ class WithdrawalScreen extends BaseScreen {
               </View>
 
               <View style={[styles.line, styles.amount]}>
-                <Text style={[styles.amountText, styles.textInline]}>
+                <Text style={[styles.amountText, styles.textInline, { marginLeft: scale(10) }]}>
                   {I18n.t('withdrawal.addressRequest', { "coinName": getCurrencyName(symbol.code) })}
                 </Text>
                 <View style={styles.addressWrapper}>
@@ -282,8 +282,10 @@ class WithdrawalScreen extends BaseScreen {
               </View>
 
               {symbol.code === 'xrp' &&
-                <View style={[styles.line, styles.amount]}>
-                  <Text style={[styles.amountText, styles.textInline]}>{I18n.t('withdrawal.tagAddress')}</Text>
+                <View style={styles.xrpGroup}>
+                  <View style={{flex: 1, marginRight: scale(15)}}>
+                    <Text style={[styles.amountText, styles.textInline, {textAlign: 'right'}]}>{I18n.t('withdrawal.tagAddress')}</Text>
+                  </View>
                   <View style={styles.tagWrapper}>
                     <TextInput
                       value={this.state.blockchainTag}
@@ -298,9 +300,12 @@ class WithdrawalScreen extends BaseScreen {
               }
 
               <TouchableOpacity
+                style={[styles.alignCenter, styles.confirmBtn]}
                 onPress={this._validateAmount.bind(this)}
-                style={[styles.alignCenter, styles.confirmBtn]}>
-                <Text style={styles.confirmText}>{I18n.t('withdrawal.coinBtn')}</Text>
+               >
+                <View>
+                  <Text style={styles.confirmText}>{I18n.t('withdrawal.coinBtn')}</Text>
+                </View>
               </TouchableOpacity>
             </View>
 
@@ -344,36 +349,36 @@ class WithdrawalScreen extends BaseScreen {
 
                 <View style={styles.table}>
                   <Text style={[styles.tbRow, styles.tbContent]}>{I18n.t('withdrawal.row1Col1')}</Text>
-                  <Icon style={[styles.tbRow, styles.tbArrow]} type="feather" name="arrow-right" />
+                  <Image style={styles.arrowRight} source={require('../../../assets/arrowRight/arrowRight.png')}/>
                   <Text style={[styles.tbRow, styles.tbContent]}>{I18n.t('withdrawal.row1Col2')}</Text>
-                  <Icon style={[styles.tbRow, styles.tbArrow]} type="feather" name="arrow-right" />
+                  <Image style={styles.arrowRight} source={require('../../../assets/arrowRight/arrowRight.png')}/>
                   <Text style={[styles.tbRow, styles.tbContent]}>{I18n.t('withdrawal.row1Col3')}</Text>
                   <Text style={[styles.tbRow, styles.tbContent]}> {I18n.t('withdrawal.row1Col4')}</Text>
                 </View>
 
                 <View style={styles.table}>
                   <Text style={[styles.tbRow, styles.tbContent]}>{I18n.t('withdrawal.row2Col1')}</Text>
-                  <Icon style={[styles.tbRow, styles.tbArrow]} type="feather" name="arrow-right" />
+                  <Image style={styles.arrowRight} source={require('../../../assets/arrowRight/arrowRight.png')}/>
                   <Text style={[styles.tbRow, styles.tbContent]}>{I18n.t('withdrawal.row2Col2')}</Text>
-                  <Icon style={[styles.tbRow, styles.tbArrow]} type="feather" name="arrow-right" />
+                  <Image style={styles.arrowRight} source={require('../../../assets/arrowRight/arrowRight.png')}/>
                   <Text style={[styles.tbRow, styles.tbContent]}>{I18n.t('withdrawal.row2Col3')}</Text>
                   <Text style={[styles.tbRow, styles.tbContent]}> {I18n.t('withdrawal.row2Col4')}</Text>
                 </View>
 
                 <View style={styles.table}>
                   <Text style={[styles.tbRow, styles.tbContent]}>{I18n.t('withdrawal.row3Col1')}</Text>
-                  <Icon style={[styles.tbRow, styles.tbArrow]} type="feather" name="arrow-right" />
+                  <Image style={styles.arrowRight} source={require('../../../assets/arrowRight/arrowRight.png')}/>
                   <Text style={[styles.tbRow, styles.tbContent]}>{I18n.t('withdrawal.row3Col2')}</Text>
-                  <Icon style={[styles.tbRow, styles.tbArrow]} type="feather" name="arrow-right" />
+                  <Image style={styles.arrowRight} source={require('../../../assets/arrowRight/arrowRight.png')}/>
                   <Text style={[styles.tbRow, styles.tbContent]}>{I18n.t('withdrawal.row3Col3')}</Text>
                   <Text style={[styles.tbRow, styles.tbContent]}> {I18n.t('withdrawal.row3Col4')}</Text>
                 </View>
 
                 <View style={styles.table}>
                   <Text style={[styles.tbRow, styles.tbContent, styles.tbColor]}>{I18n.t('withdrawal.row4Col1')}</Text>
-                  <Icon style={[styles.tbRow, styles.tbArrow, styles.tbColor]} type="feather" name="arrow-right" />
+                  <Image style={styles.arrowRight} source={require('../../../assets/arrowRight/arrowRight.png')}/>
                   <Text style={[styles.tbRow, styles.tbContent, styles.tbColor]}>{I18n.t('withdrawal.row4Col2')}</Text>
-                  <Icon style={[styles.tbRow, styles.tbArrow, styles.tbColor]} type="feather" name="arrow-right" />
+                  <Image style={styles.arrowRight} source={require('../../../assets/arrowRight/arrowRight.png')}/>
                   <Text style={[styles.tbRow, styles.tbContent, styles.tbColor]}>{I18n.t('withdrawal.row4Col3')}</Text>
                   <Text style={[styles.tbRow, styles.tbContent, styles.tbColor]}> {I18n.t('withdrawal.row4Col4')}</Text>
                 </View>
@@ -420,14 +425,22 @@ class WithdrawalScreen extends BaseScreen {
         <View style={styles.headerModalStyle}>
           <Text style={styles.headerModalTitle}>{I18n.t('withdrawal.amountConfirmTitle')}</Text>
         </View>
-        <Text style={styles.modalLine}>
-          {formatCurrency(this.state.amount, this.currency)}
+
+        <View style={styles.titleAmountGroup}>
+          <Text style={[styles.amoutTitleModal]}>
+            {formatCurrency(this.state.amount, this.currency)}
+          </Text>
           <Text style={styles.modalLineSymbol}>{getCurrencyName(this.currency)}</Text>
-        </Text>
-        <Text style={[styles.modalLine, styles.addressText]}>
+        </View>
+
+        <Text style={styles.addressText}>
           {symbol.blockchain_address}
         </Text>
-        <Text style={styles.messageSpace}>{I18n.t('withdrawal.amountMessage')}</Text>
+
+        <View style={{flexDirection: 'row'}}>
+          <Text style={styles.messageSpace}>{I18n.t('withdrawal.amountMessage')}</Text>
+          <Text style={styles.messageSpace1}>{I18n.t('withdrawal.amountMessage1')}</Text>
+        </View>
 
         <View style={styles.modalActionStyle}>
           <TouchableOpacity
@@ -449,7 +462,8 @@ class WithdrawalScreen extends BaseScreen {
     return (
       <View style={[styles.modalStyle, { alignContent: 'center', justifyContent: 'center', }]}>
         <View style={styles.headerModalStyle}>
-          <Text style={styles.headerModalTitle}>{I18n.t('withdrawal.smsConfirmTitle')}</Text>
+          <Text style={styles.headerModalTitleSms}>{I18n.t('withdrawal.smsConfirmTitle')}</Text>
+          <Text style={styles.headerModalTitleSms1}>{I18n.t('withdrawal.smsConfirmTitle1')}</Text>
         </View>
 
         <Text style={styles.smsContent}>{I18n.t('withdrawal.smsContent')}</Text>
@@ -556,9 +570,9 @@ const styles = ScaledSheet.create({
   },
   row: { flexDirection: 'row', alignItems: 'flex-end', marginBottom: '5@s' },
   leftView: { flex: 0.9, fontSize: '12@s', ...Fonts.NanumGothic_Regular, paddingBottom: '3@s' },
-  rightView: { flex: 1, alignItems: 'flex-end', justifyContent: 'flex-end' },
-  rightContent: { flex: 1, alignSelf: 'flex-end', fontSize: '18@s', ...Fonts.OpenSans_Bold },
-  symbol: { fontSize: '9@s' },
+  rightView: { flex: 3, alignItems: 'center', justifyContent: 'flex-end', flexDirection: 'row' },
+  rightContent: { flex: 1, textAlign: 'right', fontSize: '18@s', ...Fonts.OpenSans_Bold, marginRight: '10@s' },
+  symbol: { fontSize: '9@s', ...Fonts.OpenSans_Bold },
   amount: {
     flexDirection: 'column', flex: 1, alignItems: 'flex-start', justifyContent: 'center'
   },
@@ -568,7 +582,7 @@ const styles = ScaledSheet.create({
   },
   headerModalStyle: {
     borderBottomWidth: '1@s', borderColor: "rgba(0, 0, 0, 0.1)", height: '50@s', width: '100%',
-    justifyContent: 'center', alignItems: 'center'
+    justifyContent: 'center', alignItems: 'center', flexDirection: 'row'
   },
   modalActionStyle: {
     width: '70%', justifyContent: 'space-between', alignItems: 'center', flexDirection: 'row',
@@ -595,9 +609,10 @@ const styles = ScaledSheet.create({
     fontSize: '13@s',
     ...Fonts.NanumGothic_Regular
   },
-  amountSymbol: { ...Fonts.NanumGothic_Regular, fontSize: '12@s', marginRight: '10@s' },
+  amountSymbol: { ...Fonts.NanumGothic_Regular, fontSize: '12@s', marginRight: '10@s', marginBottom: '2@s' },
   amountMax: {
-    borderLeftWidth: '1@s', borderColor: "rgba(0, 0, 0, 0.3)", height: '30@s', justifyContent: 'center', padding: '5@s'
+    borderLeftWidth: '1@s', borderColor: "rgba(0, 0, 0, 0.3)", height: '30@s', justifyContent: 'center', padding: '5@s',
+    backgroundColor: '#fafafa'
   },
   addressWrapper: {
     flexDirection: 'row', alignItems: 'center', justifyContent: 'center',
@@ -614,6 +629,7 @@ const styles = ScaledSheet.create({
     ...Fonts.NanumGothic_Regular
   },
   tagWrapper: {
+    flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
@@ -631,7 +647,7 @@ const styles = ScaledSheet.create({
   },
   confirmBtn: {
     marginTop: '20@s',
-    width: '79%',
+    width: '78%',
     height: '35@s',
     backgroundColor: 'rgba(0, 112, 192, 1)',
     borderRadius: '4@s',
@@ -659,11 +675,15 @@ const styles = ScaledSheet.create({
   tableSpace: { marginTop: '10@s', paddingBottom: '50@s' },
   tbHeader: { backgroundColor: 'rgba(228, 238, 248, 1)', borderTopWidth: '1@s', },
   headerModalTitle: { fontSize: '12@s', ...Fonts.NanumGothic_Regular },
+  headerModalTitleSms: { fontSize: '12@s', ...Fonts.NanumGothic_Bold },
+  headerModalTitleSms1: { fontSize: '12@s', ...Fonts.NanumGothic_Regular },
   modalLine: { marginTop: '10@s', marginBottom: '3@s', ...Fonts.OpenSans_Bold, fontSize: '12@s' },
   modalLineSymbol: { ...Fonts.OpenSans, fontSize: '12@s' },
-  addressText: { fontSize: '11@s' },
+  amoutTitleModal: { ...Fonts.OpenSans_Bold, fontSize: '12@s', marginRight: '3@s' },
+  addressText: { fontSize: '11@s', marginTop: '10@s', marginBottom: '3@s', ...Fonts.OpenSans },
   tagText: { ...Fonts.NanumGothic_Regular, fontSize: '12@s' },
-  messageSpace: { marginBottom: '10@s', marginTop: '10@s' },
+  messageSpace: { marginBottom: '10@s', marginTop: '10@s', fontSize: '12@s', ...Fonts.NanumGothic_Bold },
+  messageSpace1: { marginBottom: '12@s', marginTop: '12@s', fontSize: '12@s', ...Fonts.NanumGothic_Regular },
   cancelBtn: {
     width: '45%',
     justifyContent: 'center',
@@ -689,13 +709,15 @@ const styles = ScaledSheet.create({
   },
   smsInputWrapper: {
     width: '80%', alignContent: 'center', justifyContent: 'center', flexDirection: 'row',
-    borderWidth: '1@s', borderRadius: '4@s', borderColor: "rgba(0, 0, 0, 0.1)",
     marginTop: '10@s', marginBottom: '10@s'
   },
-  smsInput: { flex: 1, height: '35@s', textAlign: 'center', fontSize: '12@s', ...Fonts.NanumGothic_Regular },
+  smsInput: {flex: 2, height: '30@s', textAlign: 'center', fontSize: '12@s', ...Fonts.NanumGothic_Regular, marginRight: '10@s',
+    borderWidth: '1@s', borderRadius: '4@s', borderColor: "rgba(0, 0, 0, 0.1)"
+  },
   smsConfirmBtn: {
-    justifyContent: 'center', backgroundColor: 'rgba(237, 125, 49, 1)', height: '35@s', borderWidth: '1@s',
-    borderColor: "rgba(237, 125, 49, 1)", borderTopRightRadius: '4@s', borderBottomRightRadius: '4@s', padding: '5@s'
+    flex: 1,
+    justifyContent: 'center', backgroundColor: 'rgba(237, 125, 49, 1)', height: '30@s', borderWidth: '1@s',
+    borderColor: "rgba(237, 125, 49, 1)", borderRadius: '4@s', padding: '5@s'
   },
   smsConfirmText: { color: 'white', fontSize: '12@s', textAlign: 'center', ...Fonts.NanumGothic_Regular },
   smsError: {
@@ -731,5 +753,10 @@ const styles = ScaledSheet.create({
     textAlign: 'center', ...Fonts.NanumGothic_Regular
   },
   fontNotoSansBold: { ...Fonts.NotoSans_Bold, fontSize: '14@s' },
-
+  titleAmountGroup: {flexDirection: 'row', marginTop: '20@s'},
+  xrpGroup: {flexDirection: 'row', alignItems: 'center', marginTop: '10@s', marginRight: '40@s'},
+  arrowRight: {
+    width: '20@s',
+    height: '20@s',
+  },
 });

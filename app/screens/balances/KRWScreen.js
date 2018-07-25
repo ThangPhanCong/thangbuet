@@ -34,7 +34,9 @@ export default class KRWScreen extends BaseScreen {
     try {
       let currency = this.currency
       let amount = this.state.amount
-      let depositKrw = await rf.getRequest('TransactionRequest').depositKrw({ currency, amount })
+      const parseAmount = parseFloat(amount);
+
+      let depositKrw = await rf.getRequest('TransactionRequest').depositKrw({ currency, amount: parseAmount })
       if (depositKrw.success) {
 
         Alert.alert(

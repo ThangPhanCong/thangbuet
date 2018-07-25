@@ -47,7 +47,7 @@ const androidFonts = {
     fontFamily: 'OpenSans-Regular',
   },
   OpenSans_Bold: {
-    fontFamily: 'OpenSans-Semibold',
+    fontFamily: 'OpenSans-Regular',
     fontWeight: 'bold'
   },
   OpenSans_Light: {
@@ -66,7 +66,8 @@ const androidFonts = {
     fontFamily: 'NanumGothic-Regular'
   },
   NanumGothic_Bold: {
-    fontFamily: 'NanumGothic-Bold'
+    fontFamily: 'NanumGothic-Regular',
+    fontWeight: 'bold'
   },
   Roboto: {
     fontFamily: 'Roboto-Regular'

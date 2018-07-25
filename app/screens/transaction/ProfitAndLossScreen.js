@@ -289,9 +289,9 @@ class ProfitAndLossScreen extends BaseScreen {
 
   _renderSumLeft() {
     return (
-      <View style={styles.itemContainer}>
+      <View style={[styles.itemContainer, { backgroundColor: '#fffcf5' }]}>
         <View style={styles.currencyGroup}>
-          <Text style={styles.itemCurrency}>{I18n.t('transactions.profit.titleSum')}</Text>
+          <Text style={styles.itemTitleSum}>{I18n.t('transactions.profit.titleSum')}</Text>
         </View>
       </View>
     )
@@ -302,7 +302,7 @@ class ProfitAndLossScreen extends BaseScreen {
 
     if (sum.deposit) {
       return (
-        <View style={[styles.itemContainer,]}>
+        <View style={[styles.itemContainer, { backgroundColor: '#fffcf5' } ]}>
           <View style={styles.profitGroup}>
             <Text style={styles.itemBalanceSum}>{sum.startingBalance}</Text>
             <Text style={styles.itemBalanceSum}>{Consts.CURRENCY_KRW.toUpperCase()}</Text>
@@ -344,7 +344,7 @@ class ProfitAndLossScreen extends BaseScreen {
 
     if (sum.deposit) {
       return (
-        <View style={styles.itemContainer}>
+        <View style={[styles.itemContainer, { backgroundColor: '#fffcf5' }]}>
           <View style={[styles.profitRightGroup, { marginRight: scale(10) }]}>
             <Text
               style={this._checkDecrease(sum.percentIncrease) ? styles.decreaseSumChange : styles.increaseSumChange}>{sum.percentIncrease}</Text>
@@ -372,7 +372,7 @@ class ProfitAndLossScreen extends BaseScreen {
     return (
       <View style={[styles.itemContainer]}>
         <View style={styles.profitGroup}>
-          <Text style={[styles.itemDeposit]}>{startBalance}</Text>
+          <Text style={[styles.itemStartBalance]}>{startBalance}</Text>
           <Text style={[styles.itemBalance]}>{getCurrencyName(item.currency)}</Text>
         </View>
 
@@ -507,7 +507,7 @@ const styles = ScaledSheet.create({
     margin: '6@s',
     width: '40@s',
     borderRadius: '2@s',
-    borderColor: '#000',
+    borderColor: '#bfbfbf',
     borderWidth: '0.6@s'
   },
   textSearch: {
@@ -607,5 +607,13 @@ const styles = ScaledSheet.create({
     flexDirection: 'column',
     borderLeftWidth: '1@s',
     borderLeftColor: CommonColors.separator
+  },
+  itemTitleSum: {
+    fontSize: '12@s',
+    ...Fonts.OpenSans
+  },
+  itemStartBalance: {
+    fontSize: '10@s',
+    ...Fonts.OpenSans
   }
 });
