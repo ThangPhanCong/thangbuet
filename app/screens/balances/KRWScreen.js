@@ -181,7 +181,16 @@ export default class KRWScreen extends BaseScreen {
                 <Text style={{ color: 'red' }}>{I18n.t('deposit.note2Key')}</Text>
                   <Text>{I18n.t('deposit.note2Title')}</Text>
                 </Text>
-                <Text style={styles.noteTextInside}>{I18n.t('deposit.note2Content')}</Text>
+
+                <View style={{flexDirection: 'row'}}>
+                  <Text style={styles.noteTextInside}>{I18n.t('deposit.note2Content')}</Text>
+                  <Text style={[styles.noteTextInside, {...Fonts.NanumGothic_Bold}]}>{I18n.t('deposit.note2Content1')}</Text>
+                  <Text style={styles.noteTextInside}>{I18n.t('deposit.note2Content2')}</Text>
+                  <Text style={[styles.noteTextInside, {...Fonts.NanumGothic_Bold}]}>{I18n.t('deposit.note2Content3')}</Text>
+                  <Text style={styles.noteTextInside}>{I18n.t('deposit.note2Content4')}</Text>
+                </View>
+                <Text style={styles.noteTextInside}>{I18n.t('deposit.note2Content5')}</Text>
+
               </View>
               {/* Note 3 */}
               <View style={styles.noteContainer}>
