@@ -178,7 +178,7 @@ export default class KRWPendingScreen extends BaseScreen {
 
             <View style={styles.krwStyle}>
               <Text style={[styles.fontSize12, styles.modalText, styles.marginRight10]}>{I18n.t('deposit.amountToDeposit')}</Text>
-              <Text style={[styles.fontSize12, styles.modalText, { ...Fonts.NanumGothic_Regular_Bold }]}>
+              <Text style={[styles.fontSize12, styles.modalText, { ...Fonts.NanumGothic_Bold }]}>
                 {formatCurrency(transaction.amount, this.currency)}
               </Text>
               <Text style={styles.currencyConfirm}>{' ' + I18n.t('funds.currency')}</Text>

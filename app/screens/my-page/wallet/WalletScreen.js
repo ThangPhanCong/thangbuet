@@ -88,7 +88,6 @@ export default class WalletScreen extends BaseScreen {
   }
 
   _renderItem({ item }) {
-    console.log("ok item:", item)
     return (
       <TouchableHighlight
         style={styles.listItem}

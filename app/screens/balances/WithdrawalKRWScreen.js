@@ -475,7 +475,7 @@ class WithdrawalKRWScreen extends BaseScreen {
           </Text>
 
           <View style={{flexDirection: 'row'}}>
-            <Text style={[styles.messageSpace, {...Fonts.NanumGothic_Regular_Bold}]}>{I18n.t('withdrawal.amountMessage')}</Text>
+            <Text style={[styles.messageSpace, {...Fonts.NanumGothic_Bold}]}>{I18n.t('withdrawal.amountMessage')}</Text>
             <Text style={styles.messageSpace}>{I18n.t('withdrawal.amountMessage1')}</Text>
           </View>
 
