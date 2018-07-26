@@ -171,7 +171,6 @@ export default class FundsScreen extends BaseScreen {
                 </Text>
                 <Text style={styles.headerSymbol}>{I18n.t('funds.currency')}</Text>
               </View>
-              <View style={styles.iconHelp}></View>
               <View style={styles.infoRow}>
                 <Text
                   style={[styles.infoRowLeft, styles.fontNotoSansRegular, styles.headerText]}>
@@ -182,6 +181,7 @@ export default class FundsScreen extends BaseScreen {
                 </Text>
                 <Text style={styles.headerSymbol}>{I18n.t('funds.currency')}</Text>
               </View>
+
               <View style={styles.iconHelp}>
                 <Icon name="help"
                       size={scale(15)} />
@@ -192,7 +192,6 @@ export default class FundsScreen extends BaseScreen {
                   onPress={() => this.setState({ openHelp: true })}>
                   <Text style={[styles.fontNotoSansRegular, styles.headerText]}>{I18n.t('funds.ratingYeild')}</Text>
                 </TouchableOpacity>
-
 
                 <Text
                   style={[styles.infoRowRight, styles.fontOpenSans, styles.headerNumber, { color: 'red' }]}>
@@ -294,7 +293,7 @@ const styles = ScaledSheet.create({
   header: { height: '120@s', flexDirection: "row", borderBottomWidth: '1@s', borderColor: 'rgba(222, 227, 235, 1)' },
   logo: { flex: 1, flexDirection: "row", alignItems: 'center', justifyContent: 'center' },
   info: { flex: 2, flexDirection: "column", alignItems: 'center', justifyContent: 'center', },
-  infoRow: { flexDirection: "row", alignItems: 'center', justifyContent: 'center' },
+  infoRow: { flexDirection: "row", alignItems: 'center', justifyContent: 'center', marginTop: '5@s' },
   infoRowLeft: { flex: 1 },
   infoRowRight: { flex: 1.5, textAlign: 'right', marginRight: '5@s' },
   tableHeader: {
@@ -327,7 +326,7 @@ const styles = ScaledSheet.create({
   footerNumer: { color: 'red', textAlign: 'right', fontSize: '14@s', ...Fonts.OpenSans_Bold },
   footerYield: { marginRight: '8@s' },
   headerSize14: { fontSize: '14@s' },
-  iconHelp: { flex: 0.3, alignSelf: 'flex-start', marginLeft: '60@s' },
+  iconHelp: { position: 'absolute', top: '70@s', left: '60@s' },
   modalStyle: {
     backgroundColor: "white", justifyContent: "center", alignItems: "center",
     alignContent: 'center', borderRadius: '4@s', borderColor: "rgba(0, 0, 0, 0.1)"

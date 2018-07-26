@@ -280,6 +280,7 @@
     "error": "몇 가지 오류가 발생했습니다.",
     "confirm": "입금신청확인",
     "confirmTitle": "입금 신청 확인",
+    "confirmTitleKRW": "입금 신청 취소 확인",
     "amountToDeposit": "입금 신청 금액",
     "confirmContent1": "위와 같이 ",
     "confirmContent2": "입금을 신청",
@@ -513,7 +514,7 @@
       "newPassword": "새 비밀번호",
       "repeatPassword": "새 비밀번호 확인",
       "changePasswordSubmit": "비밀번호 변경",
-      "otpWrong": "OTP코드가 올바르지 않습니다.",
+      "otpWrong": "OTP코드가 올바르지 않습니다."
     },
     "connection": {
       "dateTime": "일시",
