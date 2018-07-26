@@ -10,6 +10,7 @@ import { formatCurrency, getCurrencyName } from '../../utils/Filters'
 import Modal from "react-native-modal"
 import { CommonColors, CommonSize, CommonStyles, Fonts } from '../../utils/CommonStyles'
 import { scale } from "../../libs/reactSizeMatter/scalingUtils";
+import ModalNote from "./ModalNote";
 
 export default class KRWPendingScreen extends BaseScreen {
   constructor(props) {
@@ -18,6 +19,7 @@ export default class KRWPendingScreen extends BaseScreen {
       checked: true,
       amount: 0,
       modalConfirm: false,
+      noteDeposit: false
     }
     this.currency = 'krw'
   }
@@ -39,6 +41,7 @@ export default class KRWPendingScreen extends BaseScreen {
       checked: true,
       amount: 0,
       modalConfirm: false,
+      noteDeposit: false
     })
   }
 
@@ -71,6 +74,14 @@ export default class KRWPendingScreen extends BaseScreen {
     }
   }
 
+  hideModalNote(){
+    this.setState({ noteDeposit: false })
+  }
+
+  confirmChecked(){
+    this.setState({ checked: true })
+  }
+
   render() {
     const { symbol, transaction, isPending } = this.props
     return (
@@ -86,7 +97,7 @@ export default class KRWPendingScreen extends BaseScreen {
                 <Text style={styles.leftView}>{I18n.t('deposit.pendingAccount')}</Text>
                 <View style={styles.rightView}>
                   <Text style={[styles.rightContent, styles.amount]}> {formatCurrency(symbol.balance, this.currency)}
-                    <Text style={styles.amountSymbol}>{I18n.t('funds.currency')}</Text>
+                    <Text style={styles.amountSymbol}>{" " + I18n.t('funds.currency')}</Text>
                   </Text>
                 </View>
               </View>
@@ -153,7 +164,7 @@ export default class KRWPendingScreen extends BaseScreen {
                   style={styles.iconLogo}
                   source={require('../../../assets/balance/unchecked.png')} />
               }
-              <TouchableOpacity>
+              <TouchableOpacity onPress={() => this.setState({ noteDeposit: true })}>
                 <Text style={[{ color: 'rgba(0, 112, 192, 1)' }, styles.pendingNote]}>{I18n.t('deposit.pendingNote')}</Text>
               </TouchableOpacity>
               <Text style={{fontSize: scale(11), ...Fonts.NanumGothic_Regular}}>{I18n.t('deposit.pendingCheck')}</Text>
@@ -201,6 +212,11 @@ export default class KRWPendingScreen extends BaseScreen {
             </View>
           </View>
         </Modal>
+
+        {/*Note on Deposit*/}
+        <ModalNote noteDeposit={this.state.noteDeposit} checked={this.state.checked}
+                   hideModalNote={this.hideModalNote.bind(this)} confirmChecked={this.confirmChecked.bind(this)}/>
+
       </View >
     )
   }

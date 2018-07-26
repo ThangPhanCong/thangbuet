@@ -10,6 +10,7 @@ import Modal from "react-native-modal"
 import { CommonColors, CommonSize, CommonStyles, Fonts } from '../../utils/CommonStyles'
 import { scale } from '../../libs/reactSizeMatter/scalingUtils';
 import Consts from "../../utils/Consts";
+import ModalNote from "./ModalNote";
 
 export default class KRWScreen extends BaseScreen {
   constructor(props) {
@@ -17,7 +18,8 @@ export default class KRWScreen extends BaseScreen {
     this.state = {
       checked: false,
       amount: 0,
-      krwConfirm: false
+      krwConfirm: false,
+      noteDeposit: false
     }
     this.currency = 'krw'
   }
@@ -26,7 +28,8 @@ export default class KRWScreen extends BaseScreen {
     this.setState({
       checked: false,
       amount: 0,
-      krwConfirm: false
+      krwConfirm: false,
+      noteDeposit: false
     })
   }
 
@@ -87,6 +90,14 @@ export default class KRWScreen extends BaseScreen {
     }
   }
 
+  hideModalNote(){
+    this.setState({ noteDeposit: false })
+  }
+
+  confirmChecked(){
+    this.setState({ checked: true })
+  }
+
   render() {
     const { symbol, isPending } = this.props;
     const { amount } = this.state;
@@ -140,7 +151,7 @@ export default class KRWScreen extends BaseScreen {
                   style={styles.iconLogo}
                   source={require('../../../assets/balance/unchecked.png')} />
               }
-              <TouchableOpacity>
+              <TouchableOpacity onPress={() => this.setState({ noteDeposit: true })}>
                 <Text style={[styles.depositNote, styles.fontSize12]}>
                   {I18n.t('deposit.note')}
                 </Text>
@@ -269,6 +280,10 @@ export default class KRWScreen extends BaseScreen {
           </View>
         </Modal>
 
+        {/*Note on Deposit*/}
+        <ModalNote noteDeposit={this.state.noteDeposit} checked={this.state.checked}
+          hideModalNote={this.hideModalNote.bind(this)} confirmChecked={this.confirmChecked.bind(this)}/>
+
       </View>
     )
   }
@@ -393,5 +408,8 @@ const styles = ScaledSheet.create({
   },
   note5Phone: {
     ...Fonts.NanumGothic_Bold
+  },
+  contentModal: {
+    padding: '16@s'
   }
 });
