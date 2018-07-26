@@ -68,6 +68,7 @@ const styles = ScaledSheet.create({
   headerCoinPair: {
     flexDirection: 'row',
     width: '70@s',
+    marginTop: '2@s',
     marginLeft: '20@s',
   },
   viewHeaderLeft: {

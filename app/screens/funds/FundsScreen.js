@@ -158,12 +158,12 @@ export default class FundsScreen extends BaseScreen {
                 resizeMode="contain"
                 style={styles.iconLogo}
                 source={require('../../../assets/funds/fundLogo.png')} />
-              <Text style={[styles.fontNotoSansRegular, styles.headerSize14]}>{I18n.t('funds.assetStatus')}</Text>
+              <Text style={[styles.fontNotoSansRegular, styles.headerSize14, {marginLeft: scale(5)}]}>{I18n.t('funds.assetStatus')}</Text>
             </View>
             <View style={styles.info}>
               <View style={styles.infoRow}>
                 <Text
-                  style={[styles.infoRowLeft, styles.fontNotoSansRegular, styles.headerText]}>
+                  style={[{flex: 1}, styles.fontNotoSansRegular, styles.headerText]}>
                   {I18n.t('funds.totalNumberOfCoin')}
                 </Text>
                 <Text style={[styles.infoRowRight, styles.fontOpenSans, styles.headerNumber]}>
@@ -181,6 +181,10 @@ export default class FundsScreen extends BaseScreen {
                 </Text>
                 <Text style={styles.headerSymbol}>{I18n.t('funds.currency')}</Text>
               </View>
+              <View style={styles.iconHelp}>
+                <Icon name="help"
+                      size={scale(15)} />
+              </View>
               <View style={styles.infoRow}>
                 <TouchableOpacity
                   style={[styles.infoRowLeft, { flexDirection: 'row', justifyContent: 'flex-start' }]}
@@ -188,15 +192,12 @@ export default class FundsScreen extends BaseScreen {
                   <Text style={[styles.fontNotoSansRegular, styles.headerText]}>{I18n.t('funds.ratingYeild')}</Text>
                 </TouchableOpacity>
 
-                <View style={styles.iconHelp}>
-                  <Icon name="help"
-                    size={scale(15)} />
-                </View>
+
                 <Text
                   style={[styles.infoRowRight, styles.fontOpenSans, styles.headerNumber, { color: 'red' }]}>
                   {formatPercent(this.state.yield, true)}
                 </Text>
-                <Text style={styles.headerSymbol}>{I18n.t('funds.percent')}</Text>
+                <Text style={[styles.headerSymbol]}>{I18n.t('funds.percent')}</Text>
               </View>
             </View>
           </View>
@@ -289,7 +290,7 @@ export default class FundsScreen extends BaseScreen {
 const styles = ScaledSheet.create({
   fullScreen: { flex: 1, backgroundColor: 'white' },
   content: { flex: 1, flexDirection: "column" },
-  header: { height: '100@s', flexDirection: "row", borderBottomWidth: '1@s', borderColor: 'rgba(222, 227, 235, 1)' },
+  header: { height: '120@s', flexDirection: "row", borderBottomWidth: '1@s', borderColor: 'rgba(222, 227, 235, 1)' },
   logo: { flex: 1, flexDirection: "row", alignItems: 'center', justifyContent: 'center' },
   info: { flex: 2, flexDirection: "column", alignItems: 'center', justifyContent: 'center', marginTop: '10@s' },
   infoRow: { flexDirection: "row", alignItems: 'center', justifyContent: 'center' },
@@ -325,7 +326,7 @@ const styles = ScaledSheet.create({
   footerNumer: { color: 'red', textAlign: 'right', fontSize: '14@s', ...Fonts.OpenSans_Bold },
   footerYield: { marginRight: '8@s' },
   headerSize14: { fontSize: '14@s' },
-  iconHelp: { marginBottom: scale(20), flex: 1, alignItems: 'flex-start' },
+  iconHelp: { flex: 0.3, alignSelf: 'flex-start', marginLeft: '60@s' },
   modalStyle: {
     backgroundColor: "white", justifyContent: "center", alignItems: "center",
     alignContent: 'center', borderRadius: '4@s', borderColor: "rgba(0, 0, 0, 0.1)"
