@@ -288,7 +288,7 @@ const styles = ScaledSheet.create({
     ...Fonts.OpenSans_Light
   },
   emptyInforLogin: {
-    alignSelf: 'flex-start',
+    textAlign: 'center',
     color: 'red',
     fontSize: '12@s',
     marginLeft: '18@s',
