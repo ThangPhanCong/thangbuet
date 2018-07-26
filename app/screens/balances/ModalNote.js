@@ -19,7 +19,7 @@ export default class ModalNote extends React.Component {
         avoidKeyboard={true}
         useNativeDriver={true}
         backdropColor='transparent'
-        onBackdropPress={() => this.props.hideModalNote.bind(this)}>
+        onBackdropPress={() => this.props.hideModalNote()}>
         <Card
           style={styles.dialog}
           containerStyle={styles.largerContainerCard}>
