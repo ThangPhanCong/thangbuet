@@ -586,7 +586,7 @@ const styles = ScaledSheet.create({
   leftView: { flex: 0.9, fontSize: '12@s', ...Fonts.NanumGothic_Regular, paddingBottom: '3@s', marginLeft: '10@s' },
   rightView: { flex: 1, alignItems: 'flex-end', justifyContent: 'flex-end', flexDirection: 'row' },
   rightContent: { flex: 1, alignSelf: 'flex-end', fontSize: '18@s', ...Fonts.OpenSans_Bold },
-  symbol: { fontSize: '9@s', marginBottom: '4@s' },
+  symbol: { fontSize: '9@s', marginBottom: '4@s', ...Fonts.OpenSans_Bold },
   amount: {
     flexDirection: 'column', flex: 1, alignItems: 'flex-start', justifyContent: 'center'
   },
