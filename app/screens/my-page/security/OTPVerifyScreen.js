@@ -51,6 +51,8 @@ export default class OTPVerifyScreen extends BaseScreen {
 
   render() {
     const { otpWrong } = this.state;
+    let guideText = I18n.t('myPage.security.verificationGuide');
+    let guideTextSubstr = guideText.split('(+)');
 
     return(
       <KeyboardAvoidingView
@@ -62,12 +64,12 @@ export default class OTPVerifyScreen extends BaseScreen {
         })}>
         {otpWrong ? this._renderOtpWrong() : null}
         <Text style={styles.textHeader}>
-          {I18n.t('myPage.security.verificationGuide1') + " "}
+          {guideTextSubstr[0] + ' '}
           <Image
             style={styles.iconAdd}
             source={require('../../../../assets/myPage/security/add.png')}/>
           <Text>
-            {" " + I18n.t('myPage.security.verificationGuide2')}
+            {' ' + guideTextSubstr[1]}
           </Text>
         </Text>
         <View style={styles.qrcodeContainer}>
@@ -79,7 +81,7 @@ export default class OTPVerifyScreen extends BaseScreen {
           }
         </View>
         <View style={styles.functionContainer}>
-          <View style={{flex: 1}}>
+          <View style={{flex: 1, flexDirection: 'column'}}>
             <View style={styles.buttonRowContainer}>
               <Text style={styles.title}>
                 {I18n.t('myPage.security.secretKey').toLocaleUpperCase()}
@@ -240,7 +242,7 @@ const styles = ScaledSheet.create({
     width: '5@s'
   },
   buttonAreaSpace: {
-    height: '10@s'
+    marginTop: '30@s'
   },
   title: {
     marginBottom: '5@s',
@@ -260,8 +262,6 @@ const styles = ScaledSheet.create({
     borderWidth: '1@s',
     borderColor: '#BFBFBF',
     fontSize: '12@s',
-    paddingLeft: '16@s',
-    paddingRight: '16@s',
     ...Fonts.NanumGothic_Regular
   },
   iconAdd: {

@@ -328,12 +328,12 @@ export default class SecurityOverviewScreen extends BaseScreen {
         onBackdropPress={this._dismissInitVerificationModal.bind(this)}>
         <Card
           style={styles.dialog}
-          containerStyle={[styles.containerCard, styles.modalOtpVerification]}>
+          containerStyle={styles.largerContainerCard}>
           <Text style={styles.initOtpVerification}>
             {I18n.t('myPage.security.initOtpVerification')}
           </Text>
           <View style={styles.crossBar}/>
-          <View style={{ marginTop: scale(16), marginStart: scale(16), marginEnd: scale(16) }}>
+          <View style={{ marginTop: scale(16), marginStart: scale(30), marginEnd: scale(30) }}>
             <Text style={styles.initOtpVerificationDescRecoveryCode}>
               {I18n.t('myPage.security.initOtpVerificationDesc.recoveryCode')}
               <Text style={{ color: 'black', }}>
@@ -469,15 +469,18 @@ export default class SecurityOverviewScreen extends BaseScreen {
           </Text>
 
           <View style={styles.viewModalDropDown}>
-            <View style={{ position: 'absolute', right: 0, justifyContent: 'center', flex: 1, height: '100%' }}>
+            <TouchableOpacity
+              style={styles.iconBankDropdown}
+              onPress={() => this._bankDropdown.show()}>
               <Icon
                 name='menu-down'
                 color='#000'
                 style={styles.iconMenuDown}
               />
-            </View>
+            </TouchableOpacity>
             <ModalDropdown
-              style={{ flex: 1.3, justifyContent: 'center' }}
+              ref={ref => this._bankDropdown = ref}
+              style={{ flex: 1.3 }}
               defaultValue=''
               dropdownStyle={[styles.modalBankDropDown, {
                 height: this._calculateModalHeight()
@@ -545,7 +548,7 @@ export default class SecurityOverviewScreen extends BaseScreen {
         onBackdropPress={this._dismissChangePasswordModal.bind(this)}>
         <Card
           style={styles.dialog}
-          containerStyle={styles.containerCard}>
+          containerStyle={styles.largerContainerCard}>
           <Text style={styles.initOtpVerification}>
             {I18n.t('myPage.security.changePasswordHeader')}
           </Text>
@@ -809,13 +812,13 @@ const styles = ScaledSheet.create({
     height: '40@s',
     justifyContent: 'center',
     alignItems: 'center',
+    alignSelf: 'flex-start',
     borderWidth: '1@s',
     borderColor: '#FF3300',
-    marginEnd: '30@s'
+    paddingStart: '20@s',
+    paddingRight: '20@s'
   },
   dialog: {
-    marginStart: '40@s',
-    marginEnd: '40@s',
     backgroundColor: '#FFF'
   },
   textInput: {
@@ -824,16 +827,16 @@ const styles = ScaledSheet.create({
     borderRadius: '5@s',
     borderWidth: '1@s',
     borderColor: '#BFBFBF',
-    marginStart: '16@s',
-    marginEnd: '16@s',
+    marginStart: '30@s',
+    marginEnd: '30@s',
     paddingLeft: '16@s',
     paddingRight: '16@s',
     ...Fonts.NanumGothic_Regular
   },
   submitCancelOtpButton: {
     marginTop: '30@s',
-    marginStart: '16@s',
-    marginEnd: '16@s',
+    marginStart: '30@s',
+    marginEnd: '30@s',
     height: '40@s',
     backgroundColor: '#0070C0',
     borderRadius: '5@s',
@@ -843,16 +846,16 @@ const styles = ScaledSheet.create({
   initVerificationButton: {
     marginTop: '20@s',
     marginBottom: '30@s',
-    marginStart: '16@s',
-    marginEnd: '16@s',
+    marginStart: '30@s',
+    marginEnd: '30@s',
     height: '40@s',
     alignItems: 'center',
     justifyContent: 'center'
   },
   initVerificationScrollView: {
     marginTop: '8@s',
-    marginStart: '16@s',
-    marginEnd: '16@s',
+    marginStart: '30@s',
+    marginEnd: '30@s',
     height: '200@s',
     borderRadius: '5@s',
     borderWidth: '1@s',
@@ -861,15 +864,15 @@ const styles = ScaledSheet.create({
   bankAccountTitle: {
     fontSize: '13@s',
     marginTop: '16@s',
-    marginStart: '16@s',
-    marginEnd: '16@s',
+    marginStart: '30@s',
+    marginEnd: '30@s',
     ...Fonts.NanumGothic_Regular
   },
   bankAccountTextInput: {
     fontSize: '13@s',
     marginTop: '4@s',
-    marginStart: '16@s',
-    marginEnd: '16@s',
+    marginStart: '30@s',
+    marginEnd: '30@s',
     height: '40@s',
     borderColor: '#D9D9D9',
     borderRadius: '5@s',
@@ -880,8 +883,8 @@ const styles = ScaledSheet.create({
   },
   bankAccountPicker: {
     marginTop: '2@s',
-    marginStart: '16@s',
-    marginEnd: '16@s',
+    marginStart: '30@s',
+    marginEnd: '30@s',
     height: '40@s',
     borderColor: '#D9D9D9',
     borderRadius: '5@s',
@@ -894,6 +897,13 @@ const styles = ScaledSheet.create({
     padding: 0,
     ...UIUtils.generatePopupShadow()
   },
+  largerContainerCard: {
+    borderRadius: '5@s',
+    marginStart: '5@s',
+    marginEnd: '5@s',
+    padding: 0,
+    ...UIUtils.generateShadowStyle(5)
+  },
   registerPhoneContainer: {
     borderColor: '#7F7F7F',
     borderWidth: '1@s',
@@ -901,34 +911,31 @@ const styles = ScaledSheet.create({
     padding: 0,
     marginStart: '10@s',
     marginEnd: '10@s',
-    height: 0.8 * Dimensions.get('window').height
-  },
-  modalOtpVerification: {
-    marginStart: '3@s',
-    marginEnd: '3@s',
+    height: 0.8 * Dimensions.get('window').height,
+    ...UIUtils.generatePopupShadow()
   },
   cancelOtpHeader: {
     fontSize: '13@s',
     marginTop: '16@s',
     marginBottom: '16@s',
-    marginStart: '16@s',
-    marginEnd: '16@s',
+    marginStart: '30@s',
+    marginEnd: '30@s',
     lineHeight: '22@s',
     ...Fonts.NanumGothic_Regular
   },
   otpVerificationNumber: {
     fontSize: '13@s',
     marginBottom: '3@s',
-    marginStart: '16@s',
-    marginEnd: '16@s',
+    marginStart: '30@s',
+    marginEnd: '30@s',
     ...Fonts.NanumGothic_Regular
   },
   initOtpVerification: {
     fontSize: '13@s',
     marginTop: '16@s',
     marginBottom: '16@s',
-    marginStart: '16@s',
-    marginEnd: '16@s',
+    marginStart: '30@s',
+    marginEnd: '30@s',
     ...Fonts.NanumGothic_Regular
   },
   initOtpVerificationDescRecoveryCode: {
@@ -960,16 +967,16 @@ const styles = ScaledSheet.create({
     fontSize: '13@s',
     marginTop: '16@s',
     marginBottom: '3@s',
-    marginStart: '16@s',
-    marginEnd: '16@s',
+    marginStart: '30@s',
+    marginEnd: '30@s',
     lineHeight: '22@s',
     ...Fonts.NanumGothic_Regular
   },
   dialogRecoveryCode: {
     fontSize: '13@s',
     marginBottom: '3@s',
-    marginStart: '16@s',
-    marginEnd: '16@s',
+    marginStart: '30@s',
+    marginEnd: '30@s',
     ...Fonts.NanumGothic_Regular,
     marginTop: '16@s'
   },
@@ -987,13 +994,12 @@ const styles = ScaledSheet.create({
     ...Fonts.NanumGothic_Bold
   },
   iconMenuDown: {
-    paddingRight: '10@s',
     fontSize: '28@s'
   },
   bankAccountSubmitButton: {
     marginTop: '20@s',
-    marginStart: '16@s',
-    marginEnd: '16@s',
+    marginStart: '30@s',
+    marginEnd: '30@s',
     height: '40@s',
     backgroundColor: '#0070C0',
     borderRadius: '5@s',
@@ -1003,8 +1009,8 @@ const styles = ScaledSheet.create({
   },
   modalBankDropDown: {
     position: 'absolute',
-    right: '65@s',
-    marginTop: '19@s',
+    right: '79@s',
+    marginTop: '33@s',
     borderColor: '#D9D9D9',
     borderRadius: '3@s',
     borderWidth: '1@s',
@@ -1012,8 +1018,8 @@ const styles = ScaledSheet.create({
   },
   viewModalDropDown: {
     marginTop: '5@s',
-    marginStart: '15@s',
-    marginEnd: '16@s',
+    marginStart: '30@s',
+    marginEnd: '30@s',
     height: '40@s',
     borderColor: '#D9D9D9',
     borderRadius: '5@s',
@@ -1030,7 +1036,7 @@ const styles = ScaledSheet.create({
   },
   textModal: {
     fontSize: '13@s',
-    marginStart: '16@s',
+    marginStart: '30@s',
     ...Fonts.NanumGothic_Regular,
   },
   existedPhoneButtonText:
@@ -1040,5 +1046,13 @@ const styles = ScaledSheet.create({
   iconsInMain: {
     width: '90%',
     height: '90%'
+  },
+  iconBankDropdown: {
+    position: 'absolute',
+    right: 0,
+    justifyContent: 'center',
+    alignItems: 'center',
+    height: '40@s',
+    width: '40@s'
   }
 });
