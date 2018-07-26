@@ -9,13 +9,13 @@ import BitkoexDatePicker from "./common/BitkoexDatePicker";
 import rf from "../../libs/RequestFactory";
 import TransactionRequest from "../../requests/TransactionRequest";
 import { orderBy } from "lodash";
-import { formatCurrency, getCurrencyName, getDayMonth, getTime } from "../../utils/Filters";
+import { formatCurrency, getCurrencyName, getTime } from "../../utils/Filters";
 import HeaderFunds from "./HeaderFunds";
 import HeaderFundsRight from "./HeaderFundsRight";
-import HeaderTransactionsRight from "./common/HeaderTransactionsRight";
 import Utils from "../../utils/Utils";
+import BaseScreen from "../BaseScreen";
 
-class FundsHistoryScreen extends Component {
+class FundsHistoryScreen extends BaseScreen {
   static SORT_FIELDS = {
     DATE: 'date',
     PAIR: 'coin'
@@ -35,6 +35,7 @@ class FundsHistoryScreen extends Component {
   }
 
   firstScrollView = null;
+  last_page = 1;
 
   _renderDatePicker(titleDate) {
     const date = this.state[titleDate];
@@ -46,6 +47,7 @@ class FundsHistoryScreen extends Component {
   }
 
   componentDidMount() {
+    super.componentDidMount();
     this._loadData();
   }
 
@@ -65,11 +67,37 @@ class FundsHistoryScreen extends Component {
 
       const responseFunds = await rf.getRequest('TransactionRequest').getTrasactionHistory(params);
 
+      this.last_page = responseFunds.data.last_page;
       this.setState({ transactions: [...transactions, ...responseFunds.data.data] })
 
     } catch (err) {
       console.log("FundsHistory._error:", err)
     }
+  }
+
+  _handleLoadMore() {
+    const { page } = this.state;
+
+    if (page >= this.last_page) {
+      return;
+    }
+
+    this.setState({ page: this.state.page + 1 }, () => {
+      this._loadData();
+    })
+  }
+
+  getSocketEventHandlers() {
+    return {
+      TransactionCreated: this.onTransactionCreated.bind(this)
+    }
+  }
+
+  onTransactionCreated(data) {
+    const { transactions } = this.state;
+
+    transactions.push(data);
+    this.setState({transactions});
   }
 
   _changeSortField(sortField, sortDirection) {
@@ -316,8 +344,8 @@ class FundsHistoryScreen extends Component {
                       onTouchStart={() => this._handleTouchStartLeft()}
                       onTouchEnd={() => this._handleTouchEndLeft()}
                       renderItem={this._renderItem.bind(this)}
-              // onEndReached={this._handleLoadMore.bind(this)}
-                      onEndThreshold={100}/>
+                      onEndReached={this._handleLoadMore.bind(this)}
+                      onEndReachedThreshold={0.5}/>
           </View>
 
           <ScrollView horizontal={true} contentContainerStyle={{ flexDirection: 'column' }}>
@@ -331,8 +359,8 @@ class FundsHistoryScreen extends Component {
                       onTouchStart={() => this._handleTouchStartRight()}
                       onTouchEnd={() => this._handleTouchEndRight()}
                       renderItem={this._renderItemRight.bind(this)}
-              // onEndReached={this._handleLoadMore.bind(this)}
-                      onEndThreshold={100}/>
+                      onEndReached={this._handleLoadMore.bind(this)}
+                      onEndReachedThreshold={0.5}/>
           </ScrollView>
         </View>
       </View>
