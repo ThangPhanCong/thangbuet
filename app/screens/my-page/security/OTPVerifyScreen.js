@@ -26,7 +26,8 @@ export default class OTPVerifyScreen extends BaseScreen {
     super(props);
     this.state = {
       isShowSecretCode: false,
-      qrCodeUrl: ''
+      qrCodeUrl: '',
+      otpWrong: false,
     }
   }
 
@@ -40,7 +41,17 @@ export default class OTPVerifyScreen extends BaseScreen {
     Keyboard.dismiss();
   }
 
+  _renderOtpWrong() {
+    return(
+      <View style={styles.otpWrongContainer}>
+        <Text style={styles.otpWrongMessage}>{I18n.t('myPage.security.otpWrong')}</Text>
+      </View>
+    )
+  }
+
   render() {
+    const { otpWrong } = this.state;
+
     return(
       <KeyboardAvoidingView
         style={styles.screen}
@@ -49,6 +60,7 @@ export default class OTPVerifyScreen extends BaseScreen {
           ios: 104,
           android: 200
         })}>
+        {otpWrong ? this._renderOtpWrong() : null}
         <Text style={styles.textHeader}>
           {I18n.t('myPage.security.verificationGuide1') + " "}
           <Image
@@ -134,6 +146,9 @@ export default class OTPVerifyScreen extends BaseScreen {
 
   _onActiveOTP() {
     if (isEmpty(this._otpCode)) {
+      this.setState({otpWrong: true});
+      setTimeout(() =>this.setState({otpWrong: false}), 500);
+
       return;
     }
 
@@ -172,6 +187,8 @@ export default class OTPVerifyScreen extends BaseScreen {
       });
     }
     catch(err) {
+      this.setState({otpWrong: true});
+      setTimeout(() =>this.setState({otpWrong: false}), 500);
       console.log('OTPVerifyScreen._verifyOTP', err);
     }
   }
@@ -250,5 +267,22 @@ const styles = ScaledSheet.create({
   iconAdd: {
     width: '35@s',
     height: '35@s',
+  },
+  otpWrongContainer: {
+    backgroundColor: '#ff3333',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: '180@s',
+    height: '40@s',
+    position: 'absolute',
+    top: '50@s',
+    left: '90@s',
+    zIndex: 2
+  },
+  otpWrongMessage: {
+    ...Fonts.NanumGothic_Regular,
+    fontSize: '12@s',
+    color: '#FFF'
   }
 });
