@@ -215,8 +215,7 @@ export default class SecurityOverviewScreen extends BaseScreen {
         {this._renderIconView(item)}
 
         <View style={styles.valueGroup}/>
-
-        {this._renderVerifyButtonView(item, this._onVerifyPassword.bind(this))}
+        {this._renderVerifyButtonView(item, this._onVerifyPassword.bind(this), true)}
       </View>
     )
   }
@@ -234,7 +233,7 @@ export default class SecurityOverviewScreen extends BaseScreen {
     )
   }
 
-  _renderVerifyButtonView(item, onPressHandler) {
+  _renderVerifyButtonView(item, onPressHandler, password = false) {
     let indexItem = this._infoProps.indexOf(item);
     let disable = false;
     if (indexItem > 1 && indexItem < 4) {
@@ -257,7 +256,9 @@ export default class SecurityOverviewScreen extends BaseScreen {
           disabled={disable}
           underlayColor='#595959'>
           <Text style={styles.buttonsInMain}>
-            {this.state.info[item.propVerify] ? I18n.t('myPage.security.verified') : I18n.t('myPage.security.unverified')}
+            {this.state.info[item.propVerify] ? I18n.t('myPage.security.verified') :
+              password ? I18n.t('myPage.security.unverified1') : I18n.t('myPage.security.unverified')
+            }
           </Text>
         </TouchableHighlight>
       </View>

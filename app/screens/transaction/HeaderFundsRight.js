@@ -50,6 +50,7 @@ const styles = ScaledSheet.create({
   headerBlockChainItem: {
     flexDirection: 'column',
     width: '90@s',
+    marginLeft: '10@s',
     alignItems: 'flex-end',
     justifyContent: 'center',
   },

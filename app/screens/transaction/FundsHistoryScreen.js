@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { FlatList, Text, TouchableWithoutFeedback, View, ScrollView, Image } from "react-native";
+import { FlatList, Text, TouchableWithoutFeedback, View, ScrollView, Image, Linking } from "react-native";
 import ScaledSheet from "../../libs/reactSizeMatter/ScaledSheet";
 import { CommonColors, CommonStyles, Fonts } from "../../utils/CommonStyles";
 import { scale } from "../../libs/reactSizeMatter/scalingUtils";
@@ -13,6 +13,7 @@ import { formatCurrency, getCurrencyName, getDayMonth, getTime } from "../../uti
 import HeaderFunds from "./HeaderFunds";
 import HeaderFundsRight from "./HeaderFundsRight";
 import HeaderTransactionsRight from "./common/HeaderTransactionsRight";
+import Utils from "../../utils/Utils";
 
 class FundsHistoryScreen extends Component {
   static SORT_FIELDS = {
@@ -220,7 +221,7 @@ class FundsHistoryScreen extends Component {
   }
 
   _renderItem({ item }) {
-    const pardeDayMonth = moment(item.transaction_date).format('MM-DD');
+    const pardeDayMonth = moment(item.transaction_date).format('MM.DD');
 
     return (
       <View style={styles.itemContainer}>
@@ -241,8 +242,12 @@ class FundsHistoryScreen extends Component {
   }
 
   _renderItemRight({ item }) {
-    const truntCateAddress = item.foreign_blockchain_address.substr(0, 11) + "...";
+    const transactionId = item.transaction_id ? item.transaction_id : item.internal_transaction_id;
     const stylesQuantity = item.amount.includes('-') ? styles.itemDecreaseQuantity : styles.itemIncreaseQuantity;
+    const txidKRW = <View style={styles.txidKRW}>
+      <Text style={styles.itemBankAccount} numberOfLines={1} ellipsizeMode={'tail'}>{item.foreign_bank_account}</Text>
+      <Text style={styles.itemBankName}>{item.foreign_bank_account_holder}</Text>
+    </View>
 
     return (
       <View style={styles.itemContainer}>
@@ -254,9 +259,17 @@ class FundsHistoryScreen extends Component {
           <Text style={[styles.itemFunds]}>{getCurrencyName(item.currency)}</Text>
         </View>
 
-        <View style={styles.viewAddressBlockChain}>
-          <Text style={styles.itemBlockchain}>{truntCateAddress}</Text>
-        </View>
+        {
+          item.currency === 'krw' ? txidKRW :
+            <TouchableWithoutFeedback onPress={item.transaction_id ?
+              () => Linking.openURL(Utils.getTransactionUrl(item.currency, item.transaction_id))
+              : () => {
+              }}>
+              <View style={styles.viewAddressBlockChain}>
+                <Text style={styles.itemBlockchain} numberOfLines={1} ellipsizeMode={'tail'}>{transactionId}</Text>
+              </View>
+            </TouchableWithoutFeedback>
+        }
 
         <View style={styles.itemRight}>
           <Text style={styles.itemQuantityPrice}>{formatCurrency(item.fee, item.currency)}</Text>
@@ -296,11 +309,12 @@ class FundsHistoryScreen extends Component {
             />
             <FlatList data={transactions}
                       ref={elm => this.flatListLeft = elm}
+                      keyExtractor={(item, index) => index.toString()}
                       onScroll={(event) => this._onLeftListScroll(event)}
                       onMomentumScrollStart={() => this._handleLeftMomentumStart()}
                       onMomentumScrollEnd={() => this._handleLeftMomentumEnd()}
-                      onTouchStart={()=> this._handleTouchStartLeft()}
-                      onTouchEnd={()=> this._handleTouchEndLeft()}
+                      onTouchStart={() => this._handleTouchStartLeft()}
+                      onTouchEnd={() => this._handleTouchEndLeft()}
                       renderItem={this._renderItem.bind(this)}
               // onEndReached={this._handleLoadMore.bind(this)}
                       onEndThreshold={100}/>
@@ -310,11 +324,12 @@ class FundsHistoryScreen extends Component {
             <HeaderFundsRight titles={titles}/>
             <FlatList data={transactions}
                       ref={elm => this.flatListRight = elm}
+                      keyExtractor={(item, index) => index.toString()}
                       onScroll={(event) => this._onRightListScroll(event)}
                       onMomentumScrollStart={() => this._handleRightMomentumStart()}
                       onMomentumScrollEnd={() => this._handleRightMomentumEnd()}
-                      onTouchStart={()=> this._handleTouchStartRight()}
-                      onTouchEnd={()=> this._handleTouchEndRight()}
+                      onTouchStart={() => this._handleTouchStartRight()}
+                      onTouchEnd={() => this._handleTouchEndRight()}
                       renderItem={this._renderItemRight.bind(this)}
               // onEndReached={this._handleLoadMore.bind(this)}
                       onEndThreshold={100}/>
@@ -419,14 +434,14 @@ const styles = ScaledSheet.create({
     justifyContent: 'center',
   },
   itemBlockchain: {
-    color: CommonColors.decreased,
+    color: '#3a68bc',
     fontSize: '10@s',
-    borderBottomColor: CommonColors.decreased,
+    borderBottomColor: '#3a68bc',
     borderBottomWidth: '0.5@s'
   },
   viewAddressBlockChain: {
-    flexWrap: 'wrap',
     width: '90@s',
+    marginLeft: '10@s',
     alignItems: 'flex-end',
     justifyContent: 'center',
   },
@@ -457,5 +472,20 @@ const styles = ScaledSheet.create({
     marginTop: '7@s',
     height: '20@s',
     width: '20@s',
+  },
+  itemBankAccount: {
+    ...Fonts.OpenSans,
+    fontSize: '12@s'
+  },
+  itemBankName: {
+    ...Fonts.NanumGothic_Regular,
+    fontSize: '12@s'
+  },
+  txidKRW: {
+    flexDirection: 'column',
+    width: '90@s',
+    marginLeft: '10@s',
+    alignItems: 'flex-end',
+    justifyContent: 'center',
   }
 })

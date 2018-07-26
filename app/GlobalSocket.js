@@ -105,7 +105,7 @@ export default class GlobalSocket {
       });
   }
 
-  listenForOrderTransaction(userId) {
+  listenForOrderTransaction() {
     window.Echo.channel('App.Orders')
       .listen('OrderTransactionCreated', (transaction) => {
         this.trigger('OrderTransactionCreated', transaction.data);
