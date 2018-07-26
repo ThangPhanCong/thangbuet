@@ -501,7 +501,8 @@ class WithdrawalScreen extends BaseScreen {
     return (
       <View style={[styles.modalStyle, { alignContent: 'center', justifyContent: 'center', }]}>
         <View style={styles.headerModalStyle}>
-          <Text style={styles.headerModalTitle}>{I18n.t('withdrawal.optConfirmTitle')}</Text>
+          <Text style={styles.otpConfirmTitle}>{I18n.t('withdrawal.optConfirmTitle')}</Text>
+          <Text style={styles.headerModalTitle}>{I18n.t('withdrawal.optConfirmTitle1')}</Text>
         </View>
 
         <Text style={styles.optContent}>
@@ -759,4 +760,8 @@ const styles = ScaledSheet.create({
     width: '20@s',
     height: '20@s',
   },
+  otpConfirmTitle: {
+    ...Fonts.OpenSans_Bold,
+    fontSize: '11@s'
+  }
 });
