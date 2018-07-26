@@ -294,7 +294,7 @@
     "pendingNote": "입금시 주의 사항",
     "pendingCancel": "입금 신청 취소",
     "pendingBankAccount": "입금할 계좌",
-    "pendingConfirmContent": "입금 신청을 취소 ",
+    "pendingConfirmContent": "입금 신청을 취소",
     "pendingConfirmContent1": "하시겠습니까?",
     "pendingInfo": "이전 입금 신청이 처리 되지 않았습니다. 입금처리가 끝날 때까지 기다리시거나 입금 신청 취소 후 다시 신청하시기 바랍니다.",
     "coinNote1": "외부의 다른 지갑에서 BITKOEX의 거래용 지갑으로 비트코인을 입금 받을 때 필요한 주소를 생성합니다",
