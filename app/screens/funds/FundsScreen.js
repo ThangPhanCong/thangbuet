@@ -171,6 +171,7 @@ export default class FundsScreen extends BaseScreen {
                 </Text>
                 <Text style={styles.headerSymbol}>{I18n.t('funds.currency')}</Text>
               </View>
+              <View style={styles.iconHelp}></View>
               <View style={styles.infoRow}>
                 <Text
                   style={[styles.infoRowLeft, styles.fontNotoSansRegular, styles.headerText]}>
@@ -292,7 +293,7 @@ const styles = ScaledSheet.create({
   content: { flex: 1, flexDirection: "column" },
   header: { height: '120@s', flexDirection: "row", borderBottomWidth: '1@s', borderColor: 'rgba(222, 227, 235, 1)' },
   logo: { flex: 1, flexDirection: "row", alignItems: 'center', justifyContent: 'center' },
-  info: { flex: 2, flexDirection: "column", alignItems: 'center', justifyContent: 'center', marginTop: '10@s' },
+  info: { flex: 2, flexDirection: "column", alignItems: 'center', justifyContent: 'center', },
   infoRow: { flexDirection: "row", alignItems: 'center', justifyContent: 'center' },
   infoRowLeft: { flex: 1 },
   infoRowRight: { flex: 1.5, textAlign: 'right', marginRight: '5@s' },

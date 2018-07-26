@@ -209,7 +209,7 @@
   },
   "funds": {
     "assetStatus": "자산 현황",
-    "totalNumberOfCoin": "코인총\n매수",
+    "totalNumberOfCoin": "코인 총 매수",
     "currency": "KRW",
     "coinValuation": "코인 평가액",
     "ratingYeild": "평가 수익률",
