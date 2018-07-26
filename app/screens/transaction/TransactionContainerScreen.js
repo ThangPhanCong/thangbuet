@@ -226,7 +226,6 @@ class TransactionContainerScreen extends BaseScreen {
       const { transactions } = this.state;
 
       await rf.getRequest('OrderRequest').cancel(item.id);
-      console.log("cancel xong")
       const newTransactions = transactions.filter(tr => tr.id !== item.id) ;
 
       this.setState({transactions: newTransactions});
@@ -350,7 +349,6 @@ class TransactionContainerScreen extends BaseScreen {
   }
 
   _handleTouchEndLeft() {
-    console.log("touch left end")
     if (this.firstScrollView === 'left') {
       this.firstScrollView = null;
     }
