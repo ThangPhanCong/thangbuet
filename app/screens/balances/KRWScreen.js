@@ -248,7 +248,11 @@ export default class KRWScreen extends BaseScreen {
               <Text style={[styles.fontSize12, styles.modalText, { ...Fonts.NanumGothic_Regular }]}>{I18n.t('funds.currency')}</Text>
             </View>
             <Text style={[styles.fontSize12, styles.modalText, styles.marginBoth10]}>
-              {I18n.t('deposit.confirmContent')}
+              {I18n.t('deposit.confirmContent1')}
+              <Text style={{...Fonts.NanumGothic_Bold}}>
+                {I18n.t('deposit.confirmContent2')}
+              </Text>
+              {I18n.t('deposit.confirmContent3')}
             </Text>
             <View style={styles.questionWapper}>
               <TouchableOpacity
