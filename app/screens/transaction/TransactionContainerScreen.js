@@ -11,8 +11,15 @@ import BitkoexDatePicker from "./common/BitkoexDatePicker";
 import HeaderTransaction from "./common/HeaderTransaction";
 import { Fonts } from "../../../app/utils/CommonStyles";
 import HeaderTransactionsRight from "./common/HeaderTransactionsRight";
+import BaseScreen from "../BaseScreen";
+import Consts from "../../utils/Consts";
 
-class TransactionContainerScreen extends Component {
+class TransactionContainerScreen extends BaseScreen {
+  static TYPE_SCREEN = {
+    ORDER_HISTORY: 'order',
+    OPEN_ORDER: 'open_order',
+  };
+
   static SORT_FIELDS = {
     DATE: 'date',
     PAIR: 'coin'
@@ -36,21 +43,45 @@ class TransactionContainerScreen extends Component {
 
 
   componentDidMount() {
+    super.componentDidMount();
     this._loadData();
   }
 
-  async _loadData() {
+  getSocketEventHandlers() {
+    return {
+      PricesUpdated: this.onPricesUpdated.bind(this),
+      OrderListUpdated: this.OrderListUpdated.bind(this)
+    }
+  }
+
+  OrderListUpdated() {
+    this._loadData(true)
+  }
+
+  onPricesUpdated(prices) {
+    const { transactions } = this.state;
+
+    transactions.forEach(item => {
+      if(prices[`${item.currency}_${item.coin}`]) {
+          item.price = prices[`${item.currency}_${item.coin}`].price;
+      }
+    });
+
+    this.setState({transactions});
+  }
+
+  async _loadData(clearData = false) {
     try {
       const { page, start_date, end_date, transactions } = this.state;
-      const { title } = this.props;
+      const { typeScreen } = this.props;
       const parseStartDate = moment(start_date).format('x');
       const parseEndDate = moment(end_date).format('x');
       let responseTransaction = {}, params = {};
 
 
-      if (title === I18n.t('transactions.openOrderTab')) {
+      if (typeScreen === TransactionContainerScreen.TYPE_SCREEN.OPEN_ORDER) {
         params = {
-          page,
+          page: clearData ? 1 : page,
           limit: 20,
           start_date: parseStartDate,
           currency: 'krw',
@@ -59,7 +90,7 @@ class TransactionContainerScreen extends Component {
         responseTransaction = await rf.getRequest('OrderRequest').getOrdersPending(params);
       } else {
         params = {
-          page,
+          page: clearData ? 1 : page,
           limit: 20,
           is_all_order: true,
           start_date: parseStartDate,
@@ -68,8 +99,10 @@ class TransactionContainerScreen extends Component {
         responseTransaction = await rf.getRequest('OrderRequest').getOrderHistory(params);
       }
 
+      const newTransactions = clearData ? responseTransaction.data.data : [...transactions, ...responseTransaction.data.data];
+
       this.setState({
-        transactions: [...transactions, ...responseTransaction.data.data],
+        transactions: newTransactions,
       })
     } catch (err) {
       console.log('OrderRequest._error:', err)
@@ -181,10 +214,18 @@ class TransactionContainerScreen extends Component {
   }
 
   async _cancelTransaction(item) {
-    await rf.getRequest('OrderRequest').cancel(item.id);
-    this.setState({ page: 1, transactions: [] }, () => {
-      this._loadData();
-    })
+    try {
+      const { transactions } = this.state;
+
+      await rf.getRequest('OrderRequest').cancel(item.id);
+      console.log("cancel xong")
+      const newTransactions = transactions.filter(tr => tr.id !== item.id) ;
+
+      this.setState({transactions: newTransactions});
+    } catch (err) {
+      console.log("CancelTransaction._error:", err)
+    }
+
   }
 
   _renderStatusOrder(item) {
@@ -218,7 +259,7 @@ class TransactionContainerScreen extends Component {
   }
 
   _renderItemRight({ item }) {
-    const { title } = this.props;
+    const { typeScreen } = this.props;
     const stylesQuantity = item.quantity.includes('-') ? styles.itemDecreaseQuantity : styles.itemIncreaseQuantity;
 
     return (
@@ -241,7 +282,7 @@ class TransactionContainerScreen extends Component {
           <Text style={styles.itemTransaction}>{getCurrencyName(item.currency)}</Text>
         </View>
 
-        {title === I18n.t('transactions.openOrderTab') ? this._renderStatusOrder(item) :
+        {typeScreen === TransactionContainerScreen.TYPE_SCREEN.OPEN_ORDER ? this._renderStatusOrder(item) :
           <View style={[styles.lastItemRight]}>
             <Text style={styles.itemFee}>
               {formatCurrency(item.fee, item.coin)}
@@ -321,8 +362,8 @@ class TransactionContainerScreen extends Component {
 
   render() {
     const { transactions } = this.state;
-    const { title } = this.props;
-    const titleLast = title === I18n.t('transactions.openOrderTab') ? I18n.t('transactions.cancel') : I18n.t('transactions.fee');
+    const { typeScreen } = this.props;
+    const titleLast = typeScreen === TransactionContainerScreen.TYPE_SCREEN.OPEN_ORDER ? I18n.t('transactions.cancel') : I18n.t('transactions.fee');
 
     const titles = [I18n.t('transactions.amount'), I18n.t('transactions.orderPrice'),
       I18n.t('transactions.excutedPrice'), titleLast];
