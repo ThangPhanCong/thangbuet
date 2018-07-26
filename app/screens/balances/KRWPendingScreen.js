@@ -184,7 +184,7 @@ export default class KRWPendingScreen extends BaseScreen {
           onBackdropPress={() => this.setState({ modalConfirm: false })}>
           <View style={styles.modalStyle}>
             <View style={styles.headerModal}>
-              <Text style={[styles.fontSize12, styles.modalText]}>{I18n.t('deposit.confirmTitle')}</Text>
+              <Text style={[styles.fontSize12, styles.modalText]}>{I18n.t('deposit.confirmTitleKRW')}</Text>
             </View>
 
             <View style={styles.krwStyle}>

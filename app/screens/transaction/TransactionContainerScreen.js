@@ -40,7 +40,7 @@ class TransactionContainerScreen extends BaseScreen {
   }
 
   firstScrollView = null;
-
+  last_page = 1;
 
   componentDidMount() {
     super.componentDidMount();
@@ -99,6 +99,8 @@ class TransactionContainerScreen extends BaseScreen {
         responseTransaction = await rf.getRequest('OrderRequest').getOrderHistory(params);
       }
 
+      this.last_page = responseTransaction.data.last_page;
+
       const newTransactions = clearData ? responseTransaction.data.data : [...transactions, ...responseTransaction.data.data];
 
       this.setState({
@@ -111,6 +113,12 @@ class TransactionContainerScreen extends BaseScreen {
   }
 
   _handleLoadMore() {
+    const { page } = this.state;
+
+    if(page >= this.last_page) {
+      return;
+    }
+
     this.setState({ page: this.state.page + 1 }, () => {
       this._loadData();
     })
@@ -218,7 +226,6 @@ class TransactionContainerScreen extends BaseScreen {
       const { transactions } = this.state;
 
       await rf.getRequest('OrderRequest').cancel(item.id);
-      console.log("cancel xong")
       const newTransactions = transactions.filter(tr => tr.id !== item.id) ;
 
       this.setState({transactions: newTransactions});
@@ -342,7 +349,6 @@ class TransactionContainerScreen extends BaseScreen {
   }
 
   _handleTouchEndLeft() {
-    console.log("touch left end")
     if (this.firstScrollView === 'left') {
       this.firstScrollView = null;
     }
@@ -396,7 +402,7 @@ class TransactionContainerScreen extends BaseScreen {
                       onMomentumScrollEnd={() => this._handleLeftMomentumEnd()}
                       onTouchStart={() => this._handleTouchStartLeft()}
                       onTouchEnd={() => this._handleTouchEndLeft()}
-                      onEndThreshold={100}/>
+                      onEndReachedThreshold={0.5}/>
           </View>
 
           <ScrollView horizontal={true} contentContainerStyle={{ flexDirection: 'column' }}>
@@ -411,7 +417,7 @@ class TransactionContainerScreen extends BaseScreen {
                       onMomentumScrollEnd={() => this._handleRightMomentumEnd()}
                       onTouchStart={() => this._handleTouchStartRight()}
                       onTouchEnd={() => this._handleTouchEndRight()}
-                      onEndThreshold={100}/>
+                      onEndReachedThreshold={0.5}/>
           </ScrollView>
         </View>
       </View>

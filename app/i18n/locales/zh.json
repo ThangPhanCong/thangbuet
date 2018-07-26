@@ -266,6 +266,7 @@
     "error": "몇 가지 오류가 발생했습니다.",
     "confirm": "입금신청확인",
     "confirmTitle": "입금 신청 확인",
+    "confirmTitleKRW": "입금 신청 취소 확인",
     "amountToDeposit": "입금 신청 금액",
     "confirmContent1": "위와 같이 ",
     "confirmContent2": "입금을 신청",
