@@ -158,7 +158,7 @@ export default class FundsScreen extends BaseScreen {
                 resizeMode="contain"
                 style={styles.iconLogo}
                 source={require('../../../assets/funds/fundLogo.png')} />
-              <Text style={[styles.fontNotoSansRegular, styles.headerSize14, {marginLeft: scale(5)}]}>{I18n.t('funds.assetStatus')}</Text>
+              <Text style={[styles.fontAssetStatus, styles.headerSize14, {marginLeft: scale(5)}]}>{I18n.t('funds.assetStatus')}</Text>
             </View>
             <View style={styles.info}>
               <View style={styles.infoRow}>
@@ -246,8 +246,8 @@ export default class FundsScreen extends BaseScreen {
             style={styles.footer}>
             <Text style={[{ flex: 0.5 }, styles.footerTotalField]}>{I18n.t('funds.total')}</Text>
             <Text style={{ flex: 1 }}></Text>
-            <Text style={[{ flex: 0.5 }, styles.footerNumer, styles.footerYield]}>
-              {formatPercent(this.state.yield)}
+            <Text style={[styles.footerNumer, styles.footerYield]}>
+              {formatPercentSpace(this.state.yield)}
             </Text>
             <Text style={[{ flex: 1 }, styles.footerNumer, styles.marginRight10]}>
               {formatCurrency(this.state.priceTotal, this.currency)}
@@ -367,5 +367,9 @@ const styles = ScaledSheet.create({
     flex: 1,
     fontSize: '12@s',
     ...Fonts.OpenSans_Bold
+  },
+  fontAssetStatus: {
+    ...Fonts.NotoSans_Regular,
+    fontWeight: 'bold'
   }
 })
