@@ -203,11 +203,11 @@ export default class TradingScreen extends BaseScreen {
 
   _renderModalOpenHelp() {
     const { isShowModalHelp } = this.state;
-    const helpTitle = [I18n.t('tradeScreen.help1'), I18n.t('tradeScreen.help2'), I18n.t('tradeScreen.help3'), I18n.t('tradeScreen.help4'),
+    const helpContent = [I18n.t('tradeScreen.help1'), I18n.t('tradeScreen.help2'), I18n.t('tradeScreen.help3'), I18n.t('tradeScreen.help4'),
       I18n.t('tradeScreen.help5'), I18n.t('tradeScreen.help6')];
 
     return(
-      <ModalHelp isShowModalHelp = {isShowModalHelp} closeModalHelp={() => this._closeModalHelp()} helpTitle={helpTitle}/>
+      <ModalHelp isShowModalHelp = {isShowModalHelp} closeModalHelp={() => this._closeModalHelp()} helpContent={helpContent}/>
     )
   }
 
