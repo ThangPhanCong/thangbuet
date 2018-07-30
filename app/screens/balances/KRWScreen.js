@@ -11,6 +11,8 @@ import { CommonColors, CommonSize, CommonStyles, Fonts } from '../../utils/Commo
 import { scale } from '../../libs/reactSizeMatter/scalingUtils';
 import Consts from "../../utils/Consts";
 import ModalNote from "./ModalNote";
+import OrderUtils from '../../utils/OrderUtils';
+import CurrencyInput from '../common/CurrencyInput';
 
 export default class KRWScreen extends BaseScreen {
   constructor(props) {
@@ -19,9 +21,14 @@ export default class KRWScreen extends BaseScreen {
       checked: false,
       amount: 0,
       krwConfirm: false,
-      noteDeposit: false
+      noteDeposit: false,
+      quantityPrecision: 4
     }
     this.currency = 'krw'
+  }
+
+  componentDidMount() {
+    this._loadData()
   }
 
   componentWillReceiveProps() {
@@ -31,6 +38,23 @@ export default class KRWScreen extends BaseScreen {
       krwConfirm: false,
       noteDeposit: false
     })
+  }
+
+  async _loadData() {
+    await this._getDailyLimit()
+  }
+
+  async _getDailyLimit() {
+    try {
+      let { daily } = this.state;
+      const withdrawalLimit = await this._getItemDaily();
+
+      daily.withdrawalLimit = parseFloat(withdrawalLimit.daily_limit)
+      daily.minium = parseFloat(withdrawalLimit.minium_withdrawal)
+      this.setState({ daily, quantityPrecision: Utils.getPrecision(daily.minium) })
+    } catch (err) {
+      console.log("Some errors has occurred in  DailyLimit._error:", err)
+    }
   }
 
   async _execute() {
@@ -90,12 +114,17 @@ export default class KRWScreen extends BaseScreen {
     }
   }
 
-  hideModalNote(){
+  hideModalNote() {
     this.setState({ noteDeposit: false })
   }
 
-  confirmChecked(){
+  confirmChecked() {
     this.setState({ checked: true })
+  }
+
+  _onQuantityChanged(formatted, extracted) {
+    let amount = OrderUtils.getMaskInputValue(formatted, extracted);
+    this.setState({ amount });
   }
 
   render() {
@@ -123,7 +152,7 @@ export default class KRWScreen extends BaseScreen {
               <View style={styles.rowItem}>
                 <Text style={[{ flex: 0.7 }, styles.textLeft]}>{I18n.t('deposit.amount')}</Text>
                 <View style={styles.amountWrapper}>
-                  <TextInput
+                  {/* <TextInput
                     style={styles.inputAmount}
                     value={amountValue}
                     onChangeText={(text) => {
@@ -131,8 +160,15 @@ export default class KRWScreen extends BaseScreen {
                     }}
                     keyboardType='numeric'
                     underlineColorAndroid='rgba(0, 0, 0, 0)'
-                    autoCorrect={false} />
-                  <Image style={styles.iconWon} source={require('../../../assets/won/won.png')}/>
+                    autoCorrect={false} /> */}
+                  <CurrencyInput
+                    value={this.state.amount}
+                    precision={this.state.quantityPrecision}
+                    onChangeText={this._onQuantityChanged.bind(this)}
+                    keyboardType='numeric'
+                    style={styles.inputText}
+                    underlineColorAndroid='transparent' />
+                  <Image style={styles.iconWon} source={require('../../../assets/won/won.png')} />
                 </View>
               </View>
             </View>
@@ -193,11 +229,11 @@ export default class KRWScreen extends BaseScreen {
                   <Text>{I18n.t('deposit.note2Title')}</Text>
                 </Text>
 
-                <View style={{flexDirection: 'row'}}>
+                <View style={{ flexDirection: 'row' }}>
                   <Text style={styles.noteTextInside}>{I18n.t('deposit.note2Content')}</Text>
-                  <Text style={[styles.noteTextInside, {...Fonts.NanumGothic_Bold}]}>{I18n.t('deposit.note2Content1')}</Text>
+                  <Text style={[styles.noteTextInside, { ...Fonts.NanumGothic_Bold }]}>{I18n.t('deposit.note2Content1')}</Text>
                   <Text style={styles.noteTextInside}>{I18n.t('deposit.note2Content2')}</Text>
-                  <Text style={[styles.noteTextInside, {...Fonts.NanumGothic_Bold}]}>{I18n.t('deposit.note2Content3')}</Text>
+                  <Text style={[styles.noteTextInside, { ...Fonts.NanumGothic_Bold }]}>{I18n.t('deposit.note2Content3')}</Text>
                   <Text style={styles.noteTextInside}>{I18n.t('deposit.note2Content4')}</Text>
                 </View>
                 <Text style={styles.noteTextInside}>{I18n.t('deposit.note2Content5')}</Text>
@@ -253,14 +289,14 @@ export default class KRWScreen extends BaseScreen {
 
             <View style={styles.rowWrapper}>
               <Text style={[styles.fontSize12, styles.modalText, styles.marginRight10]}>{I18n.t('deposit.amountToDeposit')}</Text>
-              <Text style={[styles.modalText, {fontSize: scale(14), paddingBottom: scale(2), ...Fonts.NanumGothic_Bold }]}>
+              <Text style={[styles.modalText, { fontSize: scale(14), paddingBottom: scale(2), ...Fonts.NanumGothic_Bold }]}>
                 {formatCurrency(this.state.amount, this.currency) + " "}
               </Text>
               <Text style={[styles.fontSize12, styles.modalText, { ...Fonts.NanumGothic_Regular }]}>{I18n.t('funds.currency')}</Text>
             </View>
             <Text style={[styles.fontSize12, styles.modalText, styles.marginBoth10]}>
               {I18n.t('deposit.confirmContent1')}
-              <Text style={{...Fonts.NanumGothic_Bold}}>
+              <Text style={{ ...Fonts.NanumGothic_Bold }}>
                 {I18n.t('deposit.confirmContent2')}
               </Text>
               {I18n.t('deposit.confirmContent3')}
@@ -282,13 +318,15 @@ export default class KRWScreen extends BaseScreen {
 
         {/*Note on Deposit*/}
         <ModalNote noteDeposit={this.state.noteDeposit} checked={this.state.checked}
-          hideModalNote={this.hideModalNote.bind(this)} confirmChecked={this.confirmChecked.bind(this)}/>
+          hideModalNote={this.hideModalNote.bind(this)} confirmChecked={this.confirmChecked.bind(this)} />
 
       </View>
     )
   }
 }
 
+const margin = scale(23);
+const inputHeight = scale(30);
 const styles = ScaledSheet.create({
   fullScreen: { flex: 1, backgroundColor: 'white' },
   content: { flex: 1, flexDirection: "column" },
@@ -411,5 +449,16 @@ const styles = ScaledSheet.create({
   },
   contentModal: {
     padding: '16@s'
-  }
+  },
+  inputText: {
+    flex: 1,
+    height: inputHeight,
+    paddingLeft: '5@s',
+    paddingRight: '5@s',
+    paddingTop: 0,
+    paddingBottom: 0,
+    textAlign: 'right',
+    fontSize: '12@s',
+    ...Fonts.OpenSans
+  },
 });

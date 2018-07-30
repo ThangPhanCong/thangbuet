@@ -11,6 +11,8 @@ import Modal from "react-native-modal"
 import Utils from '../../utils/Utils'
 import { Fonts } from '../../utils/CommonStyles';
 import { scale } from "../../libs/reactSizeMatter/scalingUtils";
+import OrderUtils from '../../utils/OrderUtils';
+import CurrencyInput from '../common/CurrencyInput';
 
 class WithdrawalScreen extends BaseScreen {
   constructor(props) {
@@ -27,7 +29,7 @@ class WithdrawalScreen extends BaseScreen {
       otpConfirm: false,
       agree: false,
       optErr: false,
-
+      quantityPrecision: 4,
     }
     this.currency = ''
   }
@@ -47,9 +49,9 @@ class WithdrawalScreen extends BaseScreen {
   async _getBalaceDetail() {
     const { navigation } = this.props;
     let symbol = navigation.getParam('symbol', {})
-    console.log('symbol', symbol)
+    // console.log('symbol', symbol)
     const res = await rf.getRequest('UserRequest').getDetailsBalance(symbol.code)
-    console.log('res.data', res.data)
+    // console.log('res.data', res.data)
     symbol = Object.assign({}, symbol, res.data)
     this.currency = symbol.code
     this.setState({ symbol })
@@ -90,7 +92,7 @@ class WithdrawalScreen extends BaseScreen {
 
       daily.withdrawalLimit = parseFloat(withdrawalLimit.daily_limit)
       daily.minium = parseFloat(withdrawalLimit.minium_withdrawal)
-      this.setState({ daily })
+      this.setState({ daily, quantityPrecision: Utils.getPrecision(daily.minium) })
     } catch (err) {
       console.log("Some errors has occurred in  DailyLimit._error:", err)
     }
@@ -197,6 +199,11 @@ class WithdrawalScreen extends BaseScreen {
     }
   }
 
+  _onQuantityChanged(formatted, extracted) {
+    let amount = OrderUtils.getMaskInputValue(formatted, extracted);
+    this.setState({ amount });
+  }
+
   render() {
     const { symbol } = this.state
     return (
@@ -245,7 +252,7 @@ class WithdrawalScreen extends BaseScreen {
                   {I18n.t('withdrawal.amountRequest', { "coinName": getCurrencyName(symbol.code) })}
                 </Text>
                 <View style={styles.amountWrapper}>
-                  <TextInput
+                  {/* <TextInput
                     keyboardType='numeric'
                     autoCorrect={false}
                     underlineColorAndroid='transparent'
@@ -253,7 +260,14 @@ class WithdrawalScreen extends BaseScreen {
                     onChangeText={(text) => {
                       this.setState({ amount: parseFloat(text.split(',').join('')) })
                     }}
-                    style={styles.amountInput} />
+                    style={styles.amountInput} /> */}
+                  <CurrencyInput
+                    value={this.state.amount}
+                    precision={this.state.quantityPrecision}
+                    onChangeText={this._onQuantityChanged.bind(this)}
+                    keyboardType='numeric'
+                    style={styles.inputText}
+                    underlineColorAndroid='transparent' />
                   <Text style={styles.amountSymbol}>{getCurrencyName(this.currency)}</Text>
                   <TouchableOpacity
                     style={styles.amountMax}
@@ -277,14 +291,14 @@ class WithdrawalScreen extends BaseScreen {
                     }}
                     autoCorrect={false}
                     underlineColorAndroid='transparent'
-                    style={styles.addressInput} />
+                    style={[styles.inputText, styles.addressInput]} />
                 </View>
               </View>
 
               {symbol.code === 'xrp' &&
                 <View style={styles.xrpGroup}>
-                  <View style={{flex: 1, marginRight: scale(15)}}>
-                    <Text style={[styles.amountText, styles.textInline, {textAlign: 'right'}]}>{I18n.t('withdrawal.tagAddress')}</Text>
+                  <View style={{ flex: 1, marginRight: scale(15) }}>
+                    <Text style={[styles.amountText, styles.textInline, { textAlign: 'right' }]}>{I18n.t('withdrawal.tagAddress')}</Text>
                   </View>
                   <View style={styles.tagWrapper}>
                     <TextInput
@@ -302,7 +316,7 @@ class WithdrawalScreen extends BaseScreen {
               <TouchableOpacity
                 style={[styles.alignCenter, styles.confirmBtn]}
                 onPress={this._validateAmount.bind(this)}
-               >
+              >
                 <View>
                   <Text style={styles.confirmText}>{I18n.t('withdrawal.coinBtn')}</Text>
                 </View>
@@ -349,36 +363,36 @@ class WithdrawalScreen extends BaseScreen {
 
                 <View style={styles.table}>
                   <Text style={[styles.tbRow, styles.tbContent]}>{I18n.t('withdrawal.row1Col1')}</Text>
-                  <Image style={styles.arrowRight} source={require('../../../assets/arrowRight/arrowRight.png')}/>
+                  <Image style={styles.arrowRight} source={require('../../../assets/arrowRight/arrowRight.png')} />
                   <Text style={[styles.tbRow, styles.tbContent]}>{I18n.t('withdrawal.row1Col2')}</Text>
-                  <Image style={styles.arrowRight} source={require('../../../assets/arrowRight/arrowRight.png')}/>
+                  <Image style={styles.arrowRight} source={require('../../../assets/arrowRight/arrowRight.png')} />
                   <Text style={[styles.tbRow, styles.tbContent]}>{I18n.t('withdrawal.row1Col3')}</Text>
                   <Text style={[styles.tbRow, styles.tbContent]}> {I18n.t('withdrawal.row1Col4')}</Text>
                 </View>
 
                 <View style={styles.table}>
                   <Text style={[styles.tbRow, styles.tbContent]}>{I18n.t('withdrawal.row2Col1')}</Text>
-                  <Image style={styles.arrowRight} source={require('../../../assets/arrowRight/arrowRight.png')}/>
+                  <Image style={styles.arrowRight} source={require('../../../assets/arrowRight/arrowRight.png')} />
                   <Text style={[styles.tbRow, styles.tbContent]}>{I18n.t('withdrawal.row2Col2')}</Text>
-                  <Image style={styles.arrowRight} source={require('../../../assets/arrowRight/arrowRight.png')}/>
+                  <Image style={styles.arrowRight} source={require('../../../assets/arrowRight/arrowRight.png')} />
                   <Text style={[styles.tbRow, styles.tbContent]}>{I18n.t('withdrawal.row2Col3')}</Text>
                   <Text style={[styles.tbRow, styles.tbContent]}> {I18n.t('withdrawal.row2Col4')}</Text>
                 </View>
 
                 <View style={styles.table}>
                   <Text style={[styles.tbRow, styles.tbContent]}>{I18n.t('withdrawal.row3Col1')}</Text>
-                  <Image style={styles.arrowRight} source={require('../../../assets/arrowRight/arrowRight.png')}/>
+                  <Image style={styles.arrowRight} source={require('../../../assets/arrowRight/arrowRight.png')} />
                   <Text style={[styles.tbRow, styles.tbContent]}>{I18n.t('withdrawal.row3Col2')}</Text>
-                  <Image style={styles.arrowRight} source={require('../../../assets/arrowRight/arrowRight.png')}/>
+                  <Image style={styles.arrowRight} source={require('../../../assets/arrowRight/arrowRight.png')} />
                   <Text style={[styles.tbRow, styles.tbContent]}>{I18n.t('withdrawal.row3Col3')}</Text>
                   <Text style={[styles.tbRow, styles.tbContent]}> {I18n.t('withdrawal.row3Col4')}</Text>
                 </View>
 
                 <View style={styles.table}>
                   <Text style={[styles.tbRow, styles.tbContent, styles.tbColor]}>{I18n.t('withdrawal.row4Col1')}</Text>
-                  <Image style={styles.arrowRight} source={require('../../../assets/arrowRight/arrowRight.png')}/>
+                  <Image style={styles.arrowRight} source={require('../../../assets/arrowRight/arrowRight.png')} />
                   <Text style={[styles.tbRow, styles.tbContent, styles.tbColor]}>{I18n.t('withdrawal.row4Col2')}</Text>
-                  <Image style={styles.arrowRight} source={require('../../../assets/arrowRight/arrowRight.png')}/>
+                  <Image style={styles.arrowRight} source={require('../../../assets/arrowRight/arrowRight.png')} />
                   <Text style={[styles.tbRow, styles.tbContent, styles.tbColor]}>{I18n.t('withdrawal.row4Col3')}</Text>
                   <Text style={[styles.tbRow, styles.tbContent, styles.tbColor]}> {I18n.t('withdrawal.row4Col4')}</Text>
                 </View>
@@ -437,7 +451,7 @@ class WithdrawalScreen extends BaseScreen {
           {symbol.blockchain_address}
         </Text>
 
-        <View style={{flexDirection: 'row'}}>
+        <View style={{ flexDirection: 'row' }}>
           <Text style={styles.messageSpace}>{I18n.t('withdrawal.amountMessage')}</Text>
           <Text style={styles.messageSpace1}>{I18n.t('withdrawal.amountMessage1')}</Text>
         </View>
@@ -535,7 +549,8 @@ class WithdrawalScreen extends BaseScreen {
 }
 
 export default withNavigationFocus(WithdrawalScreen)
-
+const margin = scale(23);
+const inputHeight = scale(30);
 const styles = ScaledSheet.create({
   fullScreen: { flex: 1, backgroundColor: 'white' },
   content: { flex: 1, flexDirection: "column" },
@@ -712,7 +727,8 @@ const styles = ScaledSheet.create({
     width: '80%', alignContent: 'center', justifyContent: 'center', flexDirection: 'row',
     marginTop: '10@s', marginBottom: '10@s'
   },
-  smsInput: {flex: 2, height: '30@s', textAlign: 'center', fontSize: '12@s', ...Fonts.NanumGothic_Regular, marginRight: '10@s',
+  smsInput: {
+    flex: 2, height: '30@s', textAlign: 'center', fontSize: '12@s', ...Fonts.NanumGothic_Regular, marginRight: '10@s',
     borderWidth: '1@s', borderRadius: '4@s', borderColor: "rgba(0, 0, 0, 0.1)"
   },
   smsConfirmBtn: {
@@ -754,8 +770,8 @@ const styles = ScaledSheet.create({
     textAlign: 'center', ...Fonts.NanumGothic_Regular
   },
   fontNotoSansBold: { ...Fonts.NotoSans_Bold, fontSize: '14@s' },
-  titleAmountGroup: {flexDirection: 'row', marginTop: '20@s'},
-  xrpGroup: {flexDirection: 'row', alignItems: 'center', marginTop: '10@s', marginRight: '40@s'},
+  titleAmountGroup: { flexDirection: 'row', marginTop: '20@s' },
+  xrpGroup: { flexDirection: 'row', alignItems: 'center', marginTop: '10@s', marginRight: '40@s' },
   arrowRight: {
     width: '20@s',
     height: '20@s',
@@ -763,5 +779,16 @@ const styles = ScaledSheet.create({
   otpConfirmTitle: {
     ...Fonts.OpenSans_Bold,
     fontSize: '11@s'
-  }
+  },
+  inputText: {
+    flex: 1,
+    height: inputHeight,
+    paddingLeft: '5@s',
+    paddingRight: '5@s',
+    paddingTop: 0,
+    paddingBottom: 0,
+    textAlign: 'right',
+    fontSize: '12@s',
+    ...Fonts.OpenSans
+  },
 });
