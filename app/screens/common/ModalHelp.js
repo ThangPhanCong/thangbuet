@@ -9,7 +9,7 @@ import { Card } from "react-native-elements";
 
 class ModalHelp extends Component {
   render() {
-    const { closeModalHelp, helpTitle, isShowModalHelp } = this.props;
+    const { closeModalHelp, helpContent, isShowModalHelp } = this.props;
 
     return(
       <Modal
@@ -21,12 +21,12 @@ class ModalHelp extends Component {
         }}>
         <Card containerStyle={styles.containerCard}>
           <SafeAreaView style={styles.viewCardOpenHelp}>
-            <Text style={styles.modalLine}>{helpTitle[0]}</Text>
-            <Text style={styles.modalLine}>{helpTitle[1]}</Text>
-            <Text style={styles.modalLine}>{helpTitle[2]}</Text>
-            <Text style={styles.modalLine}>{helpTitle[3]}</Text>
-            <Text style={styles.modalLine}>{helpTitle[4]}</Text>
-            <Text style={styles.modalLine}>{helpTitle[5]}</Text>
+            <Text style={styles.modalLine}>{helpContent[0]}</Text>
+            <Text style={styles.modalLine}>{helpContent[1]}</Text>
+            <Text style={styles.modalLine}>{helpContent[2]}</Text>
+            <Text style={styles.modalLine}>{helpContent[3]}</Text>
+            <Text style={styles.modalLine}>{helpContent[4]}</Text>
+            <Text style={styles.modalLine}>{helpContent[5]}</Text>
 
             <TouchableOpacity
               onPress={closeModalHelp}

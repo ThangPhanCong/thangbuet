@@ -154,11 +154,11 @@ export default class FundsScreen extends BaseScreen {
 
   _renderModalHelp() {
     const { isShowModalHelp } = this.state;
-    const helpTitle = [I18n.t('funds.help1'), I18n.t('funds.help2'), I18n.t('funds.help3'), I18n.t('funds.help4'),
+    const helpContent = [I18n.t('funds.help1'), I18n.t('funds.help2'), I18n.t('funds.help3'), I18n.t('funds.help4'),
       I18n.t('funds.help5'), I18n.t('funds.help6')];
 
     return(
-      <ModalHelp isShowModalHelp = {isShowModalHelp} closeModalHelp={() => this._closeModalHelp()} helpTitle={helpTitle}/>
+      <ModalHelp isShowModalHelp = {isShowModalHelp} closeModalHelp={() => this._closeModalHelp()} helpContent={helpContent}/>
     )
   }
 
