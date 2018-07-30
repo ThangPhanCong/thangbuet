@@ -321,9 +321,12 @@ class WithdrawalKRWScreen extends BaseScreen {
                     {'\u2022' + I18n.t('withdrawal.noteLine3')}
                   </Text>
                 </View>
-                <View style={styles.noteContainer}>
+                <View style={[styles.noteContainer, {flexDirection: 'row'}]}>
                   <Text style={[styles.noteTitle, { ...Fonts.NanumGothic_Bold }]}>
-                    {'\u2022' + I18n.t('withdrawal.noteLine4')}
+                    {" " + I18n.t('withdrawal.noteLine4')}
+                  </Text>
+                  <Text style={[styles.noteTitle, { ...Fonts.NanumGothic_Bold }]}>
+                    {I18n.t('withdrawal.noteLine4_2')}
                   </Text>
                 </View>
                 <View style={styles.noteContainer}>
@@ -464,7 +467,7 @@ class WithdrawalKRWScreen extends BaseScreen {
             <Text style={[styles.lineSpace, styles.modalAmount]}>
               {formatCurrency(this.state.amount, this.currency)}
             </Text>
-            <Text>{' ' + getCurrencyName(this.currency)}</Text>
+            <Text style={{fontSize: scale(11), ...Fonts.OpenSans}}>{' ' + getCurrencyName(this.currency)}</Text>
           </View>
 
           <Text style={styles.modalLine}>
@@ -539,8 +542,9 @@ class WithdrawalKRWScreen extends BaseScreen {
   _renderOtpContent() {
     return (
       <View style={[styles.modalStyle, { alignContent: 'center', justifyContent: 'center', }]}>
-        <View style={styles.headerModalStyle}>
-          <Text style={styles.headerModalTitle}>{I18n.t('withdrawal.optConfirmTitle')}</Text>
+        <View style={[styles.headerModalStyle, {flexDirection: "row"}]}>
+          <Text style={[styles.headerModalTitle, {...Fonts.OpenSans_Bold}]}>{I18n.t('withdrawal.optConfirmTitle')}</Text>
+          <Text style={styles.headerModalTitle}>{I18n.t('withdrawal.check')}</Text>
         </View>
 
         <Text style={styles.optContent}>
@@ -660,7 +664,7 @@ const styles = ScaledSheet.create({
   tbHeader: { backgroundColor: 'rgba(228, 238, 248, 1)', borderTopWidth: '1@s', },
   modalLine: { marginTop: '10@s', marginBottom: '3@s', ...Fonts.OpenSans, fontSize: '12@s' },
   lineSpace: { marginBottom: '10@s', fontSize: '11@s' },
-  messageSpace: { marginBottom: '10@s', marginTop: '10@s' },
+  messageSpace: { marginBottom: '10@s', marginTop: '10@s', fontSize: '11@s', ...Fonts.NanumGothic_Regular },
   modalAmount: { ...Fonts.OpenSans_Bold, fontSize: '11@s' },
   modalCancelBtn: { width: '45%', justifyContent: 'center', backgroundColor: 'rgba(127, 127, 127, 1)', height: '30@s', borderRadius: '4@s' },
   modalBtnText: { color: 'white', textAlign: 'center', ...Fonts.NanumGothic_Regular, fontSize: '12@s' },
