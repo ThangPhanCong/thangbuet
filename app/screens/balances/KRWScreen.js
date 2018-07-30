@@ -169,7 +169,8 @@ export default class KRWScreen extends BaseScreen {
                     keyboardType='numeric'
                     style={styles.inputText}
                     underlineColorAndroid='transparent' />
-                  <Image style={styles.iconWon} source={require('../../../assets/won/won.png')} />
+                  <Text style={styles.amountSymbol}>{I18n.t('common.fiatSymbol')}</Text>
+                  {/* <Image style={styles.iconWon} source={require('../../../assets/won/won.png')} /> */}
                 </View>
               </View>
             </View>
@@ -439,12 +440,7 @@ const styles = ScaledSheet.create({
     textDecorationLine: 'underline',
     textDecorationColor: 'rgba(0, 112, 192, 1)'
   },
-  iconWon: {
-    width: '23@s',
-    height: '23@s',
-    marginTop: '5@s',
-    marginRight: '7@s',
-  },
+  amountSymbol: { ...Fonts.NanumGothic_Regular, fontSize: '10@s', marginRight: '10@s', textAlignVertical:'center' },
   note5Phone: {
     ...Fonts.NanumGothic_Bold
   },
