@@ -194,11 +194,11 @@ export default class TradingScreen extends BaseScreen {
   }
 
   _onOpenModalHelp() {
-    this.setState({isShowModalHelp: true})
+    this.setState({ isShowModalHelp: true })
   }
 
   _closeModalHelp() {
-    this.setState({isShowModalHelp: false})
+    this.setState({ isShowModalHelp: false })
   }
 
   _renderModalOpenHelp() {
@@ -206,8 +206,9 @@ export default class TradingScreen extends BaseScreen {
     const helpContent = [I18n.t('tradeScreen.help1'), I18n.t('tradeScreen.help2'), I18n.t('tradeScreen.help3'), I18n.t('tradeScreen.help4'),
       I18n.t('tradeScreen.help5'), I18n.t('tradeScreen.help6')];
 
-    return(
-      <ModalHelp isShowModalHelp = {isShowModalHelp} closeModalHelp={() => this._closeModalHelp()} helpContent={helpContent}/>
+    return (
+      <ModalHelp isShowModalHelp={isShowModalHelp} closeModalHelp={() => this._closeModalHelp()}
+                 helpContent={helpContent}/>
     )
   }
 
@@ -248,19 +249,24 @@ export default class TradingScreen extends BaseScreen {
             <Text style={styles.balance}>{formatCurrency(balanceData.balance, this._getCoin())}</Text>
             <Text style={styles.balanceCurrency}>{getCurrencyName(this._getCoin())}</Text>
           </View>
-          <TouchableWithoutFeedback onPress={() => this._onOpenModalHelp()}>
-            <View style={styles.headerContent}>
-              <Text style={styles.balanceLabel}>{I18n.t('tradeScreen.profit')}</Text>
-              <Icon
-                name='help'
-                type='ionicons'
-                color='#000'
-                size={scale(13)}
-                containerStyle={styles.helpIcon}/>
-              <Text style={[styles.profit, { color: profitColor }]}>{Numeral(profit).format("0.00")}</Text>
-              <Text style={[styles.balanceCurrency, { color: profitColor }]}>%</Text>
-            </View>
-          </TouchableWithoutFeedback>
+
+          <View style={styles.headerContent}>
+            <TouchableWithoutFeedback onPress={() => this._onOpenModalHelp()}>
+              <View style={{flexDirection: 'row'}}>
+                <Text style={styles.balanceLabel}>{I18n.t('tradeScreen.profit')}</Text>
+                <Icon
+                  name='help'
+                  type='ionicons'
+                  color='#000'
+                  size={scale(13)}
+                  containerStyle={styles.helpIcon}/>
+              </View>
+            </TouchableWithoutFeedback>
+
+            <Text style={[styles.profit, { color: profitColor }]}>{Numeral(profit).format("0.00")}</Text>
+            <Text style={[styles.balanceCurrency, { color: profitColor }]}>%</Text>
+          </View>
+
           {this._renderModalOpenHelp()}
         </View>
       </View>
