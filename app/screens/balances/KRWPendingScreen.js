@@ -25,6 +25,7 @@ export default class KRWPendingScreen extends BaseScreen {
   }
 
   componentDidMount() {
+    super.componentDidMount()
     const { isPending } = this.props
     if (isPending) {
       Alert.alert(

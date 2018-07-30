@@ -20,11 +20,13 @@ class DepositScreen extends BaseScreen {
   }
 
   async componentDidMount() {
+    super.componentDidMount()
     await this._loadData()
     this.setState({ isComplete: true })
   }
 
   componentWillUnmount() {
+    super.componentWillUnmount()
     this.setState({ isComplete: false })
   }
 

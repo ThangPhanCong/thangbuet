@@ -29,17 +29,18 @@ class WithdrawalScreen extends BaseScreen {
       otpConfirm: false,
       agree: false,
       optErr: false,
-      quantityPrecision: 4,
+      quantityPrecision: 10,
     }
     this.currency = ''
   }
 
-  async componentDidMount() {
-    await this._getBalaceDetail()
-    await this._loadData()
+  componentDidMount() {
+    super.componentDidMount()
+    this._loadData()
   }
 
   async _loadData() {
+    await this._getBalaceDetail()
     await this._getDailyLimit()
     await this._getWithdrawal()
     await this._getAuth()
@@ -58,6 +59,7 @@ class WithdrawalScreen extends BaseScreen {
   }
 
   componentWillUnmount() {
+    super.componentWillUnmount()
     this.setState({ isComplete: false, modalConfirm: false, amount: 0 })
   }
 
@@ -92,7 +94,7 @@ class WithdrawalScreen extends BaseScreen {
 
       daily.withdrawalLimit = parseFloat(withdrawalLimit.daily_limit)
       daily.minium = parseFloat(withdrawalLimit.minium_withdrawal)
-      this.setState({ daily, quantityPrecision: Utils.getPrecision(daily.minium) })
+      this.setState({ daily })
     } catch (err) {
       console.log("Some errors has occurred in  DailyLimit._error:", err)
     }

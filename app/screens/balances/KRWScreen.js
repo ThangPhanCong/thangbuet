@@ -22,12 +22,13 @@ export default class KRWScreen extends BaseScreen {
       amount: 0,
       krwConfirm: false,
       noteDeposit: false,
-      quantityPrecision: 4
+      quantityPrecision: 0
     }
     this.currency = 'krw'
   }
 
   componentDidMount() {
+    super.componentDidMount()
     this._loadData()
   }
 
@@ -51,7 +52,7 @@ export default class KRWScreen extends BaseScreen {
 
       daily.withdrawalLimit = parseFloat(withdrawalLimit.daily_limit)
       daily.minium = parseFloat(withdrawalLimit.minium_withdrawal)
-      this.setState({ daily, quantityPrecision: Utils.getPrecision(daily.minium) })
+      this.setState({ daily })
     } catch (err) {
       console.log("Some errors has occurred in  DailyLimit._error:", err)
     }

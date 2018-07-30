@@ -29,12 +29,13 @@ class WithdrawalKRWScreen extends BaseScreen {
       otpConfirm: false,
       agree: false,
       optErr: false,
-      quantityPrecision: 4,
+      quantityPrecision: 0,
     }
     this.currency = 'krw'
   }
 
   componentDidMount() {
+    super.componentDidMount()
     this._loadData()
   }
 
@@ -46,6 +47,7 @@ class WithdrawalKRWScreen extends BaseScreen {
   }
 
   componentWillUnmount() {
+    super.componentWillUnmount()
     this.setState({ isComplete: false, modalConfirm: false, amount: 0 })
   }
 
@@ -79,7 +81,7 @@ class WithdrawalKRWScreen extends BaseScreen {
 
       daily.withdrawalLimit = parseFloat(withdrawalLimit.daily_limit)
       daily.minium = parseFloat(withdrawalLimit.minium_withdrawal)
-      this.setState({ daily, quantityPrecision: Utils.getPrecision(daily.minium) })
+      this.setState({ daily })
     } catch (err) {
       console.log("Some errors has occurred in  DailyLimit._error:", err)
     }
