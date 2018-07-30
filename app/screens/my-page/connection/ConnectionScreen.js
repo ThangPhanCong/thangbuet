@@ -9,7 +9,7 @@ import {
 
 import BaseScreen from '../../BaseScreen';
 import rf from '../../../libs/RequestFactory';
-import { CommonStyles, Fonts } from '../../../utils/CommonStyles';
+import { CommonStyles, Fonts, CommonColors } from '../../../utils/CommonStyles';
 import I18n from '../../../i18n/i18n';
 import ScaledSheet from '../../../libs/reactSizeMatter/ScaledSheet';
 export default class ConnectionScreen extends BaseScreen {
@@ -231,6 +231,8 @@ const styles = ScaledSheet.create({
     backgroundColor: '#F8F9FB',
     paddingLeft: '10@s',
     paddingRight: '10@s',
+    borderColor: CommonColors.separator,
+    borderBottomWidth: '1@s'
   },
   valueItem: {
     fontSize: '12@s',
