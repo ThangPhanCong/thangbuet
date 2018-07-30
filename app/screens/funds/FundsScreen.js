@@ -1,5 +1,5 @@
 import React from 'react';
-import { Image, SafeAreaView, ScrollView, Text, TouchableOpacity, View } from 'react-native'
+import { Image, SafeAreaView, ScrollView, Text, TouchableOpacity, View, TouchableWithoutFeedback } from 'react-native'
 import BaseScreen from '../BaseScreen'
 import MasterdataUtils from '../../utils/MasterdataUtils'
 import ScaledSheet from '../../libs/reactSizeMatter/ScaledSheet'
@@ -10,7 +10,8 @@ import AppConfig from '../../utils/AppConfig'
 import { formatCurrency, formatPercent, getCurrencyName, formatPercentSpace } from '../../utils/Filters'
 import { CommonColors, CommonSize, CommonStyles, Fonts } from '../../utils/CommonStyles'
 import { scale } from "../../libs/reactSizeMatter/scalingUtils"
-import Modal from "react-native-modal"
+import UIUtils from "../../utils/UIUtils";
+import ModalHelp from "../common/ModalHelp";
 
 export default class FundsScreen extends BaseScreen {
 
@@ -21,7 +22,7 @@ export default class FundsScreen extends BaseScreen {
       amountTotal: 0,
       priceTotal: 0,
       yield: 0,
-      openHelp: false,
+      isShowModalHelp: false,
       symbolArr: []
     }
     this.currency = 'krw'
@@ -147,6 +148,20 @@ export default class FundsScreen extends BaseScreen {
     })
   }
 
+  _closeModalHelp() {
+    this.setState({ isShowModalHelp: false });
+  }
+
+  _renderModalHelp() {
+    const { isShowModalHelp } = this.state;
+    const helpContent = [I18n.t('funds.help1'), I18n.t('funds.help2'), I18n.t('funds.help3'), I18n.t('funds.help4'),
+      I18n.t('funds.help5'), I18n.t('funds.help6')];
+
+    return(
+      <ModalHelp isShowModalHelp = {isShowModalHelp} closeModalHelp={() => this._closeModalHelp()} helpContent={helpContent}/>
+    )
+  }
+
   render() {
     return (
       <SafeAreaView style={styles.fullScreen}>
@@ -182,16 +197,21 @@ export default class FundsScreen extends BaseScreen {
                 <Text style={styles.headerSymbol}>{I18n.t('funds.currency')}</Text>
               </View>
 
-              <View style={styles.iconHelp}>
-                <Icon name="help"
-                      size={scale(15)} />
-              </View>
+              <TouchableWithoutFeedback onPress={() => this.setState({ isShowModalHelp: true })}>
+                <View style={styles.iconHelp}>
+                  <Icon name="help"
+                        size={scale(15)} />
+                </View>
+              </TouchableWithoutFeedback>
+
               <View style={styles.infoRow}>
-                <TouchableOpacity
+                <TouchableWithoutFeedback
                   style={[styles.infoRowLeft, { flexDirection: 'row', justifyContent: 'flex-start' }]}
-                  onPress={() => this.setState({ openHelp: true })}>
-                  <Text style={[styles.fontNotoSansRegular, styles.headerText]}>{I18n.t('funds.ratingYeild')}</Text>
-                </TouchableOpacity>
+                  onPress={() => this.setState({ isShowModalHelp: true })}>
+                  <View>
+                    <Text style={[styles.fontNotoSansRegular, styles.headerText]}>{I18n.t('funds.ratingYeild')}</Text>
+                  </View>
+                </TouchableWithoutFeedback>
 
                 <Text
                   style={[styles.infoRowRight, styles.fontOpenSans, styles.headerNumber, { color: 'red' }]}>
@@ -255,32 +275,7 @@ export default class FundsScreen extends BaseScreen {
           </View>
         </View>
 
-        <Modal
-          animationType="slide"
-          transparent={false}
-          visible={this.state.openHelp}
-          onRequestClose={() => {
-          }}>
-          <SafeAreaView>
-            <View style={{ alignContent: 'flex-end', justifyContent: 'flex-end', borderBottomWidth: scale(1) }}>
-              <TouchableOpacity onPress={() => this.setState({ openHelp: false })}>
-                <Icon name="close" size={scale(20)} />
-              </TouchableOpacity>
-            </View>
-            <Text style={styles.modalLine}>{I18n.t('funds.help1')}</Text>
-            <Text style={styles.modalLine}>{I18n.t('funds.help2')}</Text>
-            <Text style={styles.modalLine}>{I18n.t('funds.help3')}</Text>
-            <Text style={styles.modalLine}>{I18n.t('funds.help4')}</Text>
-            <Text style={styles.modalLine}>{I18n.t('funds.help5')}</Text>
-            <Text style={styles.modalLine}>{I18n.t('funds.help6')}</Text>
-
-            <TouchableOpacity
-              onPress={() => this.setState({ openHelp: false })}
-              style={styles.executeBtn}>
-              <Text style={styles.executeBtnText}>{I18n.t('funds.helpBtn')}</Text>
-            </TouchableOpacity>
-          </SafeAreaView>
-        </Modal>
+        {this._renderModalHelp()}
 
       </SafeAreaView>
     )
@@ -340,15 +335,6 @@ const styles = ScaledSheet.create({
     marginBottom: '20@s', marginTop: '10@s'
   },
   headerModalTitle: { fontSize: '12@s', ...Fonts.NanumGothic_Regular },
-  modalLine: {
-    ...Fonts.OpenSans, fontSize: '12@s', textAlign: 'left',
-    width: '100%', lineHeight: '20@s', paddingLeft: '10@s', paddingRight: '10@s'
-  },
-  executeBtn: {
-    width: '70%', justifyContent: 'center', backgroundColor: 'rgba(0, 112, 192, 1)', height: '35@s',
-    margin: '20@s', borderRadius: '4@s',
-  },
-  executeBtnText: { color: 'white', fontSize: '12@s', textAlign: 'center', ...Fonts.NanumGothic_Regular },
   profitPercentFunds: {
     flex: 0.5,
     fontSize: '12@s',
@@ -371,5 +357,6 @@ const styles = ScaledSheet.create({
   fontAssetStatus: {
     ...Fonts.NotoSans_Regular,
     fontWeight: 'bold'
-  }
+  },
+
 })
