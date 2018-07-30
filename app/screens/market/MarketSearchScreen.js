@@ -279,7 +279,7 @@ class MarketSearchScreen extends BaseScreen {
   async _searchList(searchText) {
     try {
       let symbolResponse = await rf.getRequest('MasterdataRequest').getAll();
-      let rawSymbols = symbolResponse.coin_settings;
+      let rawSymbols = filter(symbolResponse.coin_settings, e => e.currency === 'krw'); // only krw base
       rawSymbols.map(symbol => {
         symbol.coinPair = symbol.coin.toUpperCase() + '/' + symbol.currency.toUpperCase();
         symbol.noSeparatorCoinPair = symbol.coin + symbol.currency;
@@ -343,6 +343,7 @@ const styles = ScaledSheet.create({
   searchViewContainer: {
     flex: 3,
     justifyContent: 'center',
+    marginStart: '10@s',
     marginEnd: '16@s'
   },
   iconContainer: {
