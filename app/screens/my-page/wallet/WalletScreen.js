@@ -24,8 +24,6 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import ScaledSheet from '../../../libs/reactSizeMatter/ScaledSheet';
 import { scale } from '../../../libs/reactSizeMatter/scalingUtils';
 import UIUtils from "../../../utils/UIUtils";
-import MasterdataUtils from "../../../utils/MasterdataUtils";
-import AppConfig from "../../../utils/AppConfig";
 
 export default class WalletScreen extends BaseScreen {
 

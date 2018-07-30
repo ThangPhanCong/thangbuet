@@ -47,11 +47,8 @@ class WithdrawalScreen extends BaseScreen {
   async _getBalaceDetail() {
     const { navigation } = this.props;
     let symbol = navigation.getParam('symbol', {})
-    console.log('symbollllllllll', symbol)
     const res = await rf.getRequest('UserRequest').getDetailsBalance(symbol.code)
-    // console.log('res.data', res.data)
     symbol = Object.assign({}, symbol, res.data)
-    console.log('symbollllllllll222222222222', symbol)
     this.currency = symbol.code
     this.setState({
       symbol,
