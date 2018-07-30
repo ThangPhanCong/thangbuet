@@ -24,6 +24,8 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import ScaledSheet from '../../../libs/reactSizeMatter/ScaledSheet';
 import { scale } from '../../../libs/reactSizeMatter/scalingUtils';
 import UIUtils from "../../../utils/UIUtils";
+import MasterdataUtils from "../../../utils/MasterdataUtils";
+import AppConfig from "../../../utils/AppConfig";
 
 export default class WalletScreen extends BaseScreen {
 
@@ -42,7 +44,7 @@ export default class WalletScreen extends BaseScreen {
       wallets: [],
       isLoading: false,
       selectedCoinType: '',
-
+      listCoin: {},
       newWalletParams: {},
 
       addNewWalletDialogVisible: false,
@@ -54,6 +56,11 @@ export default class WalletScreen extends BaseScreen {
     super.componentWillMount()
     this._loadWallets();
     this._getAvailableCoins();
+  }
+
+  componentDidMount() {
+    super.componentDidMount()
+    this._getListCoin()
   }
 
   render() {
@@ -350,12 +357,17 @@ export default class WalletScreen extends BaseScreen {
     this.setState({ addNewWalletDialogVisible: true })
   }
 
-  _onAddNewWallet() {
+  async _onAddNewWallet() {
+    let checked = true;
+    // checked ? this._addWallet(); :
     this._addWallet();
   }
 
   _onWithdraw(wallet) {
     // Navigate to withdraw screen
+    let coin = wallet.coin;
+    let symbol = {...wallet, ...this.state.listCoin[coin], code: coin};
+    this.props.screenProps.navigation.navigate('Withdrawal', {symbol});
   }
 
   _onShowRemoveWalletConfirmation(wallet) {
@@ -455,6 +467,11 @@ export default class WalletScreen extends BaseScreen {
     catch (err) {
       console.log('WalletScreen._getAvailableCoins', err);
     }
+  }
+
+  async _getListCoin(){
+    const responseBalance = await rf.getRequest('UserRequest').getBalance();
+    this.setState({listCoin: responseBalance.data});
   }
 }
 

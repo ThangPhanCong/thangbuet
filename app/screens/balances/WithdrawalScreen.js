@@ -47,12 +47,17 @@ class WithdrawalScreen extends BaseScreen {
   async _getBalaceDetail() {
     const { navigation } = this.props;
     let symbol = navigation.getParam('symbol', {})
-    console.log('symbol', symbol)
+    console.log('symbollllllllll', symbol)
     const res = await rf.getRequest('UserRequest').getDetailsBalance(symbol.code)
-    console.log('res.data', res.data)
+    // console.log('res.data', res.data)
     symbol = Object.assign({}, symbol, res.data)
+    console.log('symbollllllllll222222222222', symbol)
     this.currency = symbol.code
-    this.setState({ symbol })
+    this.setState({
+      symbol,
+      blockchainAddress: symbol.wallet_address ? symbol.wallet_address : "",
+      blockchainTag: symbol.tag ? symbol.tag : ""
+    })
   }
 
   componentWillUnmount() {
@@ -644,7 +649,10 @@ const styles = ScaledSheet.create({
     textAlign: 'right',
     opacity: 0.7,
     textAlignVertical: 'bottom',
-    lineHeight: '0.1@s'
+    lineHeight: '0.1@s',
+    paddingRight: '16@s',
+    paddingLeft: '16@s',
+
   },
   confirmBtn: {
     marginTop: '20@s',
