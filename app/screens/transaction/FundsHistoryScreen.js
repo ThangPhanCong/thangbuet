@@ -390,7 +390,6 @@ const styles = ScaledSheet.create({
   },
   textSearch: {
     fontSize: '12@s',
-    ...Fonts.NotoSans,
     color: CommonColors.mainText
   },
   itemContainer: {
