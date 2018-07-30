@@ -14,7 +14,7 @@ import { Card } from 'react-native-elements'
 import Modal from 'react-native-modal';
 import BaseScreen from '../../BaseScreen';
 import rf from '../../../libs/RequestFactory';
-import { CommonStyles, Fonts } from '../../../utils/CommonStyles';
+import { CommonStyles, Fonts, CommonColors } from '../../../utils/CommonStyles';
 import Utils from '../../../utils/Utils';
 import I18n from '../../../i18n/i18n';
 import { map, filter } from 'lodash';
@@ -526,6 +526,8 @@ const styles = ScaledSheet.create({
     backgroundColor: '#F8F9FB',
     paddingLeft: '10@s',
     paddingRight: '10@s',
+    borderColor: CommonColors.separator,
+    borderBottomWidth: '1@s'
   },
   valueItem: {
     fontSize: '12@s',
