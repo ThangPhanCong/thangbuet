@@ -30,7 +30,7 @@ export default class OpenOrders extends BaseScreen {
     try {
       const { coin, currency } = this.props;
       const { page, orders } = this.state;
-      const params = { coin, currency, page };
+      const params = { coin, currency, page: clearData ? 1 : page };
 
       const responseOrders = await rf.getRequest('OrderRequest').getOrdersPending(params);
       const newOrders = clearData ? responseOrders.data.data : [...orders, ...responseOrders.data.data];
@@ -80,7 +80,6 @@ export default class OpenOrders extends BaseScreen {
       // }
       // ids.forEach(async id => await rf.getRequest('OrderRequest').cancel(id));
       const orderFilter = this.state.orders.filter((item) => !ids.includes(item.id));
-
       this.setState({ orders: orderFilter });
     } catch (err) {
       console.log("CancelOrder._error:", err)
