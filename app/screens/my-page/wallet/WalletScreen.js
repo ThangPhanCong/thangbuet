@@ -45,6 +45,7 @@ export default class WalletScreen extends BaseScreen {
       isLoading: false,
       selectedCoinType: '',
       listCoin: {},
+      addressIncorrect: '',
       newWalletParams: {},
 
       addNewWalletDialogVisible: false,
@@ -231,6 +232,7 @@ export default class WalletScreen extends BaseScreen {
                          }
                        })
                      }/>
+          <Text style={styles.addressIncorrect}>{this.state.addressIncorrect}</Text>
 
           <Animated.View>
             {
@@ -359,8 +361,7 @@ export default class WalletScreen extends BaseScreen {
 
   async _onAddNewWallet() {
     let checked = true;
-    // checked ? this._addWallet(); :
-    this._addWallet();
+    checked ? this._addWallet() : this.setState({ addressIncorrect: I18n.t('myPage.wallet.addressIncorrect') })
   }
 
   _onWithdraw(wallet) {
@@ -675,5 +676,12 @@ const styles = ScaledSheet.create({
     position: 'absolute',
     right: '15@s',
     bottom: '20@s',
+  },
+  addressIncorrect: {
+    color: 'red',
+    fontSize: '12@s',
+    marginLeft: '18@s',
+    lineHeight: '22@s',
+    ...Fonts.NotoSans_Regular,
   }
 });

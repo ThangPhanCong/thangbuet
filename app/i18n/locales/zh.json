@@ -541,7 +541,8 @@
       "destination": "데스티네이션",
       "addNewWalletSubmit": "입출금 계좌 등록",
       "removeConfirmDesc": "'{0}' 을 삭제하시겠습니까",
-      "removeConfirm": "확인"
+      "removeConfirm": "확인",
+      "addressIncorrect":"Wallet address is not correct"
     },
     "logout": "로그아웃"
   },
