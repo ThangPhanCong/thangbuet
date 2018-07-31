@@ -40,7 +40,7 @@ const TabBarNavigator = TabNavigator({
     })
   },
   WalletScreen: {
-    screen: WalletScreen,
+    screen: props => <WalletScreen {...props}  />,
     navigationOptions: () => ({
       tabBarLabel: options => UIUtils.renderTabItem(I18n.t('myPage.tab.wallet'), {fontSize: 14, ...options}, false)
     })
@@ -59,7 +59,7 @@ export default class MyPageScreen extends BaseScreen {
     return(
       <SafeAreaView style={styles.screen}>
         {this._renderHeader()}
-        <TabBarNavigator/>
+        <TabBarNavigator screenProps={{navigation: this.props.navigation}}/>
       </SafeAreaView>
     )
   }

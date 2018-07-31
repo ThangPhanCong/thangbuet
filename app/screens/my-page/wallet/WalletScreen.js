@@ -42,7 +42,8 @@ export default class WalletScreen extends BaseScreen {
       wallets: [],
       isLoading: false,
       selectedCoinType: '',
-
+      listCoin: {},
+      addressIncorrect: '',
       newWalletParams: {},
 
       addNewWalletDialogVisible: false,
@@ -54,6 +55,11 @@ export default class WalletScreen extends BaseScreen {
     super.componentWillMount()
     this._loadWallets();
     this._getAvailableCoins();
+  }
+
+  componentDidMount() {
+    super.componentDidMount()
+    this._getListCoin()
   }
 
   render() {
@@ -224,6 +230,7 @@ export default class WalletScreen extends BaseScreen {
                          }
                        })
                      }/>
+          <Text style={styles.addressIncorrect}>{this.state.addressIncorrect}</Text>
 
           <Animated.View>
             {
@@ -350,12 +357,16 @@ export default class WalletScreen extends BaseScreen {
     this.setState({ addNewWalletDialogVisible: true })
   }
 
-  _onAddNewWallet() {
-    this._addWallet();
+  async _onAddNewWallet() {
+    let checked = true;
+    checked ? this._addWallet() : this.setState({ addressIncorrect: I18n.t('myPage.wallet.addressIncorrect') })
   }
 
   _onWithdraw(wallet) {
     // Navigate to withdraw screen
+    let coin = wallet.coin;
+    let symbol = {...wallet, ...this.state.listCoin[coin], code: coin};
+    this.props.screenProps.navigation.navigate('Withdrawal', {symbol});
   }
 
   _onShowRemoveWalletConfirmation(wallet) {
@@ -455,6 +466,11 @@ export default class WalletScreen extends BaseScreen {
     catch (err) {
       console.log('WalletScreen._getAvailableCoins', err);
     }
+  }
+
+  async _getListCoin(){
+    const responseBalance = await rf.getRequest('UserRequest').getBalance();
+    this.setState({listCoin: responseBalance.data});
   }
 }
 
@@ -658,5 +674,12 @@ const styles = ScaledSheet.create({
     position: 'absolute',
     right: '15@s',
     bottom: '20@s',
+  },
+  addressIncorrect: {
+    color: 'red',
+    fontSize: '12@s',
+    marginLeft: '18@s',
+    lineHeight: '22@s',
+    ...Fonts.NotoSans_Regular,
   }
 });
