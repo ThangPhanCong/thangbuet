@@ -72,15 +72,15 @@ export default class OpenOrders extends BaseScreen {
     try {
       const { ids } = this.state;
 
-      await Promise.all(ids.map(async (id) => {
-        await rf.getRequest('OrderRequest').cancel(id);
+      await Promise.all(ids.map( (id) => {
+         rf.getRequest('OrderRequest').cancel(id);
       }));
       // for(let i = 0; i < ids.length; i++) {
       //   await rf.getRequest('OrderRequest').cancel(ids[i]);
       // }
       // ids.forEach(async id => await rf.getRequest('OrderRequest').cancel(id));
       const orderFilter = this.state.orders.filter((item) => !ids.includes(item.id));
-      this.setState({ orders: orderFilter });
+      this.setState({ orders: orderFilter, ids: [] });
     } catch (err) {
       console.log("CancelOrder._error:", err)
     }
