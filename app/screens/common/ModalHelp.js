@@ -51,11 +51,10 @@ const styles = ScaledSheet.create({
     marginStart: '5@s',
     marginEnd: '5@s',
     padding: 0,
-    height: '310@s',
     ...UIUtils.generateShadowStyle(5),
   },
   viewCardOpenHelp: {
-    marginRight: '20@s', marginLeft: '20@s'
+    marginRight: '20@s', marginLeft: '20@s', marginBottom: '15@s'
   },
   modalLine: {
     ...Fonts.OpenSans, fontSize: '12@s', textAlign: 'left',

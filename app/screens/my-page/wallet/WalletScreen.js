@@ -596,7 +596,8 @@ const styles = ScaledSheet.create({
     borderRadius: '5@s',
     padding: 0,
     marginStart: '30@s',
-    marginEnd: '30@s'
+    marginEnd: '30@s',
+    ...UIUtils.generatePopupShadow()
   },
   removeWallet: {
     marginTop: '20@s',
