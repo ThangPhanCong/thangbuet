@@ -257,6 +257,8 @@ const styles = ScaledSheet.create({
   },
   otpInput: {
     flex: 2,
+    paddingLeft: '16@s',
+    paddingRight: '16@s',
     height: '40@s',
     borderRadius: '5@s',
     borderWidth: '1@s',

@@ -609,10 +609,10 @@ const styles = ScaledSheet.create({
     height: '30@s',
     textAlign: 'right',
     paddingRight: '5@s',
-    fontSize: '13@s',
+    fontSize: '12@s',
     ...Fonts.NanumGothic_Regular
   },
-  amountSymbol: { ...Fonts.NanumGothic_Regular, fontSize: '12@s', marginRight: '10@s', marginBottom: '2@s' },
+  amountSymbol: { ...Fonts.NanumGothic_Regular, fontSize: '12@s', marginRight: '10@s' },
   amountMax: {
     borderLeftWidth: '1@s', borderColor: "rgba(0, 0, 0, 0.3)", height: '30@s', justifyContent: 'center', padding: '5@s',
     backgroundColor: '#fafafa'
@@ -625,10 +625,9 @@ const styles = ScaledSheet.create({
     flex: 1,
     height: '30@s',
     textAlign: 'right',
-    opacity: 0.7,
     paddingRight: '16@s',
     paddingLeft: '16@s',
-    fontSize: '13@s',
+    fontSize: '12@s',
     ...Fonts.NanumGothic_Regular
   },
   tagWrapper: {
@@ -642,14 +641,13 @@ const styles = ScaledSheet.create({
   },
   tagInput: {
     flex: 1,
+    alignItems: 'center',
     height: '30@s',
     textAlign: 'right',
-    opacity: 0.7,
-    textAlignVertical: 'bottom',
-    lineHeight: '0.1@s',
     paddingRight: '16@s',
     paddingLeft: '16@s',
-
+    fontSize: '12@s',
+    ...Fonts.NanumGothic_Regular
   },
   confirmBtn: {
     marginTop: '20@s',

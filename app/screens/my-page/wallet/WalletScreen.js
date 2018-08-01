@@ -382,7 +382,8 @@ export default class WalletScreen extends BaseScreen {
     this.state.selectedCoinType = '';
     this.setState({
       newWalletParams: {},
-      addNewWalletDialogVisible: false
+      addNewWalletDialogVisible: false,
+      addressIncorrect: "",
     })
   }
 
@@ -437,7 +438,8 @@ export default class WalletScreen extends BaseScreen {
       this.setState({
         newWalletParams: {},
         wallets,
-        addNewWalletDialogVisible: false
+        addNewWalletDialogVisible: false,
+        addressIncorrect: ""
       });
     }
     catch (err) {
@@ -596,7 +598,8 @@ const styles = ScaledSheet.create({
     borderRadius: '5@s',
     padding: 0,
     marginStart: '30@s',
-    marginEnd: '30@s'
+    marginEnd: '30@s',
+    ...UIUtils.generatePopupShadow()
   },
   removeWallet: {
     marginTop: '20@s',
