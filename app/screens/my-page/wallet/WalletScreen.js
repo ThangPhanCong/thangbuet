@@ -358,8 +358,19 @@ export default class WalletScreen extends BaseScreen {
   }
 
   async _onAddNewWallet() {
-    let checked = true;
-    checked ? this._addWallet() : this.setState({ addressIncorrect: I18n.t('myPage.wallet.addressIncorrect') })
+    let coin = this.state.selectedCoinType.toLowerCase();
+    let address = this.state.newWalletParams.wallet_address;
+    let url = `https://validate-sotatek.herokuapp.com/check/${coin}/${address}`;
+    // let url = `http://wallet.sotatek.com/api/${coin}/addr_validation/${addr}`;
+    let response = await fetch(url);
+    if (response.status == 200){
+      response.json().then(data => {
+        (data.validate == true) ? this._addWallet() : this.setState({ addressIncorrect: I18n.t('myPage.wallet.addressIncorrect') })
+      })
+    } else {
+      this._addWallet()
+    }
+
   }
 
   _onWithdraw(wallet) {
@@ -382,7 +393,8 @@ export default class WalletScreen extends BaseScreen {
     this.state.selectedCoinType = '';
     this.setState({
       newWalletParams: {},
-      addNewWalletDialogVisible: false
+      addNewWalletDialogVisible: false,
+      addressIncorrect: "",
     })
   }
 
@@ -437,7 +449,8 @@ export default class WalletScreen extends BaseScreen {
       this.setState({
         newWalletParams: {},
         wallets,
-        addNewWalletDialogVisible: false
+        addNewWalletDialogVisible: false,
+        addressIncorrect: ""
       });
     }
     catch (err) {
