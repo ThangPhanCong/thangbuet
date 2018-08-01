@@ -358,19 +358,8 @@ export default class WalletScreen extends BaseScreen {
   }
 
   async _onAddNewWallet() {
-    let coin = this.state.selectedCoinType.toLowerCase();
-    let address = this.state.newWalletParams.wallet_address;
-    // let url = `https://validate-sotatek.herokuapp.com/check/${coin}/${address}`;
-    let url = `http://wallet.sotatek.com/api/${coin}/addr_validation/${addr}`;
-    let response = await fetch(url);
-    if (response.status == 200){
-      response.json().then(data => {
-        (data.validate == true) ? this._addWallet() : this.setState({ addressIncorrect: I18n.t('myPage.wallet.addressIncorrect') })
-      })
-    } else {
-      this._addWallet()
-    }
-
+    let checked = true;
+    checked ? this._addWallet() : this.setState({ addressIncorrect: I18n.t('myPage.wallet.addressIncorrect') })
   }
 
   _onWithdraw(wallet) {
