@@ -7,8 +7,8 @@ export default class BaseScreen extends React.Component {
     header: null
   };
 
-  _didFocusSubscription;
-  _willBlurSubscription;
+  // _didFocusSubscription;
+  // _willBlurSubscription;
 
   constructor(props) {
     super(props);
@@ -22,13 +22,13 @@ export default class BaseScreen extends React.Component {
   }
 
   componentWillMount() {
-    if (Platform.OS === 'android' && this.props.navigation) {
-      this._didFocusSubscription = this.props.navigation.addListener('didFocus', payload => {
-        //console.log("payload", BackHandler)
-        return BackHandler.addEventListener('hardwareBackPress', this.onBackButtonPressAndroid.bind(this))
-      }
-      );
-    }
+    // if (Platform.OS === 'android' && this.props.navigation) {
+    //   this._didFocusSubscription = this.props.navigation.addListener('didFocus', payload => {
+    //     //console.log("payload", BackHandler)
+    //     return BackHandler.addEventListener('hardwareBackPress', this.onBackButtonPressAndroid.bind(this))
+    //   }
+    //   );
+    // }
   }
 
   componentDidMount() {
@@ -44,13 +44,13 @@ export default class BaseScreen extends React.Component {
       window.EventBus.bind(event, handler);
     }
 
-    if (Platform.OS === 'android' && this.props.navigation) {
-      this._willBlurSubscription = this.props.navigation.addListener('willBlur', payload => {
-        //console.log("payload willBlur", payload)
-        return BackHandler.removeEventListener('hardwareBackPress', this.onBackButtonPressAndroid.bind(this))
-      }
-      );
-    }
+    // if (Platform.OS === 'android' && this.props.navigation) {
+    //   this._willBlurSubscription = this.props.navigation.addListener('willBlur', payload => {
+    //     //console.log("payload willBlur", payload)
+    //     return BackHandler.removeEventListener('hardwareBackPress', this.onBackButtonPressAndroid.bind(this))
+    //   }
+    //   );
+    // }
   }
 
   componentWillUnmount() {
@@ -66,10 +66,10 @@ export default class BaseScreen extends React.Component {
       window.EventBus.unbind(event, handler);
     }
 
-    if (Platform.OS === 'android') {
-      this._didFocusSubscription && this._didFocusSubscription.remove();
-      this._willBlurSubscription && this._willBlurSubscription.remove();
-    }
+    // if (Platform.OS === 'android') {
+    //   this._didFocusSubscription && this._didFocusSubscription.remove();
+    //   this._willBlurSubscription && this._willBlurSubscription.remove();
+    // }
   }
 
   getSocketEventHandlers() {
@@ -84,21 +84,21 @@ export default class BaseScreen extends React.Component {
     window.EventBus.notify(event, data);
   }
 
-  onBackButtonPressAndroid() {
-    const mainScreens = ['LoginScreen', 'MarketScreenKRW', 'MarketScreenBTC', 'MarketScreenETH']
-    let index = mainScreens.indexOf(this.props.navigation.state.routeName);
+  // onBackButtonPressAndroid() {
+    // const mainScreens = ['LoginScreen', 'MainScreen']
+    // let index = mainScreens.indexOf(this.props.navigation.state.routeName);
 
-    if (this.props.navigation.isFocused && this.props.navigation.isFocused() && index != -1) {
-      ToastAndroid.showWithGravity(
-        I18n.t('exit.content'),
-        ToastAndroid.SHORT,
-        ToastAndroid.BOTTOM
-      );
+    // if (this.props.navigation.isFocused && this.props.navigation.isFocused() && index != -1) {
+    //   ToastAndroid.showWithGravity(
+    //     I18n.t('exit.content'),
+    //     ToastAndroid.SHORT,
+    //     ToastAndroid.BOTTOM
+    //   );
 
-      BackHandler.addEventListener('hardwareBackPress', () => BackHandler.exitApp())
-      return true
-    } else {
-      return false
-    }
-  };
+    //   BackHandler.exitApp();
+    //   return true
+    // } else {
+    //   return false
+    // }
+  // };
 }
