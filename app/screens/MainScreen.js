@@ -1,6 +1,6 @@
 import React from 'react';
-import { SafeAreaView, Platform, ToastAndroid } from 'react-native';
-import { TabNavigator, TabBarBottom, StackNavigator, NavigationActions } from 'react-navigation';
+import { SafeAreaView } from 'react-native';
+import { TabNavigator, TabBarBottom, StackNavigator } from 'react-navigation';
 import I18n from "../i18n/i18n";
 import { Image } from 'react-native';
 import TradingScreen from './trade/TradingScreen'
@@ -15,8 +15,7 @@ import WithdrawalScreen from './balances/WithdrawalScreen'
 import { scale } from '../libs/reactSizeMatter/scalingUtils';
 import MarketSearchScreen from './market/MarketSearchScreen';
 import BaseScreen from './BaseScreen';
-import { isEmpty } from 'lodash';
-import App from '../../App';
+import { handleBackAction } from '../../App';
 
 export const BalanceStack = StackNavigator({
   Balance: {
@@ -120,55 +119,11 @@ let MainTabNavigator = TabNavigator(
   }
 )
 
-let defaultGetStateForAction;
-
 export default class MainScreen extends BaseScreen {
-  _lastTimeBackPress = 0;
-
   componentDidMount() {
     super.componentDidMount();
 
-    if (!defaultGetStateForAction) {
-      defaultGetStateForAction = App.router.getStateForAction;
-    }
-
-    const mainScreen = ['LoginScreen', 'MainScreen'];
-
-    if (Platform.OS === 'android') {
-      App.router.getStateForAction = (action, state) => {
-        if (
-          action.type === NavigationActions.BACK &&
-          state.routes && !isEmpty(state.routes) &&
-          mainScreen.indexOf(state.routes[state.index].routeName) >= 0
-        ) {
-          let now = new Date().getTime();
-          if (this._lastTimeBackPress > 0 && now - this._lastTimeBackPress <= 500) {
-            return null;
-          }
-
-          if (this._lastTimeBackPress == 0)
-            this._lastTimeBackPress = now;
-          else
-            this._lastTimeBackPress = 0;
-
-          ToastAndroid.showWithGravity(
-            I18n.t('exit.content'),
-            ToastAndroid.SHORT,
-            ToastAndroid.BOTTOM
-          );
-    
-          return defaultGetStateForAction({
-            type: 'Navigation/COMPLETE_TRANSITION',
-            key: 'StackRouterRoot'
-          }, {
-            ...state,
-            isTransitioning: true
-          });
-        }
-
-        return defaultGetStateForAction(action, state);
-      };
-    }
+    handleBackAction();
   }
 
   render() {
