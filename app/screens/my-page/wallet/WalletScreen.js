@@ -25,7 +25,6 @@ import ScaledSheet from '../../../libs/reactSizeMatter/ScaledSheet';
 import { scale } from '../../../libs/reactSizeMatter/scalingUtils';
 import UIUtils from "../../../utils/UIUtils";
 import { changeAddressInput } from "./ValidateAddress";
-import { debounce } from "throttle-debounce";
 
 export default class WalletScreen extends BaseScreen {
 
@@ -51,7 +50,6 @@ export default class WalletScreen extends BaseScreen {
       addNewWalletDialogVisible: false,
       removeWalletDialogVisible: false
     }
-    // this.changeAddressInput = debounce(300, this.checkAddress);
   }
 
   componentWillMount() {
