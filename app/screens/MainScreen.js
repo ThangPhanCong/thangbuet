@@ -1,8 +1,8 @@
 import React from 'react';
-import { TabNavigator, TabBarBottom, StackNavigator } from 'react-navigation';
+import { SafeAreaView, Platform, ToastAndroid } from 'react-native';
+import { TabNavigator, TabBarBottom, StackNavigator, NavigationActions } from 'react-navigation';
 import I18n from "../i18n/i18n";
-import Icon from 'react-native-vector-icons/FontAwesome';
-import { Image, PixelRatio } from 'react-native';
+import { Image } from 'react-native';
 import TradingScreen from './trade/TradingScreen'
 import FundsScreen from './funds/FundsScreen'
 import TransactionScreen from './transaction/TransactionScreen'
@@ -13,6 +13,10 @@ import DepositKRWScreen from './balances/DepositKRWScreen'
 import WithdrawalKRWScreen from './balances/WithdrawalKRWScreen'
 import WithdrawalScreen from './balances/WithdrawalScreen'
 import { scale } from '../libs/reactSizeMatter/scalingUtils';
+import MarketSearchScreen from './market/MarketSearchScreen';
+import BaseScreen from './BaseScreen';
+import { isEmpty } from 'lodash';
+import App from '../../App';
 
 export const BalanceStack = StackNavigator({
   Balance: {
@@ -41,9 +45,7 @@ export const MarketStack = StackNavigator({
   }
 });
 
-import MarketSearchScreen from './market/MarketSearchScreen';
-
-export default TabNavigator(
+let MainTabNavigator = TabNavigator(
   {
     MarketSearchScreen: {
       screen: MarketStack,
@@ -116,4 +118,64 @@ export default TabNavigator(
     swipeEnabled: false,
     initialRouteName: 'MarketSearchScreen',
   }
-);
+)
+
+let defaultGetStateForAction;
+
+export default class MainScreen extends BaseScreen {
+  _lastTimeBackPress = 0;
+
+  componentDidMount() {
+    super.componentDidMount();
+
+    if (!defaultGetStateForAction) {
+      defaultGetStateForAction = App.router.getStateForAction;
+    }
+
+    const mainScreen = ['LoginScreen', 'MainScreen'];
+
+    if (Platform.OS === 'android') {
+      App.router.getStateForAction = (action, state) => {
+        if (
+          action.type === NavigationActions.BACK &&
+          state.routes && !isEmpty(state.routes) &&
+          mainScreen.indexOf(state.routes[state.index].routeName) >= 0
+        ) {
+          let now = new Date().getTime();
+          if (this._lastTimeBackPress > 0 && now - this._lastTimeBackPress <= 500) {
+            return null;
+          }
+
+          if (this._lastTimeBackPress == 0)
+            this._lastTimeBackPress = now;
+          else
+            this._lastTimeBackPress = 0;
+
+          ToastAndroid.showWithGravity(
+            I18n.t('exit.content'),
+            ToastAndroid.SHORT,
+            ToastAndroid.BOTTOM
+          );
+    
+          return defaultGetStateForAction({
+            type: 'Navigation/COMPLETE_TRANSITION',
+            key: 'StackRouterRoot'
+          }, {
+            ...state,
+            isTransitioning: true
+          });
+        }
+
+        return defaultGetStateForAction(action, state);
+      };
+    }
+  }
+
+  render() {
+    return (
+      <SafeAreaView style={{flex: 1}}>
+        <MainTabNavigator/>
+      </SafeAreaView>
+    )
+  }
+}

@@ -60,5 +60,7 @@ async function initMasterdata() {
   return await MasterdataUtils.loadData();
 }
 
-export default App = StackNavigator(Screens, { headerMode: 'screen' });
+const App = StackNavigator(Screens, { headerMode: 'screen' })
+
+export default App;
 export { initApp };
