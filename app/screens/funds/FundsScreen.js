@@ -155,10 +155,10 @@ export default class FundsScreen extends BaseScreen {
   _renderModalHelp() {
     const { isShowModalHelp } = this.state;
     const helpContent = [I18n.t('funds.help1'), I18n.t('funds.help2'), I18n.t('funds.help3'), I18n.t('funds.help4'),
-      I18n.t('funds.help5'), I18n.t('funds.help6')];
+    I18n.t('funds.help5'), I18n.t('funds.help6')];
 
-    return(
-      <ModalHelp isShowModalHelp = {isShowModalHelp} closeModalHelp={() => this._closeModalHelp()} helpContent={helpContent}/>
+    return (
+      <ModalHelp isShowModalHelp={isShowModalHelp} closeModalHelp={() => this._closeModalHelp()} helpContent={helpContent} />
     )
   }
 
@@ -173,16 +173,16 @@ export default class FundsScreen extends BaseScreen {
                 resizeMode="contain"
                 style={styles.iconLogo}
                 source={require('../../../assets/funds/fundLogo.png')} />
-              <Text style={[styles.fontAssetStatus, styles.headerSize14, {marginLeft: scale(5)}]}>{I18n.t('funds.assetStatus')}</Text>
+              <Text style={[styles.fontAssetStatus, styles.headerSize14, { marginLeft: scale(5) }]}>{I18n.t('funds.assetStatus')}</Text>
             </View>
             <View style={styles.info}>
               <View style={styles.infoRow}>
                 <Text
-                  style={[{flex: 1}, styles.fontNotoSansRegular, styles.headerText]}>
+                  style={[{ flex: 1 }, styles.fontNotoSansRegular, styles.headerText]}>
                   {I18n.t('funds.totalNumberOfCoin')}
                 </Text>
                 <Text style={[styles.infoRowRight, styles.fontOpenSans, styles.headerNumber]}>
-                  {formatCurrency(this.state.amountTotal, this.currency)}
+                  {formatCurrency(this.state.amountTotal, this.currency, 0)}
                 </Text>
                 <Text style={styles.headerSymbol}>{I18n.t('funds.currency')}</Text>
               </View>
@@ -192,7 +192,7 @@ export default class FundsScreen extends BaseScreen {
                   {I18n.t('funds.coinValuation')}
                 </Text>
                 <Text style={[styles.infoRowRight, styles.fontOpenSans, styles.headerNumber, { color: 'red' }]}>
-                  {formatCurrency(this.state.priceTotal, this.currency)}
+                  {formatCurrency(this.state.priceTotal, this.currency, 0)}
                 </Text>
                 <Text style={styles.headerSymbol}>{I18n.t('funds.currency')}</Text>
               </View>
@@ -200,7 +200,7 @@ export default class FundsScreen extends BaseScreen {
               <TouchableWithoutFeedback onPress={() => this.setState({ isShowModalHelp: true })}>
                 <View style={styles.iconHelp}>
                   <Icon name="help"
-                        size={scale(15)} />
+                    size={scale(15)} />
                 </View>
               </TouchableWithoutFeedback>
 
@@ -246,16 +246,16 @@ export default class FundsScreen extends BaseScreen {
                     </Text>
                     <Text style={[
                       styles.profitPercentFunds, styles.rowNumber,
-                      symbol.yield === 0 ? styles.profitZero: symbol.yield > 0 ?  styles.profitIncreased : styles.profitDecreased
+                      symbol.yield === 0 ? styles.profitZero : symbol.yield > 0 ? styles.profitIncreased : styles.profitDecreased
                     ]}>
                       {symbol.code !== "krw" && formatPercentSpace(symbol.yield)}
                     </Text>
                     <Text
                       style={[styles.valuationFunds,
-                        styles.marginRight10, styles.rowNumber,
-                        symbol.yield === 0 ? styles.profitZero: symbol.yield > 0 ?  styles.profitIncreased : styles.profitDecreased,
-                        symbol.code === 'krw' ? { color: 'black' } : {}]}>
-                      {formatCurrency(parseFloat(symbol.balance * symbol.price), this.currency)}
+                      styles.marginRight10, styles.rowNumber,
+                      symbol.yield === 0 ? styles.profitZero : symbol.yield > 0 ? styles.profitIncreased : styles.profitDecreased,
+                      symbol.code === 'krw' ? { color: 'black' } : {}]}>
+                      {formatCurrency(parseFloat(symbol.balance * symbol.price), this.currency, 0)}
                     </Text>
                   </View>
                 ))
@@ -270,7 +270,7 @@ export default class FundsScreen extends BaseScreen {
               {formatPercentSpace(this.state.yield)}
             </Text>
             <Text style={[{ flex: 1 }, styles.footerNumer, styles.marginRight10]}>
-              {formatCurrency(this.state.priceTotal, this.currency)}
+              {formatCurrency(this.state.priceTotal, this.currency, 0)}
             </Text>
           </View>
         </View>

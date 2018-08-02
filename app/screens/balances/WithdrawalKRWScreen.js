@@ -10,6 +10,9 @@ import { Divider } from 'react-native-elements'
 import Modal from "react-native-modal"
 import { Fonts } from '../../utils/CommonStyles'
 import { scale } from "../../libs/reactSizeMatter/scalingUtils";
+import OrderUtils from '../../utils/OrderUtils';
+import CurrencyInput from '../common/CurrencyInput';
+import Utils from '../../utils/Utils'
 
 class WithdrawalKRWScreen extends BaseScreen {
   constructor(props) {
@@ -26,11 +29,13 @@ class WithdrawalKRWScreen extends BaseScreen {
       otpConfirm: false,
       agree: false,
       optErr: false,
+      quantityPrecision: 0,
     }
     this.currency = 'krw'
   }
 
   componentDidMount() {
+    super.componentDidMount()
     this._loadData()
   }
 
@@ -42,6 +47,7 @@ class WithdrawalKRWScreen extends BaseScreen {
   }
 
   componentWillUnmount() {
+    super.componentWillUnmount()
     this.setState({ isComplete: false, modalConfirm: false, amount: 0 })
   }
 
@@ -211,11 +217,16 @@ class WithdrawalKRWScreen extends BaseScreen {
     }
   }
 
+  _onQuantityChanged(formatted, extracted) {
+    let amount = OrderUtils.getMaskInputValue(formatted, extracted);
+    this.setState({ amount });
+  }
+
   render() {
     const { navigation } = this.props;
     const { currentUser } = this.state;
     const symbol = navigation.getParam('symbol', {});
-    const valueInputDisabled =  currentUser ?  (currentUser.bank || '') + ' ' + (currentUser.real_account_no || '') + ' ' + currentUser.name: '';
+    const valueInputDisabled = currentUser ? (currentUser.bank || '') + ' ' + (currentUser.real_account_no || '') + ' ' + currentUser.name : '';
 
     return (
       <SafeAreaView style={styles.fullScreen}>
@@ -262,13 +273,20 @@ class WithdrawalKRWScreen extends BaseScreen {
                   <Text>({I18n.t('funds.currency')})</Text>
                 </Text>
                 <View style={styles.amountWrapper}>
-                  <TextInput
+                  {/* <TextInput
                     keyboardType='numeric'
                     autoCorrect={false}
                     underlineColorAndroid='rgba(0, 0, 0, 0)'
                     value={formatCurrency(this.state.amount, this.currency)}
                     onChangeText={(text) => this.setState({ amount: parseFloat(text.split(',').join('')) })}
-                    style={[styles.amountInput, styles.amountText]} />
+                    style={[styles.amountInput, styles.amountText]} /> */}
+                  <CurrencyInput
+                    value={this.state.amount}
+                    precision={this.state.quantityPrecision}
+                    onChangeText={this._onQuantityChanged.bind(this)}
+                    keyboardType='numeric'
+                    style={styles.inputText}
+                    underlineColorAndroid='transparent' />
                   <Text style={styles.amountText}>{getCurrencyName(this.currency)}</Text>
                   <TouchableOpacity
                     style={styles.amountActionInline}
@@ -289,7 +307,7 @@ class WithdrawalKRWScreen extends BaseScreen {
                     value={valueInputDisabled}
                     autoCorrect={false}
                     underlineColorAndroid='rgba(0, 0, 0, 0)'
-                    style={[styles.accountInput, styles.amountText, styles.inputDisabled]} />
+                    style={[styles.accountInput, styles.amountText, styles.inputText, styles.inputDisabled]} />
                 </View>
               </View>
 
@@ -321,7 +339,7 @@ class WithdrawalKRWScreen extends BaseScreen {
                     {'\u2022' + I18n.t('withdrawal.noteLine3')}
                   </Text>
                 </View>
-                <View style={[styles.noteContainer, {flexDirection: 'row'}]}>
+                <View style={[styles.noteContainer, { flexDirection: 'row' }]}>
                   <Text style={[styles.noteTitle, { ...Fonts.NanumGothic_Bold }]}>
                     {" " + I18n.t('withdrawal.noteLine4')}
                   </Text>
@@ -383,36 +401,36 @@ class WithdrawalKRWScreen extends BaseScreen {
 
                   <View style={styles.table}>
                     <Text style={[styles.tbRow, styles.tbContent]}>{I18n.t('withdrawal.row1Col1')}</Text>
-                    <Image style={styles.arrowRight} source={require('../../../assets/arrowRight/arrowRight.png')}/>
+                    <Image style={styles.arrowRight} source={require('../../../assets/arrowRight/arrowRight.png')} />
                     <Text style={[styles.tbRow, styles.tbContent]}>{I18n.t('withdrawal.row1Col2')}</Text>
-                    <Image style={styles.arrowRight} source={require('../../../assets/arrowRight/arrowRight.png')}/>
+                    <Image style={styles.arrowRight} source={require('../../../assets/arrowRight/arrowRight.png')} />
                     <Text style={[styles.tbRow, styles.tbContent]}>{I18n.t('withdrawal.row1Col3')}</Text>
                     <Text style={[styles.tbRow, styles.tbContent]}> {I18n.t('withdrawal.row1Col4')}</Text>
                   </View>
 
                   <View style={styles.table}>
                     <Text style={[styles.tbRow, styles.tbContent]}>{I18n.t('withdrawal.row2Col1')}</Text>
-                    <Image style={styles.arrowRight} source={require('../../../assets/arrowRight/arrowRight.png')}/>
+                    <Image style={styles.arrowRight} source={require('../../../assets/arrowRight/arrowRight.png')} />
                     <Text style={[styles.tbRow, styles.tbContent]}>{I18n.t('withdrawal.row2Col2')}</Text>
-                    <Image style={styles.arrowRight} source={require('../../../assets/arrowRight/arrowRight.png')}/>
+                    <Image style={styles.arrowRight} source={require('../../../assets/arrowRight/arrowRight.png')} />
                     <Text style={[styles.tbRow, styles.tbContent]}>{I18n.t('withdrawal.row2Col3')}</Text>
                     <Text style={[styles.tbRow, styles.tbContent]}> {I18n.t('withdrawal.row2Col4')}</Text>
                   </View>
 
                   <View style={styles.table}>
                     <Text style={[styles.tbRow, styles.tbContent]}>{I18n.t('withdrawal.row3Col1')}</Text>
-                    <Image style={styles.arrowRight} source={require('../../../assets/arrowRight/arrowRight.png')}/>
+                    <Image style={styles.arrowRight} source={require('../../../assets/arrowRight/arrowRight.png')} />
                     <Text style={[styles.tbRow, styles.tbContent]}>{I18n.t('withdrawal.row3Col2')}</Text>
-                    <Image style={styles.arrowRight} source={require('../../../assets/arrowRight/arrowRight.png')}/>
+                    <Image style={styles.arrowRight} source={require('../../../assets/arrowRight/arrowRight.png')} />
                     <Text style={[styles.tbRow, styles.tbContent]}>{I18n.t('withdrawal.row3Col3')}</Text>
                     <Text style={[styles.tbRow, styles.tbContent]}> {I18n.t('withdrawal.row3Col4')}</Text>
                   </View>
 
                   <View style={styles.table}>
                     <Text style={[styles.tbRow, styles.tbContent, styles.tbColor]}>{I18n.t('withdrawal.row4Col1')}</Text>
-                    <Image style={styles.arrowRight} source={require('../../../assets/arrowRight/arrowRight.png')}/>
+                    <Image style={styles.arrowRight} source={require('../../../assets/arrowRight/arrowRight.png')} />
                     <Text style={[styles.tbRow, styles.tbContent, styles.tbColor]}>{I18n.t('withdrawal.row4Col2')}</Text>
-                    <Image style={styles.arrowRight} source={require('../../../assets/arrowRight/arrowRight.png')}/>
+                    <Image style={styles.arrowRight} source={require('../../../assets/arrowRight/arrowRight.png')} />
                     <Text style={[styles.tbRow, styles.tbContent, styles.tbColor]}>{I18n.t('withdrawal.row4Col3')}</Text>
                     <Text style={[styles.tbRow, styles.tbContent, styles.tbColor]}> {I18n.t('withdrawal.row4Col4')}</Text>
                   </View>
@@ -463,11 +481,11 @@ class WithdrawalKRWScreen extends BaseScreen {
             {'\u2022' + I18n.t('withdrawal.amountNumber')}
           </Text>
 
-          <View style={{flexDirection: 'row'}}>
+          <View style={{ flexDirection: 'row' }}>
             <Text style={[styles.lineSpace, styles.modalAmount]}>
               {formatCurrency(this.state.amount, this.currency)}
             </Text>
-            <Text style={{fontSize: scale(11), ...Fonts.OpenSans}}>{' ' + getCurrencyName(this.currency)}</Text>
+            <Text style={{ fontSize: scale(11), ...Fonts.OpenSans }}>{' ' + getCurrencyName(this.currency)}</Text>
           </View>
 
           <Text style={styles.modalLine}>
@@ -477,8 +495,8 @@ class WithdrawalKRWScreen extends BaseScreen {
             {this.state.currentUser.decodeAccount}
           </Text>
 
-          <View style={{flexDirection: 'row'}}>
-            <Text style={[styles.messageSpace, {...Fonts.NanumGothic_Bold}]}>{I18n.t('withdrawal.amountMessage')}</Text>
+          <View style={{ flexDirection: 'row' }}>
+            <Text style={[styles.messageSpace, { ...Fonts.NanumGothic_Bold }]}>{I18n.t('withdrawal.amountMessage')}</Text>
             <Text style={styles.messageSpace}>{I18n.t('withdrawal.amountMessage1')}</Text>
           </View>
 
@@ -542,8 +560,8 @@ class WithdrawalKRWScreen extends BaseScreen {
   _renderOtpContent() {
     return (
       <View style={[styles.modalStyle, { alignContent: 'center', justifyContent: 'center', }]}>
-        <View style={[styles.headerModalStyle, {flexDirection: "row"}]}>
-          <Text style={[styles.headerModalTitle, {...Fonts.OpenSans_Bold}]}>{I18n.t('withdrawal.optConfirmTitle')}</Text>
+        <View style={[styles.headerModalStyle, { flexDirection: "row" }]}>
+          <Text style={[styles.headerModalTitle, { ...Fonts.OpenSans_Bold }]}>{I18n.t('withdrawal.optConfirmTitle')}</Text>
           <Text style={styles.headerModalTitle}>{I18n.t('withdrawal.check')}</Text>
         </View>
 
@@ -577,7 +595,8 @@ class WithdrawalKRWScreen extends BaseScreen {
 }
 
 export default withNavigationFocus(WithdrawalKRWScreen)
-
+const margin = scale(23);
+const inputHeight = scale(30);
 const styles = ScaledSheet.create({
   fullScreen: { flex: 1, backgroundColor: 'white' },
   content: { flex: 1, flexDirection: "column" },
@@ -674,7 +693,8 @@ const styles = ScaledSheet.create({
     width: '80%', alignContent: 'center', justifyContent: 'center', flexDirection: 'row',
     marginTop: '10@s', marginBottom: '10@s'
   },
-  smsInput: {flex: 2, height: '30@s', textAlign: 'center', fontSize: '12@s', ...Fonts.NanumGothic_Regular, marginRight: '10@s',
+  smsInput: {
+    flex: 2, height: '30@s', textAlign: 'center', fontSize: '12@s', ...Fonts.NanumGothic_Regular, marginRight: '10@s',
     borderWidth: '1@s', borderRadius: '4@s', borderColor: "rgba(0, 0, 0, 0.1)"
   },
   smsConfirmBtn: {
@@ -705,5 +725,16 @@ const styles = ScaledSheet.create({
   inputDisabled: {
     backgroundColor: '#f2f2f2',
     color: '#595959'
-  }
+  },
+  inputText: {
+    flex: 1,
+    height: inputHeight,
+    paddingLeft: '5@s',
+    paddingRight: '5@s',
+    paddingTop: 0,
+    paddingBottom: 0,
+    textAlign: 'right',
+    fontSize: '12@s',
+    ...Fonts.OpenSans
+  },
 });
