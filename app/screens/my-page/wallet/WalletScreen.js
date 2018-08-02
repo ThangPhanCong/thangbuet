@@ -24,6 +24,8 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import ScaledSheet from '../../../libs/reactSizeMatter/ScaledSheet';
 import { scale } from '../../../libs/reactSizeMatter/scalingUtils';
 import UIUtils from "../../../utils/UIUtils";
+import { changeAddressInput } from "./ValidateAddress";
+import { debounce } from "throttle-debounce";
 
 export default class WalletScreen extends BaseScreen {
 
@@ -45,10 +47,11 @@ export default class WalletScreen extends BaseScreen {
       listCoin: {},
       addressIncorrect: '',
       newWalletParams: {},
-
+      addressValidated: false,
       addNewWalletDialogVisible: false,
       removeWalletDialogVisible: false
     }
+    // this.changeAddressInput = debounce(300, this.checkAddress);
   }
 
   componentWillMount() {
@@ -228,6 +231,9 @@ export default class WalletScreen extends BaseScreen {
                            ...this.state.newWalletParams,
                            wallet_address: text
                          }
+                       }, () => {
+                         changeAddressInput(this.state.selectedCoinType.toLowerCase(), this.state.newWalletParams.wallet_address,
+                           this.validateTrue, this.validateFalse)
                        })
                      }/>
           <Text style={styles.addressIncorrect}>{this.state.addressIncorrect}</Text>
@@ -358,9 +364,18 @@ export default class WalletScreen extends BaseScreen {
   }
 
   async _onAddNewWallet() {
-    let checked = true;
-    checked ? this._addWallet() : this.setState({ addressIncorrect: I18n.t('myPage.wallet.addressIncorrect') })
+    if (this.state.addressValidated){
+      this._addWallet()
+    }
   }
+
+  validateFalse = () => {
+    this.setState({ addressIncorrect: I18n.t('myPage.wallet.addressIncorrect'), addressValidated: false })
+  };
+
+  validateTrue = () => {
+    this.setState({ addressIncorrect: I18n.t(''), addressValidated: true })
+  };
 
   _onWithdraw(wallet) {
     // Navigate to withdraw screen
@@ -439,7 +454,8 @@ export default class WalletScreen extends BaseScreen {
         newWalletParams: {},
         wallets,
         addNewWalletDialogVisible: false,
-        addressIncorrect: ""
+        addressIncorrect: "",
+        addressValidated: false
       });
     }
     catch (err) {
