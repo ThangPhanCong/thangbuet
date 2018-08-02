@@ -8,15 +8,14 @@ import {
   StyleSheet,
   ImageBackground
 } from 'react-native';
-import { Icon } from 'react-native-elements'
 import rf from '../../libs/RequestFactory';
 import I18n from '../../i18n/i18n';
 import AppPreferences from '../../utils/AppPreferences';
 import BaseScreen from '../BaseScreen';
 import LoginCommonStyle from './LoginCommonStyle'
 import ScaledSheet from '../../libs/reactSizeMatter/ScaledSheet';
-import { scale } from '../../libs/reactSizeMatter/scalingUtils';
-import { CommonSize, CommonStyles, Fonts } from "../../utils/CommonStyles";
+import { Fonts } from "../../utils/CommonStyles";
+import { handleBackAction } from '../../../App';
 
 export default class LoginScreen extends BaseScreen {
 
@@ -31,6 +30,11 @@ export default class LoginScreen extends BaseScreen {
     checkOtp: false,
   }
 
+  componentDidMount() {
+    super.componentDidMount();
+
+    handleBackAction();
+  }
 
   checkValidationLogin() {
     const { email, password } = this.state;

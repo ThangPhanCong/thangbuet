@@ -1,5 +1,5 @@
-import { StackNavigator } from 'react-navigation';
-import { YellowBox } from 'react-native';
+import { StackNavigator, NavigationActions } from 'react-navigation';
+import { YellowBox, ToastAndroid, Platform } from 'react-native';
 import MicroEvent from 'microevent';
 
 import AppConfig from './app/utils/AppConfig';
@@ -9,6 +9,7 @@ import GlobalSocket from './app/GlobalSocket';
 import EventBus from './app/EventBus';
 import MasterdataUtils from './app/utils/MasterdataUtils';
 import Screens from './app/screens/Screens';
+import { isEmpty } from 'lodash';
 
 import I18n from './app/i18n/i18n';
 
@@ -60,5 +61,59 @@ async function initMasterdata() {
   return await MasterdataUtils.loadData();
 }
 
-export default App = StackNavigator(Screens, { headerMode: 'screen' });
-export { initApp };
+const App = StackNavigator(Screens, { headerMode: 'screen' })
+
+let defaultGetStateForAction;
+let _lastTimeBackPress = 0;
+
+function handleBackAction() {
+  _lastTimeBackPress = 0;
+
+  if (!defaultGetStateForAction) {
+    defaultGetStateForAction = App.router.getStateForAction;
+  }
+
+  const mainScreen = ['LoginScreen', 'MainScreen'];
+
+  if (Platform.OS === 'android') {
+    App.router.getStateForAction = (action, state) => {
+
+      console.log(action, _lastTimeBackPress);
+
+      if (
+        action.type === NavigationActions.BACK &&
+        state.routes && !isEmpty(state.routes) &&
+        mainScreen.indexOf(state.routes[state.index].routeName) >= 0
+      ) {
+        let now = new Date().getTime();
+        if (_lastTimeBackPress > 0 && now - _lastTimeBackPress <= 500) {
+          return null;
+        }
+
+        if (_lastTimeBackPress == 0)
+          _lastTimeBackPress = now;
+        else
+          _lastTimeBackPress = 0;
+
+        ToastAndroid.showWithGravity(
+          I18n.t('exit.content'),
+          ToastAndroid.SHORT,
+          ToastAndroid.BOTTOM
+        );
+  
+        return defaultGetStateForAction({
+          type: 'Navigation/COMPLETE_TRANSITION',
+          key: 'StackRouterRoot'
+        }, {
+          ...state,
+          isTransitioning: true
+        });
+      }
+
+      return defaultGetStateForAction(action, state);
+    };
+  }
+}
+
+export default App;
+export { initApp, handleBackAction };

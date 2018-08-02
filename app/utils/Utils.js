@@ -109,24 +109,7 @@ export default {
     if (erc20Tokens.indexOf(currency) >= 0) {
       currency = 'erc20';
     }
-    switch (currency) {
-      case 'btc':
-        return 'https://blockchain.info/tx/' + transactionId;
-      case 'eth':
-      case 'erc20':
-        return 'https://etherscan.io/tx/' + transactionId;
-      case 'etc':
-        return 'https://gastracker.io/tx/' + transactionId;
-      case 'bch':
-        return 'https://explorer.bitcoin.com/bch/tx/' + transactionId;
-      case 'xrp':
-        return 'https://xrpcharts.ripple.com/#/transactions/' + transactionId;
-      case 'ltc':
-        return 'https://live.blockcypher.com/ltc/tx/' + transactionId;
-      case 'dash':
-        return 'https://explorer.dash.org/tx/' + transactionId;
-      default:
-        return '';
-    }
+
+    return `http://wallet.sotatek.com/${currency}/tx/${transactionId}`;
   }
 };
