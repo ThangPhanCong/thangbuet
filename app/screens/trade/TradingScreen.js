@@ -216,7 +216,7 @@ export default class TradingScreen extends BaseScreen {
     const priceData = this._getPrice();
     const balanceData = this._getCoinBalance();
     const priceColor = this._getChangeColor(priceData.change);
-    const profit = this._getProfit(balanceData);
+    const profit = this._getProfit(balanceData, priceData);
     const profitColor = this._getChangeColor(profit);
 
     return (
@@ -288,11 +288,12 @@ export default class TradingScreen extends BaseScreen {
     return color;
   }
 
-  _getProfit(balanceData) {
+  _getProfit(balanceData, priceData) {
     let profit = 0;
-    if (balanceData.krm_amount) {
-      profit = (balanceData.krm_amount - balanceData.balance * priceData.price) / balanceData.krm_amount;
+    if (balanceData.krw_amount) {
+      profit = (balanceData.balance * priceData.price - balanceData.krw_amount)*100 / balanceData.krw_amount;
     }
+
     return profit;
   }
 
