@@ -226,8 +226,8 @@ export default class WalletScreen extends BaseScreen {
                      onChangeText={(text) => this._onChangeAddressInput(text)}/>
           {
             this.state.addressValidated
-            ? (<Text style={styles.addressValidated}></Text>)
-            : (<Text style={styles.addressValidated}>{I18n.t('myPage.wallet.addressIncorrect')}</Text>)
+            ? (<Text style={styles.addressIncorrect}></Text>)
+            : (<Text style={styles.addressIncorrect}>{I18n.t('myPage.wallet.addressIncorrect')}</Text>)
           }
 
           <Animated.View>
@@ -697,7 +697,7 @@ const styles = ScaledSheet.create({
     right: '15@s',
     bottom: '20@s',
   },
-  addressValidated: {
+  addressIncorrect: {
     color: 'red',
     fontSize: '12@s',
     marginLeft: '18@s',
