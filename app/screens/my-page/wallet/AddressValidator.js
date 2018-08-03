@@ -15,8 +15,8 @@ export default class AddressValidator {
       callBack(false)
     } else {
       this.addressSendToServer = address;
-      let url = `https://validate-sotatek.herokuapp.com/check/${coin}/${address}`;
-      // let url = `http://wallet.sotatek.com/api/${coin}/addr_validation/${address}`;
+      // let url = `https://validate-sotatek.herokuapp.com/check/${coin}/${address}`;
+      let url = `http://wallet.sotatek.com/api/${coin}/addr_validation/${address}`;
       let response = await fetch(url);
       if (response.status === 200){
         if (this.addressSendToServer === address){
