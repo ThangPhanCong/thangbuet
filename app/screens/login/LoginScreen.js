@@ -33,7 +33,7 @@ export default class LoginScreen extends BaseScreen {
   componentDidMount() {
     super.componentDidMount();
 
-    handleBackAction();
+    handleBackAction(this.backToLoginScreen);
   }
 
   checkValidationLogin() {
@@ -94,16 +94,13 @@ export default class LoginScreen extends BaseScreen {
 
   }
 
-  onBackButtonPressAndroid() {
+  backToLoginScreen = () => {
     if (this.state.checkOtp) {
       this.setState({ checkOtp: false });
       return true
     }
-    else {
-      return super.onBackButtonPressAndroid()
-    }
-
-  }
+    return false
+  };
 
   render() {
     const {

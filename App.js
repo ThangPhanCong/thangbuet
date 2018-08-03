@@ -61,12 +61,12 @@ async function initMasterdata() {
   return await MasterdataUtils.loadData();
 }
 
-const App = StackNavigator(Screens, { headerMode: 'screen' })
+const App = StackNavigator(Screens, { headerMode: 'screen', cardStyle: {opacity: 2} })
 
 let defaultGetStateForAction;
 let _lastTimeBackPress = 0;
 
-function handleBackAction() {
+function handleBackAction(callback) {
   _lastTimeBackPress = 0;
 
   if (!defaultGetStateForAction) {
@@ -78,13 +78,25 @@ function handleBackAction() {
   if (Platform.OS === 'android') {
     App.router.getStateForAction = (action, state) => {
 
-      console.log(action, _lastTimeBackPress);
+      console.log('stateeeeeeeeeeeeee', state);
 
       if (
         action.type === NavigationActions.BACK &&
         state.routes && !isEmpty(state.routes) &&
         mainScreen.indexOf(state.routes[state.index].routeName) >= 0
       ) {
+        if (state.routes[state.index].routeName === "LoginScreen") {
+          if (callback()) {
+            return defaultGetStateForAction({
+              type: 'Navigation/COMPLETE_TRANSITION',
+              key: 'StackRouterRoot'
+            }, {
+              ...state,
+              isTransitioning: true
+            });
+          }
+        }
+
         let now = new Date().getTime();
         if (_lastTimeBackPress > 0 && now - _lastTimeBackPress <= 500) {
           return null;
