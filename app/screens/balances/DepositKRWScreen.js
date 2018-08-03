@@ -21,10 +21,12 @@ class DepositKRWScreen extends BaseScreen {
   }
 
   componentDidMount() {
+    super.componentDidMount()
     this._getPendingTransaction()
   }
 
   componentWillUnmount() {
+    super.componentWillUnmount()
     this.setState({ isComplete: false })
   }
 
