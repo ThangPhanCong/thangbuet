@@ -13,8 +13,8 @@ export default class AddressValidator {
     if (address.trim() === ""){
       callBack(false)
     } else {
-      let url = `https://validate-sotatek.herokuapp.com/check/${coin}/${address}`;
-      // let url = `http://wallet.sotatek.com/api/${coin}/addr_validation/${address}`;
+      // let url = `https://validate-sotatek.herokuapp.com/check/${coin}/${address}`;
+      let url = `http://wallet.sotatek.com/api/${coin}/addr_validation/${address}`;
       let response = await fetch(url);
       if (response.status === 200){
         response.json().then(data => {
