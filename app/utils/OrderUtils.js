@@ -27,7 +27,7 @@ export default class OrderUtils {
   }
 
   static getMaskInputValue(formatted, extracted) {
-    if (formatted.endsWith('.')) {
+    if (formatted && formatted.endsWith('.')) {
       return extracted;
     } else {
       return formatted;
