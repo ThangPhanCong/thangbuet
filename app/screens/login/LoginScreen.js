@@ -94,6 +94,17 @@ export default class LoginScreen extends BaseScreen {
 
   }
 
+  // onBackButtonPressAndroid() {
+  //   if (this.state.checkOtp) {
+  //     this.setState({ checkOtp: false });
+  //     return true
+  //   }
+  //   else {
+  //     return super.onBackButtonPressAndroid()
+  //   }
+  //
+  // }
+
   backToLoginScreen = () => {
     if (this.state.checkOtp) {
       this.setState({ checkOtp: false });

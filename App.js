@@ -61,7 +61,7 @@ async function initMasterdata() {
   return await MasterdataUtils.loadData();
 }
 
-const App = StackNavigator(Screens, { headerMode: 'screen', cardStyle: {opacity: 2} })
+const App = StackNavigator(Screens, { headerMode: 'screen' })
 
 let defaultGetStateForAction;
 let _lastTimeBackPress = 0;
@@ -78,7 +78,7 @@ function handleBackAction(callback) {
   if (Platform.OS === 'android') {
     App.router.getStateForAction = (action, state) => {
 
-      console.log('stateeeeeeeeeeeeee', state);
+      console.log(action, _lastTimeBackPress);
 
       if (
         action.type === NavigationActions.BACK &&
