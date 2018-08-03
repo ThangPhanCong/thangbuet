@@ -376,9 +376,7 @@ export default class WalletScreen extends BaseScreen {
   }
 
   validateAddressStatus = (addressValidated) => {
-    addressValidated
-      ? this.setState({ addressValidated: true })
-      : this.setState({ addressValidated: false })
+    this.setState({ addressValidated })
   };
 
   _onWithdraw(wallet) {
