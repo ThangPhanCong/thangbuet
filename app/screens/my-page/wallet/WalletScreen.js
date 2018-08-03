@@ -24,6 +24,7 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import ScaledSheet from '../../../libs/reactSizeMatter/ScaledSheet';
 import { scale } from '../../../libs/reactSizeMatter/scalingUtils';
 import UIUtils from "../../../utils/UIUtils";
+import AddressValidator from "../../../utils/AddressValidator";
 
 export default class WalletScreen extends BaseScreen {
 
@@ -43,12 +44,12 @@ export default class WalletScreen extends BaseScreen {
       isLoading: false,
       selectedCoinType: '',
       listCoin: {},
-      addressIncorrect: '',
+      addressValidated: true,
       newWalletParams: {},
-
       addNewWalletDialogVisible: false,
       removeWalletDialogVisible: false
     }
+    this.addressValidator = new AddressValidator();
   }
 
   componentWillMount() {
@@ -222,15 +223,12 @@ export default class WalletScreen extends BaseScreen {
           <TextInput style={styles.addNewWalletTextInput}
                      value={this.state.newWalletParams.wallet_address}
                      underlineColorAndroid='transparent'
-                     onChangeText={text =>
-                       this.setState({
-                         newWalletParams: {
-                           ...this.state.newWalletParams,
-                           wallet_address: text
-                         }
-                       })
-                     }/>
-          <Text style={styles.addressIncorrect}>{this.state.addressIncorrect}</Text>
+                     onChangeText={(text) => this._onChangeAddressInput(text)}/>
+          {
+            this.state.addressValidated
+            ? (<Text style={styles.addressIncorrect}></Text>)
+            : (<Text style={styles.addressIncorrect}>{I18n.t('myPage.wallet.addressIncorrect')}</Text>)
+          }
 
           <Animated.View>
             {
@@ -358,9 +356,28 @@ export default class WalletScreen extends BaseScreen {
   }
 
   async _onAddNewWallet() {
-    let checked = true;
-    checked ? this._addWallet() : this.setState({ addressIncorrect: I18n.t('myPage.wallet.addressIncorrect') })
+    if (this.state.addressValidated){
+      this._addWallet();
+    }
   }
+
+  _onChangeAddressInput(text){
+    this.setState({
+      newWalletParams: {
+        ...this.state.newWalletParams,
+        wallet_address: text
+      }
+    }, () => {
+      let coin = this.state.selectedCoinType.toLowerCase();
+      let address = this.state.newWalletParams.wallet_address;
+
+      this.addressValidator.validateAddress(coin, address, this.validateAddressStatus)
+    })
+  }
+
+  validateAddressStatus = (addressValidated) => {
+    this.setState({ addressValidated })
+  };
 
   _onWithdraw(wallet) {
     // Navigate to withdraw screen
@@ -383,7 +400,7 @@ export default class WalletScreen extends BaseScreen {
     this.setState({
       newWalletParams: {},
       addNewWalletDialogVisible: false,
-      addressIncorrect: "",
+      addressValidated: true
     })
   }
 
@@ -439,7 +456,7 @@ export default class WalletScreen extends BaseScreen {
         newWalletParams: {},
         wallets,
         addNewWalletDialogVisible: false,
-        addressIncorrect: ""
+        addressValidated: true
       });
     }
     catch (err) {
