@@ -198,14 +198,16 @@ export default class WalletScreen extends BaseScreen {
             {I18n.t('myPage.wallet.coinType')}
           </Text>
           <View style={styles.viewModalDropDown}>
-            <View style={styles.menuDownNewWallet}>
+            <TouchableOpacity style={styles.menuDownNewWallet}
+              onPress={this._onShowCoinListDropdown.bind(this)}>
               <Icon
                 name='menu-down'
                 color='#000'
                 style={styles.iconMenuDown}
               />
-            </View>
+            </TouchableOpacity>
             <ModalDropdown
+              ref={ref => this._coinDropDown = ref}
               style={{ flex: 1, justifyContent: 'center' }}
               defaultValue=''
               dropdownStyle={[styles.modalAddWalletDropDown, {
@@ -278,6 +280,10 @@ export default class WalletScreen extends BaseScreen {
         </Card>
       </Modal>
     )
+  }
+
+  _onShowCoinListDropdown() {
+    this._coinDropDown.show();
   }
 
   _generateOptionList() {
