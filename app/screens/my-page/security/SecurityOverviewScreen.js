@@ -272,6 +272,7 @@ export default class SecurityOverviewScreen extends BaseScreen {
         avoidKeyboard={true}
         useNativeDriver={true}
         backdropColor='transparent'
+        onBackButtonPress={this._dismissSubmitModal.bind(this)}
         onBackdropPress={this._dismissSubmitModal.bind(this)}>
         <Card
           style={styles.dialog}
@@ -325,6 +326,7 @@ export default class SecurityOverviewScreen extends BaseScreen {
         avoidKeyboard={true}
         useNativeDriver={true}
         backdropColor='transparent'
+        onBackButtonPress={this._dismissInitVerificationModal.bind(this)}
         onBackdropPress={this._dismissInitVerificationModal.bind(this)}>
         <Card
           style={styles.dialog}
@@ -394,6 +396,7 @@ export default class SecurityOverviewScreen extends BaseScreen {
         avoidKeyboard={true}
         useNativeDriver={true}
         backdropColor='transparent'
+        onBackButtonPress={this._dismissRegisterPhoneModal.bind(this)}
         onBackdropPress={this._dismissRegisterPhoneModal.bind(this)}>
         <Card
           style={styles.dialog}
@@ -416,6 +419,7 @@ export default class SecurityOverviewScreen extends BaseScreen {
         avoidKeyboard={true}
         useNativeDriver={true}
         backdropColor='transparent'
+        onBackButtonPress={this._dismissExistedPhoneModal.bind(this)}
         onBackdropPress={this._dismissExistedPhoneModal.bind(this)}>
         <Card
           style={styles.dialog}
@@ -442,6 +446,7 @@ export default class SecurityOverviewScreen extends BaseScreen {
         avoidKeyboard={true}
         useNativeDriver={true}
         backdropColor='transparent'
+        onBackButtonPress={this._dismissBankAccountModal.bind(this)}
         onBackdropPress={this._dismissBankAccountModal.bind(this)}>
         <Card
           style={styles.dialog}
@@ -545,6 +550,7 @@ export default class SecurityOverviewScreen extends BaseScreen {
         avoidKeyboard={true}
         useNativeDriver={true}
         backdropColor='transparent'
+        onBackButtonPress={this._dismissChangePasswordModal.bind(this)}
         onBackdropPress={this._dismissChangePasswordModal.bind(this)}>
         <Card
           style={styles.dialog}
