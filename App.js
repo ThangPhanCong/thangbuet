@@ -66,7 +66,7 @@ const App = StackNavigator(Screens, { headerMode: 'screen' })
 let defaultGetStateForAction;
 let _lastTimeBackPress = 0;
 
-function handleBackAction() {
+function handleBackAction(callback) {
   _lastTimeBackPress = 0;
 
   if (!defaultGetStateForAction) {
@@ -85,6 +85,18 @@ function handleBackAction() {
         state.routes && !isEmpty(state.routes) &&
         mainScreen.indexOf(state.routes[state.index].routeName) >= 0
       ) {
+        if (state.routes[state.index].routeName === "LoginScreen") {
+          if (callback()) {
+            return defaultGetStateForAction({
+              type: 'Navigation/COMPLETE_TRANSITION',
+              key: 'StackRouterRoot'
+            }, {
+              ...state,
+              isTransitioning: true
+            });
+          }
+        }
+
         let now = new Date().getTime();
         if (_lastTimeBackPress > 0 && now - _lastTimeBackPress <= 500) {
           return null;
