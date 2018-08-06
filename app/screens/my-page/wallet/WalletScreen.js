@@ -184,6 +184,7 @@ export default class WalletScreen extends BaseScreen {
         avoidKeyboard={true}
         useNativeDriver={true}
         backdropColor='transparent'
+        onBackButtonPress={this._dismissAddNewWalletModal.bind(this)}
         onBackdropPress={this._dismissAddNewWalletModal.bind(this)}>
         <Card
           style={styles.dialog}
@@ -305,6 +306,7 @@ export default class WalletScreen extends BaseScreen {
         avoidKeyboard={true}
         useNativeDriver={true}
         backdropColor='transparent'
+        onBackButtonPress={this._dismissRemoveConfirmationModal.bind(this)}
         onBackdropPress={this._dismissRemoveConfirmationModal.bind(this)}>
         <Card
           style={styles.dialog}
