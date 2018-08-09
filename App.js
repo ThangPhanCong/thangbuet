@@ -10,8 +10,10 @@ import EventBus from './app/EventBus';
 import MasterdataUtils from './app/utils/MasterdataUtils';
 import Screens from './app/screens/Screens';
 import { isEmpty } from 'lodash';
-
 import I18n from './app/i18n/i18n';
+import { Sentry } from 'react-native-sentry';
+
+Sentry.config('https://7ab3c51453f748a28ccc242514285072@sentry.io/1259180').install();
 
 const socketWarning = 'Setting a timer for a long period of time, i.e. multiple minutes, '
   + 'is a performance and correctness issue on Android as it keeps the timer module awake, '

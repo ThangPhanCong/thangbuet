@@ -7,6 +7,7 @@ import com.RNTextInputMask.RNTextInputMaskPackage;
 import com.BV.LinearGradient.LinearGradientPackage;
 import com.avishayil.rnrestart.ReactNativeRestartPackage;
 import com.facebook.react.ReactApplication;
+import io.sentry.RNSentryPackage;
 import com.facebook.react.ReactNativeHost;
 import com.facebook.react.ReactPackage;
 import com.facebook.react.shell.MainReactPackage;
@@ -16,9 +17,7 @@ import com.horcrux.svg.SvgPackage;
 import com.oblador.keychain.KeychainPackage;
 import com.oblador.vectoricons.VectorIconsPackage;
 import com.rnfs.RNFSPackage;
-
 import org.reactnative.camera.RNCameraPackage;
-
 import java.util.Arrays;
 import java.util.List;
 
@@ -34,6 +33,7 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
+            new RNSentryPackage(),
             new LinearGradientPackage(),
             new RNTextInputMaskPackage(),
             new VectorIconsPackage(),
