@@ -366,7 +366,7 @@ export default class OrderBook extends BaseScreen {
     var maxBuyGroup = _.maxBy(orderBook.buy, 'price');
     var maxBuyPrice = maxBuyGroup ? maxBuyGroup.price : 0;
 
-    var minSellGroup = _.minBy(orderBook.buy, 'price');
+    var minSellGroup = _.minBy(orderBook.sell, 'price');
     var minSellPrice = minSellGroup ? minSellGroup.price : 0;
 
     if (maxBuyPrice > 0 && minSellPrice > 0) {
