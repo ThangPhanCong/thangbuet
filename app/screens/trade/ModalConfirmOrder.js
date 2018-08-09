@@ -9,16 +9,40 @@ import I18n from "../../i18n/i18n";
 import { formatCurrency, getCurrencyName } from "../../utils/Filters";
 
 class ModalConfirmOrder extends Component {
+  state = {
+    isShowModalOrder: false,
+    data: {}
+  };
+
+  _onShowModalOrder() {
+    this.setState({
+      isShowModalOrder: true
+    })
+  }
+
+  _onHideModalOrder() {
+    this.setState({
+      isShowModalOrder: false,
+      data: {}
+    })
+  }
+
+
+  _loadData(data) {
+    this.setState({data})
+  }
+
   render() {
-    const { closeModalOrder, data, isShowModalOrder, sendOrderRequest } = this.props;
-    const tradeTypeBuy = data.trade_type === 'buy';
+    const { sendOrderRequest } = this.props;
+    const { data, isShowModalOrder} = this.state;
+    const tradeTypeBuy =  Object.keys(data).length ? data.trade_type === 'buy' : null;
 
     return(
       <Modal
         animationType="slide"
         backdropColor='red'
         visible={isShowModalOrder}
-        onBackdropPress={closeModalOrder}
+        onBackdropPress={() => this._onHideModalOrder()}
         onRequestClose={() => {
         }}>
         <Card containerStyle={styles.containerCard}>
@@ -56,13 +80,13 @@ class ModalConfirmOrder extends Component {
           </View>
 
           <View style={styles.buttonContainer}>
-            <TouchableOpacity onPress={closeModalOrder}>
+            <TouchableOpacity onPress={() => this._onHideModalOrder()}>
               <View style={styles.cancelContainer}>
                 <Text style={styles.textCancel}>Cancel</Text>
               </View>
             </TouchableOpacity>
 
-            <TouchableOpacity onPress={sendOrderRequest}>
+            <TouchableOpacity onPress={() => sendOrderRequest(data)}>
               <View style={styles.confirmContainer}>
                 <Text style={styles.textConfirm}>Confirm</Text>
               </View>

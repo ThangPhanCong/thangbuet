@@ -51,8 +51,6 @@ export default class OrderForm extends BaseScreen {
 
       enableQuantity: true,
       settingsOrderConfirmation: undefined,
-      isShowModalOrder: false,
-      data: {},
       focusedInput: undefined
     }
     this.balances = {};
@@ -276,18 +274,6 @@ export default class OrderForm extends BaseScreen {
     }
   }
 
-  _onShowModalOrder() {
-    this.setState({
-      isShowModalOrder: true
-    })
-  }
-
-  _onHideModalOrder() {
-    this.setState({
-      isShowModalOrder: false
-    })
-  }
-
   _onPressSubmit() {
     var stopCondition = undefined;
     if (this._isStopOrder()) {
@@ -316,17 +302,17 @@ export default class OrderForm extends BaseScreen {
       return;
     }
     if (this.settingsOrderConfirmation) {
-      this._onShowModalOrder();
-      this.setState({data});
+      this._modalOrder._onShowModalOrder();
+      this._modalOrder._loadData(data);
     } else {
-      // this._sendOrderRequest(data);
+      this._sendOrderRequest(data);
     }
   }
 
   async _sendOrderRequest(data) {
     try {
       await rf.getRequest('OrderRequest').createANewOne(data);
-      this._onHideModalOrder();
+      this._modalOrder._onHideModalOrder();
     } catch (error) {
       if (!error.errors) {
         this._showError(I18n.t('common.message.network_error'));
@@ -343,14 +329,12 @@ export default class OrderForm extends BaseScreen {
   }
 
   render() {
-    const { isShowModalOrder, data } = this.state;
 
     return (
       <View style={CommonStyles.matchParent}>
-        <ModalConfirmOrder isShowModalOrder={isShowModalOrder}
-                           closeModalOrder={() => this._onHideModalOrder()}
-                           sendOrderRequest={() => this._sendOrderRequest(data)}
-                           data={data}/>
+        <ModalConfirmOrder ref={ref => this._modalOrder = ref}
+                           sendOrderRequest={(data) => this._sendOrderRequest(data)}
+                          />
         {this._renderInputs()}
         {this._isBuyOrder() && this._renderEstimationBuyValues()}
         {!this._isBuyOrder() && this._renderEstimationSellValues()}
