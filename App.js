@@ -12,6 +12,7 @@ import Screens from './app/screens/Screens';
 import { isEmpty } from 'lodash';
 
 import I18n from './app/i18n/i18n';
+import { Crashlytics } from 'react-native-fabric'; //Get Crashlytics component
 
 const socketWarning = 'Setting a timer for a long period of time, i.e. multiple minutes, '
   + 'is a performance and correctness issue on Android as it keeps the timer module awake, '
@@ -126,6 +127,13 @@ function handleBackAction(callback) {
     };
   }
 }
+Crashlytics.setUserName('thangphan');
+Crashlytics.setUserEmail('thangphan@sotatek.com');
+Crashlytics.setUserIdentifier('thangtheotk1');
+Crashlytics.setBool('has_posted', true);
+
+Crashlytics.setString('organization', 'Acme. Corp');
+Crashlytics.logException('');
 
 export default App;
 export { initApp, handleBackAction };
