@@ -51,7 +51,8 @@ export default class OrderForm extends BaseScreen {
 
       enableQuantity: true,
       settingsOrderConfirmation: undefined,
-      focusedInput: undefined
+      focusedInput: undefined,
+      errorStopPrice: false
     }
     this.balances = {};
     this.types = [
@@ -301,6 +302,7 @@ export default class OrderForm extends BaseScreen {
       this._showError(errors[0].message);
       return;
     }
+
     if (this.settingsOrderConfirmation) {
       this._modalOrder._onShowModalOrder();
       this._modalOrder._loadData(data);
@@ -325,16 +327,28 @@ export default class OrderForm extends BaseScreen {
 
   _showError(message) {
     //TODO show error
-    console.log(message);
+    this._modalOrder._onHideModalOrder();
+    this.setState({errorStopPrice: true});
+    setTimeout(() =>this.setState({errorStopPrice: false}), 500);
+  }
+
+  _renderStopPriceError() {
+    return(
+      <View style={styles.stopPriceErrorContainer}>
+        <Text style={styles.stopPriceErrorMessage}>{I18n.t('orderForm.stopPriceError')}</Text>
+      </View>
+    )
   }
 
   render() {
+    const {errorStopPrice} = this.state;
 
     return (
       <View style={CommonStyles.matchParent}>
         <ModalConfirmOrder ref={ref => this._modalOrder = ref}
                            sendOrderRequest={(data) => this._sendOrderRequest(data)}
                           />
+        {errorStopPrice ? this._renderStopPriceError() : null}
         {this._renderInputs()}
         {this._isBuyOrder() && this._renderEstimationBuyValues()}
         {!this._isBuyOrder() && this._renderEstimationSellValues()}
@@ -972,10 +986,26 @@ const styles = ScaledSheet.create({
   submitSell: {
     backgroundColor: '#007AC5'
   },
-
   submitText: {
     color: '#FFF',
     fontSize: '11@s',
     ...Fonts.NotoSans
+  },
+  stopPriceErrorContainer: {
+    backgroundColor: '#ff3333',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: '200@s',
+    height: '40@s',
+    position: 'absolute',
+    top: '150@s',
+    left: '0@s',
+    zIndex: 2
+  },
+  stopPriceErrorMessage: {
+    ...Fonts.NanumGothic_Regular,
+    fontSize: '12@s',
+    color: '#FFF'
   }
 });

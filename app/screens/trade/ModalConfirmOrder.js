@@ -14,6 +14,12 @@ class ModalConfirmOrder extends Component {
     data: {}
   };
 
+  static TYPE = {
+    LIMIT: 'limit',
+    STOP_LIMIT: 'stop_limit',
+    STOP_MARKET: 'stop_market',
+  };
+
   _onShowModalOrder() {
     this.setState({
       isShowModalOrder: true
@@ -32,10 +38,16 @@ class ModalConfirmOrder extends Component {
     this.setState({data})
   }
 
+  _renderType(type) {
+    return I18n.t(`orderForm.confirmOrder.${type}`);
+  }
+
   render() {
     const { sendOrderRequest } = this.props;
     const { data, isShowModalOrder} = this.state;
-    const tradeTypeBuy =  Object.keys(data).length ? data.trade_type === 'buy' : null;
+    const tradeTypeBuy =  data && data.trade_type ? data.trade_type === 'buy' : null;
+    const dataType = this._renderType(data.type);
+    const typeStop = data.type === ModalConfirmOrder.TYPE.STOP_LIMIT ||  data.type === ModalConfirmOrder.TYPE.STOP_MARKET;
 
     return(
       <Modal
@@ -48,16 +60,16 @@ class ModalConfirmOrder extends Component {
         <Card containerStyle={styles.containerCard}>
             <View style={styles.titleOrder}>
               <Text style={styles.textTitleOrder}>
-                Confirm Order Receipt
+                {I18n.t('orderForm.confirmOrder.titleConfirm')}
               </Text>
             </View>
 
           <View style={styles.orderContainer}>
             <View style={{flexDirection: 'column'}}>
-              <Text style={styles.titleContainer}>Pair</Text>
-              <Text style={styles.titleContainer}>Quantity</Text>
-              <Text style={styles.titleContainer}>Price</Text>
-              <Text style={styles.titleContainer}>Type</Text>
+              <Text style={styles.titleContainer}>{I18n.t('orderForm.confirmOrder.pair')}</Text>
+              <Text style={styles.titleContainer}>{I18n.t('orderForm.confirmOrder.quantity')}</Text>
+              <Text style={styles.titleContainer}>{I18n.t('orderForm.confirmOrder.price')}</Text>
+              <Text style={styles.titleContainer}>{I18n.t('orderForm.confirmOrder.type')}</Text>
             </View>
             <View style={styles.dataOrder}>
               <Text style={styles.textDataOrder}>{I18n.t(`currency.${data.coin}.fullname`) + ' (' + getCurrencyName(data.coin) + ' ' + getCurrencyName(data.currency) + ')'}</Text>
@@ -65,30 +77,32 @@ class ModalConfirmOrder extends Component {
               <Text style={styles.textDataOrder}>{formatCurrency(data.price, data.currency, 0) +  ' ' + getCurrencyName(data.currency)}</Text>
 
               <View style={styles.tradeTypeContainer}>
-                <Text style={styles.titleType}>{data.type}</Text>
+                <Text style={styles.titleType}>{dataType}</Text>
                 <Text style={tradeTypeBuy ? styles.tradeTypeBuy : styles.tradeTypeSell}>{
-                  tradeTypeBuy ? ' Buy' : ' Sell'
+                  tradeTypeBuy ? I18n.t('orderForm.confirmOrder.buy') : I18n.t('orderForm.confirmOrder.sell')
                 }</Text>
-                <Text style={styles.titleType}> Order</Text>
+                <Text style={styles.titleType}> {I18n.t('orderForm.confirmOrder.order')}</Text>
               </View>
             </View>
           </View>
 
           <View style={styles.questionOrder}>
-            <Text>Do you want to create this </Text>
-            <Text>Order?</Text>
+            <Text style={styles.textQuestion}>{I18n.t('orderForm.confirmOrder.question')}</Text>
+            {typeStop ? <Text style={styles.textQuestionBold}>{I18n.t('orderForm.confirmOrder.questionStop')}</Text> : null}
+            <Text style={styles.textQuestionBold}>{I18n.t('orderForm.confirmOrder.question1')}</Text>
+            <Text style={styles.textQuestion}>{I18n.t('orderForm.confirmOrder.question2')}</Text>
           </View>
 
           <View style={styles.buttonContainer}>
             <TouchableOpacity onPress={() => this._onHideModalOrder()}>
               <View style={styles.cancelContainer}>
-                <Text style={styles.textCancel}>Cancel</Text>
+                <Text style={styles.textCancel}>{I18n.t('orderForm.confirmOrder.cancel')}</Text>
               </View>
             </TouchableOpacity>
 
             <TouchableOpacity onPress={() => sendOrderRequest(data)}>
               <View style={styles.confirmContainer}>
-                <Text style={styles.textConfirm}>Confirm</Text>
+                <Text style={styles.textConfirm}>{I18n.t('orderForm.confirmOrder.confirm')}</Text>
               </View>
             </TouchableOpacity>
           </View>
@@ -124,7 +138,7 @@ const styles = ScaledSheet.create({
   },
   orderContainer: {
     flexDirection: 'row',
-    marginLeft: '51@s',
+    marginLeft: '63@s',
     marginRight: '25@s',
     marginTop: '20@s'
   },
@@ -194,5 +208,13 @@ const styles = ScaledSheet.create({
     flexDirection: 'row',
     justifyContent: 'flex-end',
     marginTop: '3@s'
+  },
+  textQuestion: {
+    fontSize: '12@s',
+    ...Fonts.OpenSans
+  },
+  textQuestionBold: {
+    fontSize: '12@s',
+    ...Fonts.OpenSans_Bold
   }
 });

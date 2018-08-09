@@ -182,7 +182,28 @@
     "tenThousand": "만",
     "availableQuantity": "매도가능수량",
     "sellQuantity": "매도수량",
-    "sellAmount": "매도대금"
+    "sellAmount": "매도대금",
+    "stopPriceError": "Price must be a multiple of 500",
+    "confirmOrder": {
+      "titleConfirm": "주문 접수 확인",
+      "pair": "종목",
+      "quantity": "수량",
+      "price": "주문 가격",
+      "type": "주문 구분",
+      "cancel": "취소",
+      "confirm": "확인",
+      "order": "주문",
+      "limit": "지정가",
+      "buy": " 매수",
+      "sell": " 매도",
+      "market": " 시장가",
+      "stop_limit": "지정가",
+      "stop_market": "시장가",
+      "question": "위와 같이",
+      "question1": " 주문",
+      "questionStop": " STOP",
+      "question2": "을 실행하시겠습니까?"
+    }
   },
   "orderBook": {
     "sell": "매도",
