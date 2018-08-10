@@ -41,8 +41,7 @@ class OrderConfirmationModal extends Component {
         backdropColor='red'
         visible={isModalVisible}
         onBackdropPress={() => this.hide()}
-        onRequestClose={() => {
-        }}>
+        onRequestClose={() => this.hide()}>
         <View style={styles.popup}>
             <View style={styles.titleOrder}>
               <Text style={styles.textTitleOrder}>
