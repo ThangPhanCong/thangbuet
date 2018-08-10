@@ -20,6 +20,7 @@ import BaseScreen from '../BaseScreen'
 import OrderBook from './OrderBook';
 import OrderBookSettingModal from './OrderBookSettingModal';
 import OrderQuantityModal from './OrderQuantityModal';
+import OrderConfirmationModal from './OrderConfirmationModal';
 import CurrencyInput from '../common/CurrencyInput';
 import Utils from '../../utils/Utils';
 import Consts from '../../utils/Consts'
@@ -139,7 +140,9 @@ export default class TradingOrderBookScreen extends BaseScreen {
   }
 
   _confirmCreateOrder(data) {
-    this._sendOrderRequest(data);
+    this._orderModal.show(data, () => {
+      this._sendOrderRequest(data);
+    });
   }
 
   async _sendOrderRequest(data) {
@@ -162,6 +165,7 @@ export default class TradingOrderBookScreen extends BaseScreen {
   render() {
     return (
       <View style={CommonStyles.matchParent}>
+        <OrderConfirmationModal ref={ref => this._orderModal = ref}/>
         {this._renderOrderBookSettingModal()}
         {this._renderQuantityModal()}
         {this._renderQuantityAndSetting()}
