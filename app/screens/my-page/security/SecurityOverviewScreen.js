@@ -244,7 +244,6 @@ export default class SecurityOverviewScreen extends BaseScreen {
         disable = true
       }
     } else {
-      console.log(this.state.info[item.propVerify])
       if (this.state.info[item.propVerify]) {
         disable = true
       }
@@ -558,30 +557,36 @@ export default class SecurityOverviewScreen extends BaseScreen {
             {I18n.t('myPage.security.bankAccountOwner')}
           </Text>
           <TextInput style={styles.bankAccountTextInput}
-                     underlineColorAndroid='transparent'
-                     onChangeText={text => this._passwordParams.password = text}/>
+                    underlineColorAndroid='transparent'
+                    onChangeText={text => this._passwordParams.password = text}/>
 
           <Text style={styles.bankAccountTitle}>
             {I18n.t('myPage.security.newPassword')}
           </Text>
           <TextInput style={styles.bankAccountTextInput}
-                     underlineColorAndroid='transparent'
-                     onChangeText={text => this._passwordParams.new_password = text}/>
-
+                    underlineColorAndroid='transparent'
+                    onChangeText={text => this._passwordParams.new_password = text}/>
+                    
           <Text style={styles.bankAccountTitle}>
             {I18n.t('myPage.security.repeatPassword')}
           </Text>
           <TextInput style={styles.bankAccountTextInput}
-                     underlineColorAndroid='transparent'
-                     onChangeText={text => this._passwordParams.new_password_confirm = text}/>
-
-          <Text style={styles.bankAccountTitle}>
-            {I18n.t('myPage.security.otpCode').toLocaleUpperCase()}
-          </Text>
-          <TextInput style={styles.bankAccountTextInput}
-                     underlineColorAndroid='transparent'
-                     keyboardType='numeric'
-                     onChangeText={text => this._passwordParams.otp = text}/>
+                    underlineColorAndroid='transparent'
+                    onChangeText={text => this._passwordParams.new_password_confirm = text}/>
+          {
+            !!this.state.info.otp_verified &&
+            (
+              <View>
+                <Text style={styles.bankAccountTitle}>
+                  {I18n.t('myPage.security.otpCode').toLocaleUpperCase()}
+                </Text>
+                <TextInput style={styles.bankAccountTextInput}
+                        underlineColorAndroid='transparent'
+                        keyboardType='numeric'
+                        onChangeText={text => this._passwordParams.otp = text}/>
+              </View>
+            )
+          }
 
           <TouchableOpacity
             style={styles.bankAccountSubmitButton}
