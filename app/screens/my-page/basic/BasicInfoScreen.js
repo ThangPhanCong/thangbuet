@@ -14,6 +14,7 @@ import I18n from '../../../i18n/i18n';
 import rf from '../../../libs/RequestFactory';
 import ScaledSheet from '../../../libs/reactSizeMatter/ScaledSheet';
 import { Fonts } from '../../../utils/CommonStyles';
+import Events from '../../../utils/Events';
 
 export default class BasicInfoScreen extends BaseScreen {
   _infoProps = [{
@@ -45,6 +46,12 @@ export default class BasicInfoScreen extends BaseScreen {
   componentWillMount(){
     super.componentWillMount()
     this._getCurrentUser();
+  }
+
+  getDataEventHandlers() {
+    return {
+      [Events.SECURITY_SETTINGS_UPDATED]: () => this._getCurrentUser(false)
+    };
   }
 
   render() {
@@ -100,9 +107,9 @@ export default class BasicInfoScreen extends BaseScreen {
 
   }
 
-  async _getCurrentUser() {
+  async _getCurrentUser(useCache = true) {
     try {
-      let res = await rf.getRequest('UserRequest').getCurrentUser();
+      let res = await rf.getRequest('UserRequest').getCurrentUser(useCache);
       let user = res.data;
       let info = {};
       for (el of this._infoProps) {

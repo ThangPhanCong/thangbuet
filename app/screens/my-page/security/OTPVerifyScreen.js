@@ -17,6 +17,7 @@ import rf from '../../../libs/RequestFactory';
 import I18n from '../../../i18n/i18n';
 import { isEmpty } from 'lodash';
 import UIUtils from "../../../utils/UIUtils";
+import Events from "../../../utils/Events";
 
 export default class OTPVerifyScreen extends BaseScreen {
   _otpCode = '';
@@ -178,6 +179,7 @@ export default class OTPVerifyScreen extends BaseScreen {
   async _verifyOTP(code) {
     try {
       await rf.getRequest('UserRequest').addSecuritySettingOtp(this._otpCode);
+      this.notify(Events.SECURITY_SETTINGS_UPDATED);
       Keyboard.dismiss();
       let { addOtpVerificationHandler } = this.props.navigation.state.params;
       if (addOtpVerificationHandler) {
