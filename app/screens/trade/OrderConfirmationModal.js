@@ -84,7 +84,6 @@ class OrderConfirmationModal extends Component {
             <Text style={styles.textQuestionBold}>
               {isStopOrder && I18n.t('orderForm.confirmOrder.questionStop')}
               {I18n.t('orderForm.confirmOrder.question1')}
-              }
             </Text>
             <Text style={styles.textQuestion}>{I18n.t('orderForm.confirmOrder.question2')}</Text>
           </View>

@@ -690,12 +690,17 @@ export default class OrderBook extends BaseScreen {
   }
 
   _notifyOrderBookPressed(item, tradeType, orderBookType) {
-    if (this.settings.click_to_order && item.price) {
-      let data = { ...item }
-      data.tradeType = tradeType;
-      data.orderBookType = orderBookType;
-      this.notify(Events.ORDER_BOOK_ROW_PRESSED, data);
+    if (!item.price) {
+      return;
     }
+    if (!this.settings.click_to_order && orderBookType == OrderBook.TYPE_FULL) {
+      return;
+    }
+
+    let data = { ...item }
+    data.tradeType = tradeType;
+    data.orderBookType = orderBookType;
+    this.notify(Events.ORDER_BOOK_ROW_PRESSED, data);
   }
 }
 
