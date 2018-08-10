@@ -51,8 +51,7 @@ export default class OrderForm extends BaseScreen {
 
       enableQuantity: true,
       settingsOrderConfirmation: undefined,
-      focusedInput: undefined,
-      errorStopPrice: false
+      focusedInput: undefined
     }
     this.balances = {};
     this.types = [
@@ -310,14 +309,13 @@ export default class OrderForm extends BaseScreen {
     }
   }
 
-  _confirmCreateOrder(data) { 
-    this._sendOrderRequest(data); 
-  } 
+  _confirmCreateOrder(data) {
+    this._sendOrderRequest(data);
+  }
 
   async _sendOrderRequest(data) {
     try {
       await rf.getRequest('OrderRequest').createANewOne(data);
-      this._modalOrder._onHideModalOrder();
     } catch (error) {
       if (!error.errors) {
         this._showError(I18n.t('common.message.network_error'));
@@ -333,8 +331,6 @@ export default class OrderForm extends BaseScreen {
   }
 
   render() {
-    const {errorStopPrice} = this.state;
-
     return (
       <View style={CommonStyles.matchParent}>
         <ModalConfirmOrder
