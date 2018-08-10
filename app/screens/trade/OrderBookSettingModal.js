@@ -65,6 +65,8 @@ export default class OrderBookSettingModal extends BaseScreen {
     this.setState({ modalVisible: visible });
   }
 
+
+
   async _loadData() {
     Promise.all([
       this._loadPriceGroups(),

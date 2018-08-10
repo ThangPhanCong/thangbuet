@@ -27,6 +27,7 @@ import { CommonColors, CommonSize, CommonStyles, Fonts } from '../../utils/Commo
 import { getCurrencyName, formatCurrency } from '../../utils/Filters';
 import OrderBook from './OrderBook';
 import OrderBookSettingModal from './OrderBookSettingModal';
+import OrderConfirmationModal from './OrderConfirmationModal';
 
 export default class OrderForm extends BaseScreen {
 
@@ -50,7 +51,6 @@ export default class OrderForm extends BaseScreen {
 
       enableQuantity: true,
       settingsOrderConfirmation: undefined,
-
       focusedInput: undefined
     }
     this.balances = {};
@@ -301,6 +301,7 @@ export default class OrderForm extends BaseScreen {
       this._showError(errors[0].message);
       return;
     }
+
     if (this.settingsOrderConfirmation) {
       this._confirmCreateOrder(data);
     } else {
@@ -309,7 +310,9 @@ export default class OrderForm extends BaseScreen {
   }
 
   _confirmCreateOrder(data) {
-    this._sendOrderRequest(data);
+    this._orderModal.show(data, () => {
+      this._sendOrderRequest(data);
+    });
   }
 
   async _sendOrderRequest(data) {
@@ -333,6 +336,7 @@ export default class OrderForm extends BaseScreen {
   render() {
     return (
       <View style={CommonStyles.matchParent}>
+        <OrderConfirmationModal ref={ref => this._orderModal = ref}/>
         {this._renderInputs()}
         {this._isBuyOrder() && this._renderEstimationBuyValues()}
         {!this._isBuyOrder() && this._renderEstimationSellValues()}
@@ -970,7 +974,6 @@ const styles = ScaledSheet.create({
   submitSell: {
     backgroundColor: '#007AC5'
   },
-
   submitText: {
     color: '#FFF',
     fontSize: '11@s',
