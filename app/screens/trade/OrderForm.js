@@ -27,7 +27,7 @@ import { CommonColors, CommonSize, CommonStyles, Fonts } from '../../utils/Commo
 import { getCurrencyName, formatCurrency } from '../../utils/Filters';
 import OrderBook from './OrderBook';
 import OrderBookSettingModal from './OrderBookSettingModal';
-import ModalConfirmOrder from './ModalConfirmOrder';
+import OrderConfirmationModal from './OrderConfirmationModal';
 
 export default class OrderForm extends BaseScreen {
 
@@ -310,7 +310,9 @@ export default class OrderForm extends BaseScreen {
   }
 
   _confirmCreateOrder(data) {
-    this._sendOrderRequest(data);
+    this._orderModal.show(data, () => {
+      this._sendOrderRequest(data);
+    });
   }
 
   async _sendOrderRequest(data) {
@@ -328,14 +330,13 @@ export default class OrderForm extends BaseScreen {
 
   _showError(message) {
     //TODO show error
+    console.log(message);
   }
 
   render() {
     return (
       <View style={CommonStyles.matchParent}>
-        <ModalConfirmOrder
-          ref={ref => this._modalOrder = ref}
-          sendOrderRequest={(data) => this._sendOrderRequest(data)}/>
+        <OrderConfirmationModal ref={ref => this._orderModal = ref}/>
         {this._renderInputs()}
         {this._isBuyOrder() && this._renderEstimationBuyValues()}
         {!this._isBuyOrder() && this._renderEstimationSellValues()}

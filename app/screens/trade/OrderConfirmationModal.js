@@ -1,63 +1,49 @@
 import React, { Component } from "react";
 import ScaledSheet from "../../libs/reactSizeMatter/ScaledSheet";
-import UIUtils from "../../utils/UIUtils";
 import { CommonColors, Fonts } from "../../utils/CommonStyles";
 import { SafeAreaView, Text, TouchableOpacity, View } from "react-native";
 import Modal from "react-native-modal"
 import { Card } from "react-native-elements";
 import I18n from "../../i18n/i18n";
 import { formatCurrency, getCurrencyName } from "../../utils/Filters";
+import UIUtils from "../../utils/UIUtils";
+import Consts from '../../utils/Consts'
 
-class ModalConfirmOrder extends Component {
+class OrderConfirmationModal extends Component {
   state = {
-    isShowModalOrder: false,
+    isModalVisible: false,
     data: {}
   };
 
-  static TYPE = {
-    LIMIT: 'limit',
-    STOP_LIMIT: 'stop_limit',
-    STOP_MARKET: 'stop_market',
-  };
-
-  _onShowModalOrder() {
+  show(data, onConfirm) {
     this.setState({
-      isShowModalOrder: true
-    })
+      isModalVisible: true,
+      data: data
+    });
+    this._onConfirm = onConfirm;
   }
 
-  _onHideModalOrder() {
+  hide() {
     this.setState({
-      isShowModalOrder: false,
-      data: {}
+      isModalVisible: false
     })
-  }
-
-
-  _loadData(data) {
-    this.setState({data})
-  }
-
-  _renderType(type) {
-    return I18n.t(`orderForm.confirmOrder.${type}`);
   }
 
   render() {
-    const { sendOrderRequest } = this.props;
-    const { data, isShowModalOrder} = this.state;
-    const tradeTypeBuy =  data && data.trade_type ? data.trade_type === 'buy' : null;
-    const dataType = this._renderType(data.type);
-    const typeStop = data.type === ModalConfirmOrder.TYPE.STOP_LIMIT ||  data.type === ModalConfirmOrder.TYPE.STOP_MARKET;
+    const { data, isModalVisible} = this.state;
+    const isBuyOrder = data.trade_type === Consts.TRADE_TYPE_BUY;
+    const dataType = I18n.t(`orderForm.confirmOrder.${data.type}`);
+    const isStopOrder = data.type === Consts.ORDER_TYPE_STOP_LIMIT || data.type === Consts.ORDER_TYPE_STOP_MARKET;
 
     return(
       <Modal
         animationType="slide"
         backdropColor='red'
-        visible={isShowModalOrder}
-        onBackdropPress={() => this._onHideModalOrder()}
+        visible={isModalVisible}
+        onBackdropPress={() => this.hide()}
         onRequestClose={() => {
         }}>
-        <Card containerStyle={styles.containerCard}>
+        <View style={styles.popup}>
             <View style={styles.titleOrder}>
               <Text style={styles.textTitleOrder}>
                 {I18n.t('orderForm.confirmOrder.titleConfirm')}
@@ -72,14 +58,21 @@ class ModalConfirmOrder extends Component {
               <Text style={styles.titleContainer}>{I18n.t('orderForm.confirmOrder.type')}</Text>
             </View>
             <View style={styles.dataOrder}>
-              <Text style={styles.textDataOrder}>{I18n.t(`currency.${data.coin}.fullname`) + ' (' + getCurrencyName(data.coin) + ' ' + getCurrencyName(data.currency) + ')'}</Text>
-              <Text style={styles.textDataOrder}>{formatCurrency(data.quantity, data.coin, 0) +  ' ' + getCurrencyName(data.coin)}</Text>
-              <Text style={styles.textDataOrder}>{formatCurrency(data.price, data.currency, 0) +  ' ' + getCurrencyName(data.currency)}</Text>
+              <Text style={styles.textDataOrder}>
+                {I18n.t(`currency.${data.coin}.fullname`)
+                  + ' (' + getCurrencyName(data.coin) + ' ' + getCurrencyName(data.currency) + ')'}
+              </Text>
+              <Text style={styles.textDataOrder}>
+                {formatCurrency(data.quantity, data.coin, 0) +  ' ' + getCurrencyName(data.coin)}
+              </Text>
+              <Text style={styles.textDataOrder}>
+                {formatCurrency(data.price, data.currency, 0) +  ' ' + getCurrencyName(data.currency)}
+              </Text>
 
               <View style={styles.tradeTypeContainer}>
                 <Text style={styles.titleType}>{dataType}</Text>
-                <Text style={tradeTypeBuy ? styles.tradeTypeBuy : styles.tradeTypeSell}>{
-                  tradeTypeBuy ? I18n.t('orderForm.confirmOrder.buy') : I18n.t('orderForm.confirmOrder.sell')
+                <Text style={isBuyOrder ? styles.tradeTypeBuy : styles.tradeTypeSell}>{
+                  isBuyOrder ? I18n.t('orderForm.confirmOrder.buy') : I18n.t('orderForm.confirmOrder.sell')
                 }</Text>
                 <Text style={styles.titleType}> {I18n.t('orderForm.confirmOrder.order')}</Text>
               </View>
@@ -88,40 +81,49 @@ class ModalConfirmOrder extends Component {
 
           <View style={styles.questionOrder}>
             <Text style={styles.textQuestion}>{I18n.t('orderForm.confirmOrder.question')}</Text>
-            {typeStop ? <Text style={styles.textQuestionBold}>{I18n.t('orderForm.confirmOrder.questionStop')}</Text> : null}
-            <Text style={styles.textQuestionBold}>{I18n.t('orderForm.confirmOrder.question1')}</Text>
+            <Text style={styles.textQuestionBold}>
+              {isStopOrder && I18n.t('orderForm.confirmOrder.questionStop')}
+              {I18n.t('orderForm.confirmOrder.question1')}
+              }
+            </Text>
             <Text style={styles.textQuestion}>{I18n.t('orderForm.confirmOrder.question2')}</Text>
           </View>
 
           <View style={styles.buttonContainer}>
-            <TouchableOpacity onPress={() => this._onHideModalOrder()}>
+            <TouchableOpacity onPress={() => this.hide()}>
               <View style={styles.cancelContainer}>
                 <Text style={styles.textCancel}>{I18n.t('orderForm.confirmOrder.cancel')}</Text>
               </View>
             </TouchableOpacity>
 
-            <TouchableOpacity onPress={() => sendOrderRequest(data)}>
+            <TouchableOpacity onPress={() => this._onPressConfirm()}>
               <View style={styles.confirmContainer}>
                 <Text style={styles.textConfirm}>{I18n.t('orderForm.confirmOrder.confirm')}</Text>
               </View>
             </TouchableOpacity>
           </View>
-        </Card>
+        </View>
 
       </Modal>
-    )
+    );
+  }
+
+  _onPressConfirm() {
+    this.hide();
+    this._onConfirm && this._onConfirm();
   }
 }
 
-export default ModalConfirmOrder;
+export default OrderConfirmationModal;
 
 const styles = ScaledSheet.create({
-  containerCard: {
+  popup: {
     borderRadius: '5@s',
     marginStart: '5@s',
     marginEnd: '5@s',
     height: '250@s',
     flexDirection: 'column',
+    backgroundColor: 'white',
     padding: 0,
     ...UIUtils.generateShadowStyle(5),
   },
