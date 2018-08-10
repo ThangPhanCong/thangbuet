@@ -13,6 +13,7 @@ import { Fonts } from '../../utils/CommonStyles';
 import { scale } from "../../libs/reactSizeMatter/scalingUtils";
 import OrderUtils from '../../utils/OrderUtils';
 import CurrencyInput from '../common/CurrencyInput';
+import Events from '../../utils/Events';
 
 class WithdrawalScreen extends BaseScreen {
   constructor(props) {
@@ -70,6 +71,12 @@ class WithdrawalScreen extends BaseScreen {
   getSocketEventHandlers() {
     return {
       BalanceUpdated: this._onBalanceUpdated.bind(this),
+    };
+  }
+
+  getDataEventHandlers() {
+    return {
+      [Events.SECURITY_SETTINGS_UPDATED]: this._loadData.bind(this)
     };
   }
 

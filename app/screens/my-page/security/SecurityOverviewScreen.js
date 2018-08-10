@@ -24,6 +24,7 @@ import ScaledSheet from '../../../libs/reactSizeMatter/ScaledSheet';
 import { scale } from '../../../libs/reactSizeMatter/scalingUtils';
 import { Fonts } from '../../../utils/CommonStyles';
 import UIUtils from "../../../utils/UIUtils";
+import Events from "../../../utils/Events";
 // const DownArrowIcon = require('../../../../assets/common/caretdown.png');
 const submitPhoneHtmlString =
   `<!DOCTYPE html>
@@ -274,9 +275,8 @@ export default class SecurityOverviewScreen extends BaseScreen {
         backdropColor='transparent'
         onBackButtonPress={this._dismissSubmitModal.bind(this)}
         onBackdropPress={this._dismissSubmitModal.bind(this)}>
-        <Card
-          style={styles.dialog}
-          containerStyle={styles.containerCard}>
+        <View
+          style={styles.containerCard}>
           <Text style={styles.cancelOtpHeader}>
             {I18n.t('myPage.security.cancelOtpHeader')}
           </Text>
@@ -312,7 +312,7 @@ export default class SecurityOverviewScreen extends BaseScreen {
               {I18n.t('myPage.security.initOtpVerification')}
             </Text>
           </TouchableOpacity>
-        </Card>
+        </View>
 
       </Modal>
     )
@@ -328,9 +328,8 @@ export default class SecurityOverviewScreen extends BaseScreen {
         backdropColor='transparent'
         onBackButtonPress={this._dismissInitVerificationModal.bind(this)}
         onBackdropPress={this._dismissInitVerificationModal.bind(this)}>
-        <Card
-          style={styles.dialog}
-          containerStyle={styles.largerContainerCard}>
+        <View
+          style={styles.largerContainerCard}>
           <Text style={styles.initOtpVerification}>
             {I18n.t('myPage.security.initOtpVerification')}
           </Text>
@@ -384,7 +383,7 @@ export default class SecurityOverviewScreen extends BaseScreen {
               {I18n.t('myPage.security.cancelOtpSubmit')}
             </Text>
           </TouchableOpacity>
-        </Card>
+        </View>
       </Modal>
     )
   }
@@ -398,16 +397,15 @@ export default class SecurityOverviewScreen extends BaseScreen {
         backdropColor='transparent'
         onBackButtonPress={this._dismissRegisterPhoneModal.bind(this)}
         onBackdropPress={this._dismissRegisterPhoneModal.bind(this)}>
-        <Card
-          style={styles.dialog}
-          containerStyle={styles.registerPhoneContainer}
+        <View
+          style={styles.registerPhoneContainer}
           wrapperStyle={{ flex: 1 }}>
           <WebView
             source={{ html: submitPhoneHtmlString.format(this._verifyPhoneResult.sEncryptedData, this._verifyPhoneResult.postretUrl, this._verifyPhoneResult.postcpid) }}
             javaScriptEnabled={true}
             domStorageEnabled={true}
             startInLoadingState={true}/>
-        </Card>
+        </View>
       </Modal>
     )
   }
@@ -421,9 +419,8 @@ export default class SecurityOverviewScreen extends BaseScreen {
         backdropColor='transparent'
         onBackButtonPress={this._dismissExistedPhoneModal.bind(this)}
         onBackdropPress={this._dismissExistedPhoneModal.bind(this)}>
-        <Card
-          style={styles.dialog}
-          containerStyle={styles.containerCard}>
+        <View
+          style={styles.containerCard}>
           <Text style={styles.cancelOtpHeader}>
             {I18n.t('myPage.security.existedPhoneHeader')}
           </Text>
@@ -434,7 +431,7 @@ export default class SecurityOverviewScreen extends BaseScreen {
               {I18n.t('myPage.security.existedPhoneButtonText')}
             </Text>
           </TouchableOpacity>
-        </Card>
+        </View>
       </Modal>
     )
   }
@@ -448,9 +445,8 @@ export default class SecurityOverviewScreen extends BaseScreen {
         backdropColor='transparent'
         onBackButtonPress={this._dismissBankAccountModal.bind(this)}
         onBackdropPress={this._dismissBankAccountModal.bind(this)}>
-        <Card
-          style={styles.dialog}
-          containerStyle={styles.containerCard}>
+        <View
+          style={styles.containerCard}>
           <Text style={styles.initOtpVerification}>
             {I18n.t('myPage.security.bankAccountHeader')}
           </Text>
@@ -511,7 +507,7 @@ export default class SecurityOverviewScreen extends BaseScreen {
               {I18n.t('myPage.security.bankAccountSubmitText')}
             </Text>
           </TouchableOpacity>
-        </Card>
+        </View>
       </Modal>
     )
   }
@@ -552,9 +548,8 @@ export default class SecurityOverviewScreen extends BaseScreen {
         backdropColor='transparent'
         onBackButtonPress={this._dismissChangePasswordModal.bind(this)}
         onBackdropPress={this._dismissChangePasswordModal.bind(this)}>
-        <Card
-          style={styles.dialog}
-          containerStyle={styles.largerContainerCard}>
+        <View
+          style={styles.largerContainerCard}>
           <Text style={styles.initOtpVerification}>
             {I18n.t('myPage.security.changePasswordHeader')}
           </Text>
@@ -595,7 +590,7 @@ export default class SecurityOverviewScreen extends BaseScreen {
               {I18n.t('myPage.security.changePasswordSubmit')}
             </Text>
           </TouchableOpacity>
-        </Card>
+        </View>
       </Modal>
     )
   }
@@ -658,6 +653,7 @@ export default class SecurityOverviewScreen extends BaseScreen {
   }
 
   _dismissRegisterPhoneModal() {
+    this.notify(Events.SECURITY_SETTINGS_UPDATED);
     this.setState({ registerPhoneDialogVisible: false })
     this._getCurrentUser(false);
   }
@@ -667,6 +663,7 @@ export default class SecurityOverviewScreen extends BaseScreen {
   }
 
   _dismissBankAccountModal() {
+    this.notify(Events.SECURITY_SETTINGS_UPDATED);
     this.state.selectedBank = {}
     this._bankParams = {}
     this.setState({ bankAccountDialogVisible: false })
@@ -698,7 +695,14 @@ export default class SecurityOverviewScreen extends BaseScreen {
 
   async _removeGoogleAuth() {
     try {
-      await rf.getRequest('UserRequest').delGoogleAuth(this._otpParams)
+      if (!this._otpParams['otp']) {
+        this._otpParams['otp'] = '';
+      }
+      if (!this._otpParams['authentication_code']) {
+        this._otpParams['authentication_code'] = '';
+      }
+      await rf.getRequest('UserRequest').delGoogleAuth(this._otpParams);
+      this.notify(Events.SECURITY_SETTINGS_UPDATED);
       this._otpParams = {};
 
       this.setState({
@@ -901,6 +905,7 @@ const styles = ScaledSheet.create({
     marginStart: '30@s',
     marginEnd: '30@s',
     padding: 0,
+    backgroundColor: '#FFF',
     ...UIUtils.generatePopupShadow()
   },
   largerContainerCard: {
@@ -908,6 +913,7 @@ const styles = ScaledSheet.create({
     marginStart: '5@s',
     marginEnd: '5@s',
     padding: 0,
+    backgroundColor: '#FFF',
     ...UIUtils.generateShadowStyle(5)
   },
   registerPhoneContainer: {
@@ -917,6 +923,7 @@ const styles = ScaledSheet.create({
     padding: 0,
     marginStart: '10@s',
     marginEnd: '10@s',
+    backgroundColor: '#FFF',
     height: 0.8 * Dimensions.get('window').height,
     ...UIUtils.generatePopupShadow()
   },

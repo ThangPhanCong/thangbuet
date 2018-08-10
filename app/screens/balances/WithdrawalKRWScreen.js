@@ -12,7 +12,8 @@ import { Fonts } from '../../utils/CommonStyles'
 import { scale } from "../../libs/reactSizeMatter/scalingUtils";
 import OrderUtils from '../../utils/OrderUtils';
 import CurrencyInput from '../common/CurrencyInput';
-import Utils from '../../utils/Utils'
+import Utils from '../../utils/Utils';
+import Events from '../../utils/Events';
 
 class WithdrawalKRWScreen extends BaseScreen {
   constructor(props) {
@@ -37,6 +38,12 @@ class WithdrawalKRWScreen extends BaseScreen {
   componentDidMount() {
     super.componentDidMount()
     this._loadData()
+  }
+
+  getDataEventHandlers() {
+    return {
+      [Events.SECURITY_SETTINGS_UPDATED]: this._loadData.bind(this)
+    };
   }
 
   async _loadData() {
