@@ -315,6 +315,7 @@ class WithdrawalScreen extends BaseScreen {
                   </View>
                   <View style={styles.tagWrapper}>
                     <TextInput
+                      keyboardType='numeric'
                       value={this.state.blockchainTag}
                       onChangeText={(text) => {
                         this.setState({ blockchainTag: text })
