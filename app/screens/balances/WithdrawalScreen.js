@@ -4,35 +4,40 @@ import BaseScreen from '../BaseScreen'
 import ScaledSheet from '../../libs/reactSizeMatter/ScaledSheet'
 import I18n from '../../i18n/i18n'
 import { withNavigationFocus } from 'react-navigation'
-import { Divider, Icon } from 'react-native-elements'
+import { Divider } from 'react-native-elements'
 import { formatCurrency, getCurrencyName } from '../../utils/Filters'
 import rf from '../../libs/RequestFactory'
 import Modal from "react-native-modal"
-import Utils from '../../utils/Utils'
 import { Fonts } from '../../utils/CommonStyles';
 import { scale } from "../../libs/reactSizeMatter/scalingUtils";
 import OrderUtils from '../../utils/OrderUtils';
 import CurrencyInput from '../common/CurrencyInput';
 import Events from '../../utils/Events';
+import AddressValidator from '../../utils/AddressValidator';
+import { isEmpty } from 'lodash';
 
 class WithdrawalScreen extends BaseScreen {
+  _blockchainAddress = ''
+  _blockchainTag = null
+  _daily = {}
+  _amount = 0
+  _quantityPrecision = 10
+
+  _shouldShowInvalidAddress = false
+
   constructor(props) {
     super(props)
     this.state = {
       isComplete: false,
-      amount: 0,
-      blockchainAddress: '',
-      blockchainTag: null,
-      daily: {},
       modalConfirm: false,
       amountConfirm: false,
       smsConfirm: false,
       otpConfirm: false,
       agree: false,
-      optErr: false,
-      quantityPrecision: 10,
+      optErr: false
     }
-    this.currency = ''
+    this.currency = '';
+    this.addressValidator = new AddressValidator();
   }
 
   componentDidMount() {
@@ -45,7 +50,8 @@ class WithdrawalScreen extends BaseScreen {
     await this._getDailyLimit()
     await this._getWithdrawal()
     await this._getAuth()
-    this.setState({ isComplete: true, modalConfirm: false, amount: 0 })
+    this.setState({ isComplete: true, modalConfirm: false})
+    this._amount = 0;
   }
 
   async _getBalaceDetail() {
@@ -57,15 +63,10 @@ class WithdrawalScreen extends BaseScreen {
 
     this.currency = symbol.code;
     this.setState({
-      symbol,
-      blockchainAddress: symbol.wallet_address ? symbol.wallet_address : "",
-      blockchainTag: symbol.tag ? symbol.tag : ""
+      symbol
     })
-  }
-
-  componentWillUnmount() {
-    super.componentWillUnmount();
-    this.setState({ isComplete: false, modalConfirm: false, amount: 0 })
+    this._blockchainAddress = symbol.wallet_address ? symbol.wallet_address : "";
+    this._blockchainTag = symbol.tag ? symbol.tag : "";
   }
 
   getSocketEventHandlers() {
@@ -100,12 +101,10 @@ class WithdrawalScreen extends BaseScreen {
 
   async _getDailyLimit() {
     try {
-      let { daily } = this.state
       const withdrawalLimit = await this._getItemDaily();
 
-      daily.withdrawalLimit = parseFloat(withdrawalLimit.daily_limit)
-      daily.minium = parseFloat(withdrawalLimit.minium_withdrawal)
-      this.setState({ daily })
+      this._daily.withdrawalLimit = parseFloat(withdrawalLimit.daily_limit)
+      this._daily.minium = parseFloat(withdrawalLimit.minium_withdrawal)
     } catch (err) {
       console.log("Some errors has occurred in  DailyLimit._error:", err)
     }
@@ -137,36 +136,29 @@ class WithdrawalScreen extends BaseScreen {
 
   async _getWithdrawal() {
     try {
-      let { daily } = this.state;
       const rpDaily = await rf.getRequest('TransactionRequest').getWithdrawalDaily({ 'currency': this.currency })
-
-      daily.withdrawal = rpDaily.data;
-      this.setState({ daily })
+      this._daily.withdrawal = rpDaily.data;
     } catch (err) {
       console.log("_getWithdrawal:", err)
     }
   }
 
   _validateAmount() {
-    const { amount, daily, blockchainAddress, blockchainTag } = this.state
     let errMsg = ''
 
-    if (daily.minium > amount) {
+    if (this._daily.minium > this._amount) {
       errMsg = I18n.t('withdrawal.errMinium')
-    } else if (amount > (daily.withdrawalLimit - daily.withdrawal)) {
+    } else if (this._amount > (this._daily.withdrawalLimit - this._daily.withdrawal)) {
       errMsg = I18n.t('withdrawal.errMaximum')
-    } else if (amount <= 0) {
+    } else if (this._amount <= 0) {
       errMsg = I18n.t('withdrawal.errMaximum')
     }
 
-    //validate blockchain address
-    if (!Utils.isWalletAddress(this.currency, blockchainAddress, blockchainTag)) {
-      errMsg = I18n.t('withdrawal.errBlockchainAddress')
+    if (this._shouldShowInvalidAddress) {
+      errMsg = I18n.t('withdrawal.errBlockchainAddress');
     }
 
-    if (errMsg === '') {
-      this.setState({ amountConfirm: true })
-    } else {
+    if (!isEmpty(errMsg)) {
       Alert.alert(
         I18n.t('deposit.error'),
         errMsg,
@@ -176,7 +168,10 @@ class WithdrawalScreen extends BaseScreen {
         },],
         { cancelable: false }
       )
+      return;
     }
+
+    this.setState({ amountConfirm: true });
   }
 
   _doConfirm() {
@@ -185,17 +180,16 @@ class WithdrawalScreen extends BaseScreen {
 
   async _doWithdrawal() {
     try {
-      const { amount } = this.state
       let params = {
-        amount: this.state.amount * -1 + '',
+        amount: this._amount * -1 + '',
         currency: this.currency,
-        foreign_blockchain_address: this.state.blockchainAddress,
+        foreign_blockchain_address: this._blockchainAddress,
         otp: this.state.otpConfirm ? this.state.otp + '|' : '|' + this.state.otp
       }
-      if (this.state.blockchainTag) {
-        params.destination_tag = this.state.blockchainTag
+      if (this._blockchainTag) {
+        params.destination_tag = this._blockchainTag
       }
-      const withdrawalRes = await rf.getRequest('TransactionRequest').withdraw(params)
+      await rf.getRequest('TransactionRequest').withdraw(params)
       this.setState({ optErr: false })
       this._loadData()
     } catch (err) {
@@ -206,7 +200,7 @@ class WithdrawalScreen extends BaseScreen {
 
   async _doRequestSmsOtp() {
     try {
-      const smsOtpRes = await rf.getRequest('UserRequest').sendSmsOtp({})
+      await rf.getRequest('UserRequest').sendSmsOtp({})
     } catch (err) {
       console.log("_getWithdrawalKrw:", err)
     }
@@ -214,7 +208,8 @@ class WithdrawalScreen extends BaseScreen {
 
   _onQuantityChanged(formatted, extracted) {
     let amount = OrderUtils.getMaskInputValue(formatted, extracted);
-    this.setState({ amount });
+    this._amount = amount;
+    this.setState({ isComplete: true })
   }
 
   render() {
@@ -252,8 +247,8 @@ class WithdrawalScreen extends BaseScreen {
                   <Text style={styles.leftView}>{I18n.t('withdrawal.available')}</Text>
                   <View style={[styles.rightView, { flexDirection: 'row' }]}>
                     <Text style={[styles.rightContent, { marginLeft: scale(30) }]}>
-                      {this.state.daily.withdrawalLimit - this.state.daily.withdrawal > 0 ?
-                        formatCurrency(this.state.daily.withdrawalLimit - this.state.daily.withdrawal, this.currency) : 0}
+                      {this._daily.withdrawalLimit - this._daily.withdrawal > 0 ?
+                        formatCurrency(this._daily.withdrawalLimit - this._daily.withdrawal, this.currency) : 0}
                     </Text>
                     <Text style={[styles.symbol]}>{getCurrencyName(this.currency)}</Text>
                   </View>
@@ -269,14 +264,14 @@ class WithdrawalScreen extends BaseScreen {
                     keyboardType='numeric'
                     autoCorrect={false}
                     underlineColorAndroid='transparent'
-                    value={formatCurrency(this.state.amount, this.currency)}
+                    value={formatCurrency(this._amount, this.currency)}
                     onChangeText={(text) => {
                       this.setState({ amount: parseFloat(text.split(',').join('')) })
                     }}
                     style={styles.amountInput} /> */}
                   <CurrencyInput
-                    value={this.state.amount}
-                    precision={this.state.quantityPrecision}
+                    value={this._amount}
+                    precision={this._quantityPrecision}
                     onChangeText={this._onQuantityChanged.bind(this)}
                     keyboardType='numeric'
                     style={styles.inputText}
@@ -284,9 +279,9 @@ class WithdrawalScreen extends BaseScreen {
                   <Text style={styles.amountSymbol}>{getCurrencyName(this.currency)}</Text>
                   <TouchableOpacity
                     style={styles.amountMax}
-                    onPress={() => this.setState({
-                      amount: this.state.daily.withdrawalLimit - this.state.daily.withdrawal > 0 ? this.state.daily.withdrawalLimit - this.state.daily.withdrawal : 0
-                    })}>
+                    onPress={() => {
+                      this._amount = this._daily.withdrawalLimit - this._daily.withdrawal > 0 ? this._daily.withdrawalLimit - this._daily.withdrawal : 0
+                    }}>
                     <Text style={styles.amountText}>{I18n.t('withdrawal.maximum')}</Text>
                   </TouchableOpacity>
                 </View>
@@ -298,10 +293,7 @@ class WithdrawalScreen extends BaseScreen {
                 </Text>
                 <View style={styles.addressWrapper}>
                   <TextInput
-                    value={this.state.blockchainAddress}
-                    onChangeText={(text) => {
-                      this.setState({ blockchainAddress: text })
-                    }}
+                    onChangeText={this._onBlockchainAddressChanged.bind(this)}
                     autoCorrect={false}
                     underlineColorAndroid='transparent'
                     style={[styles.inputText, styles.addressInput]} />
@@ -315,9 +307,9 @@ class WithdrawalScreen extends BaseScreen {
                   </View>
                   <View style={styles.tagWrapper}>
                     <TextInput
-                      value={this.state.blockchainTag}
+                      keyboardType='numeric'
                       onChangeText={(text) => {
-                        this.setState({ blockchainTag: text })
+                        this._blockchainTag = text
                       }}
                       autoCorrect={false}
                       underlineColorAndroid='transparent'
@@ -445,6 +437,14 @@ class WithdrawalScreen extends BaseScreen {
     )
   }
 
+  _onBlockchainAddressChanged(text) {
+    this._blockchainAddress = text;
+    this._shouldShowInvalidAddress = false;
+    this.addressValidator.validateAddress(this.currency, text, isValid => {
+      this._shouldShowInvalidAddress = !isValid;
+    });
+  }
+
   _renderAmountContent() {
     const { symbol } = this.state
     return (
@@ -455,7 +455,7 @@ class WithdrawalScreen extends BaseScreen {
 
         <View style={styles.titleAmountGroup}>
           <Text style={[styles.amoutTitleModal]}>
-            {formatCurrency(this.state.amount, this.currency)}
+            {formatCurrency(this._amount, this.currency)}
           </Text>
           <Text style={styles.modalLineSymbol}>{getCurrencyName(this.currency)}</Text>
         </View>

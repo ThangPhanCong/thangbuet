@@ -66,9 +66,13 @@ export default class CurrencyInput extends Component {
     const { value } = this.state;
     const parseValue = value ? value.toString() : value;
 
+    const props = {
+      ...this.props,
+      value: parseValue
+    }
+
     return (<TextInput
-      {...this.props}
-      value={parseValue}
+      { ...props }
       ref={ref => {
         this.input = ref
         if (typeof this.props.refInput === 'function') {

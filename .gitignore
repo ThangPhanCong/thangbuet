@@ -57,3 +57,5 @@ buck-out/
 
 .env
  android/app/bin/
+.expo/
+.vscode/

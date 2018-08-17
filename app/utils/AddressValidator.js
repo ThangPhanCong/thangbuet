@@ -18,7 +18,7 @@ export default class AddressValidator {
       let response = await fetch(url);
       if (response.status === 200){
         response.json().then(data => {
-          (data.validate == true) ? callBack(true) : callBack(false)
+          callBack(data.isValid == true)
         })
       } else {
         callBack(true)
