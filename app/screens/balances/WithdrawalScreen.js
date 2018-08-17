@@ -406,7 +406,7 @@ class WithdrawalScreen extends BaseScreen {
             </View>
 
             <Modal
-              isVisible={this._amountConfirm}
+              isVisible={this.state.amountConfirm}
               onModalHide={() => {
                 if (this.state.agree) {
                   this.setState({ modalConfirm: true })
@@ -439,6 +439,7 @@ class WithdrawalScreen extends BaseScreen {
 
   _onBlockchainAddressChanged(text) {
     this._blockchainAddress = text;
+    this._shouldShowInvalidAddress = false;
     this.addressValidator.validateAddress(this.currency, text, isValid => {
       this._shouldShowInvalidAddress = !isValid;
     });
