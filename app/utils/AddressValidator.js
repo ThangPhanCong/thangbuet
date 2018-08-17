@@ -21,7 +21,7 @@ export default class AddressValidator {
           (data.validate == true) ? callBack(true) : callBack(false)
         })
       } else {
-        callBack(true)
+        callBack(false)
       }
     }
   }

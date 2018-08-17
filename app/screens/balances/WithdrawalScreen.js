@@ -14,6 +14,8 @@ import { scale } from "../../libs/reactSizeMatter/scalingUtils";
 import OrderUtils from '../../utils/OrderUtils';
 import CurrencyInput from '../common/CurrencyInput';
 import Events from '../../utils/Events';
+import AddressValidator from '../../utils/AddressValidator';
+import { isEmpty } from 'lodash';
 
 class WithdrawalScreen extends BaseScreen {
   constructor(props) {
@@ -32,7 +34,8 @@ class WithdrawalScreen extends BaseScreen {
       optErr: false,
       quantityPrecision: 10,
     }
-    this.currency = ''
+    this.currency = '';
+    this.addressValidator = new AddressValidator();
   }
 
   componentDidMount() {
@@ -159,14 +162,7 @@ class WithdrawalScreen extends BaseScreen {
       errMsg = I18n.t('withdrawal.errMaximum')
     }
 
-    //validate blockchain address
-    if (!Utils.isWalletAddress(this.currency, blockchainAddress, blockchainTag)) {
-      errMsg = I18n.t('withdrawal.errBlockchainAddress')
-    }
-
-    if (errMsg === '') {
-      this.setState({ amountConfirm: true })
-    } else {
+    if (!isEmpty(errMsg)) {
       Alert.alert(
         I18n.t('deposit.error'),
         errMsg,
@@ -176,7 +172,26 @@ class WithdrawalScreen extends BaseScreen {
         },],
         { cancelable: false }
       )
+      return;
     }
+    
+    this.addressValidator.validateAddress(this.currency, blockchainAddress, isValid => {
+      if (isValid) {
+        this.setState({ amountConfirm: true })
+      }
+      else {
+        errMsg = I18n.t('withdrawal.errBlockchainAddress');
+        Alert.alert(
+          I18n.t('deposit.error'),
+          errMsg,
+          [{
+            text: I18n.t('deposit.accept'), onPress: () => {
+            }
+          },],
+          { cancelable: false }
+        )
+      }
+    });
   }
 
   _doConfirm() {
