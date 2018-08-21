@@ -1,15 +1,12 @@
 import React from 'react';
 import {
-  Image,
+  ScrollView,
   Keyboard,
-  NativeModules,
   Text,
-  TextInput,
   TouchableOpacity,
   TouchableWithoutFeedback,
   View
 } from 'react-native';
-import ModalDropdown from 'react-native-modal-dropdown';
 import { Icon } from 'react-native-elements';
 import BigNumber from 'bignumber.js';
 import CurrencyInput from '../common/CurrencyInput';
@@ -23,10 +20,9 @@ import { scale } from '../../libs/reactSizeMatter/scalingUtils';
 import Utils from '../../utils/Utils';
 import Consts from '../../utils/Consts'
 import OrderUtils from '../../utils/OrderUtils';
-import { CommonColors, CommonSize, CommonStyles, Fonts } from '../../utils/CommonStyles';
+import { CommonStyles, Fonts } from '../../utils/CommonStyles';
 import { getCurrencyName, formatCurrency } from '../../utils/Filters';
 import OrderBook from './OrderBook';
-import OrderBookSettingModal from './OrderBookSettingModal';
 import OrderConfirmationModal from './OrderConfirmationModal';
 
 export default class OrderForm extends BaseScreen {
@@ -641,7 +637,9 @@ export default class OrderForm extends BaseScreen {
             <Text style={styles.estimateLabel}>{I18n.t('orderForm.balance')}</Text>
           </View>
           <View style={styles.estimationRightCell}>
-            <Text style={styles.estimateValue}>{formatCurrency(balance, currency)}</Text>
+            <ScrollView horizontal={true}>
+              <Text style={styles.estimateValue}>{formatCurrency(balance, currency)}</Text>
+            </ScrollView>
             <Text style={styles.insideText}>{getCurrencyName(currency)}</Text>
           </View>
         </View>
@@ -651,7 +649,9 @@ export default class OrderForm extends BaseScreen {
             <Text style={styles.estimateLabel}>{I18n.t('orderForm.estimateTotal')}</Text>
           </View>
           <View style={styles.estimationRightCell}>
-            <Text style={styles.estimateValue}>{formatCurrency(this._getOrderTotal(), currency)}</Text>
+            <ScrollView horizontal={true}>
+              <Text style={styles.estimateValue}>{formatCurrency(this._getOrderTotal(), currency)}</Text>
+            </ScrollView>
             <Text style={styles.insideText}>{getCurrencyName(currency)}</Text>
           </View>
         </View>
@@ -661,7 +661,9 @@ export default class OrderForm extends BaseScreen {
             <Text style={styles.estimateLabel}>{I18n.t('orderForm.fee')}</Text>
           </View>
           <View style={styles.estimationRightCell}>
-            <Text style={styles.estimateValue}>{formatCurrency(this._getOrderFee(), coin)}</Text>
+            <ScrollView horizontal={true}>
+              <Text style={styles.estimateValue}>{formatCurrency(this._getOrderFee(), coin)}</Text>
+            </ScrollView>
             <Text style={styles.insideText}>{getCurrencyName(coin)}</Text>
           </View>
         </View>
@@ -671,7 +673,9 @@ export default class OrderForm extends BaseScreen {
             <Text style={styles.estimateLabel}>{I18n.t('orderForm.estimateQuantity')}</Text>
           </View>
           <View style={styles.estimationRightCell}>
-            <Text style={styles.estimateValue}>{formatCurrency(this.state.quantity, coin)}</Text>
+            <ScrollView horizontal={true}>
+              <Text style={styles.estimateValue}>{formatCurrency(this.state.quantity, coin)}</Text>
+            </ScrollView>
             <Text style={styles.insideText}>{getCurrencyName(coin)}</Text>
           </View>
         </View>
