@@ -13,10 +13,9 @@ import { TabNavigator, TabBarTop } from 'react-navigation';
 import rf from '../../libs/RequestFactory';
 import Events from '../../utils/Events';
 import Numeral from '../../libs/numeral';
-import MasterdataUtils from '../../utils/MasterdataUtils';
 import ScaledSheet from '../../libs/reactSizeMatter/ScaledSheet';
 import { scale } from '../../libs/reactSizeMatter/scalingUtils';
-import { filter, pickBy, startsWith, orderBy } from 'lodash';
+import { filter } from 'lodash';
 import Utils from '../../utils/Utils';
 import UIUtils from '../../utils/UIUtils';
 import TradingGeneralScreen from './TradingGeneralScreen';
@@ -24,7 +23,6 @@ import TradingOrderBookScreen from './TradingOrderBookScreen';
 import TradingChartScreen from './TradingChartScreen';
 import TradingTransactionsScreen from './TradingTransactionsScreen';
 import I18n from '../../i18n/i18n';
-import Consts from '../../utils/Consts';
 import { ListItem, List, Icon } from 'react-native-elements';
 import { formatCurrency, formatPercent, getCurrencyName } from '../../utils/Filters';
 import { CommonColors, CommonStyles, Fonts } from '../../utils/CommonStyles';
@@ -225,11 +223,13 @@ export default class TradingScreen extends BaseScreen {
           <TouchableOpacity
             style={styles.headerContent}
             onPress={() => this.setState({ modalVisible: true })}>
-            <View style={styles.caretContainer}>
-              <Icon name='triangle-down' type='entypo' size={scale(15)}/>
+            <View style={{flexDirection: 'row'}}>
+              <View style={styles.caretContainer}>
+                <Icon name='triangle-down' type='entypo' size={scale(15)}/>
+              </View>
+              <Text numberOfLines={1} style={styles.coin}>{this._getCurrencyName(this._getCoin())}</Text>
+              <Text numberOfLines={1} style={styles.currency}>{' / ' + getCurrencyName(this._getCurrency())}</Text>
             </View>
-            <Text style={styles.coin}>{this._getCurrencyName(this._getCoin())}</Text>
-            <Text style={styles.currency}>{' / ' + getCurrencyName(this._getCurrency())}</Text>
           </TouchableOpacity>
           <View style={[styles.headerContent, priceData.price ? {} : { opacity: 0 }]}>
             <Text
@@ -383,6 +383,7 @@ const styles = ScaledSheet.create({
     ...Fonts.NanumSquareOTF_ExtraBold
   },
   currency: {
+    flex: 1,
     fontSize: '16@s',
     ...Fonts.OpenSans_Bold
   },
