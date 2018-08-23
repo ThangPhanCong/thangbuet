@@ -49,7 +49,7 @@ export default class MasterdataUtils {
     ]);
   }
 
-  static saveMasterdata(version, data) {
+  static async saveMasterdata(version, data) {
     cacheMasterdata = data;
     masterdataVersion = version;
 
@@ -59,10 +59,9 @@ export default class MasterdataUtils {
     } catch (e) {
       console.log(e);
     }
-    return AsyncStorage.setItem(masterdataVersionKey, masterdataVersion)
-      .then(() => {
-        return AsyncStorage.setItem(masterdataKey, zipData)
-      });
+    AsyncStorage.setItem(masterdataKey, zipData);
+    AsyncStorage.setItem(masterdataVersionKey, masterdataVersion);
+    return data;
   }
 
   static getCachedMasterdata() {
