@@ -104,7 +104,7 @@ class WithdrawalScreen extends BaseScreen {
       const withdrawalLimit = await this._getItemDaily();
 
       this._daily.withdrawalLimit = parseFloat(withdrawalLimit.daily_limit)
-      this._daily.minium = parseFloat(withdrawalLimit.minium_withdrawal)
+      this._daily.minimum = parseFloat(withdrawalLimit.minium_withdrawal)
     } catch (err) {
       console.log("Some errors has occurred in  DailyLimit._error:", err)
     }
@@ -146,7 +146,7 @@ class WithdrawalScreen extends BaseScreen {
   _validateAmount() {
     let errMsg = ''
 
-    if (this._daily.minium > this._amount) {
+    if (this._daily.minimum > this._amount) {
       errMsg = I18n.t('withdrawal.errMinium')
     } else if (this._amount > (this._daily.withdrawalLimit - this._daily.withdrawal)) {
       errMsg = I18n.t('withdrawal.errMaximum')
@@ -279,9 +279,7 @@ class WithdrawalScreen extends BaseScreen {
                   <Text style={styles.amountSymbol}>{getCurrencyName(this.currency)}</Text>
                   <TouchableOpacity
                     style={styles.amountMax}
-                    onPress={() => {
-                      this._amount = this._daily.withdrawalLimit - this._daily.withdrawal > 0 ? this._daily.withdrawalLimit - this._daily.withdrawal : 0
-                    }}>
+                    onPress={this._onAutoFillAmount.bind(this)}>
                     <Text style={styles.amountText}>{I18n.t('withdrawal.maximum')}</Text>
                   </TouchableOpacity>
                 </View>
@@ -443,6 +441,16 @@ class WithdrawalScreen extends BaseScreen {
     this.addressValidator.validateAddress(this.currency, text, isValid => {
       this._shouldShowInvalidAddress = !isValid;
     });
+  }
+
+  _onAutoFillAmount() {
+    if (this.state.symbol.available_balance <= this._daily.withdrawalLimit - this._daily.withdrawal) {
+      this._amount = this.state.symbol.available_balance;
+    }
+    else {
+      this._amount = this._daily.withdrawalLimit - this._daily.withdrawal > 0 ? this._daily.withdrawalLimit - this._daily.withdrawal : 0
+    }
+    this.setState({ isComplete: true })
   }
 
   _renderAmountContent() {

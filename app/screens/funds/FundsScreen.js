@@ -1,5 +1,5 @@
 import React from 'react';
-import { Image, SafeAreaView, ScrollView, Text, TouchableOpacity, View, TouchableWithoutFeedback } from 'react-native'
+import { Image, SafeAreaView, FlatList, Text, View, TouchableWithoutFeedback } from 'react-native'
 import BaseScreen from '../BaseScreen'
 import MasterdataUtils from '../../utils/MasterdataUtils'
 import ScaledSheet from '../../libs/reactSizeMatter/ScaledSheet'
@@ -8,9 +8,8 @@ import rf from '../../libs/RequestFactory'
 import I18n from '../../i18n/i18n'
 import AppConfig from '../../utils/AppConfig'
 import { formatCurrency, formatPercent, getCurrencyName, formatPercentSpace } from '../../utils/Filters'
-import { CommonColors, CommonSize, CommonStyles, Fonts } from '../../utils/CommonStyles'
+import { CommonColors, Fonts } from '../../utils/CommonStyles'
 import { scale } from "../../libs/reactSizeMatter/scalingUtils"
-import UIUtils from "../../utils/UIUtils";
 import ModalHelp from "../common/ModalHelp";
 
 export default class FundsScreen extends BaseScreen {
@@ -23,7 +22,8 @@ export default class FundsScreen extends BaseScreen {
       priceTotal: 0,
       yield: 0,
       isShowModalHelp: false,
-      symbolArr: []
+      symbolArr: [],
+      isLoading: false
     }
     this.currency = 'krw'
   }
@@ -34,8 +34,10 @@ export default class FundsScreen extends BaseScreen {
   }
 
   async _loadData() {
+    this.setState({isLoading: true})
     await this._getSymbols()
     await this._getPrices()
+    this.setState({isLoading: false})
   }
 
   async _getSymbols() {
@@ -233,34 +235,14 @@ export default class FundsScreen extends BaseScreen {
                 <Text>({I18n.t('funds.currency')})</Text>
               </Text>
             </View>
-            <ScrollView>
-              {
-                this.state.symbolArr.map((symbol, index) => (
-                  <View key={symbol + "_" + index} style={styles.tableRow}>
-                    <View style={[{ flex: 0.5 }, styles.tableRowDetail]}>
-                      <Image style={styles.iconRow} source={{ uri: symbol.icon }} />
-                      <Text style={styles.rowCoinName}>{getCurrencyName(symbol.code)}</Text>
-                    </View>
-                    <Text style={[{ flex: 1 }, styles.rowNumber]}>
-                      {symbol.code !== 'krw' && parseFloat(symbol.balance)}
-                    </Text>
-                    <Text style={[
-                      styles.profitPercentFunds, styles.rowNumber,
-                      symbol.yield === 0 ? styles.profitZero : symbol.yield > 0 ? styles.profitIncreased : styles.profitDecreased
-                    ]}>
-                      {symbol.code !== "krw" && formatPercentSpace(symbol.yield)}
-                    </Text>
-                    <Text
-                      style={[styles.valuationFunds,
-                      styles.marginRight10, styles.rowNumber,
-                      symbol.yield === 0 ? styles.profitZero : symbol.yield > 0 ? styles.profitIncreased : styles.profitDecreased,
-                      symbol.code === 'krw' ? { color: 'black' } : {}]}>
-                      {formatCurrency(parseFloat(symbol.balance * symbol.price), this.currency, 0)}
-                    </Text>
-                  </View>
-                ))
-              }
-            </ScrollView>
+            <FlatList
+              data={this.state.symbolArr}
+              extraData={this.state}
+              renderItem={this._renderItem.bind(this)}
+              onRefresh={this._onRefresh.bind(this)}
+              refreshing={this.state.isLoading}
+              keyExtractor={(item, index) => index.toString()}
+            />
           </View>
           <View
             style={styles.footer}>
@@ -279,6 +261,38 @@ export default class FundsScreen extends BaseScreen {
 
       </SafeAreaView>
     )
+  }
+
+  _renderItem({ item }) {
+    const symbol = item;
+    return (
+      <View style={styles.tableRow}>
+        <View style={[{ flex: 0.5 }, styles.tableRowDetail]}>
+          <Image style={styles.iconRow} source={{ uri: symbol.icon }} />
+          <Text style={styles.rowCoinName}>{getCurrencyName(symbol.code)}</Text>
+        </View>
+        <Text style={[{ flex: 1 }, styles.rowNumber]}>
+          {symbol.code !== 'krw' && parseFloat(symbol.balance)}
+        </Text>
+        <Text style={[
+          styles.profitPercentFunds, styles.rowNumber,
+          symbol.yield === 0 ? styles.profitZero : symbol.yield > 0 ? styles.profitIncreased : styles.profitDecreased
+        ]}>
+          {symbol.code !== "krw" && formatPercentSpace(symbol.yield)}
+        </Text>
+        <Text
+          style={[styles.valuationFunds,
+          styles.marginRight10, styles.rowNumber,
+          symbol.yield === 0 ? styles.profitZero : symbol.yield > 0 ? styles.profitIncreased : styles.profitDecreased,
+          symbol.code === 'krw' ? { color: 'black' } : {}]}>
+          {formatCurrency(parseFloat(symbol.balance * symbol.price), this.currency, 0)}
+        </Text>
+      </View>
+    )
+  }
+
+  _onRefresh() {
+    this._loadData();
   }
 }
 

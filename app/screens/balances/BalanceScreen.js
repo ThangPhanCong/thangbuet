@@ -1,5 +1,5 @@
 import React from 'react';
-import { TouchableHighlight, Image, SafeAreaView, ScrollView, Text, View } from 'react-native';
+import { TouchableHighlight, Image, SafeAreaView, FlatList, Text, View } from 'react-native';
 import BaseScreen from '../BaseScreen'
 import MasterdataUtils from '../../utils/MasterdataUtils'
 import ScaledSheet from '../../libs/reactSizeMatter/ScaledSheet'
@@ -7,8 +7,7 @@ import rf from '../../libs/RequestFactory'
 import I18n from '../../i18n/i18n'
 import AppConfig from '../../utils/AppConfig'
 import { getCurrencyName } from '../../utils/Filters'
-import { Icon } from 'react-native-elements'
-import { CommonColors, CommonSize, CommonStyles, Fonts } from '../../utils/CommonStyles'
+import { Fonts } from '../../utils/CommonStyles'
 
 export default class BalanceScreen extends BaseScreen {
   constructor(props) {
@@ -20,6 +19,7 @@ export default class BalanceScreen extends BaseScreen {
       highLightText: false,
       name: '',
       titleButton: '',
+      isLoading: false
     }
     this.currency = 'krw'
   }
@@ -30,8 +30,10 @@ export default class BalanceScreen extends BaseScreen {
   }
 
   async _loadData() {
+    this.setState({isLoading: true})
     await this._getSymbols()
     await this._getPrices()
+    this.setState({isLoading: false})
   }
 
   async _getSymbols() {
@@ -128,7 +130,7 @@ export default class BalanceScreen extends BaseScreen {
   }
 
   _colorTextHighLight(name, title) {
-    this.setState({ highLightText: true, coinCurrent: name, titleButton: title})
+    this.setState({ highLightText: true, coinCurrent: name, titleButton: title })
   }
 
   _resetColorText() {
@@ -153,7 +155,7 @@ export default class BalanceScreen extends BaseScreen {
             <Image
               resizeMode="contain"
               style={styles.iconLogo}
-              source={require('../../../assets/balance/logo_tab3.png')}/>
+              source={require('../../../assets/balance/logo_tab3.png')} />
             <Text style={[styles.fontNotoSansBold]}>
               {I18n.t('balances.depositAndWithdrawal')}
             </Text>
@@ -164,60 +166,71 @@ export default class BalanceScreen extends BaseScreen {
               <Text style={[styles.textHeader, { textAlign: 'right' }]}> {I18n.t('balances.quantity')}</Text>
               <Text style={[styles.textHeader, { flex: 1.4 }]}>{I18n.t('balances.action')}</Text>
             </View>
-            <ScrollView>
-              {
-                this.state.symbolArr.map((symbol, index) => (
-                  <View
-                    key={symbol + "_" + index}
-                    style={styles.tableRow}>
-                    <View style={styles.tableRowDetail}>
-                      <Image
-                        style={styles.imageSize}
-                        source={{ uri: symbol.icon }}/>
-                      <Text style={styles.rowCoinName}>{getCurrencyName(symbol.code)}</Text>
-                    </View>
-                    <Text style={[styles.balance, styles.rowNumber]}>
-                      {symbol.code !== 'krw' && parseFloat(symbol.balance)}
-                    </Text>
-                    <View style={styles.action}>
-                      <TouchableHighlight
-                        style={styles.btnRow}
-                        underlayColor='#0070C0'
-                        onPressIn={() =>this._colorTextHighLight(symbol.name, 'deposit')}
-                        onPressOut={() =>this._resetColorText()}
-                        onPress={() => {
-                          if (symbol.code == 'krw') {
-                            this.navigate('DepositKRW', { symbol })
-                          } else {
-                            this.navigate('Deposit', { symbol })
-                          }
-                        }}>
-                        <Text style={this._checkColorText(symbol.name, 'deposit')}>{I18n.t('balances.deposit')}</Text>
-                      </TouchableHighlight>
-
-                      <TouchableHighlight
-                        underlayColor='#0070C0'
-                        style={styles.btnRow}
-                        onPressIn={() =>this._colorTextHighLight(symbol.name, 'withDrawl')}
-                        onPressOut={() =>this._resetColorText()}
-                        onPress={() => {
-                          if (symbol.code == 'krw') {
-                            this.navigate('WithdrawalKRW', { symbol })
-                          } else {
-                            this.navigate('Withdrawal', { symbol })
-                          }
-                        }}>
-                        <Text style={this._checkColorText(symbol.name, 'withDrawl')}>{I18n.t('balances.withdrawal')}</Text>
-                      </TouchableHighlight>
-                    </View>
-                  </View>
-                ))
-              }
-            </ScrollView>
+            <FlatList
+              data={this.state.symbolArr}
+              extraData={this.state}
+              renderItem={this._renderItem.bind(this)}
+              onRefresh={this._onRefresh.bind(this)}
+              refreshing={this.state.isLoading}
+              keyExtractor={(item, index) => index.toString()}
+            />
           </View>
         </View>
       </SafeAreaView>
     )
+  }
+
+  _renderItem({ item }) {
+    const symbol = item;
+    return (
+      <View
+        style={styles.tableRow}>
+        <View style={styles.tableRowDetail}>
+          <Image
+            style={styles.imageSize}
+            source={{ uri: symbol.icon }} />
+          <Text style={styles.rowCoinName}>{getCurrencyName(symbol.code)}</Text>
+        </View>
+        <Text style={[styles.balance, styles.rowNumber]}>
+          {symbol.code !== 'krw' && parseFloat(symbol.balance)}
+        </Text>
+        <View style={styles.action}>
+          <TouchableHighlight
+            style={styles.btnRow}
+            underlayColor='#0070C0'
+            onPressIn={() => this._colorTextHighLight(symbol.name, 'deposit')}
+            onPressOut={() => this._resetColorText()}
+            onPress={() => {
+              if (symbol.code == 'krw') {
+                this.navigate('DepositKRW', { symbol })
+              } else {
+                this.navigate('Deposit', { symbol })
+              }
+            }}>
+            <Text style={this._checkColorText(symbol.name, 'deposit')}>{I18n.t('balances.deposit')}</Text>
+          </TouchableHighlight>
+
+          <TouchableHighlight
+            underlayColor='#0070C0'
+            style={styles.btnRow}
+            onPressIn={() => this._colorTextHighLight(symbol.name, 'withDrawl')}
+            onPressOut={() => this._resetColorText()}
+            onPress={() => {
+              if (symbol.code == 'krw') {
+                this.navigate('WithdrawalKRW', { symbol })
+              } else {
+                this.navigate('Withdrawal', { symbol })
+              }
+            }}>
+            <Text style={this._checkColorText(symbol.name, 'withDrawl')}>{I18n.t('balances.withdrawal')}</Text>
+          </TouchableHighlight>
+        </View>
+      </View>
+    )
+  }
+
+  _onRefresh() {
+    this._loadData();
   }
 }
 
