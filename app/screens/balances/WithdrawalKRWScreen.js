@@ -216,6 +216,7 @@ class WithdrawalKRWScreen extends BaseScreen {
       this.setState({ optErr: false })
       this._loadData()
     } catch (err) {
+      console.log("_getWithdrawalKrw:", err)
       this.setState({ optErr: true })
     }
   }
