@@ -279,15 +279,7 @@ class WithdrawalScreen extends BaseScreen {
                   <Text style={styles.amountSymbol}>{getCurrencyName(this.currency)}</Text>
                   <TouchableOpacity
                     style={styles.amountMax}
-                    onPress={() => {
-                      if (this.symbol.balance <= this._daily.withdrawal) {
-                        this._amount = this.symbol.balance;
-                      }
-                      else {
-                        this._amount = this._daily.withdrawalLimit - this._daily.withdrawal > 0 ? this._daily.withdrawalLimit - this._daily.withdrawal : 0
-                      }
-                      this.setState({ isComplete: true })
-                    }}>
+                    onPress={this._onAutoFillAmount.bind(this)}>
                     <Text style={styles.amountText}>{I18n.t('withdrawal.maximum')}</Text>
                   </TouchableOpacity>
                 </View>
@@ -449,6 +441,16 @@ class WithdrawalScreen extends BaseScreen {
     this.addressValidator.validateAddress(this.currency, text, isValid => {
       this._shouldShowInvalidAddress = !isValid;
     });
+  }
+
+  _onAutoFillAmount() {
+    if (this.state.symbol.available_balance <= this._daily.withdrawalLimit - this._daily.withdrawal) {
+      this._amount = this.state.symbol.available_balance;
+    }
+    else {
+      this._amount = this._daily.withdrawalLimit - this._daily.withdrawal > 0 ? this._daily.withdrawalLimit - this._daily.withdrawal : 0
+    }
+    this.setState({ isComplete: true })
   }
 
   _renderAmountContent() {
