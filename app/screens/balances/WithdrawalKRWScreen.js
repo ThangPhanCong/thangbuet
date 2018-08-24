@@ -202,8 +202,13 @@ class WithdrawalKRWScreen extends BaseScreen {
   async _doWithdrawal() {
     try {
       const { amount } = this.state
+      let trueAmount = ''
+      let arrayAmount = amount.split(',')
+      arrayAmount.forEach((e) => {
+        trueAmount += e
+      });
       let params = {
-        amount: this.state.amount * -1 + '',
+        amount: trueAmount * -1 + '',
         currency: this.currency,
         otp: this.state.otpConfirm ? this.state.otp + '|' : '|' + this.state.otp
       }
@@ -211,7 +216,6 @@ class WithdrawalKRWScreen extends BaseScreen {
       this.setState({ optErr: false })
       this._loadData()
     } catch (err) {
-      console.log("_getWithdrawalKrw:", err)
       this.setState({ optErr: true })
     }
   }
