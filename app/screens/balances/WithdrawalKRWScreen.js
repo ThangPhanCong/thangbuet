@@ -201,9 +201,9 @@ class WithdrawalKRWScreen extends BaseScreen {
 
   async _doWithdrawal() {
     try {
-      const { amount } = this.state
+      let amount = this.state.amount.replace(/,/g, '')
       let params = {
-        amount: this.state.amount * -1 + '',
+        amount: amount * -1 + '',
         currency: this.currency,
         otp: this.state.otpConfirm ? this.state.otp + '|' : '|' + this.state.otp
       }
