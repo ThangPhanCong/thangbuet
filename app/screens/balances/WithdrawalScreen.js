@@ -104,7 +104,7 @@ class WithdrawalScreen extends BaseScreen {
       const withdrawalLimit = await this._getItemDaily();
 
       this._daily.withdrawalLimit = parseFloat(withdrawalLimit.daily_limit)
-      this._daily.minium = parseFloat(withdrawalLimit.minium_withdrawal)
+      this._daily.minimum = parseFloat(withdrawalLimit.minium_withdrawal)
     } catch (err) {
       console.log("Some errors has occurred in  DailyLimit._error:", err)
     }
@@ -146,7 +146,7 @@ class WithdrawalScreen extends BaseScreen {
   _validateAmount() {
     let errMsg = ''
 
-    if (this._daily.minium > this._amount) {
+    if (this._daily.minimum > this._amount) {
       errMsg = I18n.t('withdrawal.errMinium')
     } else if (this._amount > (this._daily.withdrawalLimit - this._daily.withdrawal)) {
       errMsg = I18n.t('withdrawal.errMaximum')
@@ -280,7 +280,13 @@ class WithdrawalScreen extends BaseScreen {
                   <TouchableOpacity
                     style={styles.amountMax}
                     onPress={() => {
-                      this._amount = this._daily.withdrawalLimit - this._daily.withdrawal > 0 ? this._daily.withdrawalLimit - this._daily.withdrawal : 0
+                      if (this.symbol.balance <= this._daily.withdrawal) {
+                        this._amount = this.symbol.balance;
+                      }
+                      else {
+                        this._amount = this._daily.withdrawalLimit - this._daily.withdrawal > 0 ? this._daily.withdrawalLimit - this._daily.withdrawal : 0
+                      }
+                      this.setState({ isComplete: true })
                     }}>
                     <Text style={styles.amountText}>{I18n.t('withdrawal.maximum')}</Text>
                   </TouchableOpacity>

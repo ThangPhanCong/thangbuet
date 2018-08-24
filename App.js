@@ -79,9 +79,6 @@ function handleBackAction(callback) {
 
   if (Platform.OS === 'android') {
     App.router.getStateForAction = (action, state) => {
-
-      console.log(action, _lastTimeBackPress);
-
       if (
         action.type === NavigationActions.BACK &&
         state.routes && !isEmpty(state.routes) &&

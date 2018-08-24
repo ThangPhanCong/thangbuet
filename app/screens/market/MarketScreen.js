@@ -133,7 +133,7 @@ class MarketScreen extends BaseScreen {
 
           <View style={styles.volumeGroup}>
             <Text style={styles.itemVolume}>
-              {formatCurrency(item.volume, Consts.CURRENCY_KRW, 0)}
+              {formatCurrency(Math.round(item.volume / 1000000), Consts.CURRENCY_KRW, 0)}
               <Text style={styles.itemUnit}>{I18n.t('marketList.unit')}</Text>
             </Text>
           </View>
