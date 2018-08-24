@@ -13,7 +13,7 @@ I18n.translations = {
   zh
 }
 
-I18n.missingTranslation = (scope, options) => null;
+I18n.missingTranslation = (scope, options) => '';
 
 I18n.init = async () => {
   await reloadTranslations();

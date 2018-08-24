@@ -63,6 +63,18 @@
     "espo": {
       "fullname": "에스포",
       "shortname": "ESPO"
+    },
+    "neo": {
+      "fullname": "네오",
+      "shortname": "NEO"
+    },
+    "qtum": {
+      "fullname": "퀀텀",
+      "shortname": "QTUM"
+    },
+    "tlg": {
+      "fullname": "텔루스 골드",
+      "shortname": "TLG"
     }
   },
   "splash": {
