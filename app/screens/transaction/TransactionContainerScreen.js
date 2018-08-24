@@ -309,6 +309,18 @@ class TransactionContainerScreen extends BaseScreen {
     }
   }
 
+  _onLeftListEndScroll() {
+    if (this.firstScrollView === 'left') {
+      this.firstScrollView = null;
+    }
+  }
+
+  _onRightListEndScroll() {
+    if (this.firstScrollView === 'right') {
+      this.firstScrollView = null;
+    }
+  }
+
   _onRightListScroll(event) {
     if (this.firstScrollView === 'right') {
       const y = event.nativeEvent.contentOffset.y;
@@ -349,6 +361,7 @@ class TransactionContainerScreen extends BaseScreen {
   }
 
   _handleTouchEndLeft() {
+    console.log("touch end left")
     if (this.firstScrollView === 'left') {
       this.firstScrollView = null;
     }
@@ -396,9 +409,10 @@ class TransactionContainerScreen extends BaseScreen {
                       ref={elm => this.flatListLeft = elm}
                       keyExtractor={(item, index) => index.toString()}
                       onScroll={(event) => this._onLeftListScroll(event)}
+                      onScrollEndDrag={() => this._onLeftListEndScroll()}
                       renderItem={this._renderItem.bind(this)}
                       onEndReached={this._handleLoadMore.bind(this)}
-                      onMomentumScrollStart={() => this._handleLeftMomentumStart()}
+                      onMomentumScrollBegin={() => this._handleLeftMomentumStart()}
                       onMomentumScrollEnd={() => this._handleLeftMomentumEnd()}
                       onTouchStart={() => this._handleTouchStartLeft()}
                       onTouchEnd={() => this._handleTouchEndLeft()}
@@ -411,9 +425,10 @@ class TransactionContainerScreen extends BaseScreen {
                       ref={elm => this.flatListRight = elm}
                       keyExtractor={(item, index) => index.toString()}
                       onScroll={(event) => this._onRightListScroll(event)}
+                      onScrollEndDrag={() => this._onRightListEndScroll()}
                       renderItem={this._renderItemRight.bind(this)}
                       onEndReached={this._handleLoadMore.bind(this)}
-                      onMomentumScrollStart={() => this._handleRightMomentumStart()}
+                      onMomentumScrollBegin={() => this._handleRightMomentumStart()}
                       onMomentumScrollEnd={() => this._handleRightMomentumEnd()}
                       onTouchStart={() => this._handleTouchStartRight()}
                       onTouchEnd={() => this._handleTouchEndRight()}
