@@ -702,7 +702,7 @@ const styles = ScaledSheet.create({
   },
   smsInput: {
     flex: 2, height: '30@s', textAlign: 'center', fontSize: '12@s', ...Fonts.NanumGothic_Regular, marginRight: '10@s',
-    borderWidth: '1@s', borderRadius: '4@s', borderColor: "rgba(0, 0, 0, 0.1)"
+    borderWidth: '1@s', borderRadius: '4@s', borderColor: "rgba(0, 0, 0, 0.1)", lineHeight: '15@s', padding: 0
   },
   smsConfirmBtn: {
     flex: 1,
@@ -722,7 +722,7 @@ const styles = ScaledSheet.create({
     borderWidth: '1@s', borderRadius: '4@s', borderColor: "rgba(0, 0, 0, 0.1)",
     marginTop: '10@s', marginBottom: '10@s'
   },
-  optInput: { flex: 1, height: '30@s', textAlign: 'center', fontSize: '12@s', ...Fonts.NanumGothic_Regular },
+  optInput: { flex: 1, height: '30@s', textAlign: 'center', fontSize: '12@s', ...Fonts.NanumGothic_Regular, padding: 0, lineHeight: '15@s' },
   optError: { color: 'red', marginTop: '10@s', marginBottom: '10@s', fontSize: '12@s', textAlign: 'center', ...Fonts.NanumGothic_Regular },
   fontNotoSansBold: { ...Fonts.NotoSans_Bold, fontSize: '14@s' },
   arrowRight: {
