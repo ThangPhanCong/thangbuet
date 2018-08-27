@@ -121,9 +121,6 @@ export default class OpenOrders extends BaseScreen {
     return (
       <View
         style={styles.screen}>
-        <View style={styles.viewMore}>
-          <Text style={styles.textMore}>{I18n.t('openOrder.textMore')}</Text>
-        </View>
         <FlatList data={orders}
                   keyExtractor={(item, index) => index.toString()}
                   renderItem={this._renderItem.bind(this)}
@@ -266,13 +263,6 @@ const styles = ScaledSheet.create({
     textDecorationLine: "underline",
     textDecorationColor: CommonColors.decreased,
     color: CommonColors.decreased
-  },
-  viewMore: {
-    borderBottomWidth: '1@s',
-    borderBottomColor: CommonColors.separator,
-    flexDirection: 'column',
-    justifyContent: 'center',
-    height: '40@s'
   },
   increaseQuantity: {
     color: CommonColors.increased,
