@@ -158,7 +158,7 @@
     "profit": "수익률",
     "order": "일반주문",
     "orderBook": "호가주문",
-    "chart": "챠트",
+    "chart": "차트",
     "transaction": "체결",
     "help1": "1. KRW 환산 평가액을 기준으로 합니다.",
     "help2": "2. BTC, ETH 마켓에서도 1번 기준이 공통 적용됩니다.",
@@ -278,7 +278,7 @@
     "currency": "KRW"
   },
   "deposit": {
-    "title": "입금",
+    "title": "입금 바꿔야되요",
     "account": "계좌 잔액",
     "amount": "입금 신청 금액",
     "currency": "w",

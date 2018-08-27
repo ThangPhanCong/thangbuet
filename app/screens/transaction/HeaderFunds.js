@@ -27,7 +27,7 @@ class HeaderFunds extends Component {
                 <Text style={styles.headerTitle}>{I18n.t('transactions.pair')}</Text>
               </View>
 
-              <View style={{flex: 2, marginTop: scale(3)}}>
+              <View style={{flex: 1.5, marginTop: scale(3)}}>
                 {renderArrowPair}
               </View>
             </View>
@@ -64,12 +64,14 @@ const styles = ScaledSheet.create({
     fontSize: '12@s',
     color: CommonColors.mainText,
     ...Fonts.NotoSans,
+    width: '30@s',
+    textAlign: 'right'
   },
   headerCoinPair: {
     flexDirection: 'row',
     width: '70@s',
     marginTop: '2@s',
-    marginLeft: '20@s',
+    marginLeft: '10@s',
   },
   viewHeaderLeft: {
     flexDirection: 'row',
