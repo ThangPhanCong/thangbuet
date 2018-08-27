@@ -69,9 +69,8 @@ export default class BasicInfoScreen extends BaseScreen {
 
   _renderItem({item}) {
     return (
-      <TouchableHighlight
+      <View
         style={styles.listItem}
-        onPress={() => this._onPressItem(item)}
         underlayColor='#FFECED'>
         <View style = {styles.listItemContainer}>
           <View style={styles.nameGroup}>
@@ -85,15 +84,8 @@ export default class BasicInfoScreen extends BaseScreen {
               {this.state.info[item.prop] ? item.prefix + this.state.info[item.prop] : null}
             </Text>
           </View>
-
-          <View style={styles.iconGroup}>
-            <Image
-              style={styles.iconArrow}
-              source={require('../../../../assets/myPage/basic/arrow.png')}
-            />
-          </View>
         </View>
-      </TouchableHighlight>
+      </View>
     );
   }
 
@@ -101,10 +93,6 @@ export default class BasicInfoScreen extends BaseScreen {
     return (
       <View key={`rowId`} style={styles.separator}/>
     );
-  }
-
-  _onPressItem(item) {
-
   }
 
   async _getCurrentUser(useCache = true) {
@@ -154,16 +142,8 @@ const styles = ScaledSheet.create({
     flex: 4,
     justifyContent: 'center'
   },
-  iconGroup: {
-    flex: 0.4,
-    justifyContent: 'center'
-  },
   text: {
     fontSize: '13@s',
     ...Fonts.NanumGothic_Regular,
   },
-  iconArrow: {
-    width: '12@s',
-    height: '18@s'
-  }
 });
