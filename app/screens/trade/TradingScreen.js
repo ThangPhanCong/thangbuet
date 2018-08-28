@@ -152,8 +152,6 @@ export default class TradingScreen extends BaseScreen {
       let response = await rf.getRequest('UserRequest').getBalance()
       this._onBalanceUpdated(response.data);
     } catch (err) {
-      this._onError(err, Consts.TITLE_SCREEN.ALLOW_SEE);
-      return this._onBalanceUpdated([]);
       console.log('TradingScreen._getBalance', err);
     }
   }

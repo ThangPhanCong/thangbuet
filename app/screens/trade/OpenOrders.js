@@ -41,8 +41,6 @@ export default class OpenOrders extends BaseScreen {
         last_page: responseOrders.data.last_page
       });
     } catch (err) {
-      this._onError(err, Consts.TITLE_SCREEN.ALLOW_SEE);
-      
       console.log("OpenOrderRequest._error:", err)
     }
   }

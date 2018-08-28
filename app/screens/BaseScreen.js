@@ -23,8 +23,8 @@ export default class BaseScreen extends React.Component {
     navigate({ routeName: screen, params: params, action: null, key: screen });
   }
 
-  _onError(err, title) {
-    if (err.message === Consts.NOT_LOGIN && title === Consts.TITLE_SCREEN.NOT_ALLOW_SEE) {
+  _onError(err) {
+    if (err.message === Consts.NOT_LOGIN) {
       RNRestart.Restart();
     };
   }

@@ -132,8 +132,6 @@ export default class OrderForm extends BaseScreen {
       let response = await rf.getRequest('UserRequest').getBalance();
       this._onBalanceUpdated(response.data);
     } catch (error) {
-      this._onError(error, Consts.TITLE_SCREEN.ALLOW_SEE);
-      return this._onBalanceUpdated([]);
       console.log('OrderForm._getBalance', error);
     }
   }

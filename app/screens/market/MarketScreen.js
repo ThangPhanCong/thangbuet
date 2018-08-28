@@ -317,8 +317,6 @@ class MarketScreen extends BaseScreen {
       let response = await rf.getRequest('FavoriteRequest').getList();
       return response.data;
     } catch (err) {
-      this._onError(err, Consts.TITLE_SCREEN.ALLOW_SEE);
-
       return [];
       console.log('MarketScreen._getFavorites', err.message );
     }

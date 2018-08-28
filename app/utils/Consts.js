@@ -24,8 +24,4 @@ export default class Consts {
   static DEPOSIT_DETAIL = 'Deposit detail';
   static WITHDRAW_DETAIL = 'Withdraw detail';
   static NOT_LOGIN = 'not login';
-  static TITLE_SCREEN = {
-    ALLOW_SEE: 'allow see',
-    NOT_ALLOW_SEE: 'not allow see',
-  };
 }
