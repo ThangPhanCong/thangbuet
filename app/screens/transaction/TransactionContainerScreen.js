@@ -30,10 +30,6 @@ class TransactionContainerScreen extends BaseScreen {
     DESC: 'desc'
   };
 
-  static TRADE_TYPE = {
-    BUY: 'buy'
-  };
-
   state = {
     transactions: [],
     page: 1,
@@ -272,8 +268,8 @@ class TransactionContainerScreen extends BaseScreen {
   _renderItemRight({ item }) {
     const { typeScreen } = this.props;
     const stylesQuantity = item.quantity.includes('-') ? styles.itemDecreaseQuantity : styles.itemIncreaseQuantity;
-    const itemFee = item.trade_type === TransactionContainerScreen.TRADE_TYPE.BUY ? formatCurrency(item.fee, item.coin) : formatCurrency(item.fee, item.currency);
-    const coinFee = item.trade_type === TransactionContainerScreen.TRADE_TYPE.BUY ? getCurrencyName(item.coin) : getCurrencyName(item.currency);
+    const itemFee = item.trade_type === Consts.TRADE_TYPE_BUY ? formatCurrency(item.fee, item.coin) : formatCurrency(item.fee, item.currency);
+    const coinFee = item.trade_type === Consts.TRADE_TYPE_BUY ? getCurrencyName(item.coin) : getCurrencyName(item.currency);
 
     return (
       <View style={styles.itemContainer}>
