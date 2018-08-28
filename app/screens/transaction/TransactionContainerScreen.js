@@ -317,7 +317,7 @@ class TransactionContainerScreen extends BaseScreen {
       this._leftListHasMomentum = false;
       this._leftListScrolling = false;
       setTimeout(() => {
-        if (!this._leftListHasMomentum) {
+        if (!this._leftListHasMomentum && !this._leftListScrolling) {
           this._onLeftListEndScroll();
         }
       }, 10);
@@ -345,7 +345,7 @@ class TransactionContainerScreen extends BaseScreen {
     this._leftListScrolling = false;
     setTimeout(() => {
       console.log('-----------_handleLeftMomentumEnd timeout', this._leftListScrolling);
-      if (!this._leftListScrolling) {
+      if (!this._leftListHasMomentum && !this._leftListScrolling) {
         this._onLeftListEndScroll();
       }
     }, 100);
@@ -367,7 +367,7 @@ class TransactionContainerScreen extends BaseScreen {
       this._rightListHasMomentum = false;
       this._rightListScrolling = false;
       setTimeout(() => {
-        if (!this._rightListHasMomentum) {
+        if (!this._rightListHasMomentum && !this._rightListScrolling) {
           this._onRightListEndScroll();
         }
       }, 10);
@@ -394,10 +394,10 @@ class TransactionContainerScreen extends BaseScreen {
     // if (this.firstScrollView === 'right') {
     //   this.firstScrollView = null;
     // }
-    this._riightListScrolling = false;
+    this._rightListScrolling = false;
     setTimeout(() => {
       console.log('-----------_handleRightMomentumEnd timeout', this._rightListScrolling);
-      if (!this._rightListScrolling) {
+      if (!this._rightListHasMomentum && !this._rightListScrolling) {
         this._onRightListEndScroll();
       }
     }, 100);
