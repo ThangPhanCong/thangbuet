@@ -37,25 +37,20 @@ class FundsHistoryScreen extends BaseScreen {
   firstScrollView = null;
   last_page = 1;
 
-  _renderDatePicker(titleDate) {
-    const date = this.state[titleDate];
-    const showIcon = titleDate === 'start_date';
-
-    return (
-      <BitkoexDatePicker date={date} showIcon={showIcon} changeDate={(date) => this._changeDate(titleDate, date)}/>
-    )
-  }
-
   componentDidMount() {
     super.componentDidMount();
     this._loadData();
   }
 
+  _changeDate(titleDate, date) {
+    this.setState({ [`${titleDate}`]: date });
+  }
+
   async _loadData() {
     try {
       const { page, start_date, end_date, transactions } = this.state;
-      const parseStartDate = moment(start_date).format('x');
-      const parseEndDate = moment(end_date).format('x');
+      const parseStartDate = moment(new Date(start_date)).format('x');
+      const parseEndDate = moment(new Date(end_date)).format('x');
 
       const params = {
         page,
@@ -232,6 +227,15 @@ class FundsHistoryScreen extends BaseScreen {
           <Text style={styles.textSearch}>{I18n.t('transactions.search')}</Text>
         </View>
       </TouchableWithoutFeedback>
+    )
+  }
+
+  _renderDatePicker(titleDate) {
+    const date = this.state[titleDate];
+    const showIcon = titleDate === 'start_date';
+
+    return (
+      <BitkoexDatePicker date={date} showIcon={showIcon} changeDate={(date) => this._changeDate(titleDate, date)}/>
     )
   }
 
