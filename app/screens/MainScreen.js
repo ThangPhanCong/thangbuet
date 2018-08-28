@@ -95,7 +95,7 @@ let MainTabNavigator = TabNavigator(
           iconName = require('../../assets/myPageTab/mypageTab.png')
         }
 
-        return <Image resizeMode={'contain'} style={{ width: scale(15), height: scale(15) }} source={iconName}/>
+        return <Image resizeMode={'contain'} style={{ width: scale(15), height: scale(15), marginTop: scale(5) }} source={iconName}/>
       },
       gesturesEnabled: false
     }),
@@ -103,14 +103,16 @@ let MainTabNavigator = TabNavigator(
     tabBarPosition: 'bottom',
     tabBarOptions: {
       activeTintColor: '#FFF',
-      inactiveTintColor: 'gray',
-      activeBackgroundColor: '#000',
+      inactiveTintColor: '#FFF',
+      activeBackgroundColor: '#0f2d6b',
       style: {
-        backgroundColor: '#131722',
-        height: scale(40)
+        backgroundColor: '#00358f',
+        height: scale(50),
+        
       },
       labelStyle: {
-        fontSize: scale(11)
+        fontSize: scale(11),
+        paddingBottom: scale(5)
       }
     },
     animationEnabled: false,
@@ -122,7 +124,7 @@ let MainTabNavigator = TabNavigator(
 export default class MainScreen extends BaseScreen {
   componentDidMount() {
     super.componentDidMount();
-
+    
     handleBackAction();
   }
 
