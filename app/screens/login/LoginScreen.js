@@ -22,10 +22,6 @@ export default class LoginScreen extends BaseScreen {
 
   state = {
     email: '',
-    emailValidation: null,
-    passwordEmpty: null,
-    messageUnCorrect: null,
-    otpValidation: null,
     password: '',
     otp: '',
     checkOtp: false,
