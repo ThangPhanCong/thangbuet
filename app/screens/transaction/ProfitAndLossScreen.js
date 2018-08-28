@@ -52,8 +52,8 @@ class ProfitAndLossScreen extends BaseScreen {
   async _loadData() {
     try {
       const { start_date, end_date, transactions } = this.state;
-      const parseStartDate = moment(start_date).format('x');
-      const parseEndDate = moment(end_date).format('x');
+      const parseStartDate = moment(new Date(start_date)).format('x');
+      const parseEndDate = moment(new Date(end_date)).format('x');
       const params = {
         start: parseStartDate,
         end: parseEndDate,
