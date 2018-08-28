@@ -301,7 +301,6 @@ class TransactionContainerScreen extends BaseScreen {
   }
 
   _onLeftListScroll(event) {
-    console.log('-----------_onLeftListScroll', event.nativeEvent);
     if (this.firstScrollView === 'left') {
       this._leftListScrolling = true;
       const y = event.nativeEvent.contentOffset.y;
@@ -312,7 +311,6 @@ class TransactionContainerScreen extends BaseScreen {
   }
 
   _onLeftListEndDrag() {
-    console.log('-----------_onLeftListEndDrag');
     if (this.firstScrollView === 'left') {
       this._leftListHasMomentum = false;
       this._leftListScrolling = false;
@@ -325,26 +323,19 @@ class TransactionContainerScreen extends BaseScreen {
   }
 
   _onLeftListEndScroll() {
-    console.log('-----------_onLeftListEndScroll');
     if (this.firstScrollView === 'left') {
       this.firstScrollView = null;
     }
   }
 
   _handleLeftMomentumStart() {
-    console.log('-----------_handleLeftMomentumStart');
-    // if (this.firstScrollView === null) {
-    //   this.firstScrollView = 'left';
-    // }
     this._leftListHasMomentum = true;
     this._leftListScrolling = true;
   }
 
   _handleLeftMomentumEnd() {
-    console.log('-----------_handleLeftMomentumEnd');
     this._leftListScrolling = false;
     setTimeout(() => {
-      console.log('-----------_handleLeftMomentumEnd timeout', this._leftListScrolling);
       if (!this._leftListHasMomentum && !this._leftListScrolling) {
         this._onLeftListEndScroll();
       }
@@ -352,7 +343,6 @@ class TransactionContainerScreen extends BaseScreen {
   }
 
   _onRightListScroll(event) {
-    // console.log('-----------_onRightListScroll');
     if (this.firstScrollView === 'right') {
       const y = event.nativeEvent.contentOffset.y;
       this.flatListLeft.scrollToOffset({
@@ -362,7 +352,6 @@ class TransactionContainerScreen extends BaseScreen {
   }
 
   _onRightListEndDrag() {
-    console.log('-----------_onRightListEndDrag', Date.now());
     if (this.firstScrollView === 'right') {
       this._rightListHasMomentum = false;
       this._rightListScrolling = false;
@@ -375,25 +364,17 @@ class TransactionContainerScreen extends BaseScreen {
   }
 
   _onRightListEndScroll() {
-    console.log('-----------_onRightListEndScroll', Date.now());
     if (this.firstScrollView === 'right') {
       this.firstScrollView = null;
     }
   }
 
   _handleRightMomentumStart() {
-    // if (this.firstScrollView == null) {
-    //   this.firstScrollView = 'right';
-    // }
     this._rightListHasMomentum = true;
     this._rightListScrolling = true;
   }
 
   _handleRightMomentumEnd() {
-    console.log('-----------_handleRightMomentumEnd');
-    // if (this.firstScrollView === 'right') {
-    //   this.firstScrollView = null;
-    // }
     this._rightListScrolling = false;
     setTimeout(() => {
       console.log('-----------_handleRightMomentumEnd timeout', this._rightListScrolling);
@@ -404,28 +385,17 @@ class TransactionContainerScreen extends BaseScreen {
   }
 
   _handleTouchStartLeft() {
-    // if (this.firstScrollView === null) {
     this.firstScrollView = 'left';
-    // }
   }
 
   _handleTouchEndLeft() {
-    // console.log("touch end left")
-    // if (this.firstScrollView === 'left') {
-    //   this.firstScrollView = null;
-    // }
   }
 
   _handleTouchStartRight() {
-    // if (this.firstScrollView === null) {
     this.firstScrollView = 'right';
-    // }
   }
 
   _handleTouchEndRight() {
-    // if (this.firstScrollView === 'right') {
-    //   this.firstScrollView = null;
-    // }
   }
 
   render() {
