@@ -78,8 +78,8 @@ class TransactionContainerScreen extends BaseScreen {
     try {
       const { page, start_date, end_date, transactions } = this.state;
       const { typeScreen } = this.props;
-      const parseStartDate = moment(start_date).format('x');
-      const parseEndDate = moment(end_date).format('x');
+      const parseStartDate = moment(new Date(start_date)).format('x');
+      const parseEndDate = moment(new Date(end_date)).format('x');
       let responseTransaction = {}, params = {};
 
 
