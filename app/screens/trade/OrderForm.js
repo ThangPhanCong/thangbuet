@@ -615,8 +615,8 @@ export default class OrderForm extends BaseScreen {
       return this.prefillAmounts[index];
     } else {
       let percent = 100 - (index - this.prefillAmounts.length) * 10;
+      let { price, coinBalance, currencyBalance } = this.state;
       if (this._isBuyOrder()) {
-        let { price, coinBalance, currencyBalance } = this.state;
         if (price) {
           return BigNumber(currencyBalance).times(percent).div(100).toString();
         }
