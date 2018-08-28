@@ -1,7 +1,7 @@
 import AppConfig from '../utils/AppConfig';
 import AppPreferences from '../utils/AppPreferences';
 import MasterdataUtils from '../utils/MasterdataUtils';
-import RNRestart from 'react-native-restart';
+import Consts from "../utils/Consts";
 
 export default class BaseRequest {
   async get(url, params = {}) {
@@ -90,7 +90,7 @@ export default class BaseRequest {
       //2:--data default
           //sang tab khac thi sang login.
       if(response.status === 401) {
-        throw new Error('Not Login');
+        throw new Error(Consts.NOT_LOGIN);
       }
 
       const content = await response.text();

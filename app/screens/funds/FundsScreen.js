@@ -11,6 +11,7 @@ import { formatCurrency, formatPercent, getCurrencyName, formatPercentSpace } fr
 import { CommonColors, Fonts } from '../../utils/CommonStyles'
 import { scale } from "../../libs/reactSizeMatter/scalingUtils"
 import ModalHelp from "../common/ModalHelp";
+import Consts from "../../utils/Consts";
 
 export default class FundsScreen extends BaseScreen {
 
@@ -59,7 +60,7 @@ export default class FundsScreen extends BaseScreen {
 
       this._updateState(coinList)
     } catch (err) {
-      //login o day
+      this._onError(err, Consts.TITLE_SCREEN.NOT_ALLOW_SEE);
       console.log('Error in FundsScreen._getSymbols: ', err)
     }
   }

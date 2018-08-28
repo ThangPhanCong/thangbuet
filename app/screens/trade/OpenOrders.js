@@ -8,6 +8,7 @@ import I18n from "../../i18n/i18n";
 import { getCurrencyName, formatCurrency, getTime } from "../../utils/Filters";
 import { CommonColors, CommonStyles, Fonts } from "../../utils/CommonStyles";
 import CheckBox from 'react-native-check-box'
+import Consts from "../../utils/Consts";
 
 export default class OpenOrders extends BaseScreen {
 
@@ -40,6 +41,8 @@ export default class OpenOrders extends BaseScreen {
         last_page: responseOrders.data.last_page
       });
     } catch (err) {
+      this._onError(err, Consts.TITLE_SCREEN.ALLOW_SEE);
+      
       console.log("OpenOrderRequest._error:", err)
     }
   }
