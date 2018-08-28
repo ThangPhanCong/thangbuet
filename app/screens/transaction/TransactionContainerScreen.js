@@ -377,7 +377,6 @@ class TransactionContainerScreen extends BaseScreen {
   _handleRightMomentumEnd() {
     this._rightListScrolling = false;
     setTimeout(() => {
-      console.log('-----------_handleRightMomentumEnd timeout', this._rightListScrolling);
       if (!this._rightListHasMomentum && !this._rightListScrolling) {
         this._onRightListEndScroll();
       }
