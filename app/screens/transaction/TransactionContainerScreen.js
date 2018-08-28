@@ -302,10 +302,23 @@ class TransactionContainerScreen extends BaseScreen {
 
   _onLeftListScroll(event) {
     if (this.firstScrollView === 'left') {
+      this._leftListScrolling = true;
       const y = event.nativeEvent.contentOffset.y;
       this.flatListRight.scrollToOffset({
         offset: y,
       });
+    }
+  }
+
+  _onLeftListEndDrag() {
+    if (this.firstScrollView === 'left') {
+      this._leftListHasMomentum = false;
+      this._leftListScrolling = false;
+      setTimeout(() => {
+        if (!this._leftListHasMomentum && !this._leftListScrolling) {
+          this._onLeftListEndScroll();
+        }
+      }, 10);
     }
   }
 
@@ -315,10 +328,18 @@ class TransactionContainerScreen extends BaseScreen {
     }
   }
 
-  _onRightListEndScroll() {
-    if (this.firstScrollView === 'right') {
-      this.firstScrollView = null;
-    }
+  _handleLeftMomentumStart() {
+    this._leftListHasMomentum = true;
+    this._leftListScrolling = true;
+  }
+
+  _handleLeftMomentumEnd() {
+    this._leftListScrolling = false;
+    setTimeout(() => {
+      if (!this._leftListHasMomentum && !this._leftListScrolling) {
+        this._onLeftListEndScroll();
+      }
+    }, 100);
   }
 
   _onRightListScroll(event) {
@@ -330,53 +351,50 @@ class TransactionContainerScreen extends BaseScreen {
     }
   }
 
-  _handleLeftMomentumEnd() {
-    if (this.firstScrollView === 'left') {
-      this.firstScrollView = null;
+  _onRightListEndDrag() {
+    if (this.firstScrollView === 'right') {
+      this._rightListHasMomentum = false;
+      this._rightListScrolling = false;
+      setTimeout(() => {
+        if (!this._rightListHasMomentum && !this._rightListScrolling) {
+          this._onRightListEndScroll();
+        }
+      }, 10);
     }
   }
 
-  _handleLeftMomentumStart() {
-    if (this.firstScrollView === null) {
-      this.firstScrollView = 'left';
+  _onRightListEndScroll() {
+    if (this.firstScrollView === 'right') {
+      this.firstScrollView = null;
     }
   }
 
   _handleRightMomentumStart() {
-    if (this.firstScrollView == null) {
-      this.firstScrollView = 'right';
-    }
+    this._rightListHasMomentum = true;
+    this._rightListScrolling = true;
   }
 
   _handleRightMomentumEnd() {
-    if (this.firstScrollView === 'right') {
-      this.firstScrollView = null;
-    }
+    this._rightListScrolling = false;
+    setTimeout(() => {
+      if (!this._rightListHasMomentum && !this._rightListScrolling) {
+        this._onRightListEndScroll();
+      }
+    }, 100);
   }
 
   _handleTouchStartLeft() {
-    if (this.firstScrollView === null) {
-      this.firstScrollView = 'left';
-    }
+    this.firstScrollView = 'left';
   }
 
   _handleTouchEndLeft() {
-    console.log("touch end left")
-    if (this.firstScrollView === 'left') {
-      this.firstScrollView = null;
-    }
   }
 
   _handleTouchStartRight() {
-    if (this.firstScrollView === null) {
-      this.firstScrollView = 'right';
-    }
+    this.firstScrollView = 'right';
   }
 
   _handleTouchEndRight() {
-    if (this.firstScrollView === 'right') {
-      this.firstScrollView = null;
-    }
   }
 
   render() {
@@ -409,7 +427,7 @@ class TransactionContainerScreen extends BaseScreen {
                       ref={elm => this.flatListLeft = elm}
                       keyExtractor={(item, index) => index.toString()}
                       onScroll={(event) => this._onLeftListScroll(event)}
-                      onScrollEndDrag={() => this._onLeftListEndScroll()}
+                      onScrollEndDrag={() => this._onLeftListEndDrag()}
                       renderItem={this._renderItem.bind(this)}
                       onEndReached={this._handleLoadMore.bind(this)}
                       onMomentumScrollBegin={() => this._handleLeftMomentumStart()}
@@ -425,7 +443,7 @@ class TransactionContainerScreen extends BaseScreen {
                       ref={elm => this.flatListRight = elm}
                       keyExtractor={(item, index) => index.toString()}
                       onScroll={(event) => this._onRightListScroll(event)}
-                      onScrollEndDrag={() => this._onRightListEndScroll()}
+                      onScrollEndDrag={() => this._onRightListEndDrag()}
                       renderItem={this._renderItemRight.bind(this)}
                       onEndReached={this._handleLoadMore.bind(this)}
                       onMomentumScrollBegin={() => this._handleRightMomentumStart()}
