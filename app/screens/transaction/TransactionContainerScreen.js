@@ -301,7 +301,9 @@ class TransactionContainerScreen extends BaseScreen {
   }
 
   _onLeftListScroll(event) {
+    console.log('-----------_onLeftListScroll', event.nativeEvent);
     if (this.firstScrollView === 'left') {
+      this._leftListScrolling = true;
       const y = event.nativeEvent.contentOffset.y;
       this.flatListRight.scrollToOffset({
         offset: y,
@@ -309,19 +311,48 @@ class TransactionContainerScreen extends BaseScreen {
     }
   }
 
+  _onLeftListEndDrag() {
+    console.log('-----------_onLeftListEndDrag');
+    if (this.firstScrollView === 'left') {
+      this._leftListHasMomentum = false;
+      this._leftListScrolling = false;
+      setTimeout(() => {
+        if (!this._leftListHasMomentum) {
+          this._onLeftListEndScroll();
+        }
+      }, 10);
+    }
+  }
+
   _onLeftListEndScroll() {
+    console.log('-----------_onLeftListEndScroll');
     if (this.firstScrollView === 'left') {
       this.firstScrollView = null;
     }
   }
 
-  _onRightListEndScroll() {
-    if (this.firstScrollView === 'right') {
-      this.firstScrollView = null;
-    }
+  _handleLeftMomentumStart() {
+    console.log('-----------_handleLeftMomentumStart');
+    // if (this.firstScrollView === null) {
+    //   this.firstScrollView = 'left';
+    // }
+    this._leftListHasMomentum = true;
+    this._leftListScrolling = true;
+  }
+
+  _handleLeftMomentumEnd() {
+    console.log('-----------_handleLeftMomentumEnd');
+    this._leftListScrolling = false;
+    setTimeout(() => {
+      console.log('-----------_handleLeftMomentumEnd timeout', this._leftListScrolling);
+      if (!this._leftListScrolling) {
+        this._onLeftListEndScroll();
+      }
+    }, 100);
   }
 
   _onRightListScroll(event) {
+    // console.log('-----------_onRightListScroll');
     if (this.firstScrollView === 'right') {
       const y = event.nativeEvent.contentOffset.y;
       this.flatListLeft.scrollToOffset({
@@ -330,53 +361,71 @@ class TransactionContainerScreen extends BaseScreen {
     }
   }
 
-  _handleLeftMomentumEnd() {
-    if (this.firstScrollView === 'left') {
-      this.firstScrollView = null;
+  _onRightListEndDrag() {
+    console.log('-----------_onRightListEndDrag', Date.now());
+    if (this.firstScrollView === 'right') {
+      this._rightListHasMomentum = false;
+      this._rightListScrolling = false;
+      setTimeout(() => {
+        if (!this._rightListHasMomentum) {
+          this._onRightListEndScroll();
+        }
+      }, 10);
     }
   }
 
-  _handleLeftMomentumStart() {
-    if (this.firstScrollView === null) {
-      this.firstScrollView = 'left';
+  _onRightListEndScroll() {
+    console.log('-----------_onRightListEndScroll', Date.now());
+    if (this.firstScrollView === 'right') {
+      this.firstScrollView = null;
     }
   }
 
   _handleRightMomentumStart() {
-    if (this.firstScrollView == null) {
-      this.firstScrollView = 'right';
-    }
+    // if (this.firstScrollView == null) {
+    //   this.firstScrollView = 'right';
+    // }
+    this._rightListHasMomentum = true;
+    this._rightListScrolling = true;
   }
 
   _handleRightMomentumEnd() {
-    if (this.firstScrollView === 'right') {
-      this.firstScrollView = null;
-    }
+    console.log('-----------_handleRightMomentumEnd');
+    // if (this.firstScrollView === 'right') {
+    //   this.firstScrollView = null;
+    // }
+    this._riightListScrolling = false;
+    setTimeout(() => {
+      console.log('-----------_handleRightMomentumEnd timeout', this._rightListScrolling);
+      if (!this._rightListScrolling) {
+        this._onRightListEndScroll();
+      }
+    }, 100);
   }
 
   _handleTouchStartLeft() {
-    if (this.firstScrollView === null) {
-      this.firstScrollView = 'left';
-    }
+    // if (this.firstScrollView === null) {
+    this.firstScrollView = 'left';
+    // }
   }
 
   _handleTouchEndLeft() {
-    console.log("touch end left")
-    if (this.firstScrollView === 'left') {
-      this.firstScrollView = null;
-    }
+    // console.log("touch end left")
+    // if (this.firstScrollView === 'left') {
+    //   this.firstScrollView = null;
+    // }
   }
 
   _handleTouchStartRight() {
-    if (this.firstScrollView === null) {
-      this.firstScrollView = 'right';
-    }
+    // if (this.firstScrollView === null) {
+    this.firstScrollView = 'right';
+    // }
   }
 
   _handleTouchEndRight() {
-    if (this.firstScrollView === 'right') {
-      this.firstScrollView = null;
-    }
+    // if (this.firstScrollView === 'right') {
+    //   this.firstScrollView = null;
+    // }
   }
 
   render() {
@@ -409,7 +458,7 @@ class TransactionContainerScreen extends BaseScreen {
                       ref={elm => this.flatListLeft = elm}
                       keyExtractor={(item, index) => index.toString()}
                       onScroll={(event) => this._onLeftListScroll(event)}
-                      onScrollEndDrag={() => this._onLeftListEndScroll()}
+                      onScrollEndDrag={() => this._onLeftListEndDrag()}
                       renderItem={this._renderItem.bind(this)}
                       onEndReached={this._handleLoadMore.bind(this)}
                       onMomentumScrollBegin={() => this._handleLeftMomentumStart()}
@@ -425,7 +474,7 @@ class TransactionContainerScreen extends BaseScreen {
                       ref={elm => this.flatListRight = elm}
                       keyExtractor={(item, index) => index.toString()}
                       onScroll={(event) => this._onRightListScroll(event)}
-                      onScrollEndDrag={() => this._onRightListEndScroll()}
+                      onScrollEndDrag={() => this._onRightListEndDrag()}
                       renderItem={this._renderItemRight.bind(this)}
                       onEndReached={this._handleLoadMore.bind(this)}
                       onMomentumScrollBegin={() => this._handleRightMomentumStart()}
