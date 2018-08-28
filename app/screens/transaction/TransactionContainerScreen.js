@@ -74,8 +74,8 @@ class TransactionContainerScreen extends BaseScreen {
     try {
       const { page, start_date, end_date, transactions } = this.state;
       const { typeScreen } = this.props;
-      const parseStartDate = moment(start_date).format('x');
-      const parseEndDate = moment(end_date).format('x');
+      const parseStartDate = moment(new Date(start_date)).format('x');
+      const parseEndDate = moment(new Date(end_date)).format('x');
       let responseTransaction = {}, params = {};
 
 
@@ -268,6 +268,8 @@ class TransactionContainerScreen extends BaseScreen {
   _renderItemRight({ item }) {
     const { typeScreen } = this.props;
     const stylesQuantity = item.quantity.includes('-') ? styles.itemDecreaseQuantity : styles.itemIncreaseQuantity;
+    const itemFee = item.trade_type === Consts.TRADE_TYPE_BUY ? formatCurrency(item.fee, item.coin) : formatCurrency(item.fee, item.currency);
+    const coinFee = item.trade_type === Consts.TRADE_TYPE_BUY ? getCurrencyName(item.coin) : getCurrencyName(item.currency);
 
     return (
       <View style={styles.itemContainer}>
@@ -292,9 +294,9 @@ class TransactionContainerScreen extends BaseScreen {
         {typeScreen === TransactionContainerScreen.TYPE_SCREEN.OPEN_ORDER ? this._renderStatusOrder(item) :
           <View style={[styles.lastItemRight]}>
             <Text style={styles.itemFee}>
-              {formatCurrency(item.fee, item.coin)}
+              {itemFee}
             </Text>
-            <Text style={styles.itemTransaction}>{getCurrencyName(item.coin)}</Text>
+            <Text style={styles.itemTransaction}>{coinFee}</Text>
           </View>}
       </View>
     )
