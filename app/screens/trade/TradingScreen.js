@@ -103,11 +103,11 @@ export default class TradingScreen extends BaseScreen {
   }
 
   _getCurrency() {
-    return this.state.currency;
+    return this.state.currency || '';
   }
 
   _getCoin() {
-    return this.state.coin;
+    return this.state.coin || '';
   }
 
   async _loadData() {
@@ -152,6 +152,9 @@ export default class TradingScreen extends BaseScreen {
       let response = await rf.getRequest('UserRequest').getBalance()
       this._onBalanceUpdated(response.data);
     } catch (err) {
+      if(err.message === Consts.NOT_LOGIN) {
+        return this._onBalanceUpdated({});
+      };
       console.log('TradingScreen._getBalance', err);
     }
   }
