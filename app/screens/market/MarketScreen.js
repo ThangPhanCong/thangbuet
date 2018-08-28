@@ -317,7 +317,10 @@ class MarketScreen extends BaseScreen {
       let response = await rf.getRequest('FavoriteRequest').getList();
       return response.data;
     } catch (err) {
-      console.log('MarketScreen._getFavorites', err);
+      if(err.message ==='Not Login') {
+        return [];
+      }
+      console.log('MarketScreen._getFavorites', err.message );
     }
   }
 

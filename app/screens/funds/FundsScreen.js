@@ -59,6 +59,7 @@ export default class FundsScreen extends BaseScreen {
 
       this._updateState(coinList)
     } catch (err) {
+      //login o day
       console.log('Error in FundsScreen._getSymbols: ', err)
     }
   }

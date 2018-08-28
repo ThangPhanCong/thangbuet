@@ -127,6 +127,11 @@
       "googleAuthentication": "2FA"
     }
   },
+  "preview": {
+    "login": "로그인하고 시작하기",
+    "signUp": "회원가입",
+    "trade": "둘러보기"
+  },
   "marketDetail": {
     "time": "시간",
     "price": "체결가",
