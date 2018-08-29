@@ -103,11 +103,11 @@ export default class TradingScreen extends BaseScreen {
   }
 
   _getCurrency() {
-    return this.state.currency || '';
+    return this.state.currency;
   }
 
   _getCoin() {
-    return this.state.coin || '';
+    return this.state.coin;
   }
 
   async _loadData() {

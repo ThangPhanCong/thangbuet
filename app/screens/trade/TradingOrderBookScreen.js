@@ -89,6 +89,15 @@ export default class TradingOrderBookScreen extends BaseScreen {
       const response = await rf.getRequest('UserRequest').getOrderBookSettings(params);
       this._onOrderBookSettingsUpdated(response.data);
     } catch (err) {
+      if(err.message === Consts.NOT_LOGIN) {
+        const params = {
+          currency: this._getCurrency(),
+          coin: this._getCoin()
+        };
+
+        const defaultOrderBookSetting = { ...Consts.DEFAULT_ORDER_BOOK_SETTING, ...params };
+        return this._onOrderBookSettingsUpdated(defaultOrderBookSetting);
+      }
       console.log('GetOrderBookSettings._error:', err)
     }
   }

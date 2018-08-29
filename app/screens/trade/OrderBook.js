@@ -1,17 +1,6 @@
 import React from 'react';
-import {
-  Dimensions,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  TouchableWithoutFeedback,
-  View,
-  Image
-} from 'react-native';
+import { Dimensions, ScrollView, Text, TouchableWithoutFeedback, View } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
-import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import ScaledSheet from '../../libs/reactSizeMatter/ScaledSheet';
 import { scale, verticalScale } from '../../libs/reactSizeMatter/scalingUtils';
 import _ from 'lodash';
@@ -23,8 +12,7 @@ import I18n from '../../i18n/i18n';
 import Utils from '../../utils/Utils';
 import UIUtils from '../../utils/UIUtils';
 import BaseScreen from '../BaseScreen';
-import { CommonColors, CommonSize, CommonStyles, Fonts } from '../../utils/CommonStyles';
-import { formatCurrency, formatPercent } from '../../utils/Filters';
+import { CommonStyles, Fonts } from '../../utils/CommonStyles';
 import Events from '../../utils/Events';
 
 export default class OrderBook extends BaseScreen {
@@ -139,13 +127,13 @@ export default class OrderBook extends BaseScreen {
   async _getPriceSetting() {
     try {
       let response = await rf.getRequest('MasterdataRequest').getAll();
-      console.log('getpIrceSetting:', response)
       let priceGroups = _.filter(response.price_groups, (value) => {
         return value.currency == this.props.currency && value.coin == this.props.coin;
       });
-      let priceSetting = priceGroups[this.settings.price_group];
+      let priceSetting = priceGroups[this.settings.price_group || 0];
+
       this.priceSetting = priceSetting;
-      this.pricePrecision = Utils.getPrecision(priceSetting ? priceSetting.value : 0);
+      this.pricePrecision = Utils.getPrecision(priceSetting.value);
     } catch (err) {
       console.log('GetMasterData._error:', err)
     }
@@ -183,7 +171,11 @@ export default class OrderBook extends BaseScreen {
       return this._updateOrderBook();
     } catch (err) {
       if(err.message === Consts.NOT_LOGIN) {
-        this.settings = {};
+        const params = {
+          currency: this._getCurrency(),
+          coin: this._getCoin()
+        };
+        this.settings = { ...Consts.DEFAULT_ORDER_BOOK_SETTING, ...params };
         return this._updateOrderBook();
       }
       console.log('GetOrderBookSettings._error:', err)
@@ -198,11 +190,6 @@ export default class OrderBook extends BaseScreen {
       this._convertOrderBookDataType(this.orderBook);
       return this._updateOrderBook();
     } catch (err) {
-      if(err.message === Consts.NOT_LOGIN) {
-        this.orderBook = {};
-        this._convertOrderBookDataType(this.orderBook);
-        return;
-      }
       console.log('GetOrderBook._error:', err)
     }
   }
@@ -224,7 +211,7 @@ export default class OrderBook extends BaseScreen {
       return this._updateOrderBook();
     } catch (err) {
       if(err.message === Consts.NOT_LOGIN) {
-        this.userOrderBook = {};
+        this.userOrderBook = Consts.DEFAULT_USER_ORDER_BOOK;
         this._convertOrderBookDataType(this.userOrderBook);
         return this._updateOrderBook();
       }

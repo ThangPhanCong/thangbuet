@@ -55,11 +55,11 @@ export default class OrderBookSettingModal extends BaseScreen {
   }
 
   _getCoin() {
-    return this.props.coin || '';
+    return this.props.coin;
   }
 
   _getCurrency() {
-    return this.props.currency || '';
+    return this.props.currency;
   }
 
   setModalVisible(visible) {
@@ -96,7 +96,13 @@ export default class OrderBookSettingModal extends BaseScreen {
       this._onOrderBookSettingsUpdated(response.data);
     } catch (err) {
       if(err.message === Consts.NOT_LOGIN) {
-        return this._onOrderBookSettingsUpdated({})
+        const params = {
+          currency: this._getCurrency(),
+          coin: this._getCoin()
+        };
+
+       const defaultOrderBookSetting = { ...Consts.DEFAULT_ORDER_BOOK_SETTING, ...params };
+        return this._onOrderBookSettingsUpdated(defaultOrderBookSetting);
       }
       console.log('GetOrderBookSettings._error:', err)
     }

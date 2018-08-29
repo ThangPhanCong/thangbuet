@@ -445,6 +445,10 @@ export default class WalletScreen extends BaseScreen {
       })
     }
     catch (err) {
+      if(err.message === Consts.NOT_LOGIN) {
+        return this._onError(err);
+      }
+
       console.log('WalletScreen._loadWallets', err);
       this.setState({
         isLoading: false
@@ -496,8 +500,14 @@ export default class WalletScreen extends BaseScreen {
   }
 
   async _getListCoin(){
-    const responseBalance = await rf.getRequest('UserRequest').getBalance();
-    this.setState({listCoin: responseBalance.data});
+    try {
+      const responseBalance = await rf.getRequest('UserRequest').getBalance();
+      this.setState({listCoin: responseBalance.data});
+    } catch (err) {
+      if(err.message === Consts.NOT_LOGIN) {
+        return this._onError(err);
+      }
+    }
   }
 }
 

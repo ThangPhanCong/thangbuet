@@ -166,21 +166,22 @@ export default class OrderForm extends BaseScreen {
   }
 
   async _getFeeRate() {
+    let user = {};
+
     try {
       const response = await rf.getRequest('UserRequest').getCurrentUser();
-      const user = response.data;
-
-      const masterdata = await rf.getRequest('MasterdataRequest').getAll();
-      let setting = masterdata.fee_levels.find(setting => user.fee_level == setting.level);
-
-      this.setState({ feeRate: setting.fee });
+      user = response.data;
     } catch (err) {
       if(err.message === Consts.NOT_LOGIN) {
-        return;
+        user = { fee_level: 1 }
       }
       console.log('GetCurrentUser._error:', err)
     }
 
+    const masterdata = await rf.getRequest('MasterdataRequest').getAll();
+    let setting = masterdata.fee_levels.find(setting => user.fee_level == setting.level);
+
+    this.setState({ feeRate: setting.fee });
   }
 
   async _getOrderBookSettings() {
@@ -193,7 +194,13 @@ export default class OrderForm extends BaseScreen {
       this._onOrderBookSettingsUpdated(response.data);
     } catch (err) {
       if(err.message === Consts.NOT_LOGIN) {
-        return this._onOrderBookSettingsUpdated({});
+        const params = {
+          currency: this._getCurrency(),
+          coin: this._getCoin()
+        };
+
+        const defaultOrderBookSetting = { ...Consts.DEFAULT_ORDER_BOOK_SETTING, ...params };
+        return this._onOrderBookSettingsUpdated(defaultOrderBookSetting);
       }
       console.log('GerOrderBookSettings._error:', err)
     }
