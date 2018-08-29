@@ -110,21 +110,31 @@ export default class OrderForm extends BaseScreen {
   }
 
   async _getCoinSetting() {
-    const { coin, currency } = this.props;
-    let response = await rf.getRequest('MasterdataRequest').getAll();
-    const coinSetting = response.coin_settings.find((item) => item.coin == coin && item.currency == currency);
+    try {
+      const { coin, currency } = this.props;
+      let response = await rf.getRequest('MasterdataRequest').getAll();
+      const coinSetting = response.coin_settings.find((item) => item.coin == coin && item.currency == currency);
 
-    this.quantityPrecision = Utils.getPrecision(coinSetting.minimum_quantity);
+      this.quantityPrecision = Utils.getPrecision(coinSetting.minimum_quantity);
+    } catch (err) {
+      console.log('GetMasterDate._error:', err)
+    }
+
   }
 
   async _getQuantitySetting() {
-    const { coin, currency } = this.props;
-    let response = await rf.getRequest('MasterdataRequest').getAll();
-    const priceGroup = response.price_groups.find((item) => {
-      return item.coin == coin && item.currency == currency && item.group == 0;
-    });
+    try {
+      const { coin, currency } = this.props;
+      let response = await rf.getRequest('MasterdataRequest').getAll();
+      const priceGroup = response.price_groups.find((item) => {
+        return item.coin == coin && item.currency == currency && item.group == 0;
+      });
 
-    this.pricePrecision = Utils.getPrecision(priceGroup.value);
+      this.pricePrecision = Utils.getPrecision(priceGroup.value);
+    } catch (e) {
+      console.log('GetMasterDate._error:', err)
+    }
+
   }
 
   async _getBalance() {
@@ -133,7 +143,6 @@ export default class OrderForm extends BaseScreen {
       this._onBalanceUpdated(response.data);
     } catch (error) {
       if(error.message === Consts.NOT_LOGIN) {
-        console.log("not login roi")
         return this._onBalanceUpdated({});
       }
       console.log('OrderForm._getBalance', error);
@@ -157,31 +166,52 @@ export default class OrderForm extends BaseScreen {
   }
 
   async _getFeeRate() {
-    const response = await rf.getRequest('UserRequest').getCurrentUser();
-    const user = response.data;
+    try {
+      const response = await rf.getRequest('UserRequest').getCurrentUser();
+      const user = response.data;
 
-    const masterdata = await rf.getRequest('MasterdataRequest').getAll();
-    let setting = masterdata.fee_levels.find(setting => user.fee_level == setting.level);
+      const masterdata = await rf.getRequest('MasterdataRequest').getAll();
+      let setting = masterdata.fee_levels.find(setting => user.fee_level == setting.level);
 
-    this.setState({ feeRate: setting.fee });
+      this.setState({ feeRate: setting.fee });
+    } catch (err) {
+      if(err.message === Consts.NOT_LOGIN) {
+        return;
+      }
+      console.log('GetCurrentUser._error:', err)
+    }
+
   }
 
   async _getOrderBookSettings() {
-    const params = {
-      currency: this._getCurrency(),
-      coin: this._getCoin()
-    };
-    const response = await rf.getRequest('UserRequest').getOrderBookSettings(params);
-    this._onOrderBookSettingsUpdated(response.data);
+    try {
+      const params = {
+        currency: this._getCurrency(),
+        coin: this._getCoin()
+      };
+      const response = await rf.getRequest('UserRequest').getOrderBookSettings(params);
+      this._onOrderBookSettingsUpdated(response.data);
+    } catch (err) {
+      if(err.message === Consts.NOT_LOGIN) {
+        return this._onOrderBookSettingsUpdated({});
+      }
+      console.log('GerOrderBookSettings._error:', err)
+    }
+
   }
 
   async _getPrice() {
-    const response = await rf.getRequest('PriceRequest').getPrices();
-    const prices = response.data;
-    const key = Utils.getPriceKey(this._getCurrency(), this._getCoin());
-    if (prices[key] && !this.state.price) {
-      this.setState({ price: prices[key].price });
+    try {
+      const response = await rf.getRequest('PriceRequest').getPrices();
+      const prices = response.data;
+      const key = Utils.getPriceKey(this._getCurrency(), this._getCoin());
+      if (prices[key] && !this.state.price) {
+        this.setState({ price: prices[key].price });
+      }
+    } catch (e) {
+      console.log('GetPrice._error:', e)
     }
+
   }
 
   _isBuyOrder() {

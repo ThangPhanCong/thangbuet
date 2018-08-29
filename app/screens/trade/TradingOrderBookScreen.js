@@ -67,22 +67,30 @@ export default class TradingOrderBookScreen extends BaseScreen {
   }
 
   async _loadCoinSettings() {
-    const masterdata = await rf.getRequest('MasterdataRequest').getAll();
-    const settings = masterdata.coin_settings.find(item => {
-      return item.currency == this._getCurrency() && item.coin == this._getCoin()
-    });
-    this.setState({
-      quantityPrecision: Utils.getPrecision(settings.minimum_quantity)
-    });
+    try {
+      const masterdata = await rf.getRequest('MasterdataRequest').getAll();
+      const settings = masterdata.coin_settings.find(item => {
+        return item.currency == this._getCurrency() && item.coin == this._getCoin()
+      });
+      this.setState({
+        quantityPrecision: Utils.getPrecision(settings.minimum_quantity)
+      });
+    } catch (err) {
+      console.log('GetMasterData._error:', err)
+    }
   }
 
   async _getOrderBookSettings() {
-    const params = {
-      currency: this._getCurrency(),
-      coin: this._getCoin()
-    };
-    const response = await rf.getRequest('UserRequest').getOrderBookSettings(params);
-    this._onOrderBookSettingsUpdated(response.data);
+    try {
+      const params = {
+        currency: this._getCurrency(),
+        coin: this._getCoin()
+      };
+      const response = await rf.getRequest('UserRequest').getOrderBookSettings(params);
+      this._onOrderBookSettingsUpdated(response.data);
+    } catch (err) {
+      console.log('GetOrderBookSettings._error:', err)
+    }
   }
 
   _onOrderBookSettingsUpdated(settings) {

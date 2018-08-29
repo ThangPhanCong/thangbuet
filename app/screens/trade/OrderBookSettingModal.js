@@ -20,6 +20,7 @@ import { formatCurrency, getCurrencyName } from '../../utils/Filters';
 import { CommonColors, CommonSize, CommonStyles, Fonts } from '../../utils/CommonStyles';
 import UIUtils from '../../utils/UIUtils';
 import Events from '../../utils/Events';
+import Consts from "../../utils/Consts";
 
 export default class OrderBookSettingModal extends BaseScreen {
   state = {
@@ -54,11 +55,11 @@ export default class OrderBookSettingModal extends BaseScreen {
   }
 
   _getCoin() {
-    return this.props.coin;
+    return this.props.coin || '';
   }
 
   _getCurrency() {
-    return this.props.currency;
+    return this.props.currency || '';
   }
 
   setModalVisible(visible) {
@@ -86,12 +87,19 @@ export default class OrderBookSettingModal extends BaseScreen {
   }
 
   async _loadSettings() {
-    const params = {
-      currency: this._getCurrency(),
-      coin: this._getCoin(),
-    };
-    const response = await rf.getRequest('UserRequest').getOrderBookSettings(params);
-    this._onOrderBookSettingsUpdated(response.data);
+    try {
+      const params = {
+        currency: this._getCurrency(),
+        coin: this._getCoin(),
+      };
+      const response = await rf.getRequest('UserRequest').getOrderBookSettings(params);
+      this._onOrderBookSettingsUpdated(response.data);
+    } catch (err) {
+      if(err.message === Consts.NOT_LOGIN) {
+        return this._onOrderBookSettingsUpdated({})
+      }
+      console.log('GetOrderBookSettings._error:', err)
+    }
   }
 
   _onOrderBookSettingsUpdated(data) {
@@ -102,15 +110,20 @@ export default class OrderBookSettingModal extends BaseScreen {
   }
 
   async _saveOrderBookSettings() {
-    const settings = this._convertStateToSettings(this.state);
-    const params = {
-      currency: this._getCurrency(),
-      coin: this._getCoin(),
-      ...settings
+    try {
+      const settings = this._convertStateToSettings(this.state);
+      const params = {
+        currency: this._getCurrency(),
+        coin: this._getCoin(),
+        ...settings
+      };
+
+      this.setModalVisible(false);
+      const response = await rf.getRequest('UserRequest').updateOrderBookSettings(params);
+      this.notify(Events.ORDER_BOOK_SETTINGS_UPDATED, response.data);
+    } catch (err) {
+      console.log('UpdateOrderBookSetting._error:', err)
     }
-    this.setModalVisible(false);
-    const response = await rf.getRequest('UserRequest').updateOrderBookSettings(params);
-    this.notify(Events.ORDER_BOOK_SETTINGS_UPDATED, response.data);
   }
 
   _convertSettingsToState(settings) {
