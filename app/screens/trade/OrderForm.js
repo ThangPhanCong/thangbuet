@@ -132,6 +132,10 @@ export default class OrderForm extends BaseScreen {
       let response = await rf.getRequest('UserRequest').getBalance();
       this._onBalanceUpdated(response.data);
     } catch (error) {
+      if(error.message === Consts.NOT_LOGIN) {
+        console.log("not login roi")
+        return this._onBalanceUpdated({});
+      }
       console.log('OrderForm._getBalance', error);
     }
   }

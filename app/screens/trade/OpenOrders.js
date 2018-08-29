@@ -35,12 +35,14 @@ export default class OpenOrders extends BaseScreen {
 
       const responseOrders = await rf.getRequest('OrderRequest').getOrdersPending(params);
       const newOrders = clearData ? responseOrders.data.data : [...orders, ...responseOrders.data.data];
-
       this.setState({
         orders: newOrders,
         last_page: responseOrders.data.last_page
       });
     } catch (err) {
+      if(err.message === Consts.NOT_LOGIN) {
+        return;
+      }
       console.log("OpenOrderRequest._error:", err)
     }
   }
