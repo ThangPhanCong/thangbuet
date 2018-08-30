@@ -208,6 +208,12 @@ class WithdrawalScreen extends BaseScreen {
     }
   }
 
+  _onQuantityChanged(formatted, extracted) {
+    let amount = OrderUtils.getMaskInputValue(formatted, extracted);
+    this._amount = amount;
+    this.setState({ isComplete: true })
+  }
+
   render() {
     const { symbol } = this.state
     return (
@@ -259,6 +265,7 @@ class WithdrawalScreen extends BaseScreen {
                   <CurrencyInput
                     value={this._amount}
                     precision={this._quantityPrecision}
+                    onChangeText={this._onQuantityChanged.bind(this)}
                     keyboardType='numeric'
                     style={styles.inputText}
                     underlineColorAndroid='transparent' />
