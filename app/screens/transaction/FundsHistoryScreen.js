@@ -156,11 +156,44 @@ class FundsHistoryScreen extends BaseScreen {
 
   _onLeftListScroll(event) {
     if (this.firstScrollView === 'left') {
+      this._leftListScrolling = true;
       const y = event.nativeEvent.contentOffset.y;
       this.flatListRight.scrollToOffset({
         offset: y,
       });
     }
+  }
+
+  _onLeftListEndDrag() {
+    if (this.firstScrollView === 'left') {
+      this._leftListHasMomentum = false;
+      this._leftListScrolling = false;
+      setTimeout(() => {
+        if (!this._leftListHasMomentum && !this._leftListScrolling) {
+          this._onLeftListEndScroll();
+        }
+      }, 10);
+    }
+  }
+
+  _onLeftListEndScroll() {
+    if (this.firstScrollView === 'left') {
+      this.firstScrollView = null;
+    }
+  }
+
+  _handleLeftMomentumStart() {
+    this._leftListHasMomentum = true;
+    this._leftListScrolling = true;
+  }
+
+  _handleLeftMomentumEnd() {
+    this._leftListScrolling = false;
+    setTimeout(() => {
+      if (!this._leftListHasMomentum && !this._leftListScrolling) {
+        this._onLeftListEndScroll();
+      }
+    }, 100);
   }
 
   _onRightListScroll(event) {
@@ -172,52 +205,50 @@ class FundsHistoryScreen extends BaseScreen {
     }
   }
 
-  _handleLeftMomentumEnd() {
-    if (this.firstScrollView === 'left') {
-      this.firstScrollView = null;
+  _onRightListEndDrag() {
+    if (this.firstScrollView === 'right') {
+      this._rightListHasMomentum = false;
+      this._rightListScrolling = false;
+      setTimeout(() => {
+        if (!this._rightListHasMomentum && !this._rightListScrolling) {
+          this._onRightListEndScroll();
+        }
+      }, 10);
     }
   }
 
-  _handleLeftMomentumStart() {
-    if (this.firstScrollView === null) {
-      this.firstScrollView = 'left';
+  _onRightListEndScroll() {
+    if (this.firstScrollView === 'right') {
+      this.firstScrollView = null;
     }
   }
 
   _handleRightMomentumStart() {
-    if (this.firstScrollView == null) {
-      this.firstScrollView = 'right';
-    }
+    this._rightListHasMomentum = true;
+    this._rightListScrolling = true;
   }
 
   _handleRightMomentumEnd() {
-    if (this.firstScrollView === 'right') {
-      this.firstScrollView = null;
-    }
+    this._rightListScrolling = false;
+    setTimeout(() => {
+      if (!this._rightListHasMomentum && !this._rightListScrolling) {
+        this._onRightListEndScroll();
+      }
+    }, 100);
   }
 
   _handleTouchStartLeft() {
-    if (this.firstScrollView === null) {
-      this.firstScrollView = 'left';
-    }
+    this.firstScrollView = 'left';
   }
 
   _handleTouchEndLeft() {
-    if (this.firstScrollView === 'left') {
-      this.firstScrollView = null;
-    }
   }
 
   _handleTouchStartRight() {
-    if (this.firstScrollView === null) {
-      this.firstScrollView = 'right';
-    }
+    this.firstScrollView = 'right';
   }
 
   _handleTouchEndRight() {
-    if (this.firstScrollView === 'right') {
-      this.firstScrollView = null;
-    }
   }
 
   _renderButtonSeach() {
@@ -342,13 +373,14 @@ class FundsHistoryScreen extends BaseScreen {
             <FlatList data={transactions}
                       ref={elm => this.flatListLeft = elm}
                       keyExtractor={(item, index) => index.toString()}
+                      renderItem={this._renderItem.bind(this)}
+                      onEndReached={this._handleLoadMore.bind(this)}
                       onScroll={(event) => this._onLeftListScroll(event)}
-                      onMomentumScrollStart={() => this._handleLeftMomentumStart()}
+                      onScrollEndDrag={() => this._onLeftListEndDrag()}
+                      onMomentumScrollBegin={() => this._handleLeftMomentumStart()}
                       onMomentumScrollEnd={() => this._handleLeftMomentumEnd()}
                       onTouchStart={() => this._handleTouchStartLeft()}
                       onTouchEnd={() => this._handleTouchEndLeft()}
-                      renderItem={this._renderItem.bind(this)}
-                      onEndReached={this._handleLoadMore.bind(this)}
                       onEndReachedThreshold={0.5}/>
           </View>
 
@@ -357,13 +389,14 @@ class FundsHistoryScreen extends BaseScreen {
             <FlatList data={transactions}
                       ref={elm => this.flatListRight = elm}
                       keyExtractor={(item, index) => index.toString()}
+                      renderItem={this._renderItemRight.bind(this)}
+                      onEndReached={this._handleLoadMore.bind(this)}
                       onScroll={(event) => this._onRightListScroll(event)}
-                      onMomentumScrollStart={() => this._handleRightMomentumStart()}
+                      onScrollEndDrag={() => this._onRightListEndDrag()}
+                      onMomentumScrollBegin={() => this._handleRightMomentumStart()}
                       onMomentumScrollEnd={() => this._handleRightMomentumEnd()}
                       onTouchStart={() => this._handleTouchStartRight()}
                       onTouchEnd={() => this._handleTouchEndRight()}
-                      renderItem={this._renderItemRight.bind(this)}
-                      onEndReached={this._handleLoadMore.bind(this)}
                       onEndReachedThreshold={0.5}/>
           </ScrollView>
         </View>
