@@ -278,7 +278,7 @@
     "currency": "KRW"
   },
   "deposit": {
-    "title": "입금 바꿔야되요",
+    "title": "입금",
     "account": "계좌 잔액",
     "amount": "입금 신청 금액",
     "currency": "w",
