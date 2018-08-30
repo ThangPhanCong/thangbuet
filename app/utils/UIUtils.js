@@ -1,5 +1,5 @@
 import React from 'react';
-import { Platform, StatusBar, StyleSheet, Text, View } from 'react-native';
+import { Platform, StatusBar, StyleSheet, Text, View, Dimensions } from 'react-native';
 import { scale } from '../libs/reactSizeMatter/scalingUtils';
 import { CommonColors, CommonStyles, Fonts } from './CommonStyles';
 

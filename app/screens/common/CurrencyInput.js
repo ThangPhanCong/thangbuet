@@ -3,12 +3,8 @@ import TextInputMask from 'react-native-text-input-mask';
 
 export default class CurrencyInput extends Component {
 
-  state = {
-    value: ''
-  };
-
   render() {
-    const { value } = this.state;
+    const { value } = this.props;
     const parseValue = value ? value.toString() : value;
 
     const props = {
