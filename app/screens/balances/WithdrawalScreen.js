@@ -22,6 +22,7 @@ class WithdrawalScreen extends BaseScreen {
   _daily = {}
   _amount = 0
   _quantityPrecision = 10
+  _fee = 0
 
   _shouldShowInvalidAddress = false
 
@@ -105,6 +106,7 @@ class WithdrawalScreen extends BaseScreen {
 
       this._daily.withdrawalLimit = parseFloat(withdrawalLimit.daily_limit)
       this._daily.minimum = parseFloat(withdrawalLimit.minium_withdrawal)
+      this._fee = parseFloat(withdrawalLimit.fee)
     } catch (err) {
       console.log("Some errors has occurred in  DailyLimit._error:", err)
     }
@@ -206,12 +208,6 @@ class WithdrawalScreen extends BaseScreen {
     }
   }
 
-  _onQuantityChanged(formatted, extracted) {
-    let amount = OrderUtils.getMaskInputValue(formatted, extracted);
-    this._amount = amount;
-    this.setState({ isComplete: true })
-  }
-
   render() {
     const { symbol } = this.state
     return (
@@ -260,19 +256,9 @@ class WithdrawalScreen extends BaseScreen {
                   {I18n.t('withdrawal.amountRequest', { "coinName": getCurrencyName(symbol.code) })}
                 </Text>
                 <View style={styles.amountWrapper}>
-                  {/* <TextInput
-                    keyboardType='numeric'
-                    autoCorrect={false}
-                    underlineColorAndroid='transparent'
-                    value={formatCurrency(this._amount, this.currency)}
-                    onChangeText={(text) => {
-                      this.setState({ amount: parseFloat(text.split(',').join('')) })
-                    }}
-                    style={styles.amountInput} /> */}
                   <CurrencyInput
                     value={this._amount}
                     precision={this._quantityPrecision}
-                    onChangeText={this._onQuantityChanged.bind(this)}
                     keyboardType='numeric'
                     style={styles.inputText}
                     underlineColorAndroid='transparent' />
@@ -444,11 +430,11 @@ class WithdrawalScreen extends BaseScreen {
   }
 
   _onAutoFillAmount() {
-    if (this.state.symbol.available_balance <= this._daily.withdrawalLimit - this._daily.withdrawal) {
-      this._amount = this.state.symbol.available_balance;
+    if (this.state.symbol.available_balance + this._fee <= this._daily.withdrawalLimit - this._daily.withdrawal) {
+      this._amount = parseFloat(this.state.symbol.available_balance) - this._fee;
     }
     else {
-      this._amount = this._daily.withdrawalLimit - this._daily.withdrawal > 0 ? this._daily.withdrawalLimit - this._daily.withdrawal : 0
+      this._amount = Math.max(this._daily.withdrawalLimit - this._daily.withdrawal - this._fee, 0)
     }
     this.setState({ isComplete: true })
   }
