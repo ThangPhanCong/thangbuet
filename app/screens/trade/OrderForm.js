@@ -631,6 +631,8 @@ export default class OrderForm extends BaseScreen {
     const balance = this.state.currencyBalance;
     const currency = this._getCurrency();
     const coin = this._getCoin();
+    const orderFee = this._getOrderFee();
+    const orderTotal = this._getOrderTotal()
     return (
       <View style={styles.estimationValues}>
         <View style={styles.estimationRow}>
@@ -638,9 +640,15 @@ export default class OrderForm extends BaseScreen {
             <Text style={styles.estimateLabel}>{I18n.t('orderForm.balance')}</Text>
           </View>
           <View style={styles.estimationRightCell}>
-            <ScrollView horizontal={true}>
-              <Text style={styles.estimateValue}>{formatCurrency(balance, currency)}</Text>
-            </ScrollView>
+            {
+              formatCurrency(balance, currency).length > 13
+                ?
+                <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
+                  <Text style={styles.estimateValue}>{formatCurrency(balance, currency)}</Text>
+                </ScrollView>
+                :
+                <Text style={styles.estimateValue}>{formatCurrency(balance, currency)}</Text>
+            }
             <Text style={styles.insideText}>{getCurrencyName(currency)}</Text>
           </View>
         </View>
@@ -650,9 +658,15 @@ export default class OrderForm extends BaseScreen {
             <Text style={styles.estimateLabel}>{I18n.t('orderForm.estimateTotal')}</Text>
           </View>
           <View style={styles.estimationRightCell}>
-            <ScrollView horizontal={true}>
-              <Text style={styles.estimateValue}>{formatCurrency(this._getOrderTotal(), currency)}</Text>
-            </ScrollView>
+            {
+              formatCurrency(orderTotal, currency).length > 13
+                ?
+                <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
+                  <Text style={styles.estimateValue}>{formatCurrency(orderTotal, currency)}</Text>
+                </ScrollView>
+                :
+                <Text style={styles.estimateValue}>{formatCurrency(orderTotal, currency)}</Text>
+            }
             <Text style={styles.insideText}>{getCurrencyName(currency)}</Text>
           </View>
         </View>
@@ -662,9 +676,15 @@ export default class OrderForm extends BaseScreen {
             <Text style={styles.estimateLabel}>{I18n.t('orderForm.fee')}</Text>
           </View>
           <View style={styles.estimationRightCell}>
-            <ScrollView horizontal={true}>
-              <Text style={styles.estimateValue}>{formatCurrency(this._getOrderFee(), coin)}</Text>
-            </ScrollView>
+            {
+              formatCurrency(orderFee, coin).length > 13
+                ?
+                <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
+                  <Text style={styles.estimateValue}>{formatCurrency(orderFee, coin)}</Text>
+                </ScrollView>
+                :
+                <Text style={styles.estimateValue}>{formatCurrency(orderFee, coin)}</Text>
+            }
             <Text style={styles.insideText}>{getCurrencyName(coin)}</Text>
           </View>
         </View>
@@ -674,9 +694,15 @@ export default class OrderForm extends BaseScreen {
             <Text style={styles.estimateLabel}>{I18n.t('orderForm.estimateQuantity')}</Text>
           </View>
           <View style={styles.estimationRightCell}>
-            <ScrollView horizontal={true}>
-              <Text style={styles.estimateValue}>{formatCurrency(this.state.quantity, coin)}</Text>
-            </ScrollView>
+            {
+              formatCurrency(this.state.quantity, coin).length > 13
+                ?
+                <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
+                  <Text style={styles.estimateValue}>{formatCurrency(this.state.quantity, coin)}</Text>
+                </ScrollView>
+                :
+                <Text style={styles.estimateValue}>{formatCurrency(this.state.quantity, coin)}</Text>
+            }
             <Text style={styles.insideText}>{getCurrencyName(coin)}</Text>
           </View>
         </View>
