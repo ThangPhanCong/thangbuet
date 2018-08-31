@@ -26,7 +26,7 @@ import Utils from '../../utils/Utils';
 import Consts from '../../utils/Consts'
 import Events from '../../utils/Events';
 import OrderUtils from '../../utils/OrderUtils';
-
+import { scale } from "../../libs/reactSizeMatter/scalingUtils";
 
 export default class TradingOrderBookScreen extends BaseScreen {
   constructor(props) {
@@ -205,23 +205,8 @@ export default class TradingOrderBookScreen extends BaseScreen {
             underlineColorAndroid='transparent'
             placeholderTextColor='#4E545E'/>
 
-        <Text style={styles.headerLabel}>{I18n.t('orderBook.hand')}</Text>
-        <TextInput
-          style={[styles.input, {color: CommonColors.decreased}]}
-          value='-15'
-          editable={false}
-          underlineColorAndroid='transparent'/>
-        <Text style={styles.percentText}>%</Text>
-
-        <Text style={styles.headerLabel}>{I18n.t('orderBook.fence')}</Text>
-        <TextInput
-          style={[styles.input, {color: CommonColors.increased}]}
-          value=' 15'
-          editable={false}
-          underlineColorAndroid='transparent'/>
-        <Text style={styles.percentText}>%</Text>
-
-        <TouchableOpacity onPress={this._openOrderBookSettingModal.bind(this)}>
+        <TouchableOpacity onPress={this._openOrderBookSettingModal.bind(this)}
+                          style={{position: 'absolute', right: scale(10)}}>
           <Image
             resizeMode={'contain'}
             style={styles.setting}
@@ -250,7 +235,7 @@ const styles = ScaledSheet.create({
     ...Fonts.NotoSans
   },
   quantityInput: {
-    flex: 1,
+    flex: 0.5,
     marginLeft: '10@s',
     marginRight: '15@s'
   },
