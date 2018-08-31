@@ -643,7 +643,7 @@ export default class OrderForm extends BaseScreen {
             {
               formatCurrency(balance, currency).length > 13
                 ?
-                <ScrollView horizontal={true}>
+                <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
                   <Text style={styles.estimateValue}>{formatCurrency(balance, currency)}</Text>
                 </ScrollView>
                 :
@@ -661,7 +661,7 @@ export default class OrderForm extends BaseScreen {
             {
               formatCurrency(orderTotal, currency).length > 13
                 ?
-                <ScrollView horizontal={true}>
+                <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
                   <Text style={styles.estimateValue}>{formatCurrency(orderTotal, currency)}</Text>
                 </ScrollView>
                 :
@@ -679,7 +679,7 @@ export default class OrderForm extends BaseScreen {
             {
               formatCurrency(orderFee, coin).length > 13
                 ?
-                <ScrollView horizontal={true}>
+                <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
                   <Text style={styles.estimateValue}>{formatCurrency(orderFee, coin)}</Text>
                 </ScrollView>
                 :
@@ -697,7 +697,7 @@ export default class OrderForm extends BaseScreen {
             {
               formatCurrency(this.state.quantity, coin).length > 13
                 ?
-                <ScrollView horizontal={true}>
+                <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
                   <Text style={styles.estimateValue}>{formatCurrency(this.state.quantity, coin)}</Text>
                 </ScrollView>
                 :
