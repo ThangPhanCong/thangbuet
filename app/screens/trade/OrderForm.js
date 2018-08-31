@@ -24,6 +24,7 @@ import { CommonStyles, Fonts } from '../../utils/CommonStyles';
 import { getCurrencyName, formatCurrency } from '../../utils/Filters';
 import OrderBook from './OrderBook';
 import OrderConfirmationModal from './OrderConfirmationModal';
+import TextInputMask from 'react-native-text-input-mask';
 
 export default class OrderForm extends BaseScreen {
 
@@ -37,10 +38,10 @@ export default class OrderForm extends BaseScreen {
     super(props)
     this.state = {
       type: Consts.ORDER_TYPE_LIMIT,
-      price: undefined,
-      stop: undefined,
-      quantity: undefined,
-      total: undefined,
+      price: '',
+      stop: '',
+      quantity: '',
+      total: '',
 
       currencyBalance: undefined,
       coinBalance: undefined,
