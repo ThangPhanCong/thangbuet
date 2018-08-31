@@ -51,7 +51,6 @@ export default class TradingGeneralScreen extends BaseScreen {
     return (
       <View style={CommonStyles.matchParent}>
         {this._renderOrderBookSettingModal()}
-        {this._renderQuantityAndSetting()}
         <View style={styles.content}>
           <View style={styles.orderBook}>
             <OrderBook currency={this._getCurrency()} coin={this._getCoin()} type={OrderBook.TYPE_SMALL}/>
@@ -62,36 +61,6 @@ export default class TradingGeneralScreen extends BaseScreen {
     )
   }
 
-  _renderQuantityAndSetting() {
-    return (
-      <View style={styles.quantityAndSettingGroup}>
-        <View style={CommonStyles.matchParent}/>
-
-        <Text style={styles.headerLabel}>{I18n.t('orderBook.hand')}</Text>
-        <TextInput
-          style={[styles.input, {color: CommonColors.decreased}]}
-          value='-15'
-          editable={false}
-          underlineColorAndroid='transparent'/>
-        <Text style={styles.percentText}>%</Text>
-
-        <Text style={styles.headerLabel}>{I18n.t('orderBook.fence')}</Text>
-        <TextInput
-          style={[styles.input, {color: CommonColors.increased}]}
-          value=' 15'
-          editable={false}
-          underlineColorAndroid='transparent'/>
-        <Text style={styles.percentText}>%</Text>
-
-        <TouchableOpacity onPress={this._openOrderBookSettingModal.bind(this)}>
-          <Image
-            resizeMode={'contain'}
-            style={styles.setting}
-            source={require('../../../assets/orderBook/setting.png')}/>
-        </TouchableOpacity>
-      </View>
-    );
-  }
 
   _renderOrderBookSettingModal() {
     return (

@@ -802,7 +802,8 @@ const styles = ScaledSheet.create({
     alignItems: 'center',
   },
   inputLabel: {
-    width: scale(55),
+    width: scale(60),
+    marginRight: margin,
     fontSize: '11@s',
     ...Fonts.NotoSans
   },
