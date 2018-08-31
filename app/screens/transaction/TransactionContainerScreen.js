@@ -428,10 +428,10 @@ class TransactionContainerScreen extends BaseScreen {
             <FlatList data={transactions}
                       ref={elm => this.flatListLeft = elm}
                       keyExtractor={(item, index) => index.toString()}
-                      onScroll={(event) => this._onLeftListScroll(event)}
-                      onScrollEndDrag={() => this._onLeftListEndDrag()}
                       renderItem={this._renderItem.bind(this)}
                       onEndReached={this._handleLoadMore.bind(this)}
+                      onScroll={(event) => this._onLeftListScroll(event)}
+                      onScrollEndDrag={() => this._onLeftListEndDrag()}
                       onMomentumScrollBegin={() => this._handleLeftMomentumStart()}
                       onMomentumScrollEnd={() => this._handleLeftMomentumEnd()}
                       onTouchStart={() => this._handleTouchStartLeft()}
@@ -444,10 +444,10 @@ class TransactionContainerScreen extends BaseScreen {
             <FlatList data={transactions}
                       ref={elm => this.flatListRight = elm}
                       keyExtractor={(item, index) => index.toString()}
-                      onScroll={(event) => this._onRightListScroll(event)}
-                      onScrollEndDrag={() => this._onRightListEndDrag()}
                       renderItem={this._renderItemRight.bind(this)}
                       onEndReached={this._handleLoadMore.bind(this)}
+                      onScroll={(event) => this._onRightListScroll(event)}
+                      onScrollEndDrag={() => this._onRightListEndDrag()}
                       onMomentumScrollBegin={() => this._handleRightMomentumStart()}
                       onMomentumScrollEnd={() => this._handleRightMomentumEnd()}
                       onTouchStart={() => this._handleTouchStartRight()}
