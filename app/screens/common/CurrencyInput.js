@@ -36,7 +36,7 @@ export default class CurrencyInput extends Component {
 
     return (
       <TextInputMask
-        mask='[000]'
+        mask='currency'
         { ...props }
         />
     )
