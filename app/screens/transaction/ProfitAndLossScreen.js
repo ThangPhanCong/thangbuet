@@ -177,8 +177,8 @@ class ProfitAndLossScreen extends BaseScreen {
 
   _onLeftListScroll(event) {
     if (this.firstScrollView === 'left') {
+      this._leftListScrolling = true;
       const y = event.nativeEvent.contentOffset.y;
-
       this.flatListRight.scrollToOffset({
         offset: y,
       });
@@ -188,103 +188,146 @@ class ProfitAndLossScreen extends BaseScreen {
     }
   }
 
-  _onCenterListScroll(event) {
-    if (this.firstScrollView === 'center') {
-      const y = event.nativeEvent.contentOffset.y;
-
-      this.flatListRight.scrollToOffset({
-        offset: y,
-      });
-      this.flatListLeft.scrollToOffset({
-        offset: y,
-      });
+  _onLeftListEndDrag() {
+    if (this.firstScrollView === 'left') {
+      this._leftListHasMomentum = false;
+      this._leftListScrolling = false;
+      setTimeout(() => {
+        if (!this._leftListHasMomentum && !this._leftListScrolling) {
+          this._onLeftListEndScroll();
+        }
+      }, 10);
     }
   }
 
-  _onRightListScroll(event) {
-    if (this.firstScrollView === 'right') {
-      const y = event.nativeEvent.contentOffset.y;
-
-      this.flatListLeft.scrollToOffset({
-        offset: y,
-      });
-      this.flatListCenter.scrollToOffset({
-        offset: y,
-      });
-    }
-  }
-
-  _handleLeftMomentumEnd() {
+  _onLeftListEndScroll() {
     if (this.firstScrollView === 'left') {
       this.firstScrollView = null;
     }
   }
 
   _handleLeftMomentumStart() {
-    if (this.firstScrollView === null) {
-      this.firstScrollView = 'left';
+    this._leftListHasMomentum = true;
+    this._leftListScrolling = true;
+  }
+
+  _handleLeftMomentumEnd() {
+    this._leftListScrolling = false;
+    setTimeout(() => {
+      if (!this._leftListHasMomentum && !this._leftListScrolling) {
+        this._onLeftListEndScroll();
+      }
+    }, 100);
+  }
+
+  _onRightListScroll(event) {
+    if (this.firstScrollView === 'right') {
+      const y = event.nativeEvent.contentOffset.y;
+      this.flatListLeft.scrollToOffset({
+        offset: y,
+      });
+      this.flatListCenter.scrollToOffset({
+        offset: y,
+      });
     }
   }
 
-  _handleCenterMomentumEnd() {
+  _onRightListEndDrag() {
+    if (this.firstScrollView === 'right') {
+      this._rightListHasMomentum = false;
+      this._rightListScrolling = false;
+      setTimeout(() => {
+        if (!this._rightListHasMomentum && !this._rightListScrolling) {
+          this._onRightListEndScroll();
+        }
+      }, 10);
+    }
+  }
+
+  _onRightListEndScroll() {
+    if (this.firstScrollView === 'right') {
+      this.firstScrollView = null;
+    }
+  }
+
+  _handleRightMomentumStart() {
+    this._rightListHasMomentum = true;
+    this._rightListScrolling = true;
+  }
+
+  _handleRightMomentumEnd() {
+    this._rightListScrolling = false;
+    setTimeout(() => {
+      if (!this._rightListHasMomentum && !this._rightListScrolling) {
+        this._onRightListEndScroll();
+      }
+    }, 100);
+  }
+
+  _onCenterListScroll(event) {
+    if (this.firstScrollView === 'center') {
+      this._centerListScrolling = true;
+      const y = event.nativeEvent.contentOffset.y;
+      this.flatListLeft.scrollToOffset({
+        offset: y,
+      });
+      this.flatListRight.scrollToOffset({
+        offset: y,
+      });
+    }
+  }
+
+  _onCenterListEndDrag() {
+    if (this.firstScrollView === 'center') {
+      this._centerListHasMomentum = false;
+      this._centerListScrolling = false;
+      setTimeout(() => {
+        if (!this._centerListHasMomentum && !this._centerListScrolling) {
+          this._onCenterListEndScroll();
+        }
+      }, 10);
+    }
+  }
+
+  _onCenterListEndScroll() {
     if (this.firstScrollView === 'center') {
       this.firstScrollView = null;
     }
   }
 
   _handleCenterMomentumStart() {
-    if (this.firstScrollView === null) {
-      this.firstScrollView = 'center';
-    }
+    this._centerListHasMomentum = true;
+    this._centerListScrolling = true;
   }
 
-  _handleRightMomentumStart() {
-    if (this.firstScrollView == null) {
-      this.firstScrollView = 'right';
-    }
-  }
-
-  _handleRightMomentumEnd() {
-    if (this.firstScrollView === 'right') {
-      this.firstScrollView = null;
-    }
+  _handleCenterMomentumEnd() {
+    this._centerListScrolling = false;
+    setTimeout(() => {
+      if (!this._centerListHasMomentum && !this._centerListScrolling) {
+        this._onCenterListEndScroll();
+      }
+    }, 100);
   }
 
   _handleTouchStartLeft() {
-    if (this.firstScrollView === null) {
-      this.firstScrollView = 'left';
-    }
+    this.firstScrollView = 'left';
   }
 
   _handleTouchEndLeft() {
-    console.log("touch left end")
-    if (this.firstScrollView === 'left') {
-      this.firstScrollView = null;
-    }
-  }
-
-  _handleTouchStartCenter() {
-    if (this.firstScrollView === null) {
-      this.firstScrollView = 'center';
-    }
-  }
-
-  _handleTouchEndCenter() {
-    if (this.firstScrollView === 'center') {
-      this.firstScrollView = null;
-    }
   }
 
   _handleTouchStartRight() {
-    if (this.firstScrollView === null) {
-      this.firstScrollView = 'right';
-    }
+    this.firstScrollView = 'right';
   }
 
   _handleTouchEndRight() {
-    if (this.firstScrollView === 'right') {
-      this.firstScrollView = null;
-    }
+  }
+
+  _handleTouchStartCenter() {
+    this.firstScrollView = 'center';
+  }
+
+  _handleTouchEndCenter() {
   }
 
   _renderSumLeft() {
@@ -442,12 +485,13 @@ class ProfitAndLossScreen extends BaseScreen {
             {this._renderSumLeft()}
             <FlatList data={transactions}
                       keyExtractor={(item, index) => index.toString()}
-                      onScroll={(event) => this._onLeftListScroll(event)}
                       ref={elm => this.flatListLeft = elm}
-                      onMomentumScrollStart={() => this._handleLeftMomentumStart()}
+                      onScroll={(event) => this._onLeftListScroll(event)}
+                      onScrollEndDrag={() => this._onLeftListEndDrag()}
+                      onMomentumScrollBegin={() => this._handleLeftMomentumStart()}
                       onMomentumScrollEnd={() => this._handleLeftMomentumEnd()}
-                      onTouchStart={()=> this._handleTouchStartLeft()}
-                      onTouchEnd={()=> this._handleTouchEndLeft()}
+                      onTouchStart={() => this._handleTouchStartLeft()}
+                      onTouchEnd={() => this._handleTouchEndLeft()}
                       renderItem={this._renderItem.bind(this)}
               // onEndReached={this._handleLoadMore.bind(this)}
                       onEndThreshold={100}/>
@@ -458,12 +502,13 @@ class ProfitAndLossScreen extends BaseScreen {
             {this._renderSumCenter()}
             <FlatList data={transactions}
                       keyExtractor={(item, index) => index.toString()}
-                      onScroll={(event) => this._onCenterListScroll(event)}
                       ref={elm => this.flatListCenter = elm}
-                      onMomentumScrollStart={() => this._handleCenterMomentumStart()}
+                      onScroll={(event) => this._onCenterListScroll(event)}
+                      onScrollEndDrag={() => this._onCenterListEndDrag()}
+                      onMomentumScrollBegin={() => this._handleCenterMomentumStart()}
                       onMomentumScrollEnd={() => this._handleCenterMomentumEnd()}
-                      onTouchStart={()=> this._handleTouchStartCenter()}
-                      onTouchEnd={()=> this._handleTouchEndCenter()}
+                      onTouchStart={() => this._handleTouchStartCenter()}
+                      onTouchEnd={() => this._handleTouchEndCenter()}
                       renderItem={this._renderItemCenter.bind(this)}
               // onEndReached={this._handleLoadMore.bind(this)}
                       onEndThreshold={100}/>
@@ -474,12 +519,13 @@ class ProfitAndLossScreen extends BaseScreen {
             {this._renderSumRight()}
             <FlatList data={transactions}
                       keyExtractor={(item, index) => index.toString()}
-                      onScroll={(event) => this._onRightListScroll(event)}
                       ref={elm => this.flatListRight = elm}
-                      onMomentumScrollStart={() => this._handleRightMomentumStart()}
+                      onScroll={(event) => this._onRightListScroll(event)}
+                      onScrollEndDrag={() => this._onRightListEndDrag()}
+                      onMomentumScrollBegin={() => this._handleRightMomentumStart()}
                       onMomentumScrollEnd={() => this._handleRightMomentumEnd()}
-                      onTouchStart={()=> this._handleTouchStartRight()}
-                      onTouchEnd={()=> this._handleTouchEndRight()}
+                      onTouchStart={() => this._handleTouchStartRight()}
+                      onTouchEnd={() => this._handleTouchEndRight()}
                       renderItem={this._renderItemRight.bind(this)}
               // onEndReached={this._handleLoadMore.bind(this)}
                       onEndThreshold={100}/>
