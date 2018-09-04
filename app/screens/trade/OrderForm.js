@@ -89,6 +89,12 @@ export default class OrderForm extends BaseScreen {
     };
   }
 
+  getSocketEventHandlers() {
+    return {
+      BalanceUpdated: this._onBalanceUpdated.bind(this)
+    };
+  }
+
   _getCurrency() {
     return this.props.currency;
   }
