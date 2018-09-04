@@ -187,6 +187,7 @@
     "stop": "기준가격",
     "quantity": "주문수량",
     "total": "매도대금으로",
+    "total2": "매수대금",
     "balance": "주문가능금액",
     "estimateTotal": "매수대금",
     "fee": "수수료",

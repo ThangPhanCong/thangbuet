@@ -549,7 +549,14 @@ export default class OrderForm extends BaseScreen {
     const enableQuantity = this.state.enableQuantity;
     return (
       <View style={styles.inputRow}>
-        <Text style={styles.inputLabel}>{I18n.t('orderForm.total')}</Text>
+        {
+          this._isBuyOrder()
+            ?
+            <Text style={styles.inputLabel}>{I18n.t('orderForm.total2')}</Text>
+            :
+            <Text style={styles.inputLabel}>{I18n.t('orderForm.total')}</Text>
+        }
+
         <View style={[
           styles.inputValue,
           { borderRightWidth: 0 },
