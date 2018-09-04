@@ -18,7 +18,7 @@ import { isEmpty } from 'lodash';
 
 class WithdrawalScreen extends BaseScreen {
   _blockchainAddress = ''
-  _blockchainTag = null
+  _blockchainTag = ''
   _daily = {}
   _amount = 0
   _quantityPrecision = 10
@@ -66,8 +66,8 @@ class WithdrawalScreen extends BaseScreen {
     this.setState({
       symbol
     })
-    this._blockchainAddress = symbol.wallet_address ? symbol.wallet_address : "";
-    this._blockchainTag = symbol.tag ? symbol.tag : "";
+    this._blockchainAddress = symbol.wallet_address ? symbol.wallet_address : this._blockchainAddress;
+    this._blockchainTag = symbol.tag ? symbol.tag : this._blockchainTag;
   }
 
   getSocketEventHandlers() {
@@ -240,7 +240,7 @@ class WithdrawalScreen extends BaseScreen {
                   <Text style={styles.leftView}>{I18n.t('withdrawal.balance')}</Text>
                   <View style={[styles.rightView, { flexDirection: 'row' }]}>
                     <Text style={[styles.rightContent]}>
-                      {formatCurrency(symbol.balance, this.currency)}
+                      {formatCurrency(symbol.available_balance, this.currency)}
                     </Text>
                     <Text style={[styles.symbol]}>{getCurrencyName(this.currency)}</Text>
                   </View>
