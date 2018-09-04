@@ -549,7 +549,10 @@ export default class OrderForm extends BaseScreen {
     const enableQuantity = this.state.enableQuantity;
     return (
       <View style={styles.inputRow}>
-        <Text style={styles.inputLabel}>{I18n.t('orderForm.total')}</Text>
+        <Text style={styles.inputLabel}>
+          {this._isBuyOrder() ? I18n.t('orderForm.buyTotal') : I18n.t('orderForm.sellTotal')}
+        </Text>
+
         <View style={[
           styles.inputValue,
           { borderRightWidth: 0 },
@@ -829,8 +832,8 @@ const styles = ScaledSheet.create({
     alignItems: 'center',
   },
   inputLabel: {
-    width: scale(60),
-    marginRight: margin,
+    width: scale(63),
+    marginRight: scale(5),
     fontSize: '11@s',
     ...Fonts.NotoSans
   },
