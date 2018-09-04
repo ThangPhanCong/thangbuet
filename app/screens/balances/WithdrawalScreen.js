@@ -437,7 +437,7 @@ class WithdrawalScreen extends BaseScreen {
   }
 
   _onAutoFillAmount() {
-    if (this.state.symbol.available_balance + this._fee <= this._daily.withdrawalLimit - this._daily.withdrawal) {
+    if (parseFloat(this.state.symbol.available_balance) + this._fee <= this._daily.withdrawalLimit - this._daily.withdrawal) {
       this._amount = Math.max(parseFloat(this.state.symbol.available_balance) - this._fee, 0);
     }
     else {
