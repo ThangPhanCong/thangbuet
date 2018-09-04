@@ -17,8 +17,6 @@ import AddressValidator from '../../utils/AddressValidator';
 import { isEmpty } from 'lodash';
 
 class WithdrawalScreen extends BaseScreen {
-  _blockchainAddress = ''
-  _blockchainTag = null
   _daily = {}
   _amount = 0
   _quantityPrecision = 10
@@ -35,7 +33,9 @@ class WithdrawalScreen extends BaseScreen {
       smsConfirm: false,
       otpConfirm: false,
       agree: false,
-      optErr: false
+      optErr: false,
+      blockchainAddress: '',
+      blockchainTag: ''
     }
     this.currency = '';
     this.addressValidator = new AddressValidator();
@@ -63,11 +63,13 @@ class WithdrawalScreen extends BaseScreen {
     symbol = Object.assign({}, symbol, res.data);
 
     this.currency = symbol.code;
+    // this.state.blockchainAddress = symbol.blockchain_address ? symbol.blockchain_address : '';
+    // this.state.blockchainTag = symbol.blockchain_tag ? symbol.tag : '';
     this.setState({
-      symbol
+      symbol,
+      blockchainAddress: '',
+      blockchainTag: ''
     })
-    this._blockchainAddress = symbol.wallet_address ? symbol.wallet_address : "";
-    this._blockchainTag = symbol.tag ? symbol.tag : "";
   }
 
   getSocketEventHandlers() {
@@ -185,11 +187,11 @@ class WithdrawalScreen extends BaseScreen {
       let params = {
         amount: this._amount * -1 + '',
         currency: this.currency,
-        foreign_blockchain_address: this._blockchainAddress,
+        foreign_blockchain_address: this.state.blockchainAddress,
         otp: this.state.otpConfirm ? this.state.otp + '|' : '|' + this.state.otp
       }
-      if (this._blockchainTag) {
-        params.destination_tag = this._blockchainTag
+      if (this.state.blockchainTag) {
+        params.destination_tag = this.state.blockchainTag
       }
       await rf.getRequest('TransactionRequest').withdraw(params)
       this.setState({ optErr: false })
@@ -240,7 +242,7 @@ class WithdrawalScreen extends BaseScreen {
                   <Text style={styles.leftView}>{I18n.t('withdrawal.balance')}</Text>
                   <View style={[styles.rightView, { flexDirection: 'row' }]}>
                     <Text style={[styles.rightContent]}>
-                      {formatCurrency(symbol.balance, this.currency)}
+                      {formatCurrency(symbol.available_balance, this.currency)}
                     </Text>
                     <Text style={[styles.symbol]}>{getCurrencyName(this.currency)}</Text>
                   </View>
@@ -284,6 +286,7 @@ class WithdrawalScreen extends BaseScreen {
                 </Text>
                 <View style={styles.addressWrapper}>
                   <TextInput
+                    value={this.state.blockchainAddress}
                     onChangeText={this._onBlockchainAddressChanged.bind(this)}
                     autoCorrect={false}
                     underlineColorAndroid='transparent'
@@ -298,9 +301,10 @@ class WithdrawalScreen extends BaseScreen {
                   </View>
                   <View style={styles.tagWrapper}>
                     <TextInput
+                      value={this.state.blockchainTag}
                       keyboardType='numeric'
                       onChangeText={(text) => {
-                        this._blockchainTag = text
+                        this.setState({blockchainTag: text})
                       }}
                       autoCorrect={false}
                       underlineColorAndroid='transparent'
@@ -429,7 +433,7 @@ class WithdrawalScreen extends BaseScreen {
   }
 
   _onBlockchainAddressChanged(text) {
-    this._blockchainAddress = text;
+    this.setState({blockchainAddress: text})
     this._shouldShowInvalidAddress = false;
     this.addressValidator.validateAddress(this.currency, text, isValid => {
       this._shouldShowInvalidAddress = !isValid;
