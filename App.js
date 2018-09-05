@@ -75,7 +75,7 @@ function handleBackAction(callback) {
     defaultGetStateForAction = App.router.getStateForAction;
   }
 
-  const mainScreen = ['LoginScreen', 'MainScreen'];
+  const mainScreen = ['LoginScreen', 'MainScreen', 'PreviewScreen'];
 
   if (Platform.OS === 'android') {
     App.router.getStateForAction = (action, state) => {
@@ -94,6 +94,8 @@ function handleBackAction(callback) {
               isTransitioning: true
             });
           }
+
+          return defaultGetStateForAction(action, state);
         }
 
         let now = new Date().getTime();

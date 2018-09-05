@@ -4,13 +4,26 @@ import ScaledSheet from "../../libs/reactSizeMatter/ScaledSheet";
 import { CommonColors, Fonts } from "../../utils/CommonStyles";
 import I18n from "../../i18n/i18n";
 import MarketSearchScreen from "../market/MarketSearchScreen";
+import { handleBackAction } from "../../../App";
+import BaseScreen from "../BaseScreen";
 
 const { height } = Dimensions.get('window');
 
-class PreviewScreen extends Component{
+class PreviewScreen extends BaseScreen{
   static navigationOptions = {
     header: null
   };
+
+  componentDidMount() {
+    super.componentDidMount();
+
+    handleBackAction(this.onBackButtonPressAndroid);
+  }
+
+
+  onBackButtonPressAndroid = () => {
+    return false;
+  }
 
   render() {
     return(

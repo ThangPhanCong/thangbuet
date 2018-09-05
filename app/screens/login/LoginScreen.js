@@ -28,12 +28,6 @@ export default class LoginScreen extends BaseScreen {
     errorText: null
   }
 
-  componentDidMount() {
-    super.componentDidMount();
-
-    handleBackAction(this.onBackButtonPressAndroid);
-  }
-
   checkValidationLogin() {
     const { email, password } = this.state;
 
@@ -88,6 +82,12 @@ export default class LoginScreen extends BaseScreen {
 
     }
 
+  }
+
+  componentDidMount() {
+    super.componentDidMount();
+
+    handleBackAction(this.onBackButtonPressAndroid);
   }
 
   onBackButtonPressAndroid = () => {
