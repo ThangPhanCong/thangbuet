@@ -8,6 +8,7 @@ import I18n from "../../i18n/i18n";
 import { getCurrencyName, formatCurrency, getTime } from "../../utils/Filters";
 import { CommonColors, CommonStyles, Fonts } from "../../utils/CommonStyles";
 import CheckBox from 'react-native-check-box'
+import Consts from "../../utils/Consts";
 
 export default class OpenOrders extends BaseScreen {
 
@@ -34,12 +35,14 @@ export default class OpenOrders extends BaseScreen {
 
       const responseOrders = await rf.getRequest('OrderRequest').getOrdersPending(params);
       const newOrders = clearData ? responseOrders.data.data : [...orders, ...responseOrders.data.data];
-
       this.setState({
         orders: newOrders,
         last_page: responseOrders.data.last_page
       });
     } catch (err) {
+      if(err.message === Consts.NOT_LOGIN) {
+        return;
+      }
       console.log("OpenOrderRequest._error:", err)
     }
   }

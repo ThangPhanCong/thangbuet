@@ -8,6 +8,7 @@ import I18n from '../../i18n/i18n'
 import AppConfig from '../../utils/AppConfig'
 import { getCurrencyName } from '../../utils/Filters'
 import { Fonts } from '../../utils/CommonStyles'
+import Consts from "../../utils/Consts";
 
 export default class BalanceScreen extends BaseScreen {
   constructor(props) {
@@ -55,6 +56,9 @@ export default class BalanceScreen extends BaseScreen {
 
       this._updateState(coinList)
     } catch (err) {
+      if(err.message === Consts.NOT_LOGIN) {
+        return this._onError(err);
+      }
       console.log('Error in HeaderScreen._getSymbols: ', err)
     }
   }

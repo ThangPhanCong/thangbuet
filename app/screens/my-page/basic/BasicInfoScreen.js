@@ -15,6 +15,7 @@ import rf from '../../../libs/RequestFactory';
 import ScaledSheet from '../../../libs/reactSizeMatter/ScaledSheet';
 import { Fonts } from '../../../utils/CommonStyles';
 import Events from '../../../utils/Events';
+import Consts from "../../../utils/Consts";
 
 export default class BasicInfoScreen extends BaseScreen {
   _infoProps = [{
@@ -107,6 +108,9 @@ export default class BasicInfoScreen extends BaseScreen {
       this.setState({ info })
     }
     catch(err) {
+      if(err.message === Consts.NOT_LOGIN) {
+        return this._onError(err);
+      }
       console.log('BasicInfoScreen._getCurrentUser', err);
     }
   }

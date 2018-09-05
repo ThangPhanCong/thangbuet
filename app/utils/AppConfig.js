@@ -16,6 +16,7 @@ export default class AppConfig {
   static CLIENT_ID='2';
   static CLIENT_SECRET = '4ZgDKFUAuC06xfMK2HsjEBOx7BYcMFG8jNKmyHZA';
   static ACCESS_TOKEN = '';
+  static SIGNUP_URL = 'http://bitkoex.net/webview/sign_up';
 
   static dev() {
     return __DEV__ && JSON.parse(DEV);
@@ -43,5 +44,9 @@ export default class AppConfig {
 
   static getAssetServer() {
     return AppConfig.dev() ? DEV_ASSET_SERVER : AppConfig.ASSET_SERVER;
+  }
+
+  static getSignUpUrl() {
+    return AppConfig.SIGNUP_URL;
   }
 }

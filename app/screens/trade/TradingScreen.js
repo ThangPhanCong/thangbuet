@@ -28,6 +28,7 @@ import { formatCurrency, formatPercent, getCurrencyName } from '../../utils/Filt
 import { CommonColors, CommonStyles, Fonts } from '../../utils/CommonStyles';
 import DropdownMenu from '../common/DropdownMenu';
 import ModalHelp from '../common/ModalHelp';
+import Consts from "../../utils/Consts";
 
 const TradeTabs = TabNavigator(
   {
@@ -151,6 +152,9 @@ export default class TradingScreen extends BaseScreen {
       let response = await rf.getRequest('UserRequest').getBalance()
       this._onBalanceUpdated(response.data);
     } catch (err) {
+      if(err.message === Consts.NOT_LOGIN) {
+        return this._onBalanceUpdated({});
+      };
       console.log('TradingScreen._getBalance', err);
     }
   }

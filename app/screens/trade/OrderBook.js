@@ -1,17 +1,6 @@
 import React from 'react';
-import {
-  Dimensions,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  TouchableWithoutFeedback,
-  View,
-  Image
-} from 'react-native';
+import { Dimensions, ScrollView, Text, TouchableWithoutFeedback, View } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
-import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import ScaledSheet from '../../libs/reactSizeMatter/ScaledSheet';
 import { scale, verticalScale } from '../../libs/reactSizeMatter/scalingUtils';
 import _ from 'lodash';
@@ -23,8 +12,7 @@ import I18n from '../../i18n/i18n';
 import Utils from '../../utils/Utils';
 import UIUtils from '../../utils/UIUtils';
 import BaseScreen from '../BaseScreen';
-import { CommonColors, CommonSize, CommonStyles, Fonts } from '../../utils/CommonStyles';
-import { formatCurrency, formatPercent } from '../../utils/Filters';
+import { CommonStyles, Fonts } from '../../utils/CommonStyles';
 import Events from '../../utils/Events';
 
 export default class OrderBook extends BaseScreen {
@@ -43,7 +31,7 @@ export default class OrderBook extends BaseScreen {
 
     let emptyOrderBook = [];
     for (let i = 0; i < this._getOrderBookSize(); i++) {
-      emptyOrderBook.push({price: 0, quantity: 0});
+      emptyOrderBook.push({ price: 0, quantity: 0 });
     }
     this.state = {
       firstPriceGroup: 0,
@@ -137,44 +125,73 @@ export default class OrderBook extends BaseScreen {
   }
 
   async _getPriceSetting() {
-    let response = await rf.getRequest('MasterdataRequest').getAll();
-    let priceGroups = _.filter(response.price_groups, (value) => {
-      return value.currency == this.props.currency && value.coin == this.props.coin;
-    });
-    let priceSetting = priceGroups[this.settings.price_group];
-    this.priceSetting = priceSetting;
-    this.pricePrecision = Utils.getPrecision(priceSetting.value);
+    try {
+      let response = await rf.getRequest('MasterdataRequest').getAll();
+      let priceGroups = _.filter(response.price_groups, (value) => {
+        return value.currency == this.props.currency && value.coin == this.props.coin;
+      });
+      let priceSetting = priceGroups[this.settings.price_group || 0];
+
+      this.priceSetting = priceSetting;
+      this.pricePrecision = Utils.getPrecision(priceSetting.value);
+    } catch (err) {
+      console.log('GetMasterData._error:', err)
+    }
   }
 
   async _getQuantityPrecision() {
-    const response = await rf.getRequest('MasterdataRequest').getAll();
-    let setting = _.find(response.coin_settings, (setting) => {
-      return setting.currency == this.props.currency && setting.coin == this.props.coin;
-    });
-    this.quantityPrecision = Math.round(Math.log(1 / setting.minimum_quantity) / Math.log(10));
+    try {
+      const response = await rf.getRequest('MasterdataRequest').getAll();
+      let setting = _.find(response.coin_settings, (setting) => {
+        return setting.currency == this.props.currency && setting.coin == this.props.coin;
+      });
+      this.quantityPrecision = Math.round(Math.log(1 / setting.minimum_quantity) / Math.log(10));
+    } catch (err) {
+      console.log('GetMasterData._error:', err)
+    }
   }
 
   async _getPrices() {
-    let response = await rf.getRequest('PriceRequest').getPrices();
-    return this._onPriceUpdated(response.data);
+    try {
+      let response = await rf.getRequest('PriceRequest').getPrices();
+      return this._onPriceUpdated(response.data);
+    } catch (err) {
+      console.log('GetPrices._error:', err)
+    }
   }
 
   async _getOrderBookSettings() {
-    const params = {
-      currency: this._getCurrency(),
-      coin: this._getCoin()
-    };
-    const response = await rf.getRequest('UserRequest').getOrderBookSettings(params);
-    this.settings = response.data;
-    return this._updateOrderBook();
+    try {
+      const params = {
+        currency: this._getCurrency(),
+        coin: this._getCoin()
+      };
+      const response = await rf.getRequest('UserRequest').getOrderBookSettings(params);
+      this.settings = response.data;
+      return this._updateOrderBook();
+    } catch (err) {
+      if(err.message === Consts.NOT_LOGIN) {
+        const params = {
+          currency: this._getCurrency(),
+          coin: this._getCoin()
+        };
+        this.settings = { ...Consts.DEFAULT_ORDER_BOOK_SETTING, ...params };
+        return this._updateOrderBook();
+      }
+      console.log('GetOrderBookSettings._error:', err)
+    }
   }
 
   async _getOrderBook() {
-    let params = this._getOrderBookParams();
-    let response = await rf.getRequest('OrderRequest').getOrderBook(params);
-    this.orderBook = response.data;
-    this._convertOrderBookDataType(this.orderBook);
-    return this._updateOrderBook();
+    try {
+      let params = this._getOrderBookParams();
+      let response = await rf.getRequest('OrderRequest').getOrderBook(params);
+      this.orderBook = response.data;
+      this._convertOrderBookDataType(this.orderBook);
+      return this._updateOrderBook();
+    } catch (err) {
+      console.log('GetOrderBook._error:', err)
+    }
   }
 
   _getOrderBookParams() {
@@ -186,11 +203,20 @@ export default class OrderBook extends BaseScreen {
   }
 
   async _getUserOrderBook() {
-    let params = this._getOrderBookParams();
-    let response = await rf.getRequest('OrderRequest').getUserOrderBook(params);
-    this.userOrderBook = response.data;
-    this._convertOrderBookDataType(this.userOrderBook);
-    return this._updateOrderBook();
+    try {
+      let params = this._getOrderBookParams();
+      let response = await rf.getRequest('OrderRequest').getUserOrderBook(params);
+      this.userOrderBook = response.data;
+      this._convertOrderBookDataType(this.userOrderBook);
+      return this._updateOrderBook();
+    } catch (err) {
+      if(err.message === Consts.NOT_LOGIN) {
+        this.userOrderBook = Consts.DEFAULT_USER_ORDER_BOOK;
+        this._convertOrderBookDataType(this.userOrderBook);
+        return this._updateOrderBook();
+      }
+      console.log('GetUserOrderBook._error:', err)
+    }
   }
 
   _convertOrderBookDataType(orderBook) {
@@ -278,14 +304,14 @@ export default class OrderBook extends BaseScreen {
     let sellOrderBook = [];
 
     let price = middlePrice;
-    for (let i = 0 ; i < orderBookSize; i++) {
+    for (let i = 0; i < orderBookSize; i++) {
       let row = orderBook.buy.find(row => this._isEqual(row['price'], price));
       buyOrderBook.push(row || { price })
       price -= tickerSize;
     }
 
     price = middlePrice;
-    for (let i = 0 ; i < orderBookSize; i++) {
+    for (let i = 0; i < orderBookSize; i++) {
       let row = orderBook.sell.find(row => this._isEqual(row['price'], price));
       sellOrderBook.unshift(row || { price })
       price += tickerSize;
@@ -460,7 +486,7 @@ export default class OrderBook extends BaseScreen {
       <View style={styles.screen}>
         {this._renderHeader()}
         <ScrollView ref={ref => this._scrollView = ref} style={styles.screen} showsVerticalScrollIndicator={false}>
-          <View style={{width: '100%', height: 1.8 * this._getOrderBookHeight()}}>
+          <View style={{ width: '100%', height: 1.8 * this._getOrderBookHeight() }}>
             <View style={styles.sellGroup}>
               {this.state.sellOrderBook.map((item, index) => {
                 return this._renderSellRow(item, index, index == this.state.sellOrderBook.length - 1);
@@ -509,7 +535,7 @@ export default class OrderBook extends BaseScreen {
           </View>
         </TouchableWithoutFeedback>
         <View style={[styles.quantityCell, borders[1]]}>
-          <View style={[styles.sellPercent, this._getPercentViewStyle(item)]} />
+          <View style={[styles.sellPercent, this._getPercentViewStyle(item)]}/>
           <Text style={styles.quantityText} numberOfLines={1} ellipsizeMode='tail'>
             {this._formatQuantity(item.quantity)}
           </Text>
@@ -548,7 +574,8 @@ export default class OrderBook extends BaseScreen {
     const borders = this._generateBorderStyles(orderBookRowIndex, extendedStyles.bottomBorder);
     return (
       <View style={styles.orderBookRow} key={index}>
-        <TouchableWithoutFeedback onPress={() => this._onPressOrderBookCell(item, orderBookRowIndex, Consts.TRADE_TYPE_SELL)}>
+        <TouchableWithoutFeedback
+          onPress={() => this._onPressOrderBookCell(item, orderBookRowIndex, Consts.TRADE_TYPE_SELL)}>
           <View style={[styles.userSellQuantityCell, borders[0]]}>
             <Text style={styles.userSellQuantityText}></Text>
           </View>
@@ -559,12 +586,13 @@ export default class OrderBook extends BaseScreen {
           <Text style={[styles.priceText, this._getPriceTextStyle(item.price)]}>{this._formatPrice(item.price)}</Text>
         </View>
         <View style={[styles.quantityCell, borders[3]]}>
-          <View style={[styles.sellPercent, this._getPercentViewStyle(item)]} />
+          <View style={[styles.sellPercent, this._getPercentViewStyle(item)]}/>
           <Text style={styles.quantityText} numberOfLines={1} ellipsizeMode='tail'>
             {this._formatQuantity(item.quantity)}
           </Text>
         </View>
-        <TouchableWithoutFeedback onPress={() => this._onPressOrderBookCell(item, orderBookRowIndex, Consts.TRADE_TYPE_BUY)}>
+        <TouchableWithoutFeedback
+          onPress={() => this._onPressOrderBookCell(item, orderBookRowIndex, Consts.TRADE_TYPE_BUY)}>
           <View style={[styles.userBuyQuantityCell, borders[4]]}>
             <Text style={styles.userBuyQuantityText}>{this._formatQuantity(item.userQuantity)}</Text>
           </View>
@@ -593,11 +621,11 @@ export default class OrderBook extends BaseScreen {
 
   _onPressOrderBookCell(item, index, tradeType) {
     const column = tradeType == Consts.TRADE_TYPE_SELL
-                              ? OrderBook.COLUMN_USER_SELL_QUANTITY
-                              : OrderBook.COLUMN_USER_BUY_QUANTITY;
+      ? OrderBook.COLUMN_USER_SELL_QUANTITY
+      : OrderBook.COLUMN_USER_BUY_QUANTITY;
     const highlightCells = [
-      { row: index, column: OrderBook.COLUMN_PRICE},
-      { row: index, column: column}
+      { row: index, column: OrderBook.COLUMN_PRICE },
+      { row: index, column: column }
     ];
     this.setState({ highlightCells });
     this._notifyOrderBookPressed(item, tradeType, OrderBook.TYPE_FULL);
@@ -628,7 +656,7 @@ export default class OrderBook extends BaseScreen {
   _renderSmallOrderBook() {
     return (
       <ScrollView ref={ref => this._scrollView = ref} style={styles.screen} showsVerticalScrollIndicator={false}>
-        <View style={{width: '100%', height: 1.8 * this._getOrderBookHeight()}}>
+        <View style={{ width: '100%', height: 1.8 * this._getOrderBookHeight() }}>
           <View style={styles.sellGroup}>
             {this.state.sellOrderBook.map((item, index) => {
               return this._renderSmallSellRow(item, index);
@@ -646,14 +674,16 @@ export default class OrderBook extends BaseScreen {
 
   _renderSmallSellRow(item, index) {
     return (
-      <TouchableWithoutFeedback key={index} onPress={() => this._onPressSmallOrderBookRow(item, Consts.TRADE_TYPE_SELL)}>
+      <TouchableWithoutFeedback key={index}
+                                onPress={() => this._onPressSmallOrderBookRow(item, Consts.TRADE_TYPE_SELL)}>
         <View style={styles.smallOrderBookRow}>
           <View
             style={[styles.priceCell, styles.smallTopBorder, styles.smallSellPrice, this._getPriceCellStyle(item.price)]}>
-            <Text style={[styles.smallPriceText, this._getPriceTextStyle(item.price)]}>{this._formatPrice(item.price)}</Text>
+            <Text
+              style={[styles.smallPriceText, this._getPriceTextStyle(item.price)]}>{this._formatPrice(item.price)}</Text>
           </View>
           <View style={[styles.quantityCell, styles.smallTopBorder, styles.smallQuantity]}>
-            <View style={[styles.sellPercent, this._getPercentViewStyle(item)]} />
+            <View style={[styles.sellPercent, this._getPercentViewStyle(item)]}/>
             <Text style={styles.smallQuantityText} numberOfLines={1} ellipsizeMode='tail'>
               {this._formatQuantity(item.quantity)}
             </Text>
@@ -668,14 +698,15 @@ export default class OrderBook extends BaseScreen {
       <TouchableWithoutFeedback key={index} onPress={() => this._onPressSmallOrderBookRow(item, Consts.TRADE_TYPE_BUY)}>
         <View style={styles.smallOrderBookRow}>
           <View style={[
-              styles.priceCell,
-              styles.smallBottomBorder,
-              styles.smallBuyPrice,
-              this._getPriceCellStyle(item.price)]}>
-            <Text style={[styles.smallPriceText, this._getPriceTextStyle(item.price)]}>{this._formatPrice(item.price)}</Text>
+            styles.priceCell,
+            styles.smallBottomBorder,
+            styles.smallBuyPrice,
+            this._getPriceCellStyle(item.price)]}>
+            <Text
+              style={[styles.smallPriceText, this._getPriceTextStyle(item.price)]}>{this._formatPrice(item.price)}</Text>
           </View>
           <View style={[styles.quantityCell, styles.smallBottomBorder, styles.smallQuantity]}>
-            <View style={[styles.sellPercent, this._getPercentViewStyle(item)]} />
+            <View style={[styles.sellPercent, this._getPercentViewStyle(item)]}/>
             <Text style={styles.smallQuantityText} numberOfLines={1} ellipsizeMode='tail'>
               {this._formatQuantity(item.quantity)}
             </Text>

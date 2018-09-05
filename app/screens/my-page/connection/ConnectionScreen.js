@@ -12,6 +12,7 @@ import rf from '../../../libs/RequestFactory';
 import { CommonStyles, Fonts, CommonColors } from '../../../utils/CommonStyles';
 import I18n from '../../../i18n/i18n';
 import ScaledSheet from '../../../libs/reactSizeMatter/ScaledSheet';
+import Consts from "../../../utils/Consts";
 export default class ConnectionScreen extends BaseScreen {
 
   _page = 1;
@@ -172,6 +173,9 @@ export default class ConnectionScreen extends BaseScreen {
       })
     }
     catch(err) {
+      if(err.message === Consts.NOT_LOGIN) {
+        return this._onError(err);
+      }
       console.log('ConnectionScreen._loadConnections', err);
       this.setState({
         isLoading: false

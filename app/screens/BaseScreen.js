@@ -1,6 +1,8 @@
 import React from 'react';
 import { View, BackHandler, Alert, Platform, ToastAndroid } from "react-native";
 import I18n from '../i18n/i18n';
+import Consts from "../utils/Consts";
+import RNRestart from 'react-native-restart';
 
 export default class BaseScreen extends React.Component {
   static navigationOptions = {
@@ -18,7 +20,13 @@ export default class BaseScreen extends React.Component {
 
   navigate(screen, params) {
     const { navigate } = this.props.navigation;
-    navigate({routeName: screen, params: params, action: null, key: screen});
+    navigate({ routeName: screen, params: params, action: null, key: screen });
+  }
+
+  _onError(err) {
+    if (err.message === Consts.NOT_LOGIN) {
+      RNRestart.Restart();
+    };
   }
 
   componentWillMount() {
@@ -85,20 +93,20 @@ export default class BaseScreen extends React.Component {
   }
 
   // onBackButtonPressAndroid() {
-    // const mainScreens = ['LoginScreen', 'MainScreen']
-    // let index = mainScreens.indexOf(this.props.navigation.state.routeName);
+  // const mainScreens = ['LoginScreen', 'MainScreen']
+  // let index = mainScreens.indexOf(this.props.navigation.state.routeName);
 
-    // if (this.props.navigation.isFocused && this.props.navigation.isFocused() && index != -1) {
-    //   ToastAndroid.showWithGravity(
-    //     I18n.t('exit.content'),
-    //     ToastAndroid.SHORT,
-    //     ToastAndroid.BOTTOM
-    //   );
+  // if (this.props.navigation.isFocused && this.props.navigation.isFocused() && index != -1) {
+  //   ToastAndroid.showWithGravity(
+  //     I18n.t('exit.content'),
+  //     ToastAndroid.SHORT,
+  //     ToastAndroid.BOTTOM
+  //   );
 
-    //   BackHandler.exitApp();
-    //   return true
-    // } else {
-    //   return false
-    // }
+  //   BackHandler.exitApp();
+  //   return true
+  // } else {
+  //   return false
+  // }
   // };
 }

@@ -69,6 +69,10 @@ export default class OrderQuantityModal extends BaseScreen {
       let response = await rf.getRequest('UserRequest').getBalance();
       this._onBalanceUpdated(response.data);
     } catch (error) {
+      if(error.message === Consts.NOT_LOGIN) {
+        return this._onBalanceUpdated({})
+      }
+
       console.log('OrderForm._getBalance', error);
     }
   }

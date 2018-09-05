@@ -46,11 +46,15 @@ export default class TradingTransactionsScreen extends BaseScreen {
   }
 
   async _loadData() {
-    let { coin, currency } = this.props.screenProps
-    const count = this._getMaxTransactionCount();
+    try {
+      let { coin, currency } = this.props.screenProps
+      const count = this._getMaxTransactionCount();
 
-    let response = await rf.getRequest('OrderRequest').getRecentTransactions({ coin, currency, count });
-    this._onReceiveTransactions(response.data);
+      let response = await rf.getRequest('OrderRequest').getRecentTransactions({ coin, currency, count });
+      this._onReceiveTransactions(response.data);
+    } catch (err) {
+      console.log('GetRecentTransactions._error:', err)
+    }
   }
 
   _onReceiveTransactions(data) {
@@ -102,13 +106,17 @@ export default class TradingTransactionsScreen extends BaseScreen {
   }
 
   async _getTickerSize() {
-    let { coin, currency } = this.props.screenProps
-    let response = await rf.getRequest('MasterdataRequest').getAll()
-    let priceGroups = filter(response.price_groups, (value) => {
-      return value.currency == currency && value.coin == coin;
-    });
-    let priceGroup = priceGroups[0];
-    this._calculateDecimalDigitCount(parseFloat(priceGroup.value));
+    try {
+      let { coin, currency } = this.props.screenProps
+      let response = await rf.getRequest('MasterdataRequest').getAll()
+      let priceGroups = filter(response.price_groups, (value) => {
+        return value.currency == currency && value.coin == coin;
+      });
+      let priceGroup = priceGroups[0];
+      this._calculateDecimalDigitCount(parseFloat(priceGroup.value));
+    } catch (err) {
+      console.log('GetMasterData._error:', err)
+    }
   }
 
   _calculateDecimalDigitCount(tickerSize) {
@@ -120,13 +128,17 @@ export default class TradingTransactionsScreen extends BaseScreen {
   }
 
   async _getQuantityPrecision() {
-    let { coin, currency } = this.props.screenProps
-    let response = await rf.getRequest('MasterdataRequest').getAll();
-    let setting = find(response.coin_settings, (setting) => {
-      return setting.currency == currency && setting.coin == coin;
-    });
-    let quantityPrecision = Math.round(Math.log(1 / setting.minimum_quantity) / Math.log(10));
-    this.setState({ quantityPrecision: quantityPrecision });
+    try {
+      let { coin, currency } = this.props.screenProps
+      let response = await rf.getRequest('MasterdataRequest').getAll();
+      let setting = find(response.coin_settings, (setting) => {
+        return setting.currency == currency && setting.coin == coin;
+      });
+      let quantityPrecision = Math.round(Math.log(1 / setting.minimum_quantity) / Math.log(10));
+      this.setState({ quantityPrecision: quantityPrecision });
+    } catch (err) {
+      console.log('GetMasterData._error:', err)
+    }
   }
 
   _formatQuantity(value) {

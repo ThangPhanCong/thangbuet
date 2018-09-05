@@ -32,7 +32,7 @@ export default class SplashScreen extends BaseScreen {
           this.navigate('MainScreen');
         } else {
           // TODO show market info
-          this.navigate('LoginScreen');
+          this.navigate('PreviewScreen');
         }
       });
   }
