@@ -92,9 +92,9 @@ class CommonColors {
   static headerTintColor = '#ffffff';
   static listItemBgColor = '#1a2030';
   static separator = '#DEE3EB';
-  static tabBg = '#3B3838';
-  static tabActive = '#FFC000';
-  static tabInactive = '#D9D9D9';
+  static tabBg = '#00358f';
+  static tabActive = '#00eaff';
+  static tabInactive = '#ffffff';
 };
 
 class CommonSize {
