@@ -16,18 +16,16 @@ import LoginCommonStyle from './LoginCommonStyle'
 import ScaledSheet from '../../libs/reactSizeMatter/ScaledSheet';
 import { Fonts } from "../../utils/CommonStyles";
 import { handleBackAction } from '../../../App';
+import { scale } from "../../libs/reactSizeMatter/scalingUtils";
 
 export default class LoginScreen extends BaseScreen {
 
   state = {
     email: '',
-    emailValidation: null,
-    passwordEmpty: null,
-    messageUnCorrect: null,
-    otpValidation: null,
     password: '',
     otp: '',
     checkOtp: false,
+    errorText: null
   }
 
   componentDidMount() {
@@ -40,11 +38,11 @@ export default class LoginScreen extends BaseScreen {
     const { email, password } = this.state;
 
     if (!email.length) {
-      this.setState({ emailValidation: I18n.t('login.emailEmpty') });
+      this.setState({ errorText: I18n.t('login.emailEmpty') });
     } else if (!password.length) {
-      this.setState({ emailValidation: null, passwordEmpty: I18n.t('login.passwordEmpty') });
+      this.setState({ errorText: I18n.t('login.passwordEmpty') });
     } else {
-      this.setState({ emailValidation: I18n.t('login.emailValidation'), passwordEmpty: null });
+      this.setState({ errorText: I18n.t('login.emailValidation') });
     }
   }
 
@@ -71,21 +69,19 @@ export default class LoginScreen extends BaseScreen {
     } catch (err) {
       if (err.error == 'invalid_otp'){
         if (!this.state.checkOtp){
-          this.setState({ checkOtp: true, emailValidation: null, passwordEmpty: null})
+          this.setState({ checkOtp: true, errorText: null})
         } else {
-          this.setState({ messageUnCorrect: I18n.t('login.otpUncorrect')})
-          setTimeout(() => this.setState({ messageUnCorrect: null }), 1000);
+          this.setState({ errorText: I18n.t('login.otpUncorrect')})
+          setTimeout(() => this.setState({ errorText: null }), 1000);
         }
 
       }
       else {
         this.setState({
-          emailValidation: null,
-          passwordEmpty: null,
-          messageUnCorrect: I18n.t('login.messageUnCorrect')
+          errorText: I18n.t('login.messageUnCorrect')
         });
 
-        setTimeout(() => this.setState({ messageUnCorrect: null }), 1000);
+        setTimeout(() => this.setState({ errorText: null }), 1000);
       }
       console.log('err', err);
 
@@ -109,48 +105,37 @@ export default class LoginScreen extends BaseScreen {
     const {
       email,
       password,
-      emailValidation,
-      passwordEmpty,
-      messageUnCorrect,
       otp,
       checkOtp,
-      otpValidation
+      errorText
     } = this.state;
     let rawInput1;
-    if (this.state.checkOtp) {
+    if (checkOtp) {
       rawInput1 =
-        <View style={[styles.viewInput]}>
-          <TextInput
-            value={otp}
-            keyboardType= 'numeric'
-            placeholder={I18n.t('login.otp')}
-            // blurOnSubmit={false}
-            placeholderTextColor='#fff'
-            underlineColorAndroid='transparent'
-            autoCapitalize='none'
-            style={[styles.inputLogin, {flex: 1, textAlign: 'center' }]}
-            returnKeyType={"next"}
-            onChangeText={(text) => this.setState({ otp: text })}/>
+        <View>
+          <TextInput style={[styles.inputLogin, {borderTopLeftRadius: scale(3), borderTopRightRadius: scale(3)}]}
+                     underlineColorAndroid='transparent'
+                     value={otp}
+                     keyboardType= 'numeric'
+                     placeholder={I18n.t('login.otp')}
+                     placeholderTextColor='#000000'
+                     returnKeyType={"next"}
+                     onChangeText={(text) => this.setState({ otp: text })}/>
         </View>
     } else {
       rawInput1 =
-        <View style={styles.viewInput}>
+        <View>
+          <TextInput style={[styles.inputLogin, {borderTopLeftRadius: scale(3), borderTopRightRadius: scale(3)}]}
+                     underlineColorAndroid='transparent'
+                     value={email}
+                     keyboardType='email-address'
+                     placeholder={I18n.t('login.email')}
+                     placeholderTextColor='#000000'
+                     returnKeyType={"next"}
+                     onChangeText={(text) => this.setState({ email: text })}/>
           <Image
-            resizeMode={'contain'}
-            style={styles.iconLogin}
-            source={require('../../../assets/emailLogin/email.png')}
-          />
-          <TextInput
-            value={email}
-            keyboardType='email-address'
-            placeholder={I18n.t('login.email')}
-            // blurOnSubmit={false}
-            placeholderTextColor='#fff'
-            underlineColorAndroid='transparent'
-            autoCapitalize='none'
-            style={[styles.inputLogin]}
-            returnKeyType={"next"}
-            onChangeText={(text) => this.setState({ email: text })}/>
+            style={styles.iconMenu}
+            source={require('../../../assets/login/mail.png')}/>
         </View>
 
 
@@ -158,48 +143,30 @@ export default class LoginScreen extends BaseScreen {
     return (
       <View style={styles.screen}>
         <Image
-          resizeMode="cover"
-          style={styles.backgroundLogin}
-          source={require('../../../assets/background/bitkoex.png')}/>
-        <View style={styles.viewLogo}>
-          <Text style={styles.textLogo}>{I18n.t('login.textLogo')}</Text>
-          <Text style={styles.titleLogo}>{I18n.t('login.titleLogo')}</Text>
-        </View>
-
-        {/*<View style={styles.rowFlexOne}/>*/}
+          style={styles.logoLogin}
+          source={require('../../../assets/login/logologin.png')}/>
 
         {rawInput1}
-        <Text style={styles.emptyInforLogin}>{emailValidation}</Text>
 
-        <View style={[styles.viewInput, styles.inputRowMarginTop]}>
+        <View>
+          <TextInput style={[styles.inputLogin, {borderBottomLeftRadius: scale(3), borderBottomRightRadius: scale(3)}]}
+                     secureTextEntry={true}
+                     underlineColorAndroid='transparent'
+                     value={password}
+                     placeholder={I18n.t('login.password')}
+                     placeholderTextColor='#000000'
+                     returnKeyType={"next"}
+                     onChangeText={(text) => this.setState({ password: text })}/>
           <Image
-            resizeMode={'contain'}
-            style={styles.iconLogin}
-            source={require('../../../assets/password/password.png')}
-          />
-          <TextInput
-            style={[styles.inputLogin]}
-            value={password}
-            secureTextEntry={true}
-            placeholderTextColor='#fff'
-            placeholder={I18n.t('login.password')}
-            underlineColorAndroid='transparent'
-            onChangeText={(text) => this.setState({ password: text })}/>
-
+            style={styles.iconMenu}
+            source={require('../../../assets/login/password.png')}/>
         </View>
-        <Text style={styles.emptyInforLogin}>{passwordEmpty}</Text>
+
+        <Text style={styles.errorText}>{errorText}</Text>
 
         <TouchableOpacity onPress={this._onPressLogin.bind(this)} style={styles.viewButtonLogin}>
-          <View>
             <Text style={styles.textLogin}>{I18n.t('login.login')}</Text>
-          </View>
         </TouchableOpacity>
-
-        <Text style={styles.emptyInforLogin}>{messageUnCorrect}</Text>
-
-        <View style={styles.rowFlexTwo}>
-        </View>
-
       </View>
 
     )
@@ -209,105 +176,28 @@ export default class LoginScreen extends BaseScreen {
 const styles = ScaledSheet.create({
   ...LoginCommonStyle,
   screen: {
-    flex: 1,
-    ...LoginCommonStyle.screen,
+    flex: 1, backgroundColor: '#00358e', flexDirection: 'column', alignItems: 'center'
   },
-  loginBottom: {
-    marginTop: "52@s",
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  textRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginTop: "5@s",
-  },
-  textUnderline: {
-    textDecorationLine: 'underline',
-  },
-  inputRowMarginTop: {
-    marginTop: "15@s",
-  },
-  showPassword: {
-    backgroundColor: 'transparent',
-    position: 'absolute',
-    right: "9@s"
-  },
-  viewLogo: {
-    alignItems: 'center',
-    marginTop: '120@s',
-    flexDirection: 'column',
-    marginBottom: '40@s'
-  },
-  textLogo: {
-    color: '#FFF',
-    fontSize: '40@s',
-    ...Fonts.OpenSans_Bold
-  },
-  titleLogo: {
-    color: '#FFF',
-    fontSize: '10@s',
-    ...Fonts.NotoSans_Regular
+  logoLogin:{
+    width: '191@s', height: '74.5@s', margin: '25@s'
   },
   inputLogin: {
-    height: '40@s',
-    color: '#FFF',
-    flex: 1,
-    textAlign: 'center',
-    fontSize: '14@s',
-    ...Fonts.OpenSans_Light
+    height: '35@s', width: '300@s', backgroundColor: '#ffffff', fontSize: '13@s', color: '#000000', paddingLeft: '45@s',
+    flexDirection: 'column', justifyContent: 'center', paddingTop: 0, paddingBottom: 0, paddingRight: '15@s',
+    textAlign: 'center', ...Fonts.NanumGothic_Regular, marginBottom: '1@s'
   },
-  iconLogin: {
-    position: 'absolute',
-    width: '15@s',
-    marginBottom: '3@s',
-    flex: 0.2,
-    height: '15@s',
-    left: '22@s'
+  iconMenu: {
+    width: '19@s', height: '18@s', position: 'absolute', top: '8@s', left: '15@s'
   },
-  viewInput: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderBottomColor: '#FFF',
-    borderBottomWidth: StyleSheet.hairlineWidth,
-    paddingLeft: '50@s',
-    paddingRight: '50@s'
+  errorText: {
+    textAlign: 'center', color: 'red', fontSize: '12@s', lineHeight: '15@s', ...Fonts.NotoSans_Regular,
+    margin: '5@s'
   },
   viewButtonLogin: {
-    // flex: 1,
-    width: '100%',
-    marginTop: '37@s',
-    height: '43@s',
-    backgroundColor: '#467b92',
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderRadius: '5@s'
+    width: '300@s', marginTop: '5@s', height: '35@s', backgroundColor: '#2a6edf', borderRadius: '3@s',
+    flexDirection: 'row', alignItems: 'center', justifyContent: 'center',
   },
-  textLogin: {
-    fontSize: '14@s',
-    color: '#FFF',
-    ...Fonts.OpenSans_Light
-  },
-  emptyInforLogin: {
-    textAlign: 'center',
-    color: 'red',
-    fontSize: '12@s',
-    marginLeft: '18@s',
-    lineHeight: '22@s',
-    ...Fonts.NotoSans_Regular,
-  },
-  backgroundLogin: {
-    position: 'absolute',
-    top: '0@s',
-    bottom: '0@s',
-    left: '0@s',
-    right: '0@s',
-    justifyContent: 'center',
-    alignItems: 'center',
-    width: null,
-    height: null
+  textLogin:{
+    fontSize: '13@s', color: '#FFF', ...Fonts.OpenSans_Light
   }
 });
