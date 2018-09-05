@@ -25,7 +25,7 @@ class PreviewScreen extends Component{
           </TouchableOpacity>
 
           <View style={styles.secondNavigateGroup}>
-            <TouchableOpacity style={styles.buttonNavigateSignUp} onPress={() => Linking.openURL('https://bitkoex.net/webview/sign_up')}>
+            <TouchableOpacity style={styles.buttonNavigateSignUp} onPress={() => Linking.openURL('http://bitkoex.net/webview/sign_up')}>
               <View>
                 <Text style={styles.textNavigateSignUp}>{I18n.t('preview.signUp')}</Text>
               </View>
