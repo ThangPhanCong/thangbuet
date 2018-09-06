@@ -5,7 +5,7 @@ import {
   TouchableOpacity,
   View,
   Image,
-  StyleSheet,
+  Keyboard,
   ImageBackground
 } from 'react-native';
 import rf from '../../libs/RequestFactory';
@@ -25,7 +25,8 @@ export default class LoginScreen extends BaseScreen {
     password: '',
     otp: '',
     checkOtp: false,
-    errorText: null
+    errorText: null,
+    isShowKeyboard: false
   }
 
   checkValidationLogin() {
@@ -61,11 +62,11 @@ export default class LoginScreen extends BaseScreen {
         this.checkValidationLogin();
       }
     } catch (err) {
-      if (err.error == 'invalid_otp'){
-        if (!this.state.checkOtp){
-          this.setState({ checkOtp: true, errorText: null})
+      if (err.error == 'invalid_otp') {
+        if (!this.state.checkOtp) {
+          this.setState({ checkOtp: true, errorText: null })
         } else {
-          this.setState({ errorText: I18n.t('login.otpUncorrect')})
+          this.setState({ errorText: I18n.t('login.otpUncorrect') })
           setTimeout(() => this.setState({ errorText: null }), 1000);
         }
 
@@ -85,78 +86,99 @@ export default class LoginScreen extends BaseScreen {
   }
 
   componentDidMount() {
+    this.isMounted = true;
     super.componentDidMount();
 
+    this.keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', () => this._keyboardDidShow());
+    this.keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', () => this._keyboardDidHide());
+
     handleBackAction(this.onBackButtonPressAndroid);
+  }
+
+  componentWillUnmount() {
+    this.isMounted = false;
+  }
+
+  _keyboardDidShow() {
+    this.setState({ isShowKeyboard: true });
+  }
+
+  _keyboardDidHide() {
+    this.setState({ isShowKeyboard: false });
   }
 
   onBackButtonPressAndroid = () => {
     if (this.state.checkOtp) {
       this.setState({ checkOtp: false });
-      return true
+      return true;
     }
     else {
-      return false
+      return false;
     }
 
   }
 
-  render() {
-    const {
-      email,
-      password,
-      otp,
-      checkOtp,
-      errorText
-    } = this.state;
-    let rawInput1;
-    if (checkOtp) {
-      rawInput1 =
-        <View>
-          <TextInput style={[styles.inputLogin, {borderTopLeftRadius: scale(3), borderTopRightRadius: scale(3)}]}
-                     underlineColorAndroid='transparent'
-                     value={otp}
-                     keyboardType= 'numeric'
-                     placeholder={I18n.t('login.otp')}
-                     placeholderTextColor='#000000'
-                     returnKeyType={"next"}
-                     onChangeText={(text) => this.setState({ otp: text })}/>
-        </View>
-    } else {
-      rawInput1 =
-        <View>
-          <TextInput style={[styles.inputLogin, {borderTopLeftRadius: scale(3), borderTopRightRadius: scale(3)}]}
-                     underlineColorAndroid='transparent'
-                     value={email}
-                     keyboardType='email-address'
-                     placeholder={I18n.t('login.email')}
-                     placeholderTextColor='#000000'
-                     returnKeyType={"next"}
-                     onChangeText={(text) => this.setState({ email: text })}/>
-          <Image
-            style={styles.iconMenu}
-            source={require('../../../assets/login/mail.png')}/>
-        </View>
+  _renderOtpInput() {
+    const { otp } = this.state;
 
-
-    }
     return (
-      <View style={styles.screen}>
+      <View>
+        <TextInput style={[styles.inputLogin, { borderTopLeftRadius: scale(3), borderTopRightRadius: scale(3) }]}
+                   underlineColorAndroid='transparent'
+                   value={otp}
+                   keyboardType='numeric'
+                   placeholder={I18n.t('login.otp')}
+                   placeholderTextColor='#000000'
+                   returnKeyType={"next"}
+                   onChangeText={(text) => this.setState({ otp: text })}/>
+      </View>
+    )
+  }
+
+  _renderEmailInput() {
+    const { email } = this.state;
+
+    return (
+      <View>
+        <TextInput style={[styles.inputLogin, { borderTopLeftRadius: scale(3), borderTopRightRadius: scale(3) }]}
+                   underlineColorAndroid='transparent'
+                   value={email}
+                   keyboardType='email-address'
+                   placeholder={I18n.t('login.email')}
+                   placeholderTextColor='#000000'
+                   returnKeyType={"next"}
+                   onChangeText={(text) => this.setState({ email: text })}/>
         <Image
-          style={styles.logoLogin}
-          source={require('../../../assets/login/logologin.png')}/>
+          style={styles.iconMenu}
+          source={require('../../../assets/login/mail.png')}/>
+      </View>
+    )
+  }
 
+  _renderFormInput(isMarginTop) {
+    const {
+      password,
+      checkOtp,
+      errorText,
+    } = this.state;
+
+    let rawInput1= null;
+
+    checkOtp ? rawInput1 = this._renderOtpInput() : rawInput1 = this._renderEmailInput();
+
+    return (
+      <View style={{ marginTop: isMarginTop ? scale(100) : 0 }}>
         {rawInput1}
-
         <View>
-          <TextInput style={[styles.inputLogin, {borderBottomLeftRadius: scale(3), borderBottomRightRadius: scale(3)}]}
-                     secureTextEntry={true}
-                     underlineColorAndroid='transparent'
-                     value={password}
-                     placeholder={I18n.t('login.password')}
-                     placeholderTextColor='#000000'
-                     returnKeyType={"next"}
-                     onChangeText={(text) => this.setState({ password: text })}/>
+          <TextInput
+            style={[styles.inputLogin, { borderBottomLeftRadius: scale(3), borderBottomRightRadius: scale(3) }]}
+            secureTextEntry={true}
+            underlineColorAndroid='transparent'
+            value={password}
+            placeholder={I18n.t('login.password')}
+            placeholderTextColor='#000000'
+            returnKeyType={"next"}
+            onChangeText={(text) => this.setState({ password: text })}/>
           <Image
             style={styles.iconMenu}
             source={require('../../../assets/login/password.png')}/>
@@ -165,10 +187,23 @@ export default class LoginScreen extends BaseScreen {
         <Text style={styles.errorText}>{errorText}</Text>
 
         <TouchableOpacity onPress={this._onPressLogin.bind(this)} style={styles.viewButtonLogin}>
-            <Text style={styles.textLogin}>{I18n.t('login.login')}</Text>
+          <Text style={styles.textLogin}>{I18n.t('login.login')}</Text>
         </TouchableOpacity>
       </View>
+    )
+  }
 
+  render() {
+    const { isShowKeyboard } = this.state;
+
+    return (
+      <View style={styles.screen}>
+        <Image
+          style={styles.logoLogin}
+          source={require('../../../assets/login/logologin.png')}/>
+
+        {isShowKeyboard ? this._renderFormInput() : this._renderFormInput(true)}
+      </View>
     )
   }
 }
@@ -178,7 +213,7 @@ const styles = ScaledSheet.create({
   screen: {
     flex: 1, backgroundColor: '#00358e', flexDirection: 'column', alignItems: 'center'
   },
-  logoLogin:{
+  logoLogin: {
     width: '191@s', height: '74.5@s', margin: '25@s'
   },
   inputLogin: {
@@ -197,7 +232,7 @@ const styles = ScaledSheet.create({
     width: '300@s', marginTop: '5@s', height: '35@s', backgroundColor: '#2a6edf', borderRadius: '3@s',
     flexDirection: 'row', alignItems: 'center', justifyContent: 'center',
   },
-  textLogin:{
+  textLogin: {
     fontSize: '13@s', color: '#FFF', ...Fonts.OpenSans_Light
   }
 });

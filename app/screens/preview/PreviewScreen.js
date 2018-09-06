@@ -80,7 +80,7 @@ const styles = ScaledSheet.create({
     height: '38@s',
     marginLeft: '40@s',
     marginRight: '40@s',
-    marginTop: `${height/2 -100}@s`,
+    marginTop: '180@s',
     borderRadius: '3@s'
   },
   textNavigateLogin: {
