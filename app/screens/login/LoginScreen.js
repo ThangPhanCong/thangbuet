@@ -86,13 +86,13 @@ class LoginScreen extends BaseScreen {
   }
 
   componentDidMount() {
-    this.isMounted = true;
     super.componentDidMount();
 
     this.keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', () => this._keyboardDidShow());
     this.keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', () => this._keyboardDidHide());
 
     handleBackAction(this.onBackButtonPressAndroid);
+    this.isMounted = true;
   }
 
   componentWillUnmount() {
