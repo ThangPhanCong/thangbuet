@@ -64,7 +64,11 @@ async function initMasterdata() {
   return await MasterdataUtils.loadData();
 }
 
-const App = StackNavigator(Screens, { headerMode: 'screen' })
+const App = StackNavigator(Screens, {
+  headerMode: 'screen', cardStyle: {
+    opacity: 1
+  }
+});
 
 let defaultGetStateForAction;
 let _lastTimeBackPress = 0;
