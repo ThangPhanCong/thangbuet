@@ -131,7 +131,7 @@ export default class MainScreen extends BaseScreen {
   render() {
     return (
       <SafeAreaView style={{flex: 1}}>
-        <MainTabNavigator/>
+        <MainTabNavigator screenProps={{navigation: this.props.navigation}}/>
       </SafeAreaView>
     )
   }

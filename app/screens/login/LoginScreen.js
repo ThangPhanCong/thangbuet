@@ -18,7 +18,7 @@ import { Fonts } from "../../utils/CommonStyles";
 import { handleBackAction } from '../../../App';
 import { scale } from "../../libs/reactSizeMatter/scalingUtils";
 
-export default class LoginScreen extends BaseScreen {
+class LoginScreen extends BaseScreen {
 
   state = {
     email: '',
@@ -208,6 +208,8 @@ export default class LoginScreen extends BaseScreen {
   }
 }
 
+export default LoginScreen;
+
 const styles = ScaledSheet.create({
   ...LoginCommonStyle,
   screen: {
@@ -217,9 +219,9 @@ const styles = ScaledSheet.create({
     width: '191@s', height: '74.5@s', margin: '25@s'
   },
   inputLogin: {
-    height: '35@s', width: '300@s', backgroundColor: '#ffffff', fontSize: '13@s', color: '#000000', paddingLeft: '45@s',
-    flexDirection: 'column', justifyContent: 'center', paddingTop: 0, paddingBottom: 0, paddingRight: '15@s',
-    textAlign: 'center', ...Fonts.NanumGothic_Regular, marginBottom: '1@s'
+    height: '35@s', width: '300@s', backgroundColor: '#ffffff', fontSize: '13@s', color: '#000000',
+    flexDirection: 'column', justifyContent: 'center', paddingTop: 0, paddingBottom: 0,
+    textAlign: 'center', ...Fonts.NanumGothic_Regular, marginBottom: '1@s',
   },
   iconMenu: {
     width: '19@s', height: '18@s', position: 'absolute', top: '8@s', left: '15@s'

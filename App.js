@@ -1,4 +1,4 @@
-import { StackNavigator, NavigationActions } from 'react-navigation';
+import { StackNavigator, NavigationActions, StackActions } from 'react-navigation';
 import { YellowBox, ToastAndroid, Platform } from 'react-native';
 import MicroEvent from 'microevent';
 
@@ -40,7 +40,8 @@ async function initApp() {
 
 async function initI18n() {
   await AppPreferences.init();
-  let locale = await AppPreferences.getLocale();;
+  let locale = await AppPreferences.getLocale();
+  ;
   if (!locale) {
     locale = 'ko';
     AppPreferences.saveLocale(locale);
@@ -95,7 +96,15 @@ function handleBackAction(callback) {
             });
           }
 
-          return defaultGetStateForAction(action, state);
+          const resetAction = NavigationActions.reset({
+            index: 0,
+            key: null,
+            actions: [
+              NavigationActions.navigate({ routeName: 'PreviewScreen' }),
+            ]
+          });
+
+          return defaultGetStateForAction(resetAction, state);
         }
 
         let now = new Date().getTime();
@@ -113,7 +122,7 @@ function handleBackAction(callback) {
           ToastAndroid.SHORT,
           ToastAndroid.BOTTOM
         );
-  
+
         return defaultGetStateForAction({
           type: 'Navigation/COMPLETE_TRANSITION',
           key: 'StackRouterRoot'

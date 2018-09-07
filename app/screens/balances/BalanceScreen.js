@@ -57,7 +57,7 @@ export default class BalanceScreen extends BaseScreen {
       this._updateState(coinList)
     } catch (err) {
       if(err.message === Consts.NOT_LOGIN) {
-        return this._onError(err);
+        return this._onError(err, this.props.screenProps.navigation);
       }
       console.log('Error in HeaderScreen._getSymbols: ', err)
     }

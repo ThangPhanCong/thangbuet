@@ -59,7 +59,7 @@ export default class MyPageScreen extends BaseScreen {
     return(
       <SafeAreaView style={styles.screen}>
         {this._renderHeader()}
-        <TabBarNavigator screenProps={{navigation: this.props.navigation}}/>
+        <TabBarNavigator screenProps={{navigation: this.props.screenProps.navigation}}/>
       </SafeAreaView>
     )
   }

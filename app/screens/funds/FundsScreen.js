@@ -60,7 +60,7 @@ export default class FundsScreen extends BaseScreen {
 
       this._updateState(coinList)
     } catch (err) {
-      return this._onError(err);
+      return this._onError(err, this.props.screenProps.navigation);
       console.log('Error in FundsScreen._getSymbols: ', err)
     }
   }

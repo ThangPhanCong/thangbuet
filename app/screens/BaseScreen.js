@@ -3,7 +3,7 @@ import { View, BackHandler, Alert, Platform, ToastAndroid } from "react-native";
 import I18n from '../i18n/i18n';
 import Consts from "../utils/Consts";
 import RNRestart from 'react-native-restart';
-
+import { NavigationActions } from "react-navigation";
 export default class BaseScreen extends React.Component {
   static navigationOptions = {
     header: null
@@ -23,9 +23,18 @@ export default class BaseScreen extends React.Component {
     navigate({ routeName: screen, params: params, action: null, key: screen });
   }
 
-  _onError(err) {
+  _onError(err, navigation) {
     if (err.message === Consts.NOT_LOGIN) {
-      RNRestart.Restart();
+
+      const resetAction = NavigationActions.reset({
+        index: 0,
+        key: null,
+        actions: [
+          NavigationActions.navigate({ routeName: 'LoginScreen' }),
+        ]
+      });
+
+      navigation.dispatch(resetAction);
     };
   }
 
